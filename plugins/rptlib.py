@@ -1,5 +1,6 @@
-# Copyright (C) 1998,1999  marduk <marduk@python.net>
+# Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -176,8 +177,6 @@ def nav_bar(plugins):
 	doTopMain(report)
 	report.generate()
 	report_version = report.__version__
-	if config.WARN_OLD_VERSION:
-	    check_and_warn(plugin,report_version)
 	doBotMain()
 	fp.close()
 	sys.stdout = tmp
@@ -226,65 +225,3 @@ def doBotMain():
 	  % (webcheck.start_time,version.home, version.webcheck)
     print '</body>'
     print '</html>'
-
-
-def read_registry(url):
-    """Read file referenced by url and return a registry object.
-
-       The registry object is just a dictionary.  The key an individual
-       module name.  The value is a tuple consisting of the latest version
-       and the url where it can be retrieved.  e.g.:
-       registry['mymodule'] = ('1.0','http://www.mymodule.com/')
-    """
-    registry = {}
-    lines =  opener.open(url).readlines()
-    opener.close()
-    for line in lines:
-	fields = string.split(line)
-	if len(fields) != 3: continue
-	registry[fields[0]] = fields[1:]
-	
-    return registry
-
-def check_and_warn(plugin,plugin_version):
-    """Check to see if Webcheck and plugin are up to date if so write it in
-       the report.
-    """
-
-    old_webcheck = 0
-    old_plugin = 0
-
-    # first check to see if webcheck is up to date
-    try:
-	if version.webcheck != registry['webcheck'][0]:
-	    old_webcheck = 1
-    except KeyError:
-	pass
-    try:
-	if plugin_version != registry[plugin][0]:
-	    old_plugin = 1
-    except KeyError:
-	pass
-    
-    if (old_plugin + old_webcheck):
-	print '<table class="warning" cellpadding="4" cellspacing="0" border="0">'
-	print '<tr><td><strong>Warning:</strong> ',
-	if old_webcheck:
-	    print 'The version of Webcheck you are using (%s) is outdated.' \
-		  % version.webcheck,
-	    print 'You may download the latest version, %s, at ' \
-		  % registry['webcheck'][0],
-	    print '<a href="%s" target="_top">%s</a>.<br><br>' \
-		  % (registry['webcheck'][1],registry['webcheck'][1])
-	if old_plugin:
-	    print 'The %s plugin used to generate this report is outdated.' \
-		  % plugin,
-	    print 'This version is %s.  The latest version is %s ' \
-		  % (plugin_version, registry[plugin][0]),
-	    print 'And may be downloaded at <a href="%s" target="_top">%s</a>.<br>' \
-		  % (registry[plugin][1],registry[plugin][1])
-	print '</td></tr></table>'
-
-if config.WARN_OLD_VERSION:
-    registry = read_registry(version.registry)
-    debugio.write('registry = %s' % registry,4)

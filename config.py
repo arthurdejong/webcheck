@@ -91,16 +91,6 @@ WAIT_BETWEEN_REQUESTS = 0
 # network logs you produced and he printed... :)
 REDIRECT_DEPTH = 5
 
-# Webcheck has the option of checking a registry and determine it is the
-# latest version of Webcheck as well as plugin reports you are using.  If
-# this option is set to true (not 0) it will check the registry and print a
-# message on the reports to notify you along with a link to where you
-# can download the latest version of the plugin (or Webcheck).  Note that
-# this feature requires that Webcheck have access to the Internet
-#
-# **** THIS FEATURE IS CURRENTLY NONFUNCTIONAL ****
-WARN_OLD_VERSION = 0
-
 # Debug level.  For normal output, set to 1.  The higher the number, the more
 # output.  A setting of 0 produces no output. 
 DEBUG_LEVEL = 1

@@ -1,5 +1,6 @@
-# Copyright (C) 1998,1999  marduk <marduk@python.net>
+# Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,4 +22,3 @@
 webcheck="1.0"
 authors='Mike Meyer <mwm@mired.org>'
 home='http://www.mired.org/webcheck/'
-#registry='http://starship.python.net/crew/marduk/webcheck/registry'
