@@ -1,16 +1,16 @@
-The following entities have contributed to webcheck in some fashion.  Please
-know that this is not a complete list.  Most likely I've forgotten someone
-If you would like to be included/removed from this list, send email to
-mwm@mired.org.  Thank you to all the contributers to webcheck.
+The following people have made major contributions to the webcheck code. They
+own copyrights to most files in the codebase.
 
+Marduk <marduk@python.net>
+Mike Meyer <mwm@mired.org>
 
-				  Contributers
-		    ----------------------------------------
+These people have also contributed to webcheck in some fashion. This is most
+likely not a complete list. If you feel you are left unjustly left out of this
+list, please send an email.
 
-Mike Meyer                      mwm@mired.org
-Marduk                          marduk@python.net
-Oleg Broytmann                  phd2@earthlink.net
-Andrea Glorioso                 sama@intercity.it
-Andrew Kuchling                 akuchlin@cnri.reston.va.us
-Jean Pierre LeJacq              jplejacq@quoininc.com
-Steffen Siebert                 siebert@logware.de
+Oleg Broytmann <phd2@earthlink.net>
+Andrea Glorioso <sama@intercity.it>
+Andrew Kuchling <akuchlin@cnri.reston.va.us>
+Jean Pierre LeJacq <jplejacq@quoininc.com>
+Steffen Siebert <siebert@logware.de>
+Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
