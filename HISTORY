@@ -1,0 +1,567 @@
+//depot/mwm/webcheck/BUGS
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/CHANGES
+... #3 change 2087 edit on 2002/04/02 by mwm@guru (text)
+
+	Note that we don't send accept headers any more, and fix the URL for
+	linkbot in README.
+
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/COPYING
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/CREDITS
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/HISTORY.linbot
+... #1 change 2185 add on 2002/05/04 by mwm@guru (text)
+
+	Add the linbot history file. 
+
+//depot/mwm/webcheck/INSTALL
+... #3 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #2 change 2079 edit on 2002/04/02 by mwm@guru (text)
+
+	Apply the patches from the FreeBSD port.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/README
+... #3 change 2087 edit on 2002/04/02 by mwm@guru (text)
+
+	Note that we don't send accept headers any more, and fix the URL for
+	linkbot in README.
+
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/TODO
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/config.py
+... #4 change 2083 edit on 2002/04/02 by mwm@guru (text)
+
+	Change config.py to match my own version.
+
+... #3 change 2082 edit on 2002/04/02 by mwm@guru (text)
+
+	Move the stylesheet and LOGO references from marduk's - now
+	non-existent - site.
+
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/debugio.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/htmlparse.py
+... #4 change 2156 edit on 2002/04/28 by mwm@guru (text)
+
+	Deal with ambiguous tabs in the source.
+
+... #3 change 2090 edit on 2002/04/02 by mwm@guru (text)
+
+	Fix "import *"'s that caused 2.2 to choke.
+
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/httpcodes.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/myUrlLib.py
+... #5 change 2156 edit on 2002/04/28 by mwm@guru (text)
+
+	Deal with ambiguous tabs in the source.
+
+... #4 change 2085 edit on 2002/04/02 by mwm@guru (text)
+
+	Change the "import *"'s that were causing problems to import just the
+	one name we needed.
+
+... #3 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #2 change 2079 edit on 2002/04/02 by mwm@guru (text)
+
+	Apply the patches from the FreeBSD port.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/robotparser.py
+... #3 change 2156 edit on 2002/04/28 by mwm@guru (text)
+
+	Deal with ambiguous tabs in the source.
+
+... #2 change 2079 edit on 2002/04/02 by mwm@guru (text)
+
+	Apply the patches from the FreeBSD port.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/version.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/webcheck.css
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2080 branch on 2002/04/02 by mwm@guru (text)
+
+	Stage one of the rename - fix the file names.
+
+... ... branch from //depot/mwm/webcheck/linbot.css#1
+//depot/mwm/webcheck/webcheck.py
+... #4 change 2156 edit on 2002/04/28 by mwm@guru (xtext)
+
+	Deal with ambiguous tabs in the source.
+
+... #3 change 2091 edit on 2002/04/02 by mwm@guru (xtext)
+
+	Change one last "import *".
+
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (xtext)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2080 branch on 2002/04/02 by mwm@guru (xtext)
+
+	Stage one of the rename - fix the file names.
+
+... ... branch from //depot/mwm/webcheck/linbot.py#1
+//depot/mwm/webcheck/webcheck.sh
+... #4 change 2157 edit on 2002/04/28 by mwm@guru (xtext)
+
+	Add the director the python binary resides in to the PATH.
+
+... #3 change 2084 edit on 2002/04/02 by mwm@guru (xtext)
+
+	Fix the program name to be src, not external-src.
+
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (xtext)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2080 branch on 2002/04/02 by mwm@guru (xtext)
+
+	Stage one of the rename - fix the file names.
+
+... ... branch from //depot/mwm/webcheck/linbot.sh#1
+//depot/mwm/webcheck/plugins/__init__.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/badlinks.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/external.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/images.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/notchkd.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/notitles.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/problems.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/rptlib.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/sitemap.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/slow.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/whatsnew.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/plugins/whatsold.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/schemes/__init__.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/schemes/filelink.py
+... #3 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #2 change 2079 edit on 2002/04/02 by mwm@guru (text)
+
+	Apply the patches from the FreeBSD port.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/schemes/ftplink.py
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+
+//depot/mwm/webcheck/schemes/httplink.py
+... #5 change 2186 edit on 2002/05/04 by mwm@guru (text)
+
+	Revert the accept headers - leave them out.
+
+... #4 change 2184 edit on 2002/05/04 by mwm@guru (text)
+
+	Put back the accept headers. The problem appeared to be elsewhere.
+
+... #3 change 2086 edit on 2002/04/02 by mwm@guru (text)
+
+	Rip out the accept: headers. They are making some servers choke for
+	some reason.
+
+... #2 change 2081 edit on 2002/04/02 by mwm@guru (text)
+
+	Rename, phase 2 - change internal references from "linbot" to "webcheck".
+	
+	Also add my copyright, standardize the GNU copyright header, and rip out
+	the CVS cruft that we're not going to use.
+	
+	Document this in changes.
+
+... #1 change 2078 add on 2002/04/02 by mwm@guru (text)
+
+	Check in linbot with the webcheck name, in preperation for the
+	rename for my distribution.
+

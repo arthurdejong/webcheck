@@ -1,0 +1,126 @@
+/* "Global" Settings */
+BODY {
+	background: #ffffff;
+	font-size: 10pt;
+}
+
+A:link {
+	color: #0000cd;
+}
+
+A.external:link {
+	font-style: italic;
+}
+
+A:active {
+	color: #0000ff;
+}
+
+A:visited {
+	color: #bc0000;
+}
+
+TH {
+	background: #cccc99;
+	color: #000000;
+}
+
+TD {
+	background: #eeeee0;
+	color: #000000;
+}
+
+BODY.navbar {
+	background:
+	url(http://www.mired.org/webcheck/blackbar.png);
+}
+.navbar TH {
+	background: #000000 url(http://www.mired.org/webcheck/blackbar.png);
+	color: #ffffff;
+	font-family: arial, sans-serif;
+}
+
+.highlight TH {
+	background: #ffffff;
+	color: #000000;
+}
+
+.navbar A:link { 
+	background: none;
+	color: #ffffff;
+}
+
+.navbar A:active {
+	background: none;
+	color: #00ff00;
+}
+
+.navbar A:visited {
+	background: none;
+	color: #ffffff;
+}
+
+.navbar TH.home {
+	background: #cd0000;
+	color: #ffffff;
+}
+
+P.logo {
+	text-align: center;
+}
+
+H1 {
+	font-size: 1.5em;
+}
+H1.basename {
+	text-align: center;
+}
+
+TH.title {
+	background: #cd0000;
+	color: #ffffff;
+	font-family: "comic sans ms", verdana, sans-serif;
+	font-size: 1.3em;
+	text-align: left;
+}
+
+TR.link  {
+	background: #cccc99;
+	color: #000000;
+}
+
+TR.status {
+	background: #bbbbb0;
+	color: #000000;
+}
+
+TR.parent {
+	background: #ddddd0;
+	color: #000000;
+}
+
+/* time/age fields */
+TD.time {
+	b
+	background: #ddddd0;
+	color: #000000;
+	text-align: right;
+}
+
+TD.blank {
+	background: #ffffff;
+}
+
+DIV.table {
+	/* the only way I know of to align tables via CSS */
+	text-align: center;
+}
+
+
+P.authorlist {
+	font-family: helvetica, sans-serif;
+	font-size: smaller;
+	font-weight: bold;
+	text-align: center;
+}
+

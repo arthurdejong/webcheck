@@ -1,0 +1,262 @@
+# $Log: debugio.py,v $
+# Revision 1.1  1999/03/11 02:29:50  marduk
+# Added debugio module to handle debugging and IO
+
+# $Log: htmlparse.py,v $
+# Revision 1.5  1999/03/11 04:51:25  marduk
+# Added version module.
+#
+# Revision 1.4  1999/03/11 02:29:50  marduk
+# Added debugio module to handle debugging and IO
+#
+# Revision 1.3  1999/02/21 16:39:24  marduk
+# 1.0b8
+#
+# Revision 1.2  1999/01/10 01:01:44  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1  1998/12/23 02:12:15  marduk
+# This is 1.0b1
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+
+
+# $Log: httpcodes.py,v $
+# Revision 1.2  1999/01/10 01:01:44  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+
+# $Log: __init__.py,v $
+# Revision 1.2  1999/01/10 01:02:02  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: badlinks.py,v $
+# Revision 1.2  1999/01/10 01:02:02  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: external.py,v $
+# Revision 1.2  1999/01/10 01:02:02  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: images.py,v $
+# Revision 1.3  1999/02/21 16:39:43  marduk
+# 1.0b8
+#
+# Revision 1.2  1999/01/10 01:02:03  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: notchkd.py,v $
+# Revision 1.2  1999/01/10 01:02:03  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: notitles.py,v $
+# Revision 1.2  1999/01/10 01:02:03  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: problems.py,v $
+# Revision 1.2  1999/01/10 01:02:03  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+ $Log: rptlib.py,v $
+# Revision 1.8  1999/03/12 04:56:05  marduk
+# Added ability to warn of old versions of linbot/plugins
+# Added patch to enable file:// to work with OS/2
+#
+# Revision 1.7  1999/03/11 04:51:28  marduk
+# Added version module.
+#
+# Revision 1.6  1999/03/11 02:30:00  marduk
+# Added debugio module to handle debugging and IO
+#
+# Revision 1.5  1999/02/26 01:12:15  marduk
+# -o option Created directory if does not exist.
+#
+# Revision 1.4  1999/02/21 16:39:44  marduk
+# 1.0b8
+#
+# Revision 1.3  1999/01/10 01:02:04  marduk
+# Linbot 1.0b6
+#
+# Revision 1.2  1998/12/31 03:49:08  marduk
+# This is linbot 1.0b5.  See CHANGES
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: sitemap.py,v $
+# Revision 1.2  1999/01/10 01:02:04  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: slow.py,v $
+# Revision 1.2  1999/01/10 01:02:04  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: whatsnew.py,v $
+# Revision 1.2  1999/01/10 01:02:05  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: whatsold.py,v $
+# Revision 1.2  1999/01/10 01:02:05  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Log: __init__.py,v $
+# Revision 1.3  1999/03/11 04:51:32  marduk
+# Added version module.
+#
+# Revision 1.2  1999/01/10 01:02:15  marduk
+# Linbot 1.0b6
+#
+# Revision 1.1.1.1  1998/12/20 23:17:13  marduk
+# initial 1.0
+#
+
+# $Log: filelink.py,v $
+# Revision 1.5  1999/03/12 04:56:07  marduk
+# Added ability to warn of old versions of linbot/plugins
+# Added patch to enable file:// to work with OS/2
+#
+# Revision 1.4  1999/03/11 04:51:32  marduk
+# Added version module.
+#
+# Revision 1.3  1999/01/10 01:02:15  marduk
+# Linbot 1.0b6
+#
+# Revision 1.2  1998/12/31 03:49:14  marduk
+# This is linbot 1.0b5.  See CHANGES
+#
+# Revision 1.1.1.1  1998/12/20 23:17:13  marduk
+# initial 1.0
+#
+
+# $Log: ftplink.py,v $
+# Revision 1.6  1999/03/11 04:51:32  marduk
+# Added version module.
+#
+# Revision 1.5  1999/03/11 02:30:05  marduk
+# Added debugio module to handle debugging and IO
+#
+# Revision 1.4  1999/01/10 01:02:15  marduk
+# Linbot 1.0b6
+#
+# Revision 1.3  1998/12/31 03:49:14  marduk
+# This is linbot 1.0b5.  See CHANGES
+#
+# Revision 1.2  1998/12/23 07:38:35  marduk
+# Fix bug: NameError: myUrlLib
+#
+# Revision 1.1.1.1  1998/12/20 23:17:14  marduk
+# initial 1.0
+#
+
+# $Log: httplink.py,v $
+# Revision 1.11  1999/03/14 19:24:25  marduk
+# Fixed bug when server redirects to a document in robots.txt
+#
+# Revision 1.10  1999/03/12 01:48:21  marduk
+# Preliminary support for authenticating proxies added.
+# Added Andrea's redirect-depth patch.
+#
+# Revision 1.9  1999/03/11 04:51:33  marduk
+# Added version module.
+#
+# Revision 1.8  1999/03/11 02:30:05  marduk
+# Added debugio module to handle debugging and IO
+#
+# Revision 1.7  1999/02/27 16:31:35  marduk
+# Use putheader("User-Agent:"...) instead of putrequest(...)
+#
+# Revision 1.6  1999/02/26 01:55:08  marduk
+# ACCEPTS all mime types in mimetypes.py
+#
+# Identify itself as Linbot x.x in HEAD requests
+#
+# Revision 1.5  1999/02/21 16:39:51  marduk
+# 1.0b8
+#
+# Revision 1.4  1999/01/10 21:58:19  marduk
+# Changed self.* to link.* @line 86 in httplink.py
+#
+# Revision 1.3  1999/01/10 01:02:16  marduk
+# Linbot 1.0b6
+#
+# Revision 1.2  1998/12/31 03:49:14  marduk
+# This is linbot 1.0b5.  See CHANGES
+#
+# Revision 1.1.1.1  1998/12/20 23:17:12  marduk
+# initial 1.0
+#
+
+# $Id: linbot.py,v 1.8 1999/03/12 04:56:01 marduk Exp $
+# Revision 1.8  1999/03/12 04:56:01  marduk
+# Added ability to warn of old versions of linbot/plugins
+# Added patch to enable file:// to work with OS/2
+#
+# Revision 1.7  1999/03/12 01:48:14  marduk
+# Preliminary support for authenticating proxies added.
+# Added Andrea's redirect-depth patch.
+#
+# Revision 1.6  1999/03/11 04:51:25  marduk
+# Added version module.
+#
+# Revision 1.5  1999/03/11 02:29:51  marduk
+# Added debugio module to handle debugging and IO
+#
+# Revision 1.4  1999/02/21 16:39:25  marduk
+# 1.0b8
+#
+# Revision 1.3  1999/01/10 01:01:44  marduk
+# Linbot 1.0b6
+#
+# Revision 1.2  1998/12/23 07:34:59  marduk
+# Fixed problem in linbot.py "import parser"
+#
+# Revision 1.1.1.2  1998/12/20 23:27:50  marduk
+# This is pre 1.0, I hope

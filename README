@@ -1,0 +1,41 @@
+
+Webcheck is the amazing Site Management Tool for webmasters.  Downloads and more
+information at:
+
+	    http://www.mired.org/webcheck/
+
+Webcheck allows webmasters to:
+
+* View The Structure Of A Site
+
+* Track Down Broken Links
+
+* Find Potentially Outdated Web Pages
+
+* List Links Pointing To External Sites
+
+* View Portfolio Of Inline Images
+
+* Do All This Periodically And Without User Intervention	
+
+
+
+Changes to v. 1.0 include:
+
+* Faster checking of sites (only downloads files when it needs).
+
+* Supported schemes (http, ftp, file) handled more efficiently.
+
+* More modular design allows other schemes to be added easily.
+
+* Plug-in support: third-party reports can be added to webcheck easily!
+
+* Themes (TM) support via Cascading StyleSheets.
+
+* Lots of bug fixes, including the infamous proxy bug.
+
+* and more! 
+
+Webcheck is a FREE clone of Linkbot <URL:
+http://www.watchfire.com/solutions/linkbot.asp > and incorporates many
+of Linkbot's features as well as enhancements of its own.
