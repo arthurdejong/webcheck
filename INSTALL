@@ -143,6 +143,8 @@ Synopsis
          This option can be set to any non-negative number.
  -d levelSet debug level to level. For programmer-level debugging use a
          level > 1.
+ -W      Overwrite existing files without asking.                                                                                                              
+                                                                                                                                                               
    url   The base url. Webcheck checks this link first, then all the links it
          points to on down the "tree".
  location This specifies the hosts pointed to that are to be considered

@@ -194,8 +194,21 @@ def open_file(filename):
     """ given config.OUTPUT_DIR checks if the directory already exists; if not, it creates it, and then opens         filename for writing and returns the file object """
     if os.path.isdir (config.OUTPUT_DIR) == 0:
         os.mkdir(config.OUTPUT_DIR)
-    return open(config.OUTPUT_DIR + filename,'w')
-    
+
+    fname = config.OUTPUT_DIR + filename
+    tmp = sys.stdout
+    sys.stdout = sys.__stdout__
+    if os.path.exists(fname) and not config.OVERWRITE_FILES:
+        ow = raw_input('File %s already exists. Overwrite? y[es]/a[ll]/Q[uit] ' % `fname`)
+        ow = ow.lower() + " "
+        if ow[0] == 'a':
+            config.OVERWRITE_FILES = 1
+        elif ow[0] != 'y':
+            print 'Aborted.'
+            sys.exit(0)
+    sys.stdout = tmp
+    return open(fname,'w')
+
 def doTopMain(report):
     """top part of html files in main frame prints to stdout"""
     print '<html>'

@@ -32,10 +32,10 @@ TD {
 
 BODY.navbar {
 	background:
-	url(http://www.mired.org/webcheck/blackbar.png);
+	url(blackbar.png);
 }
 .navbar TH {
-	background: #000000 url(http://www.mired.org/webcheck/blackbar.png);
+	background: #000000 url(blackbar.png);
 	color: #ffffff;
 	font-family: arial, sans-serif;
 }

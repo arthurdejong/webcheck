@@ -32,27 +32,7 @@ title = 'Images'
 
 # images
 def generate():    
-    import math
-    imagelist=Link.images.keys()
-
-    currentPic=0
-    rows = int(math.ceil(len(imagelist)/config.REPORT_IMAGES_COLS))+1
-    print '<div class="table">'
-    print '<table border=0 cellspacing="1" cellpadding="0">'
-    
-    for row in range(rows):
-	print'\t<tr>'
-	for col in range(config.REPORT_IMAGES_COLS):
-	    if currentPic==len(imagelist): break
-	    image=imagelist[currentPic]
-	    print '\t\t<td>' + \
-	      make_link(image,
-			'<img src="%s" width="%d" height="%d" alt="%s">' \
-		  % (image,config.REPORT_IMAGES_WIDTH,
-		     config.REPORT_IMAGES_HEIGHT, image)),
-	    print '</td>'
-	    currentPic = currentPic + 1
-
-	print '\t</tr>'
-    print '</table>'
-    print '</div>'
+    print '<ol>'
+    for url, image in Link.images.items():
+        print '\t<li>%s' % make_link(url, url)
+    print '</ol>'

@@ -21,13 +21,13 @@
 import htmllib
 import string
 import debugio
+from urlparse import urlparse, urljoin, urlunparse
+from formatter import NullFormatter
 
 def urlformat(url,parent=None):
     """ returns a formatted version of URL, which, adds trailing '/'s, if 
     necessary, deletes fragmentation identifiers '#' and expands partial url's 
     based on parent"""
-    
-    from urlparse import urlparse, urljoin, urlunparse
     
     method=urlparse(url)[0]
     if (method=='') and (parent != None):
@@ -87,6 +87,13 @@ class MyHTMLParser(htmllib.HTMLParser):
                     self.author = author
                     debugio.write('\tauthor: ' + author)
 
+    # stylesheet links
+    def do_link(self,attrs):
+        for name, val in attrs:
+            if name=="href":
+                if val not in self.anchorlist:
+                    self.anchorlist.append(val)
+
     # <AREA> for client-side image maps
     def do_area(self,attrs):
         for name, val in attrs:
@@ -103,8 +110,6 @@ def pageLinks(url,page):
     """ returns a list of all the url's in a page.  page should be a file object
     Partial urls will be expanded using <url> parameter unless the page contains
     the <BASE HREF=> tag."""
-    import htmllib
-    from formatter import NullFormatter
 
     parser = MyHTMLParser(NullFormatter())
     parser.feed(page)

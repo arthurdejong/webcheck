@@ -36,14 +36,24 @@ def init(self, url, parent):
 
     host, port, user, passwd, pathname = parseurl(url)
     try:
-	ftp = ftplib.FTP(host,user,passwd)
-    	stat(pathname, ftp)
+        ftp = ftplib.FTP()
+        ftp.connect(host, port)
+        ftp.login(user, passwd)
+        dirs, filename = split_dirs(pathname)
+        cwd(dirs, ftp)
+        if filename:
+            try:  # FTP.size raises an exception instead of returning None!
+                self.size = ftp.size(filename)
+            except ftplib.error_perm:
+                self.size = 0
+                if filename not in ftp.nlst():
+                    raise ftplib.error_perm, "No such file or directory"
     except ftplib.all_errors, errtext:
 	self.set_bad_link(self.URL, str(errtext))
-	return
-
-    self.size = size(pathname,ftp)
-    if self.size is None: self.size = 0 
+    try:
+        ftp.quit()
+    except:
+        ftp.close()
 
 def callback(line):
     """Read a line of text and do nothing with it"""
@@ -70,20 +80,31 @@ def stat(pathname, ftpobject):
 def get_document(url):
     host, port, user, passwd, pathname = parseurl(url)
     dirs, filename = split_dirs(pathname)
-    ftp = ftplib.FTP(host,user,passwd)
+    ftp = ftplib.FTP()
+    ftp.connect(host, port)
+    ftp.login(user, passwd)
     cwd(dirs, ftp)
-    return ftp.retrbinary('RETR %s' % filename)
+
+    ftp.voidcmd('TYPE I')
+    conn, size = ftp.ntransfercmd('RETR ' + filename)
+    if size:
+       page = conn.makefile().read(size)
+    else:
+       page = conn.makefile().read()
+
+    try:
+       ftp.quit()
+    except ftplib.all_errors:
+       ftp.close()
+    return page
 
 def split_dirs(pathname):
     """Given pathname, split it into a tuple consisting of a list of dirs and
     a filename"""
     
-    dirs, filename = posixpath.split(pathname)
-    dirs = string.split(dirs,'/')
-    if dirs[0] == '': dirs[0] = '/'
-    if not filename:
-	filename = dirs[-1]
-	dirs = dirs[:-1]
+    dirs = map(urllib.unquote, string.split(pathname, '/'))
+    filename = dirs.pop()
+    if len(dirs) and not dirs[0]: del dirs[0]
     return (dirs, filename)
 
 def size(pathname,ftpobject):
@@ -111,8 +132,7 @@ def parseurl(url):
 	    passwd = None
     else:
 	user = 'anonymous'
-	# this is bad, i'll change it later
-	passwd = 'mwm@mired.org'
+        passwd = ''  # Filled in by ftplib.
 
     if ':' in host:
 	host, port = string.split(host,':')

@@ -38,6 +38,8 @@ redirect_depth = 0
 
 opener = urllib.FancyURLopener(proxies)
 opener.addheaders = [('User-agent','Webcheck ' + version.webcheck)]
+if config.HEADERS:
+    opener.addheaders = opener.addheaders + config.HEADERS
 
 def get_reply(url):
     """Open connection to url and report information given by HEAD command"""
@@ -77,12 +79,13 @@ def get_reply(url):
     debugio.write(errcode,2)
     debugio.write(errmsg,2)
     if errcode == 301 or errcode == 302:
-	redirect_depth = redirect_depth + 1
+	redirect_depth += 1
 	if redirect_depth > config.REDIRECT_DEPTH:
 	    debugio.write('\tToo many redirects!')
 	    redirect_depth = 0
 	    return (errcode, errmsg, headers, url)
         redirect = headers['location']
+	debugio.write('\tRedirect location: ' + redirect)
 	redirect = urlparse.urljoin(url,redirect)
 	if redirect == url:
 	    debugio.write('\tRedirect same as source: %s' % redirect)
@@ -93,6 +96,7 @@ def get_reply(url):
 	    link = Link.linkList[redirect]
 	    return (link.status, link.message, link.headers, link.URL)
         return get_reply(redirect)
+    redirect_depth = 0
     return (errcode, errmsg, headers, url)
 
 def init(self, url, parent):

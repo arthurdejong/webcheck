@@ -18,7 +18,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 
-USAGE='webcheck [-abvq][-l url][-x url]... [-y url]... [-r depth][-o dir][-w sec][-d level] url [location]...'
+USAGE='webcheck [-abvqW][-l url][-x url]... [-y url]... [-r depth][-o dir][-w sec][-d level] url [location]...'
 PYTHON_VERSION=1.5 # not used right now
 explored = []
 problem_db = {}
@@ -26,6 +26,7 @@ linkList = {}
 
 import sys
 import time
+import os
 
 
 start_time = time.ctime(time.time())
@@ -55,7 +56,7 @@ def parse_args():
     import getopt
     global URL
     try:
-        optlist, args = getopt.getopt(sys.argv[1:],'vl:x:y:ar:o:bw:d:q')
+        optlist, args = getopt.getopt(sys.argv[1:],'vl:x:y:ar:o:bw:d:qW')
     except getopt.error, reason:
         print reason
         print USAGE
@@ -80,6 +81,8 @@ def parse_args():
             config.WAIT_BETWEEN_REQUESTS=int(arg)
         elif flag=='-l':
             config.LOGO_HREF=arg
+        elif flag=='-W':
+            config.OVERWRITE_FILES=1
         elif flag=='-d':
             debugio.DEBUG_LEVEL=int(arg)
         elif flag=='-q':
@@ -89,7 +92,7 @@ def parse_args():
         print USAGE
         sys.exit(1)
     else: URL = args[0]
-    config.HOSTS=args[1:]
+    config.HOSTS = config.HOSTS + args[1:]
 
 def print_version():
     """Print version information"""
@@ -113,6 +116,16 @@ def warn():
     print "* Webcheck %s                             *" % version.webcheck
     print "*                                         *"
     print "*******************************************"
+
+def link_image(filename):
+    source = '/usr/share/webcheck/' + filename
+    target = config.OUTPUT_DIR + filename
+    if os.path.exists(target): return
+    try:
+       os.symlink(source, target)
+    except os.error, (errcode, errtext):
+       print 'Warning: "%s": %s' % (target, errtext)
+       print '         Please copy "%s" to "%s".' % (source, target)
 
 # set up the pages
 plugins = config.PLUGINS
@@ -141,5 +154,7 @@ if __name__ == '__main__':
     from plugins.rptlib import main_index, nav_bar
     main_index()
     nav_bar(plugins)
+    link_image('blackbar.png')
+    if config.LOGO_HREF == 'webcheck.png': link_image('webcheck.png')
     debugio.write('done.')
 
