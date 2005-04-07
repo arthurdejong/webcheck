@@ -49,29 +49,30 @@ def get_reply(url):
     """Open connection to url and report information given by HEAD command"""
 
     global redirect_depth
-    parsed = urlparse.urlparse(url)
+    (scheme,location,path,query,fragment)=urlparse.urlsplit(url)
     if proxies and proxies.has_key('http'):
         host = urlparse.urlparse(proxies['http'])[1]
         document = url
-
     else:
-        host = parsed[1]
-        document = string.join(parsed[2:4],'')
+        host = location
+        document = string.join((path,query),'')
 
-    if not document: document = '/'
-    debugio.write('document= %s' % document,3)
+    if not document:
+        document = '/'
+    debugio.write('document=%s' % document)
 
     (username, passwd, realhost, port) = parse_host(host)
 
-    h=httplib.HTTPConnection(realhost,port)
+    if port:
+        h=httplib.HTTPConnection(realhost,port)
+    else:
+        h=httplib.HTTPConnection(realhost)
 
     h.putrequest('HEAD', document)
     if username and passwd:
         auth = string.strip(base64.encodestring(username + ":" + passwd))
         h.putheader('Authorization', 'Basic %s' % auth)
     h.putheader('User-Agent','Webcheck %s' % version.webcheck)
-    h.putheader('Host',realhost)
-
     h.endheaders()
 
     r = h.getresponse()
