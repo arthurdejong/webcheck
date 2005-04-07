@@ -1,4 +1,7 @@
-# Copyright (C) 1998,1999  marduk <marduk@python.net>
+
+# httpcodes.py - a list of http error codes
+#
+# Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -10,11 +13,10 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
 
 __version__='0.10'
 __author__ = 'Mike Meyer <mwm@miredo.org>'
