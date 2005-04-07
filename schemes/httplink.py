@@ -1,16 +1,20 @@
-# Copyright (C) 1998,1999  marduk <marduk@python.net>
-# Copyright (C) 2002 Mike Meyer <mwm@mired.org>
 
+# httplink.py - handle urls with a http scheme
+#
+# Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
+# Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
+# 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -59,11 +63,7 @@ def get_reply(url):
 
     (username, passwd, realhost, port) = parse_host(host)
 
-    h = httplib.HTTP()
-    if port:
-	h.connect(realhost, port)
-    else:
-	h.connect(realhost)
+    h=httplib.HTTPConnection(realhost,port)
 
     h.putrequest('HEAD', document)
     if username and passwd:
@@ -74,7 +74,8 @@ def get_reply(url):
 
     h.endheaders()
 
-    errcode, errmsg, headers = h.getreply()
+    r = h.getresponse()
+    errcode, errmsg, headers = r.status, r.reason, r.msg
     h.close()
     debugio.write(errcode,2)
     debugio.write(errmsg,2)

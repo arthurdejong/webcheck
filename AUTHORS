@@ -1,12 +1,12 @@
 The following people have made major contributions to the webcheck code. They
 own copyrights to most files in the codebase.
 
-Marduk <marduk@python.net>
+Albert Hopkins (marduk) <marduk@python.net>
 Mike Meyer <mwm@mired.org>
 
-These people have also contributed to webcheck in some fashion. This is most
-likely not a complete list. If you feel you are left unjustly left out of this
-list, please send an email.
+These people have also contributed to webcheck in some fashion (in no
+particular order). This is most likely not a complete list. If you feel you
+are unjustly left out of this list, please send an email.
 
 Oleg Broytmann <phd2@earthlink.net>
 Andrea Glorioso <sama@intercity.it>
@@ -14,3 +14,4 @@ Andrew Kuchling <akuchlin@cnri.reston.va.us>
 Jean Pierre LeJacq <jplejacq@quoininc.com>
 Steffen Siebert <siebert@logware.de>
 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
+Sebastien Delafond <sdelafond@gmx.net>
