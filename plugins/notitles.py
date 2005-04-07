@@ -41,7 +41,7 @@ def generate():
         if link.external: continue
         if link.html and (link.title is None):
             print '\t<tr><td>%s</td><td>%s</td></tr>' \
-        	  % (make_link(url,url), link.author)
+                  % (make_link(url,url), link.author)
             add_problem("No Title",link)
     print '</table>'
     print '</div>'

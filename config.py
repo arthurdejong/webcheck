@@ -21,7 +21,7 @@ BASE_URLS_ONLY=0
 # be passed to webcheck via the -x command line switch.  Note this should be a
 # VALID REGULAR EXPRESSION.  See also YANKED_URLS below.
 EXCLUDED_URLS = [r'.*\.gif',r'.*\.tar\.gz',r'.*\.jpeg',r'.*\.jpg',
-        	 r'http://www.mired.org/cgi-bin/', r'http://www.mired.org/ATCPFAQ/']
+                 r'http://www.mired.org/cgi-bin/', r'http://www.mired.org/ATCPFAQ/']
 
 # This is like EXCLUDED_URLS, but YANKED_URLS are not checked at all.  Also
 # you can use the -y command line switch.
