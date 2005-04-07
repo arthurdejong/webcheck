@@ -56,7 +56,7 @@ def get_reply(url):
 
     else:
         host = parsed[1]
-            document = string.join(parsed[2:4],'')
+        document = string.join(parsed[2:4],'')
 
     if not document: document = '/'
     debugio.write('document= %s' % document,3)
