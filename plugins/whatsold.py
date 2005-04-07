@@ -38,13 +38,13 @@ def generate():
     urls = linkList.keys()
     urls.sort(sort_by_rev_age)
     for url in urls:
-	link=linkList[url]
-	if not link.html: continue
-	age = link.age
-	if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
-	    print '\t<tr><td>%s</td>' % make_link(url,get_title(url)),
-	    print '<td>%s</td>' % (link.author),
-	    print '<td class="time">%s</td></tr>' % age
-	    add_problem('Old Link: %s days old' % age ,link)
+        link=linkList[url]
+        if not link.html: continue
+        age = link.age
+        if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
+            print '\t<tr><td>%s</td>' % make_link(url,get_title(url)),
+            print '<td>%s</td>' % (link.author),
+            print '<td class="time">%s</td></tr>' % age
+            add_problem('Old Link: %s days old' % age ,link)
     print '</table>'
     print '</div>'

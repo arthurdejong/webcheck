@@ -37,11 +37,11 @@ def generate():
     urls = linkList.keys()
     urls.sort(sort_by_author)
     for url in urls:
-	link = linkList[url]
-	if link.external: continue
-	if link.html and (link.title is None):
-	    print '\t<tr><td>%s</td><td>%s</td></tr>' \
-		  % (make_link(url,url), link.author)
-	    add_problem("No Title",link)
+        link = linkList[url]
+        if link.external: continue
+        if link.html and (link.title is None):
+            print '\t<tr><td>%s</td><td>%s</td></tr>' \
+        	  % (make_link(url,url), link.author)
+            add_problem("No Title",link)
     print '</table>'
     print '</div>'

@@ -32,12 +32,12 @@ def init(self, url, parent):
     parsed = urlparse.urlparse(self.URL,'file',0)
     filename = parsed[2]
     if os.name != 'posix':
-	filename = re.sub("^/\(//\)?\([a-zA-Z]\)[|:]","\\2:",filename)
+        filename = re.sub("^/\(//\)?\([a-zA-Z]\)[|:]","\\2:",filename)
     try:
-	stats = os.stat(filename)
+        stats = os.stat(filename)
     except os.error:
-	self.set_bad_link(self.URL, "No such file or directory")
-	return
+        self.set_bad_link(self.URL, "No such file or directory")
+        return
 
     self.size = stats[6]
     
@@ -51,7 +51,7 @@ def get_document(url):
     parsed = urlparse.urlparse(url,'file',0)
     filename = parsed[2]
     if os.name != 'posix':
-	filename = re.sub("^/\(//\)?\([a-zA-Z]\)[|:]","\\2:",filename)
+        filename = re.sub("^/\(//\)?\([a-zA-Z]\)[|:]","\\2:",filename)
     
     return open(filename,'r').read()
     

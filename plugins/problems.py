@@ -34,20 +34,20 @@ def generate():
     authors=problem_db.keys()
     authors.sort()
     if len(authors) > 1:
-	print '<p class="authorlist">'
-	for author in authors[:-1]:
-	    print '<a href="#%s">%s</a>' % (author, author),
-	    print " | "
-	print '<a href="#%s">%s</a>' % (authors[-1], authors[-1]),
-	print '</p>'
+        print '<p class="authorlist">'
+        for author in authors[:-1]:
+            print '<a href="#%s">%s</a>' % (author, author),
+            print " | "
+        print '<a href="#%s">%s</a>' % (authors[-1], authors[-1]),
+        print '</p>'
     print '<div class="table">'
     print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
     for author in authors:
-	print '<tr><th><a name="%s">%s</a></th></tr>' % (author,author)
-	for type,link in problem_db[author]:
-	    url=`link`
-	    title=get_title(url)
-	    print '<tr><td>%s <br>%s</td></tr>' % (make_link(url,title), type)
-	print '<tr><td class="blank">&nbsp;</td></tr>\n'
+        print '<tr><th><a name="%s">%s</a></th></tr>' % (author,author)
+        for type,link in problem_db[author]:
+            url=`link`
+            title=get_title(url)
+            print '<tr><td>%s <br>%s</td></tr>' % (make_link(url,title), type)
+        print '<tr><td class="blank">&nbsp;</td></tr>\n'
     print '</table>'
     print '</div>'

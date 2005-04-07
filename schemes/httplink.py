@@ -51,12 +51,12 @@ def get_reply(url):
     global redirect_depth
     parsed = urlparse.urlparse(url)
     if proxies and proxies.has_key('http'):
-	host = urlparse.urlparse(proxies['http'])[1]
-	document = url
+        host = urlparse.urlparse(proxies['http'])[1]
+        document = url
 
     else:
-	host = parsed[1]
-    	document = string.join(parsed[2:4],'')
+        host = parsed[1]
+            document = string.join(parsed[2:4],'')
 
     if not document: document = '/'
     debugio.write('document= %s' % document,3)
@@ -67,8 +67,8 @@ def get_reply(url):
 
     h.putrequest('HEAD', document)
     if username and passwd:
-	auth = string.strip(base64.encodestring(username + ":" + passwd))
-	h.putheader('Authorization', 'Basic %s' % auth)
+        auth = string.strip(base64.encodestring(username + ":" + passwd))
+        h.putheader('Authorization', 'Basic %s' % auth)
     h.putheader('User-Agent','Webcheck %s' % version.webcheck)
     h.putheader('Host',realhost)
 
@@ -80,22 +80,22 @@ def get_reply(url):
     debugio.write(errcode,2)
     debugio.write(errmsg,2)
     if errcode == 301 or errcode == 302:
-	redirect_depth += 1
-	if redirect_depth > config.REDIRECT_DEPTH:
-	    debugio.write('\tToo many redirects!')
-	    redirect_depth = 0
-	    return (errcode, errmsg, headers, url)
+        redirect_depth += 1
+        if redirect_depth > config.REDIRECT_DEPTH:
+            debugio.write('\tToo many redirects!')
+            redirect_depth = 0
+            return (errcode, errmsg, headers, url)
         redirect = headers['location']
-	debugio.write('\tRedirect location: ' + redirect)
-	redirect = urlparse.urljoin(url,redirect)
-	if redirect == url:
-	    debugio.write('\tRedirect same as source: %s' % redirect)
-	    redirect_depth = 0
-	    return (errcode, errmsg, headers, url)
-	debugio.write('\tRedirected to: ' + redirect)
-	if Link.linkList.has_key(redirect):
-	    link = Link.linkList[redirect]
-	    return (link.status, link.message, link.headers, link.URL)
+        debugio.write('\tRedirect location: ' + redirect)
+        redirect = urlparse.urljoin(url,redirect)
+        if redirect == url:
+            debugio.write('\tRedirect same as source: %s' % redirect)
+            redirect_depth = 0
+            return (errcode, errmsg, headers, url)
+        debugio.write('\tRedirected to: ' + redirect)
+        if Link.linkList.has_key(redirect):
+            link = Link.linkList[redirect]
+            return (link.status, link.message, link.headers, link.URL)
         return get_reply(redirect)
     redirect_depth = 0
     return (errcode, errmsg, headers, url)
@@ -107,26 +107,26 @@ def init(self, url, parent):
     (self.status, self.message, self.headers, self.URL) = get_reply(myUrlLib.basejoin(parent,url))
     Link.linkList[self.URL] = self
     try:
-	self.type = self.headers.gettype()
+        self.type = self.headers.gettype()
     except AttributeError:
-	self.type = 'text/html' # is this a good enough default?
+        self.type = 'text/html' # is this a good enough default?
 
     debugio.write('\tContent-type: ' + self.type,2)
     try:
-	self.size = int(self.headers['content-length'])
+        self.size = int(self.headers['content-length'])
     except (KeyError, TypeError):
-	self.size = 0
+        self.size = 0
 
     if (self.status != 200) and (self.status != 'Not Checked'):
-	self.set_bad_link(self.URL,str(self.status) + ": " +  self.message)
-	return
+        self.set_bad_link(self.URL,str(self.status) + ": " +  self.message)
+        return
 
     try:
-	lastMod = time.mktime(self.headers.getdate('Last-Modified'))
+        lastMod = time.mktime(self.headers.getdate('Last-Modified'))
     except (OverflowError, TypeError, ValueError):
-	lastMod = None
+        lastMod = None
     if lastMod:
-	self.age = int((time.time()-lastMod)/myUrlLib.SECS_PER_DAY)
+        self.age = int((time.time()-lastMod)/myUrlLib.SECS_PER_DAY)
 
 def get_document(url):
     document = opener.open(url).read()
@@ -146,26 +146,26 @@ def parse_host(location):
 
     at = string.find(location, "@")
     if at > -1:
-	userpass = location[:at]
-	colon = string.find(userpass, ":")
-	if colon > -1:
-	    user = userpass[:colon]
-	    passw = userpass[colon+1:]
-	else:
-	    user = userpass
-	    passw = None
-	hostport = location[at+1:]
+        userpass = location[:at]
+        colon = string.find(userpass, ":")
+        if colon > -1:
+            user = userpass[:colon]
+            passw = userpass[colon+1:]
+        else:
+            user = userpass
+            passw = None
+        hostport = location[at+1:]
     else:
-	user = passw = None
-	hostport = location
+        user = passw = None
+        hostport = location
     
     colon = string.find(hostport, ":")
     if colon > -1:
-	hostname = hostport[:colon]
-	port = hostport[colon+1:]
+        hostname = hostport[:colon]
+        port = hostport[colon+1:]
     else:
-	hostname = hostport
-	port = None
+        hostname = hostport
+        port = None
 
     debugio.write("parse_host = %s %s %s %s" % (user, passw, hostname, port),3)
     return (user, passw, hostname, port)

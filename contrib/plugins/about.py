@@ -37,11 +37,11 @@ def generate():
     print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
     print '<tr><th>Plugin</th><th>Version</th><th>Author</th></tr>'
     for plugin in config.PLUGINS + ['problems']:
-	report = __import__('plugins.%s' % plugin,globals(),locals(),[plugin])
-	author = report.__author__
-	version = report.__version__
-	print '<tr><td class="pluginname">%s</td>' % plugin,
-	print '<td class="pluginversion">%s</td>' % version,
-	print '<td class="pluginauthor">%s</td></tr>' % author 
+        report = __import__('plugins.%s' % plugin,globals(),locals(),[plugin])
+        author = report.__author__
+        version = report.__version__
+        print '<tr><td class="pluginname">%s</td>' % plugin,
+        print '<td class="pluginversion">%s</td>' % version,
+        print '<td class="pluginauthor">%s</td></tr>' % author 
     print '</table>'
     print '</div>'

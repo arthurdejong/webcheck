@@ -52,7 +52,7 @@ def get_title(url):
     note that this implies linkList[url] """
     link=linkList[url]
     if link.title is None:
-	return url
+        return url
     return link.title
 
 def make_link(url,text):
@@ -61,13 +61,13 @@ def make_link(url,text):
     url = str(url) # because sometimes I lazily pass a Link object.
     mystring = '<a href="' + url + '"'
     try:
-	external = linkList[url].external
+        external = linkList[url].external
     except KeyError:
-	external = 0
+        external = 0
     if external:
-	mystring = mystring + ' class="external"'
+        mystring = mystring + ' class="external"'
     else:
-	mystring = mystring + ' class="internal"'
+        mystring = mystring + ' class="internal"'
     mystring = mystring + '>' + text + '</a>'
     return mystring
 
@@ -77,41 +77,41 @@ def add_problem(type,link):
     global problem_db
     author = link.author
     if problem_db.has_key(author):
-	problem_db[author].append((type,link))
+        problem_db[author].append((type,link))
     else:
-	problem_db[author]=[(type,link)]
+        problem_db[author]=[(type,link)]
 
 def sort_by_age(a,b):
     """ sort helper for url's age.  a and b are urls in linkList """
     aage, bage = linkList[a].age, linkList[b].age
     if aage < bage:
-	return -1
+        return -1
     if aage == bage:
-	return sort_by_author(a,b)
+        return sort_by_author(a,b)
     return 1
 
 def sort_by_rev_age(a,b):
     aage, bage = linkList[a].age, linkList[b].age
     if aage > bage:
-	return -1
+        return -1
     if aage == bage:
-	return sort_by_author(a,b)
+        return sort_by_author(a,b)
     return 1
 
 def sort_by_author(a,b):
     aauthor,bauthor = `linkList[a].author`, `linkList[b].author`
     if aauthor < bauthor:
-	return -1
+        return -1
     if aauthor == bauthor:
-	return 0
+        return 0
     return 1
 
 def sort_by_size(a,b):
     asize, bsize = linkList[a].totalSize, linkList[b].totalSize
     if asize < bsize:
-	return 1
+        return 1
     if asize == bsize:
-	return 0
+        return 0
     return -1
 
 def main_index():
@@ -128,9 +128,9 @@ def main_index():
     print ' --> </style>'
     print '</head>'
     print '<frameset COLS="%s,*" border=0 framespacing=0>' \
-	  % config.NAVBAR_WIDTH
+          % config.NAVBAR_WIDTH
     print '<frame name="navbar" src="%s" marginwidth=0 marginheight=0 frameborder=0>' \
-	  % config.NAVBAR_FILENAME
+          % config.NAVBAR_FILENAME
     print '<frame name="main" src="%s" frameborder=0>' % (webcheck.plugins[0]+'.html')
     print '</frameset>'
     print '</html>'
@@ -154,32 +154,32 @@ def nav_bar(plugins):
     print '<body class="navbar">'
     print '<div align=center>'
     print '<table cellpadding="%s" cellspacing="%s">' \
-	  % (config.NAVBAR_PADDING, config.NAVBAR_SPACING)
+          % (config.NAVBAR_PADDING, config.NAVBAR_SPACING)
     # title
     print '<tr><th class="home">',
     print '<a target="_top" href="%s" onMouseOver="window.status=\'Webcheck Home Page\'; return true;">Webcheck %s</a></th></tr>' \
-	  % (version.home, version.webcheck)
+          % (version.home, version.webcheck)
 
     # labels pointing to each individual page
     for plugin in plugins + ['problems']:
-	debugio.write('\t' + plugin,file=stdout)
-	filename = plugin + '.html'
-	print '<tr><th>',
-	report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
-	print '<strong><a href="%s" onMouseOver="window.status=\'%s\'; return true">%s</a></strong>' \
-	      % (filename, report.__doc__, report.title),
-	print '</th></tr>'
+        debugio.write('\t' + plugin,file=stdout)
+        filename = plugin + '.html'
+        print '<tr><th>',
+        report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
+        print '<strong><a href="%s" onMouseOver="window.status=\'%s\'; return true">%s</a></strong>' \
+              % (filename, report.__doc__, report.title),
+        print '</th></tr>'
 
-	# create the file we just pointed to
-	tmp = sys.stdout
-	fp = open_file(filename)
-	sys.stdout = fp
-	doTopMain(report)
-	report.generate()
-	report_version = report.__version__
-	doBotMain()
-	fp.close()
-	sys.stdout = tmp
+        # create the file we just pointed to
+        tmp = sys.stdout
+        fp = open_file(filename)
+        sys.stdout = fp
+        doTopMain(report)
+        report.generate()
+        report_version = report.__version__
+        doBotMain()
+        fp.close()
+        sys.stdout = tmp
     
     print
     print '</table>'
@@ -224,7 +224,7 @@ def doTopMain(report):
     print 'href="%s"><img src="%s" border=0 alt=""></a></p>' % (Link.base, config.LOGO_HREF)
     print '\n<h1 class="basename">'
     print '\t<a href="%s">%s</a>' \
-	  % (`Link.base`, get_title(`Link.base`))
+          % (`Link.base`, get_title(`Link.base`))
     print '</h1>'
     print '\n\n<table width="100%" cellpadding=4>'
     print '\t<tr><th class="title">%s</th></tr>\n</table>\n' % report.title
@@ -235,6 +235,6 @@ def doBotMain():
     print '<hr>'
     print '<p class="footer">'
     print '<em>Generated %s by <a target="_top" href="%s">Webcheck %s</a></em></p>' \
-	  % (webcheck.start_time,version.home, version.webcheck)
+          % (webcheck.start_time,version.home, version.webcheck)
     print '</body>'
     print '</html>'

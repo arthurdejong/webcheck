@@ -49,7 +49,7 @@ def init(self, url, parent):
                 if filename not in ftp.nlst():
                     raise ftplib.error_perm, "No such file or directory"
     except ftplib.all_errors, errtext:
-	self.set_bad_link(self.URL, str(errtext))
+        self.set_bad_link(self.URL, str(errtext))
     try:
         ftp.quit()
     except:
@@ -118,27 +118,27 @@ def size(pathname,ftpobject):
 
 def cwd(dirs, ftpobject):
     for dir in dirs:
-	ftpobject.cwd(dir)
+        ftpobject.cwd(dir)
 
 def parseurl(url):
     parsed = urlparse.urlparse(url)
     host = parsed[1]
     if '@' in host:
-	userpass, host = string.split(host,'@')
-	if ':' in userpass:
-	    user, passwd = string.split(userpass,':')
-	else:
-	    user = userpass
-	    passwd = None
+        userpass, host = string.split(host,'@')
+        if ':' in userpass:
+            user, passwd = string.split(userpass,':')
+        else:
+            user = userpass
+            passwd = None
     else:
-	user = 'anonymous'
+        user = 'anonymous'
         passwd = ''  # Filled in by ftplib.
 
     if ':' in host:
-	host, port = string.split(host,':')
-	port = int(port)
+        host, port = string.split(host,':')
+        port = int(port)
     else:
-	port = ftplib.FTP_PORT
+        port = ftplib.FTP_PORT
 
     pathname = parsed[2]
     if not port: port = ftplib.FTP_PORT

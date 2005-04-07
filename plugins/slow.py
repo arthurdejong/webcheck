@@ -42,20 +42,20 @@ def generate():
     urls = linkList.keys()
     urls.sort(sort_by_size)
     for url in urls:
-	link = linkList[url]
-	if not link.html: continue
-	sizeK = link.totalSize / 1024
-	sizek = link.totalSize * 8 / 1000
-	if sizeK < config.REPORT_SLOW_URL_SIZE:
-	    break
-	print '\t<tr><td>%s</td>' % make_link(url, get_title(url)),
-	print '<td>%s</td><td class="time">%s</td>' \
-	      % (sizeK, time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8)))),
-	print '<td class="time">%s</td>' \
-	      % time.strftime('%H:%M:%S',time.gmtime(int(sizek/56))),
-	print '<td class="time">%s</td>' \
-	      % time.strftime('%H:%M:%S',time.gmtime(int(sizek/1500))),
-	print '</tr>'
-	add_problem('Slow Link: %sK' % sizeK, link) 
+        link = linkList[url]
+        if not link.html: continue
+        sizeK = link.totalSize / 1024
+        sizek = link.totalSize * 8 / 1000
+        if sizeK < config.REPORT_SLOW_URL_SIZE:
+            break
+        print '\t<tr><td>%s</td>' % make_link(url, get_title(url)),
+        print '<td>%s</td><td class="time">%s</td>' \
+              % (sizeK, time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8)))),
+        print '<td class="time">%s</td>' \
+              % time.strftime('%H:%M:%S',time.gmtime(int(sizek/56))),
+        print '<td class="time">%s</td>' \
+              % time.strftime('%H:%M:%S',time.gmtime(int(sizek/1500))),
+        print '</tr>'
+        add_problem('Slow Link: %sK' % sizeK, link) 
     print '</table>'
     print '</div>'

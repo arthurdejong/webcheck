@@ -50,9 +50,9 @@ def explore(link, explored):
     for i in link.children:
         # Skip pages that have already been traversed
         if explored.has_key( i ): continue
-	if (i in webcheck.Link.badLinks) and not webcheck.config.ANCHOR_BAD_LINKS:
-	    L.append('<li>%s' % i)
-	else:
+        if (i in webcheck.Link.badLinks) and not webcheck.config.ANCHOR_BAD_LINKS:
+            L.append('<li>%s' % i)
+        else:
             to_explore.append(i)
         explored[ i ] = 1               # Mark the link as explored
 
@@ -60,8 +60,8 @@ def explore(link, explored):
     # any pages that are marked as having already been traversed.
     for i in to_explore:
             child = webcheck.Link.linkList[i]
-	    L.append('<li>%s' % (make_link(i,get_title(i))))
-	    L = L + explore(child, explored)
+            L.append('<li>%s' % (make_link(i,get_title(i))))
+            L = L + explore(child, explored)
             
     L.append( '</ul>' )
     level=level-1
@@ -73,7 +73,7 @@ def explore(link, explored):
     return L
     
 # site map
-def generate():	
+def generate():        
     print make_link(webcheck.Link.base,'Starting Page')
     L = explore(webcheck.Link.base, {})
     for i in L: print i
