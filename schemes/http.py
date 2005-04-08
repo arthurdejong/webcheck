@@ -1,5 +1,5 @@
 
-# httplink.py - handle urls with a http scheme
+# http.py - handle urls with a http scheme
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>

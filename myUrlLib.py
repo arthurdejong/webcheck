@@ -94,11 +94,10 @@ class Link:
         self.URL = url
         Link.linkList[self.URL]=self
 
-        modname = self.scheme + 'link'
-        if linkmodules.has_key(modname): linkmodule = linkmodules[modname]
+        if linkmodules.has_key(self.scheme): linkmodule = linkmodules[self.scheme]
         else: 
             try:
-                linkmodule = linkmodules[modname] = __import__('schemes.'+modname, globals(),locals(),[modname])
+                linkmodule = linkmodules[self.scheme] = __import__('schemes.'+self.scheme, globals(),locals(),[self.scheme])
             except ImportError:
                 self.status="Not Checked"
                 self.external=1

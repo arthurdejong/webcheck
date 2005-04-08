@@ -1,5 +1,5 @@
 
-# filelink.py handle urls with a file scheme
+# file.py handle urls with a file scheme
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
