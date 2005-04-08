@@ -25,7 +25,6 @@ robot_parsers={}
 SECS_PER_DAY=60*60*24
 compiled_ex = []
 compiled_yanked = []
-linkmodules={}
 
 from urllib import *
 from types import *
@@ -94,19 +93,16 @@ class Link:
         self.URL = url
         Link.linkList[self.URL]=self
 
-        if linkmodules.has_key(self.scheme): linkmodule = linkmodules[self.scheme]
-        else: 
-            try:
-                linkmodule = linkmodules[self.scheme] = __import__('schemes.'+self.scheme, globals(),locals(),[self.scheme])
-            except ImportError:
-                self.status="Not Checked"
-                self.external=1
-                self.URL=url
-                Link.notChecked.append(self.URL)
-                Link.linkList[self.URL]=self
-                debugio.write('\tNot checked: URL scheme ' + self.scheme + ' ignored.')
-                return
-        
+        # see if we can import module for this scheme
+        self.schememodule=get_schememodule(self.scheme)
+        if self.schememodule is None:
+            debugio.write("\tunsupported scheme ("+self.scheme+")")
+            self.status="Not Checked"
+            self.external=True
+            Link.notChecked.append(self.URL)
+            Link.linkList[self.URL]=self
+            return
+
         if (parent is None):
             Link.baseurl=self.URL
             if hasattr(self.URL, 'rfind'):
@@ -135,9 +131,9 @@ class Link:
                 return
 
         try:
-            linkmodule.init(self, url, parent)
+            self.schememodule.init(self, url, parent)
             if (self.URL not in Link.badLinks) and (self.type == 'text/html'):
-                page = linkmodule.get_document(self.URL)
+                page = self.schememodule.get_document(self.URL)
                 self._handleHTML(self.URL, page)
         except IOError, data:
             self.set_bad_link(url,str(data.errno) + ': ' + str(data.strerror))
@@ -303,3 +299,14 @@ def is_yanked(url):
             return 1
     return 0
 
+# a map of schemes to modules
+schememodules={}
+
+def get_schememodule(scheme):
+    """look up the correct module for the specified scheme"""
+    if not schememodules.has_key(scheme):
+        try:
+            schememodules[scheme]=__import__('schemes.'+scheme,globals(),locals(),[scheme])
+        except ImportError:
+            schememodules[scheme]=None
+    return schememodules[scheme]
