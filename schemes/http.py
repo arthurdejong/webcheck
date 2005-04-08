@@ -59,7 +59,7 @@ def get_reply(url):
 
     if not document:
         document = '/'
-    debugio.write('document=%s' % document)
+    debugio.write('document=%s' % document,3)
 
     (username, passwd, realhost, port) = parse_host(host)
 
