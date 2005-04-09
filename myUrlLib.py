@@ -27,7 +27,6 @@ compiled_ex = []
 compiled_yanked = []
 
 from urllib import *
-from types import *
 import htmllib
 import httplib
 import robotparser
@@ -41,7 +40,7 @@ import htmlparse
 import debugio
 import sys
 import socket
-
+import types
 
 def get_robots(location):
     global robot_parsers
@@ -139,9 +138,9 @@ class Link:
             self.set_bad_link(url,str(data.errno) + ': ' + str(data.strerror))
             return
         except socket.error, data:
-            if type(data) is StringType:
+            if type(data) is types.StringType:
                 self.set_bad_link(url, data)
-            elif type(data) is TupleType:
+            elif type(data) is types.TupleType:
                 errno, string = data
                 self.set_bad_link(url,str(errno) + ': ' + string)
             else:
