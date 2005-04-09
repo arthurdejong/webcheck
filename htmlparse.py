@@ -88,7 +88,7 @@ class MyHTMLParser(htmllib.HTMLParser):
                 if fields.has_key('content'):
                     author = fields['content']
                     self.author = author
-                    debugio.write('\tauthor: ' + author)
+                    debugio.write('  author: ' + author)
 
     # stylesheet links
     def do_link(self,attrs):

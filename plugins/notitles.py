@@ -36,14 +36,14 @@ title = 'No Titles'
 def generate():
     print '<div class="table">'
     print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
-    print '\t<tr><th>URL</th><th>Author</th></tr>'
+    print '  <tr><th>URL</th><th>Author</th></tr>'
     urls = linkList.keys()
     urls.sort(sort_by_author)
     for url in urls:
         link = linkList[url]
         if link.external: continue
         if link.html and (link.title is None):
-            print '\t<tr><td>%s</td><td>%s</td></tr>' \
+            print '  <tr><td>%s</td><td>%s</td></tr>' \
                   % (make_link(url,url), link.author)
             add_problem("No Title",link)
     print '</table>'

@@ -45,7 +45,7 @@ import socket
 
 def get_robots(location):
     global robot_parsers
-    debugio.write('\tGetting robots.txt for %s' % location)
+    debugio.write('  Getting robots.txt for %s' % location)
     rp=robotparser.RobotFileParser(config.PROXIES)
     try:
         rp.set_url('http://' + location + '/robots.txt')
@@ -80,7 +80,7 @@ class Link:
     def __init__(self,url,parent):
         self.init()
 
-        debugio.write('\tparent = ' + str(parent),2)
+        debugio.write('  parent = ' + str(parent),2)
         from urlparse import urlparse
 
         parsed = urlparse(url)
@@ -96,7 +96,7 @@ class Link:
         # see if we can import module for this scheme
         self.schememodule=get_schememodule(self.scheme)
         if self.schememodule is None:
-            debugio.write("\tunsupported scheme ("+self.scheme+")")
+            debugio.write("  unsupported scheme ("+self.scheme+")")
             self.status="Not Checked"
             self.external=True
             Link.notChecked.append(self.URL)
@@ -110,7 +110,7 @@ class Link:
             else:
                 Link.base=self.URL[:string.rfind(self.URL,'/')+1]
             if Link.base[-2:] == '//': Link.base = self.URL
-            debugio.write('\tbase: %s' % Link.base)
+            debugio.write('  base: %s' % Link.base)
             if self.scheme == 'http':
                 base_location = parsed[1]
                 if base_location not in config.HOSTS:
@@ -124,7 +124,7 @@ class Link:
         # see if robots.txt will let us in
         if self.scheme == 'http':
             if not can_fetch(location, url):
-                debugio.write('\tRobot Restriced')
+                debugio.write('  Robot Restriced')
                 self.status = 'Not Checked'
                 self.message = 'Robot Restricted'
                 Link.notChecked.append(url)
@@ -150,7 +150,7 @@ class Link:
             raise KeyboardInterrupt
         except:
             self.set_bad_link(url,"Error: Malformed URL?")
-            debugio.write("\t%s: %s" % (sys.exc_type, sys.exc_value),3)
+            debugio.write("  %s: %s" % (sys.exc_type, sys.exc_value),3)
             return
         
     def explore_children(self):
@@ -190,7 +190,7 @@ class Link:
 
     def set_bad_link(self,url,status):
         """ flags the link as bad """
-        debugio.write('\t' + str(status))
+        debugio.write('  ' + str(status))
         self.status = str(status)
         self.URL=url
         Link.linkList[self.URL]=self
@@ -201,7 +201,7 @@ class Link:
         # get anchorlist
         (anchorlist, imagelist, title, author) = htmlparse.pageLinks(url,htmlfile)
 
-        debugio.write('\ttitle: %s' % str(title))
+        debugio.write('  title: %s' % str(title))
         for child in anchorlist:
             if child not in self.children:
                 self.children.append(child)
@@ -213,7 +213,7 @@ class Link:
         # get image list
         for image in imagelist:
             if image not in Link.images.keys():
-                debugio.write('\tadding image: %s' % image)
+                debugio.write('  adding image: %s' % image)
                 Link.images[image] = Image(image, self.URL)
             self.totalSize = self.totalSize + int(Link.images[image].size)
         if not self.external: self.explore_children()
@@ -230,8 +230,8 @@ class ExternalLink(Link):
             self.init()
             self.status="Not Checked"
             self.external=1
-            debugio.write('\tNot checked')
-            if yanked: debugio.write('\tYanked')
+            debugio.write('  Not checked')
+            if yanked: debugio.write('  Yanked')
             if parent not in self.parents:
                 if parent: self.parents.append(parent)
             Link.notChecked.append(url)
@@ -243,7 +243,7 @@ class ExternalLink(Link):
     def _handleHTML(self,url,htmlfile):
         # ignore links and images, but use the title
         self.title = htmlparse.pageLinks(url,htmlfile)[2]
-        debugio.write('\ttitle: %s' % str(self.title))
+        debugio.write('  title: %s' % str(self.title))
         self.children=[]
 
 class Image(Link):

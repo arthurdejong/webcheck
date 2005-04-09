@@ -37,7 +37,7 @@ title = "What's New"
 def generate():
     print '<div class="table">'
     print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
-    print '\t<tr><th>Link</th><th>Author</th><th>Age</th></tr>'
+    print '  <tr><th>Link</th><th>Author</th><th>Age</th></tr>'
     urls = linkList.keys()
     urls.sort(sort_by_age)
     for url in urls:
@@ -45,7 +45,7 @@ def generate():
         if not link.html: continue
         age = link.age
         if (age is not None)and (age <= config.REPORT_WHATSNEW_URL_AGE):
-            print '\t<tr><td>%s</td>' % make_link(url,get_title(url)),
+            print '  <tr><td>%s</td>' % make_link(url,get_title(url)),
             print '<td>%s</td>' % link.author,
             print '<td class="time">%s</td></tr>' % age
     print '</table>'

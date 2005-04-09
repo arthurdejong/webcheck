@@ -37,13 +37,13 @@ def generate():
     print '<div class="table">'
     print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
     for url in Link.notChecked:
-        print '\t<tr><th colspan=4>%s</th></tr>' % make_link(url,url)
-        print '\t<tr class="parent"><th rowspan="%s">Parent</th>' % len(linkList[url].parents)
+        print '  <tr><th colspan=4>%s</th></tr>' % make_link(url,url)
+        print '  <tr class="parent"><th rowspan="%s">Parent</th>' % len(linkList[url].parents)
         for parent in linkList[url].parents:
-            print '\t\t',
+            print '  \t',
             if parent != linkList[url].parents[0]: print '<tr>',
             print '<td colspan=2>%s</td>' % make_link(parent,get_title(parent)),
             print '<td>%s</td></tr>' % (linkList[parent].author)
-        print '\n\t<tr><td class="blank" colspan=4>&nbsp;</td></tr>\n'
+        print '\n  <tr><td class="blank" colspan=4>&nbsp;</td></tr>\n'
     print '</table>'
     print '</div>'

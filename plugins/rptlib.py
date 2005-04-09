@@ -147,12 +147,12 @@ def nav_bar(plugins):
     stdout = sys.stdout
     sys.stdout = fp
     print '<html>\n<head>'
-    print '\t<title>navbar</title>'
+    print '  <title>navbar</title>'
     print '<style type="text/css">'
     print '<!-- /* hide from old browsers */'
     print stylesheet
     print ' --> </style>'
-    print '\t<base target="main">'
+    print '  <base target="main">'
     print '</head>'
     print '<body class="navbar">'
     print '<div align=center>'
@@ -165,7 +165,7 @@ def nav_bar(plugins):
 
     # labels pointing to each individual page
     for plugin in plugins + ['problems']:
-        debugio.write('\t' + plugin,file=stdout)
+        debugio.write('  ' + plugin,file=stdout)
         filename = plugin + '.html'
         print '<tr><th>',
         report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
@@ -226,11 +226,11 @@ def doTopMain(report):
     print '<p class="logo"><a '
     print 'href="%s"><img src="%s" border=0 alt=""></a></p>' % (Link.base, config.LOGO_HREF)
     print '\n<h1 class="basename">'
-    print '\t<a href="%s">%s</a>' \
+    print '  <a href="%s">%s</a>' \
           % (`Link.base`, get_title(`Link.base`))
     print '</h1>'
     print '\n\n<table width="100%" cellpadding=4>'
-    print '\t<tr><th class="title">%s</th></tr>\n</table>\n' % report.title
+    print '  <tr><th class="title">%s</th></tr>\n</table>\n' % report.title
 
 def doBotMain():
     """ bottom part of html files in main frame"""

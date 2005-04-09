@@ -39,5 +39,5 @@ def generate():
     for url in linkList.keys():
         link=linkList[url]
         if link.external:
-            print '\t<li>%s' % make_link(url,get_title(url))
+            print '  <li>%s' % make_link(url,get_title(url))
     print '</ol>'

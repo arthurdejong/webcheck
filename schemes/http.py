@@ -83,17 +83,17 @@ def get_reply(url):
     if errcode == 301 or errcode == 302:
         redirect_depth += 1
         if redirect_depth > config.REDIRECT_DEPTH:
-            debugio.write('\tToo many redirects!')
+            debugio.write('  Too many redirects!')
             redirect_depth = 0
             return (errcode, errmsg, headers, url)
         redirect = headers['location']
-        debugio.write('\tRedirect location: ' + redirect)
+        debugio.write('  Redirect location: ' + redirect)
         redirect = urlparse.urljoin(url,redirect)
         if redirect == url:
-            debugio.write('\tRedirect same as source: %s' % redirect)
+            debugio.write('  Redirect same as source: %s' % redirect)
             redirect_depth = 0
             return (errcode, errmsg, headers, url)
-        debugio.write('\tRedirected to: ' + redirect)
+        debugio.write('  Redirected to: ' + redirect)
         if Link.linkList.has_key(redirect):
             link = Link.linkList[redirect]
             return (link.status, link.message, link.headers, link.URL)
@@ -112,7 +112,7 @@ def init(self, url, parent):
     except AttributeError:
         self.type = 'text/html' # is this a good enough default?
 
-    debugio.write('\tContent-type: ' + self.type,2)
+    debugio.write('  Content-type: ' + self.type,2)
     try:
         self.size = int(self.headers['content-length'])
     except (KeyError, TypeError):

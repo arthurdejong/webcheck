@@ -37,5 +37,5 @@ title = 'Images'
 def generate():    
     print '<ol>'
     for url, image in Link.images.items():
-        print '\t<li>%s' % make_link(url, url)
+        print '  <li>%s' % make_link(url, url)
     print '</ol>'

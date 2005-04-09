@@ -37,10 +37,10 @@ def generate():
     import time
     print '<div class="table">'
     print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
-    print '\t<tr><th rowspan=2>Link</th>',
+    print '  <tr><th rowspan=2>Link</th>',
     print '<th rowspan=2>Size <br>(Kb)</th>',
     print '<th colspan=3>Time (HH:MM:SS)</th></tr>'
-    print '\t<tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>'
+    print '  <tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>'
 
     urls = linkList.keys()
     urls.sort(sort_by_size)
@@ -51,7 +51,7 @@ def generate():
         sizek = link.totalSize * 8 / 1000
         if sizeK < config.REPORT_SLOW_URL_SIZE:
             break
-        print '\t<tr><td>%s</td>' % make_link(url, get_title(url)),
+        print '  <tr><td>%s</td>' % make_link(url, get_title(url)),
         print '<td>%s</td><td class="time">%s</td>' \
               % (sizeK, time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8)))),
         print '<td class="time">%s</td>' \
