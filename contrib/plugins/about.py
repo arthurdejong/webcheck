@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,31 +21,23 @@
 
 """Plugins used in this report"""
 
-# This is a trivial plugin aid developers of linbot pluggins
+# This is a trivial plugin aid developers of webcheck pluggins
 
 __version__ = '1.0'
 __author__ = 'mwm@mired.org'
+title = "About&nbsp;Plugins"
 
 import webcheck
-from httpcodes import HTTP_STATUS_CODES
-from rptlib import *
-
-Link = webcheck.Link
-linkMap = Link.linkMap
-config = webcheck.config
-
-title = "About&nbsp;Plugins"
+import rptlib
 
 def generate():
     print '<div class="table">'
     print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
     print '<tr><th>Plugin</th><th>Version</th><th>Author</th></tr>'
-    for plugin in config.PLUGINS + ['problems']:
-        report = __import__('plugins.%s' % plugin,globals(),locals(),[plugin])
-        author = report.__author__
-        version = report.__version__
-        print '<tr><td class="pluginname">%s</td>' % plugin,
-        print '<td class="pluginversion">%s</td>' % version,
-        print '<td class="pluginauthor">%s</td></tr>' % author 
+    for plugin in webcheck.config.PLUGINS + ['problems']:
+        report = __import__('plugins.'+plugin,globals(),locals(),[plugin])
+        print '<tr><td class="pluginname">%s</td>' % plugin
+        print '<td class="pluginversion">%s</td>' % report.__version__
+        print '<td class="pluginauthor">%s</td></tr>' % report.__author__
     print '</table>'
     print '</div>'
