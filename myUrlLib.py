@@ -45,7 +45,7 @@ import types
 def get_robots(location):
     global robot_parsers
     debugio.write('  Getting robots.txt for %s' % location)
-    rp=robotparser.RobotFileParser(config.PROXIES)
+    rp=robotparser.RobotFileParser()
     try:
         rp.set_url('http://' + location + '/robots.txt')
         rp.read()
