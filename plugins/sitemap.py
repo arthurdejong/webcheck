@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,61 +23,49 @@
 
 __version__ = '1.0'
 __author__ = 'mwm@mired.org'
+title = 'Site Map'
 
 import webcheck
-from rptlib import *
+import rptlib
 
-title = 'Site Map'
-level = 0
-
-def explore(link, explored):
+def explore(link, explored={}, level=0):
     """Recursively do a breadth-first traversal of the graph of links
     on the site.  Returns a list of HTML fragments that can be printed 
     to produce a site map."""
 
-    global level
-    if level > webcheck.config.REPORT_SITEMAP_LEVEL: return []
-    # XXX I assume an object without a .URL is something
-    # uninteresting? --amk
-    if not hasattr(link, 'URL'): return []
+    explored[link.URL]=True
+    # output this link
+    print('<li>')
+    if (link.URL in webcheck.Link.badLinks) and not webcheck.config.ANCHOR_BAD_LINKS:
+        print(link.URL)
+    else:
+        print(rptlib.make_link(link.URL,rptlib.get_title(link.URL)))
 
-    level=level+1
-    explored[ link.URL ] = 1
-    to_explore = []
-    L = ['<ul>']
+    # only check children if we are not too deep yet
+    if level <= webcheck.config.REPORT_SITEMAP_LEVEL:
 
-    # We need to do a breadth-first traversal.  This requires two
-    # steps for any given page.  First, we need to make a list of
-    # links to be traversed; links that have already been explored can 
-    # be ignored.
-    
-    for i in link.children:
-        # Skip pages that have already been traversed
-        if explored.has_key( i ): continue
-        if (i in webcheck.Link.badLinks) and not webcheck.config.ANCHOR_BAD_LINKS:
-            L.append('<li>%s' % i)
-        else:
+        # figure out the links to follow and ensure that they are only
+        # explored from here
+        to_explore = []
+        for i in link.children:
+            # skip pages that have already been traversed
+            if explored.has_key(i):
+                continue
+            # mark the link as explored
+            explored[i]=True
             to_explore.append(i)
-        explored[ i ] = 1               # Mark the link as explored
 
-    # Now we loop over the list of links; the traversal will not go to 
-    # any pages that are marked as having already been traversed.
-    for i in to_explore:
-            child = webcheck.Link.linkMap[i]
-            L.append('<li>%s' % (make_link(i,get_title(i))))
-            L = L + explore(child, explored)
-            
-    L.append( '</ul>' )
-    level=level-1
+        # go over the children and present them as a list
+        if len(to_explore) > 0:
+            print('<ul>')
+            for i in to_explore:
+                explore(webcheck.Link.linkMap[i],explored,level+1)
+            print('</ul>')
 
-    # If no sub-pages were traversed at all, just return an empty list 
-    # to avoid redundant <UL>...</UL> pairs
-    if len(L) == 2: return []
+    print( '</li>' )
 
-    return L
-    
 # site map
 def generate():        
-    print make_link(webcheck.Link.base,'Starting Page')
-    L = explore(webcheck.Link.base, {})
-    for i in L: print i
+    print('<ul>')
+    explore(webcheck.Link.base)
+    print('</ul>')
