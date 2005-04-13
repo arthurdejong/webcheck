@@ -28,7 +28,7 @@ from httpcodes import HTTP_STATUS_CODES
 from rptlib import *
 
 Link = webcheck.Link
-linkList = Link.linkList
+linkMap = Link.linkMap
 config = webcheck.config
 
 title = 'Bad Links'
@@ -44,16 +44,16 @@ def generate():
         else:
             print '  <tr class="link"><th>Link</th>',
             print '<td colspan=2 align=left>%s</td></tr>' % link
-        status = str(linkList[link].status)
+        status = str(linkMap[link].status)
         if status in HTTP_STATUS_CODES.keys():
             status = status + ": " + HTTP_STATUS_CODES[status]
         print '  <tr class="status"><th>Status</th><td colspan=2>%s</td></tr>' % status
-        print '  <tr class="parent"><th rowspan="%s">Parents</th>' % len(linkList[link].parents)
-        parents = linkList[link].parents
+        print '  <tr class="parent"><th rowspan="%s">Parents</th>' % len(linkMap[link].parents)
+        parents = linkMap[link].parents
         parents.sort(sort_by_author)
         for parent in parents:
             print '  \t<td>%s</td>' % make_link(parent,get_title(parent)),
-            print '<td>%s</td>\n  </tr>' % (str(linkList[parent].author))
-            add_problem("Bad Link: " + link,linkList[parent])
+            print '<td>%s</td>\n  </tr>' % (str(linkMap[parent].author))
+            add_problem("Bad Link: " + link,linkMap[parent])
     print '</table>'
     print '</div>'

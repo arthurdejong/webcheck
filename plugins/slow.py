@@ -28,7 +28,7 @@ from httpcodes import HTTP_STATUS_CODES
 from rptlib import *
 
 Link = webcheck.Link
-linkList = Link.linkList
+linkMap = Link.linkMap
 config = webcheck.config
 
 title = "What's Slow"
@@ -42,10 +42,10 @@ def generate():
     print '<th colspan=3>Time (HH:MM:SS)</th></tr>'
     print '  <tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>'
 
-    urls = linkList.keys()
+    urls = linkMap.keys()
     urls.sort(sort_by_size)
     for url in urls:
-        link = linkList[url]
+        link = linkMap[url]
         if not link.html: continue
         sizeK = link.totalSize / 1024
         sizek = link.totalSize * 8 / 1000

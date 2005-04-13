@@ -28,7 +28,7 @@ from httpcodes import HTTP_STATUS_CODES
 from rptlib import *
 
 Link = webcheck.Link
-linkList = Link.linkList
+linkMap = Link.linkMap
 config = webcheck.config
 
 title = 'Problems (By&nbsp;Author)'

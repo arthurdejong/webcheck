@@ -31,7 +31,7 @@ import debugio
 import version
 
 Link = webcheck.Link
-linkList = Link.linkList
+linkMap = Link.linkMap
 config = webcheck.config
 proxies = config.PROXIES
 
@@ -52,8 +52,8 @@ except:
 
 def get_title(url):
     """ returns the title of a url if it is not None, else returns url
-    note that this implies linkList[url] """
-    link=linkList[url]
+    note that this implies linkMap[url] """
+    link=linkMap[url]
     if link.title is None:
         return url
     return link.title
@@ -64,7 +64,7 @@ def make_link(url,text):
     url = str(url) # because sometimes I lazily pass a Link object.
     mystring = '<a href="' + url + '"'
     try:
-        external = linkList[url].external
+        external = linkMap[url].external
     except KeyError:
         external = 0
     if external:
@@ -85,8 +85,8 @@ def add_problem(type,link):
         problem_db[author]=[(type,link)]
 
 def sort_by_age(a,b):
-    """ sort helper for url's age.  a and b are urls in linkList """
-    aage, bage = linkList[a].age, linkList[b].age
+    """ sort helper for url's age.  a and b are urls in linkMap """
+    aage, bage = linkMap[a].age, linkMap[b].age
     if aage < bage:
         return -1
     if aage == bage:
@@ -94,7 +94,7 @@ def sort_by_age(a,b):
     return 1
 
 def sort_by_rev_age(a,b):
-    aage, bage = linkList[a].age, linkList[b].age
+    aage, bage = linkMap[a].age, linkMap[b].age
     if aage > bage:
         return -1
     if aage == bage:
@@ -102,7 +102,7 @@ def sort_by_rev_age(a,b):
     return 1
 
 def sort_by_author(a,b):
-    aauthor,bauthor = `linkList[a].author`, `linkList[b].author`
+    aauthor,bauthor = `linkMap[a].author`, `linkMap[b].author`
     if aauthor < bauthor:
         return -1
     if aauthor == bauthor:
@@ -110,7 +110,7 @@ def sort_by_author(a,b):
     return 1
 
 def sort_by_size(a,b):
-    asize, bsize = linkList[a].totalSize, linkList[b].totalSize
+    asize, bsize = linkMap[a].totalSize, linkMap[b].totalSize
     if asize < bsize:
         return 1
     if asize == bsize:

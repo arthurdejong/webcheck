@@ -94,8 +94,8 @@ def get_reply(url):
             redirect_depth = 0
             return (errcode, errmsg, headers, url)
         debugio.write('  Redirected to: ' + redirect)
-        if Link.linkList.has_key(redirect):
-            link = Link.linkList[redirect]
+        if Link.linkMap.has_key(redirect):
+            link = Link.linkMap[redirect]
             return (link.status, link.message, link.headers, link.URL)
         return get_reply(redirect)
     redirect_depth = 0
@@ -106,7 +106,7 @@ def init(self, url, parent):
     pseudo-method"""
 
     (self.status, self.message, self.headers, self.URL) = get_reply(myUrlLib.basejoin(parent,url))
-    Link.linkList[self.URL] = self
+    Link.linkMap[self.URL] = self
     try:
         self.type = self.headers.gettype()
     except AttributeError:

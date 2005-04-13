@@ -24,7 +24,7 @@ USAGE='webcheck [-abvqW][-l url][-x url]... [-y url]... [-r depth][-o dir][-w se
 PYTHON_VERSION=1.5 # not used right now
 explored = []
 problem_db = {}
-linkList = {}
+linkMap = {}
 
 import sys
 import time
@@ -148,7 +148,7 @@ if __name__ == '__main__':
         warn()
         sys.exit(1)
 
-    linkList = Link.linkList
+    linkMap = Link.linkMap
 
     # now we can write out the files
     # start with the frame-description page

@@ -28,7 +28,7 @@ from httpcodes import HTTP_STATUS_CODES
 from rptlib import *
 
 Link = webcheck.Link
-linkList = Link.linkList
+linkMap = Link.linkMap
 config = webcheck.config
 
 title = "What's Old"
@@ -38,10 +38,10 @@ def generate():
     print '<div class="table">'
     print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
     print '  <tr><th>Link</th><th>Author</th><th>Age</th></tr>'
-    urls = linkList.keys()
+    urls = linkMap.keys()
     urls.sort(sort_by_rev_age)
     for url in urls:
-        link=linkList[url]
+        link=linkMap[url]
         if not link.html: continue
         age = link.age
         if age and (age >= config.REPORT_WHATSOLD_URL_AGE):

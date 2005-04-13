@@ -62,7 +62,7 @@ def explore(link, explored):
     # Now we loop over the list of links; the traversal will not go to 
     # any pages that are marked as having already been traversed.
     for i in to_explore:
-            child = webcheck.Link.linkList[i]
+            child = webcheck.Link.linkMap[i]
             L.append('<li>%s' % (make_link(i,get_title(i))))
             L = L + explore(child, explored)
             

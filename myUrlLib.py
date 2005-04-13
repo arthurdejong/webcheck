@@ -65,7 +65,7 @@ class Link:
         a list of URL's in that link urls.
     """
 
-    linkList = {}
+    linkMap = {}
     badLinks = []
     notChecked = []
     images = {}
@@ -90,7 +90,7 @@ class Link:
             if parent: self.parents.append(parent)
             
         self.URL = url
-        Link.linkList[self.URL]=self
+        Link.linkMap[self.URL]=self
 
         # see if we can import module for this scheme
         self.schememodule=get_schememodule(self.scheme)
@@ -99,7 +99,7 @@ class Link:
             self.status="Not Checked"
             self.external=True
             Link.notChecked.append(self.URL)
-            Link.linkList[self.URL]=self
+            Link.linkMap[self.URL]=self
             return
 
         if (parent is None):
@@ -154,19 +154,19 @@ class Link:
         
     def explore_children(self):
         for child in self.children:
-            if not Link.linkList.has_key(child):
+            if not Link.linkMap.has_key(child):
                 if config.WAIT_BETWEEN_REQUESTS > 0:
                     debugio.write('sleeping %s seconds' %  config.WAIT_BETWEEN_REQUESTS)
                     time.sleep(config.WAIT_BETWEEN_REQUESTS)
                 debugio.write("adding url: %s" % child)
                 if is_yanked(child):
-                    Link.linkList[child]=ExternalLink(child,self.URL,1)
+                    Link.linkMap[child]=ExternalLink(child,self.URL,1)
                 elif is_external(child) or is_excluded(child):
-                    Link.linkList[child]=ExternalLink(child,self.URL)
+                    Link.linkMap[child]=ExternalLink(child,self.URL)
                 else:
-                    Link.linkList[child]=Link(child,self.URL)
-            elif self.URL not in Link.linkList[child].parents:
-                Link.linkList[child].parents.append(self.URL)
+                    Link.linkMap[child]=Link(child,self.URL)
+            elif self.URL not in Link.linkMap[child].parents:
+                Link.linkMap[child].parents.append(self.URL)
         return # __init__
 
     def init(self):
@@ -192,7 +192,7 @@ class Link:
         debugio.write('  ' + str(status))
         self.status = str(status)
         self.URL=url
-        Link.linkList[self.URL]=self
+        Link.linkMap[self.URL]=self
         Link.badLinks.append(self.URL)
 
     def _handleHTML(self,url,htmlfile):

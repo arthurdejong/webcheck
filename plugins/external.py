@@ -29,15 +29,15 @@ from httpcodes import HTTP_STATUS_CODES
 from rptlib import *
 
 Link = webcheck.Link
-linkList = Link.linkList
+linkMap = Link.linkMap
 config = webcheck.config
 
 title = 'External Links'
 
 def generate():
     print '<ol>'
-    for url in linkList.keys():
-        link=linkList[url]
+    for url in linkMap.keys():
+        link=linkMap[url]
         if link.external:
             print '  <li>%s' % make_link(url,get_title(url))
     print '</ol>'
