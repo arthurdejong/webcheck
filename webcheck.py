@@ -4,6 +4,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +21,6 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 
-USAGE='webcheck [-abvqW][-l url][-x url]... [-y url]... [-r depth][-o dir][-w sec][-d level] url [location]...'
-PYTHON_VERSION=1.5 # not used right now
 explored = []
 problem_db = {}
 linkMap = {}
@@ -54,55 +53,99 @@ debugio.DEBUG_LEVEL = config.DEBUG_LEVEL
 
 import version
 
+def print_version():
+    """print version information"""
+    print \
+        "webcheck "+version.webcheck+"\n" \
+        "Written by Albert Hopkins (marduk), Mike Meyer and Arthur de Jong.\n" \
+        "\n" \
+        "Copyright (C) 1998, 1999, 2002, 2005 Albert Hopkins (marduk), Mike Meyer\n" \
+        "and Arthur de Jong.\n" \
+        "This is free software; see the source for copying conditions.  There is NO\n" \
+        "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+
+def print_usage():
+    """print short usage information"""
+    print >>sys.stderr, \
+        "Usage: webcheck [OPTION]... URL"
+
+def print_tryhelp():
+    """print friendly pointer to more information"""
+    print >>sys.stderr, \
+        "Try `webcheck --help' for more information."
+
+def print_help():
+    """print option list"""
+    print \
+        "Usage: webcheck [OPTION]... URL\n" \
+        "Generate report for the given URL\n" \
+        "\n" \
+        "  -x PATTERN     mark URLs matching PATTERN as external\n" \
+        "  -y PATTERN     do not check URLs matching PATTERN\n" \
+        "  -l URL         use URL as logo for the report\n" \
+        "  -b             base URLs only: consider any URL not starting with the base\n" \
+        "                 URL to be external\n" \
+        "  -a             do not check external URLs\n" \
+        "  -q, --quiet, --silent\n" \
+        "                 do not print out progress as webcheck traverses a site\n" \
+        "  -o DIRECTORY   the directory in which webcheck will generate the reports\n" \
+        "  -f, --force    overwrite files without asking\n" \
+        "  -r N           the amount of redirects Webcheck should follow when following\n" \
+        "                 a link, 0 implies follow all redirects.\n" \
+        "  -w, --wait=SECONDS\n" \
+        "                 wait SECONDS between retrievals\n" \
+        "  -V, --version  output version information and exit\n" \
+        "  -h, --help     display this help and exit\n" \
+        "  -d LEVEL       set loglevel to LEVEL, for programmer-level debugging"
+
 def parse_args():
+    """parse command-line arguments"""
     import getopt
-    global URL
     try:
-        optlist, args = getopt.getopt(sys.argv[1:],'vl:x:y:ar:o:bw:d:qW')
+        optlist, args = getopt.gnu_getopt(sys.argv[1:],
+            "x:y:l:baqo:fr:w:Vhd:",
+            ["quiet","silent","wait=","version","help"])
     except getopt.error, reason:
-        print reason
-        print USAGE
+        print >>sys.stderr,"webcheck: %s" % reason;
+        print_tryhelp()
         sys.exit(1)
     for flag,arg in optlist:
-        if flag=='-v':
-            print_version()
-            sys.exit(0)
-        elif flag=='-x':
+        if flag=='-x':
             config.EXCLUDED_URLS.append(arg)
         elif flag=='-y':
             config.YANKED_URLS.append(arg)
-        elif flag=='-a':
-            config.AVOID_EXTERNAL_LINKS=1
-        elif flag=='-r':
-            config.REDIRECT_DEPTH=int(arg)
-        elif flag=='-o':
-            config.OUTPUT_DIR=arg
-        elif flag=='-b':
-            config.BASE_URLS_ONLY=1
-        elif flag=='-w':
-            config.WAIT_BETWEEN_REQUESTS=int(arg)
         elif flag=='-l':
             config.LOGO_HREF=arg
-        elif flag=='-W':
+        elif flag=='-b':
+            config.BASE_URLS_ONLY=1
+        elif flag=='-a':
+            config.AVOID_EXTERNAL_LINKS=1
+        elif flag in ("-q","--quiet","--silent"):
+            debugio.DEBUG_LEVEL=0
+        elif flag=='-o':
+            config.OUTPUT_DIR=arg
+        elif flag in ("-f","--force"):
             config.OVERWRITE_FILES=1
+        elif flag=='-r':
+            config.REDIRECT_DEPTH=int(arg)
+        elif flag in ("-w","--wait"):
+            config.WAIT_BETWEEN_REQUESTS=int(arg)
+        elif flag in ("-V","--version"):
+            print_version()
+            sys.exit(0)
+        elif flag in ("-h","--help"):
+            print_help()
+            sys.exit(0)
         elif flag=='-d':
             debugio.DEBUG_LEVEL=int(arg)
-        elif flag=='-q':
-            debugio.DEBUG_LEVEL=0
-
     if len(args)==0:
-        print USAGE
+        print_usage()
+        print_tryhelp()
         sys.exit(1)
-    else: URL = args[0]
+    else:
+        global URL
+        URL = args[0]
     config.HOSTS = config.HOSTS + args[1:]
-
-def print_version():
-    """Print version information"""
-    import os
-    print "    Webcheck: " + version.webcheck
-    print "    Python: " + sys.version
-    print "    OS:     " + os.name
-    print
 
 def warn():
     """Warn the user that something has gone wrong."""
