@@ -104,7 +104,7 @@ def parse_args():
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
             "x:y:l:baqo:fr:w:Vhd:",
-            ["quiet","silent","wait=","version","help"])
+            ["quiet","silent","force","wait=","version","help"])
     except getopt.error, reason:
         print >>sys.stderr,"webcheck: %s" % reason;
         print_tryhelp()
