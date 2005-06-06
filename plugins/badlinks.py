@@ -52,7 +52,7 @@ def generate():
         parents = linkMap[link].parents
         parents.sort(sort_by_author)
         for parent in parents:
-            print '  \t<td>%s</td>' % make_link(parent,get_title(parent)),
+            print '    <td>%s</td>' % make_link(parent,get_title(parent)),
             print '<td>%s</td>\n  </tr>' % (str(linkMap[parent].author))
             add_problem("Bad Link: " + link,linkMap[parent])
     print '</table>'

@@ -40,7 +40,7 @@ def generate():
         print '  <tr><th colspan=4>%s</th></tr>' % make_link(url,url)
         print '  <tr class="parent"><th rowspan="%s">Parent</th>' % len(linkMap[url].parents)
         for parent in linkMap[url].parents:
-            print '  \t',
+            print '    ',
             if parent != linkMap[url].parents[0]: print '<tr>',
             print '<td colspan=2>%s</td>' % make_link(parent,get_title(parent)),
             print '<td>%s</td></tr>' % (linkMap[parent].author)
