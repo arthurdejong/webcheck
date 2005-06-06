@@ -3,6 +3,7 @@ own copyrights to most files in the codebase.
 
 Albert Hopkins (marduk) <marduk@python.net>
 Mike Meyer <mwm@mired.org>
+Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 
 These people have also contributed to webcheck in some fashion (in no
 particular order). This is most likely not a complete list. If you feel you
@@ -13,5 +14,5 @@ Andrea Glorioso <sama@intercity.it>
 Andrew Kuchling <akuchlin@cnri.reston.va.us>
 Jean Pierre LeJacq <jplejacq@quoininc.com>
 Steffen Siebert <siebert@logware.de>
-Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 Sebastien Delafond <sdelafond@gmx.net>
+Bastian Kleineidam <calvin@debian.org>
