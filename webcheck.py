@@ -78,7 +78,7 @@ def print_help():
     """print option list"""
     print \
         "Usage: webcheck [OPTION]... URL\n" \
-        "Generate report for the given URL\n" \
+        "Generate a report for the given URL\n" \
         "\n" \
         "  -x PATTERN     mark URLs matching PATTERN as external\n" \
         "  -y PATTERN     do not check URLs matching PATTERN\n" \
