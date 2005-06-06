@@ -1,0 +1,128 @@
+.\" Copyright (C) 2005 Arthur de Jong
+.\" 
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\" 
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\" 
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\" .nh
+.\" 
+.TH "webcheck" "1" "Jun 2005" "Version 1.0" "User Commands"
+.SH "NAME"
+webcheck \- website link checker
+
+.SH "SYNOPSIS"
+.B webcheck
+.RI [ OPTION ]...
+.I URL
+
+.SH "DESCRIPTION"
+\fBwebcheck\fP will check the document at the specified URL for links to other documents,
+follow these links recursively and generate an HTML report.
+
+.TP 
+.BI \-x " PATTERN"
+Mark URLs matching the
+.I PATTERN
+(perl\-type regular expression) as an external link.
+Can be used multiple times.
+
+.TP 
+.BI \-y " PATTERN"
+Do not check URLs matching the
+.I PATTERN
+(perl\-type regular expression).
+Like the \-x flag, though this option will cause webcheck to not
+check the link matched by regex whereas \-x will check the link but
+not its children.
+Can be used multiple times.
+
+.TP 
+.BI \-l " URL"
+Use
+.I URL
+as logo for the report.
+The URL should point to a valid image.
+
+.TP 
+.B \-b
+Consider any URL not starting with the base URL to be external.
+For example, if you run
+.ft B
+    webcheck \-b http://www.example.com/foo
+.ft R
+.br
+then http://www.example.com/foo/bar will be
+considered internal whereas http://www.example.com/ will
+be considered external.
+By default all the pages on the site will be considered internal.
+
+.TP 
+.B \-a
+Avoid external links.
+Normally if webcheck is examining an HTML page
+and it finds a link that points to an external document, it will
+check to see if that external document exists.
+This flag disables that action.
+
+.TP 
+.B \-q, \-\-quiet, \-\-silent
+Do not print out progress as webcheck traverses a site.
+
+.TP 
+.BI \-o " DIRECTORY"
+Output directory. Use to specify the directory where webcheck will
+dump its reports. The default is the current directory or as
+specified by config.py. If this directory does not exist it will
+be created for you (if possible).
+
+.TP 
+.B \-f, \-\-force
+Overwrite files without asking
+
+.TP 
+.BI \-r " N"
+Redirect depth. the number of redirects webcheck should follow when
+following a link. 0 implies to follow all redirects.
+
+.TP 
+.BI "\-w, \-\-wait=" "SECONDS"
+Wait
+.I SECONDS
+between document retrievals. Usually Webcheck will process a url
+and immediately move on to the next. However on some loaded
+systems it may be desirable to have Webcheck pause between requests.
+This option can be set to any non\-negative number.
+
+.TP 
+.B \-v, \-\-version
+Show version of program.
+
+.TP 
+.B \-h, \-\-help
+Show short summary of options.
+
+.SH "EXAMPLES"
+
+Check the site www.example.com but exclude any path with "/webckeck" in it.
+.ft B
+    webcheck http://www.example.com/ \-x /webcheck
+.ft R
+
+.SH "COPYRIGHT"
+Copyright \(co 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
+.br 
+Copyright \(co 2002 Mike Meyer <mwm@mired.org>
+.br 
+Copyright \(co 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
+.br 
+Webcheck is free software; see the license for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
