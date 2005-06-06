@@ -59,7 +59,7 @@ def get_reply(url):
 
     if not document:
         document = '/'
-    debugio.write('document=%s' % document,3)
+    debugio.debug('document=%s' % document)
 
     (username, passwd, realhost, port) = parse_host(host)
 
@@ -78,22 +78,21 @@ def get_reply(url):
     r = h.getresponse()
     errcode, errmsg, headers = r.status, r.reason, r.msg
     h.close()
-    debugio.write(errcode,2)
-    debugio.write(errmsg,2)
+    debugio.debug(errcode)
+    debugio.debug(errmsg)
     if errcode == 301 or errcode == 302:
         redirect_depth += 1
         if redirect_depth > config.REDIRECT_DEPTH:
-            debugio.write('  Too many redirects!')
+            debugio.error('  Too many redirects!')
             redirect_depth = 0
             return (errcode, errmsg, headers, url)
         redirect = headers['location']
-        debugio.write('  Redirect location: ' + redirect)
+        debugio.info('  redirected to: ' + redirect)
         redirect = urlparse.urljoin(url,redirect)
         if redirect == url:
-            debugio.write('  Redirect same as source: %s' % redirect)
+            debugio.error('  redirect same as source: %s' % redirect)
             redirect_depth = 0
             return (errcode, errmsg, headers, url)
-        debugio.write('  Redirected to: ' + redirect)
         if Link.linkMap.has_key(redirect):
             link = Link.linkMap[redirect]
             return (link.status, link.message, link.headers, link.URL)
@@ -112,7 +111,7 @@ def init(self, url, parent):
     except AttributeError:
         self.type = 'text/html' # is this a good enough default?
 
-    debugio.write('  Content-type: ' + self.type,2)
+    debugio.debug('  Content-type: ' + self.type)
     try:
         self.size = int(self.headers['content-length'])
     except (KeyError, TypeError):
@@ -143,7 +142,7 @@ def parse_host(location):
     """
 
     #location = urlparse.urlparse(host)[1]
-    debugio.write("network location= %s" % location,3)
+    debugio.debug("network location= %s" % location)
 
     at = string.find(location, "@")
     if at > -1:
@@ -159,7 +158,7 @@ def parse_host(location):
     else:
         user = passw = None
         hostport = location
-    
+
     colon = string.find(hostport, ":")
     if colon > -1:
         hostname = hostport[:colon]
@@ -168,6 +167,6 @@ def parse_host(location):
         hostname = hostport
         port = None
 
-    debugio.write("parse_host = %s %s %s %s" % (user, passw, hostname, port),3)
+    debugio.debug("parse_host = %s %s %s %s" % (user, passw, hostname, port))
     return (user, passw, hostname, port)
-    
+

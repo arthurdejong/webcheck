@@ -49,7 +49,7 @@ Link=myUrlLib.Link
 myUrlLib.config=config
 
 import debugio
-debugio.DEBUG_LEVEL = config.DEBUG_LEVEL
+debugio.loglevel=debugio.INFO
 
 import version
 
@@ -88,6 +88,7 @@ def print_help():
         "  -a             do not check external URLs\n" \
         "  -q, --quiet, --silent\n" \
         "                 do not print out progress as webcheck traverses a site\n" \
+        "  -d, --debug    set loglevel to LEVEL, for programmer-level debugging\n" \
         "  -o DIRECTORY   the directory in which webcheck will generate the reports\n" \
         "  -f, --force    overwrite files without asking\n" \
         "  -r N           the amount of redirects Webcheck should follow when following\n" \
@@ -95,16 +96,15 @@ def print_help():
         "  -w, --wait=SECONDS\n" \
         "                 wait SECONDS between retrievals\n" \
         "  -V, --version  output version information and exit\n" \
-        "  -h, --help     display this help and exit\n" \
-        "  -d LEVEL       set loglevel to LEVEL, for programmer-level debugging"
+        "  -h, --help     display this help and exit"
 
 def parse_args():
     """parse command-line arguments"""
     import getopt
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
-            "x:y:l:baqo:fr:w:Vhd:",
-            ["quiet","silent","force","wait=","version","help"])
+            "x:y:l:baqdo:fr:w:Vh",
+            ["quiet","silent","debug","force","wait=","version","help"])
     except getopt.error, reason:
         print >>sys.stderr,"webcheck: %s" % reason;
         print_tryhelp()
@@ -121,7 +121,7 @@ def parse_args():
         elif flag=='-a':
             config.AVOID_EXTERNAL_LINKS=1
         elif flag in ("-q","--quiet","--silent"):
-            debugio.DEBUG_LEVEL=0
+            debugio.loglevel=debugio.ERROR
         elif flag=='-o':
             config.OUTPUT_DIR=arg
         elif flag in ("-f","--force"):
@@ -136,8 +136,8 @@ def parse_args():
         elif flag in ("-h","--help"):
             print_help()
             sys.exit(0)
-        elif flag=='-d':
-            debugio.DEBUG_LEVEL=int(arg)
+        elif flag in("-d","--debug"):
+            debugio.loglevel=debugio.DEBUG
     if len(args)==0:
         print_usage()
         print_tryhelp()
@@ -180,13 +180,13 @@ if __name__ == '__main__':
     parse_args()
     config.OUTPUT_DIR=config.OUTPUT_DIR + '/'
 
-    debugio.write('checking site....')
+    debugio.info('checking site....')
     try:
         Link.base = Link(URL,None) # this will take a while
     except KeyboardInterrupt:
         sys.stderr.write("Interrupted\n")
         sys.exit(1)
-    debugio.write('done.')
+    debugio.info('done.')
     if not hasattr(Link.base,"URL"):
         warn()
         sys.exit(1)
@@ -195,11 +195,11 @@ if __name__ == '__main__':
 
     # now we can write out the files
     # start with the frame-description page
-    debugio.write('Generating reports...')
+    debugio.info('generating reports...')
     from plugins.rptlib import main_index, nav_bar
     main_index()
     nav_bar(plugins)
     link_image('blackbar.png')
     if config.LOGO_HREF == 'webcheck.png': link_image('webcheck.png')
-    debugio.write('done.')
+    debugio.info('done.')
 

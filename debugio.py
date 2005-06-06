@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,20 +19,41 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-
-
 """debugio.py: debugging and input/output module
-   
-   This module contains facilities for printing to standard output.  The use
-   of this module is really simple: import it, set DEBUG_LEVEL, and use write()
-   whenever you want to print something.  The print function will print to
-   standard output depending on DEBUG_LEVEL.
+
+   This module contains facilities for logging program output.  The use of
+   this module is really simple: import it, set loglevel, and use debug(),
+   info(), warn() and error() whenever you want to print something.
 """
+
 import sys
 
-DEBUG_LEVEL=1
+# log levels that can be used
+ERROR=0
+WARN=1
+INFO=2
+DEBUG=3
 
-def write(s, level=1, file=sys.stdout):
-    """Write s to stdout if DEBUG_LEVEL is >= level"""
+# initialize logging at default level
+loglevel=INFO
 
-    if DEBUG_LEVEL >= level: file.write("%s\n" % s)
+def debug(msg):
+    """log the message to stderr if loglevel will allow it"""
+    if loglevel>=DEBUG:
+        print >>sys.stderr,"webcheck: DEBUG: "+str(msg)
+
+def info(msg):
+    """log the message to stdout if loglevel will allow it"""
+    if loglevel>=INFO:
+        # FIXME: remove ">>sys.stderr," part once plugin system is rewritten
+        print >>sys.stderr,"webcheck: "+str(msg)
+
+def warn(msg):
+    """log a warning to stderr if loglevel will allow it"""
+    if loglevel>=WARN:
+        print >>sys.stderr,"webcheck: Warning: "+str(msg)
+
+def error(msg):
+    """log an error to stderr if loglevel will allow it"""
+    if loglevel>=ERROR:
+        print >>sys.stderr,"webcheck: Error: "+str(msg)

@@ -165,7 +165,7 @@ def nav_bar(plugins):
 
     # labels pointing to each individual page
     for plugin in plugins + ['problems']:
-        debugio.write('  ' + plugin,file=stdout)
+        debugio.info('  ' + plugin)
         filename = plugin + '.html'
         print '<tr><th>',
         report = __import__('plugins.' + plugin, globals(), locals(), [plugin])

@@ -78,7 +78,7 @@ def stat(pathname, ftpobject):
     dirs, filename = split_dirs(pathname)
     cwd(dirs, ftpobject)
     response = ftpobject.retrlines('NLST %s' % filename,callback)
-    debugio.write(response,2)
+    debugio.debug(response)
 
 def get_document(url):
     host, port, user, passwd, pathname = parseurl(url)
@@ -113,9 +113,9 @@ def split_dirs(pathname):
 def size(pathname,ftpobject):
     if pathname == '': pathname = '/'
     dirs, filename = split_dirs(pathname)
-    debugio.write('pathname =%s' % pathname,3)
-    debugio.write('dirs= %s' % dirs,3)
-    debugio.write('filename= %s' % filename,3)
+    debugio.debug('pathname =%s' % pathname)
+    debugio.debug('dirs= %s' % dirs)
+    debugio.debug('filename= %s' % filename)
     cwd(dirs, ftpobject)
     return ftpobject.size(filename)
 
