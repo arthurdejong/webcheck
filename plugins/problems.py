@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,24 +34,24 @@ config = webcheck.config
 
 title = 'Problems (By&nbsp;Author)'
 
-def generate():
+def generate(fp):
     authors=problem_db.keys()
     authors.sort()
     if len(authors) > 1:
-        print '<p class="authorlist">'
+        fp.write('<p class="authorlist">\n')
         for author in authors[:-1]:
-            print '<a href="#%s">%s</a>' % (author, author),
-            print " | "
-        print '<a href="#%s">%s</a>' % (authors[-1], authors[-1]),
-        print '</p>'
-    print '<div class="table">'
-    print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
+            fp.write('<a href="#%s">%s</a>\n' % (author, author))
+            fp.write(' | \n')
+        fp.write('<a href="#%s">%s</a>\n' % (authors[-1], authors[-1]))
+        fp.write('</p>\n')
+    fp.write('<div class="table">\n')
+    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     for author in authors:
-        print '<tr><th><a name="%s">%s</a></th></tr>' % (author,author)
+        fp.write('<tr><th><a name="%s">%s</a></th></tr>\n' % (author,author))
         for type,link in problem_db[author]:
             url=`link`
             title=get_title(url)
-            print '<tr><td>%s <br>%s</td></tr>' % (make_link(url,title), type)
-        print '<tr><td class="blank">&nbsp;</td></tr>\n'
-    print '</table>'
-    print '</div>'
+            fp.write('<tr><td>%s<br>%s</td></tr>\n' % (make_link(url,title), type))
+        fp.write('<tr><td class="blank">&nbsp;</td></tr>\n')
+    fp.write('</table>\n')
+    fp.write('</div>\n')

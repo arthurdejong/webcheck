@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,33 +28,31 @@ import webcheck
 from httpcodes import HTTP_STATUS_CODES
 from rptlib import *
 
-Link = webcheck.Link
 linkMap = Link.linkMap
-config = webcheck.config
 
 title = 'Bad Links'
 
-def generate():
-    print '<div class="table">'
-    print '<table border=0 cellspacing=2 width="75%">'
-    for link in Link.badLinks:
-        print '  <tr><td class="blank" colspan=3>&nbsp;</td></tr>'
-        if config.ANCHOR_BAD_LINKS:
-            print '  <tr class="link"><th>Link</th>',
-            print '<td colspan=2 align=left>'  +make_link(link,link) +'</td></tr>'
+def generate(fp):
+    fp.write('<div class="table">\n')
+    fp.write('<table border="0" cellspacing="2" width="75%">\n')
+    for link in webcheck.Link.badLinks:
+        fp.write('  <tr><td class="blank" colspan="3">&nbsp;</td></tr>\n')
+        if webcheck.config.ANCHOR_BAD_LINKS:
+            fp.write('  <tr class="link"><th>Link</th>\n')
+            fp.write('    <td colspan="2" align="left">'  +make_link(link,link) +'</td></tr>\n')
         else:
-            print '  <tr class="link"><th>Link</th>',
-            print '<td colspan=2 align=left>%s</td></tr>' % link
+            fp.write('  <tr class="link"><th>Link</th>\n')
+            fp.write('    <td colspan="2" align="left">%s</td></tr>\n' % link)
         status = str(linkMap[link].status)
         if status in HTTP_STATUS_CODES.keys():
             status = status + ": " + HTTP_STATUS_CODES[status]
-        print '  <tr class="status"><th>Status</th><td colspan=2>%s</td></tr>' % status
-        print '  <tr class="parent"><th rowspan="%s">Parents</th>' % len(linkMap[link].parents)
+        fp.write('  <tr class="status"><th>Status</th><td colspan="2">%s</td></tr>\n' % status)
+        fp.write('  <tr class="parent"><th rowspan="%s">Parents</th>\n' % len(linkMap[link].parents))
         parents = linkMap[link].parents
         parents.sort(sort_by_author)
         for parent in parents:
-            print '    <td>%s</td>' % make_link(parent,get_title(parent)),
-            print '<td>%s</td>\n  </tr>' % (str(linkMap[parent].author))
+            fp.write('    <td>%s</td>\n' % make_link(parent,get_title(parent)))
+            fp.write('    <td>%s</td>\n  </tr>\n' % (str(linkMap[parent].author)))
             add_problem("Bad Link: " + link,linkMap[parent])
-    print '</table>'
-    print '</div>'
+    fp.write('</table>\n')
+    fp.write('</div>\n')

@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,19 +35,20 @@ config = webcheck.config
 title = "What's New"
 
 # what's new
-def generate():
-    print '<div class="table">'
-    print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
-    print '  <tr><th>Link</th><th>Author</th><th>Age</th></tr>'
+def generate(fp):
+    fp.write('<div class="table">\n')
+    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
+    fp.write('  <tr><th>Link</th><th>Author</th><th>Age</th></tr>\n')
     urls = linkMap.keys()
     urls.sort(sort_by_age)
     for url in urls:
         link=linkMap[url]
-        if not link.html: continue
+        if not link.html:
+            continue
         age = link.age
-        if (age is not None)and (age <= config.REPORT_WHATSNEW_URL_AGE):
-            print '  <tr><td>%s</td>' % make_link(url,get_title(url)),
-            print '<td>%s</td>' % link.author,
-            print '<td class="time">%s</td></tr>' % age
-    print '</table>'
-    print '</div>'
+        if (age is not None) and (age <= config.REPORT_WHATSNEW_URL_AGE):
+            fp.write('  <tr><td>%s</td>\n' % make_link(url,get_title(url)))
+            fp.write('      <td>%s</td>\n' % link.author)
+            fp.write('      <td class="time">%s</td></tr>\n' % age)
+    fp.write('</table>\n')
+    fp.write('</div>\n')

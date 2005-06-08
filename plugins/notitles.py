@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,18 +34,19 @@ config = webcheck.config
 
 title = 'No Titles'
 
-def generate():
-    print '<div class="table">'
-    print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
-    print '  <tr><th>URL</th><th>Author</th></tr>'
+def generate(fp):
+    fp.write('<div class="table">\n')
+    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
+    fp.write('  <tr><th>URL</th><th>Author</th></tr>\n')
     urls = linkMap.keys()
     urls.sort(sort_by_author)
     for url in urls:
         link = linkMap[url]
-        if link.external: continue
+        if link.external:
+            continue
         if link.html and (link.title is None):
-            print '  <tr><td>%s</td><td>%s</td></tr>' \
-                  % (make_link(url,url), link.author)
+            fp.write('  <tr><td>%s</td><td>%s</td></tr>\n' \
+                     % (make_link(url,url), link.author))
             add_problem("No Title",link)
-    print '</table>'
-    print '</div>'
+    fp.write('</table>\n')
+    fp.write('</div>\n')

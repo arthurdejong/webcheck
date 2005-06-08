@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,19 +26,14 @@ __author__ = 'mwm@mired.org'
 
 
 import webcheck
-from httpcodes import HTTP_STATUS_CODES
 from rptlib import *
-
-Link = webcheck.Link
-linkMap = Link.linkMap
-config = webcheck.config
 
 title = 'External Links'
 
-def generate():
-    print '<ol>'
-    for url in linkMap.keys():
-        link=linkMap[url]
+def generate(fp):
+    fp.write('<ol>\n')
+    for url in Link.linkMap.keys():
+        link=Link.linkMap[url]
         if link.external:
-            print '  <li>%s' % make_link(url,get_title(url))
-    print '</ol>'
+            fp.write('  <li>%s</li>\n' % make_link(url,get_title(url)))
+    fp.write('</ol>\n')

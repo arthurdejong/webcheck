@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,15 +34,14 @@ config = webcheck.config
 
 title = "What's Slow"
 
-def generate():
+def generate(fp):
     import time
-    print '<div class="table">'
-    print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
-    print '  <tr><th rowspan=2>Link</th>',
-    print '<th rowspan=2>Size <br>(Kb)</th>',
-    print '<th colspan=3>Time (HH:MM:SS)</th></tr>'
-    print '  <tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>'
-
+    fp.write('<div class="table">\n')
+    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
+    fp.write('  <tr><th rowspan="2">Link</th>\n')
+    fp.write('      <th rowspan="2">Size <br>(Kb)</th>\n')
+    fp.write('      <th colspan="3">Time (HH:MM:SS)</th></tr>\n')
+    fp.write('  <tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>\n')
     urls = linkMap.keys()
     urls.sort(sort_by_size)
     for url in urls:
@@ -51,14 +51,13 @@ def generate():
         sizek = link.totalSize * 8 / 1000
         if sizeK < config.REPORT_SLOW_URL_SIZE:
             break
-        print '  <tr><td>%s</td>' % make_link(url, get_title(url)),
-        print '<td>%s</td><td class="time">%s</td>' \
-              % (sizeK, time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8)))),
-        print '<td class="time">%s</td>' \
-              % time.strftime('%H:%M:%S',time.gmtime(int(sizek/56))),
-        print '<td class="time">%s</td>' \
-              % time.strftime('%H:%M:%S',time.gmtime(int(sizek/1500))),
-        print '</tr>'
+        fp.write('  <tr><td>%s</td>' % make_link(url, get_title(url))+'\n')
+        fp.write('      <td>%s</td><td class="time">%s</td>\n' \
+                 % (sizeK, time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8)))))
+        fp.write('      <td class="time">%s</td>\n' \
+              % time.strftime('%H:%M:%S',time.gmtime(int(sizek/56))))
+        fp.write('      <td class="time">%s</td></tr>\n' \
+              % time.strftime('%H:%M:%S',time.gmtime(int(sizek/1500))))
         add_problem('Slow Link: %sK' % sizeK, link) 
-    print '</table>'
-    print '</div>'
+    fp.write('</table>\n')
+    fp.write('</div>\n')

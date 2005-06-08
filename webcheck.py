@@ -172,9 +172,6 @@ def link_image(filename):
        print 'Warning: "%s": %s' % (target, errtext)
        print '         Please copy "%s" to "%s".' % (source, target)
 
-# set up the pages
-plugins = config.PLUGINS
-
 if __name__ == '__main__':
 
     parse_args()
@@ -196,10 +193,16 @@ if __name__ == '__main__':
     # now we can write out the files
     # start with the frame-description page
     debugio.info('generating reports...')
-    from plugins.rptlib import main_index, nav_bar
-    main_index()
-    nav_bar(plugins)
+    import plugins.rptlib
+    # generate frameset
+    plugins.rptlib.main_index(config.MAIN_FILENAME)
+    # generate navigation frame
+    plugins.rptlib.nav_bar(config.NAVBAR_FILENAME,config.PLUGINS + ['problems'])
+    # for every plugin, generate a page
+    plugins.rptlib.gen_plugins(config.PLUGINS + ['problems'])
+    # put extra files in the output directory
     link_image('blackbar.png')
-    if config.LOGO_HREF == 'webcheck.png': link_image('webcheck.png')
+    if config.LOGO_HREF == 'webcheck.png':
+        link_image('webcheck.png')
     debugio.info('done.')
 

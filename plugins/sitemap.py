@@ -28,18 +28,18 @@ title = 'Site Map'
 import webcheck
 import rptlib
 
-def explore(link, explored={}, level=0):
+def explore(fp, link, explored={}, level=0):
     """Recursively do a breadth-first traversal of the graph of links
     on the site.  Returns a list of HTML fragments that can be printed 
     to produce a site map."""
 
     explored[link.URL]=True
     # output this link
-    print('<li>')
+    fp.write('<li>\n')
     if (link.URL in webcheck.Link.badLinks) and not webcheck.config.ANCHOR_BAD_LINKS:
-        print(link.URL)
+        fp.write(link.URL+'\n')
     else:
-        print(rptlib.make_link(link.URL,rptlib.get_title(link.URL)))
+        fp.write(rptlib.make_link(link.URL,rptlib.get_title(link.URL))+'\n')
 
     # only check children if we are not too deep yet
     if level <= webcheck.config.REPORT_SITEMAP_LEVEL:
@@ -57,15 +57,15 @@ def explore(link, explored={}, level=0):
 
         # go over the children and present them as a list
         if len(to_explore) > 0:
-            print('<ul>')
+            fp.write('<ul>\n')
             for i in to_explore:
-                explore(webcheck.Link.linkMap[i],explored,level+1)
-            print('</ul>')
+                explore(fp,webcheck.Link.linkMap[i],explored,level+1)
+            fp.write('</ul>\n')
 
-    print( '</li>' )
+    fp.write('</li>\n')
 
 # site map
-def generate():        
-    print('<ul>')
-    explore(webcheck.Link.base)
-    print('</ul>')
+def generate(fp):
+    fp.write('<ul>\n')
+    explore(fp,webcheck.Link.base)
+    fp.write('</ul>\n')
