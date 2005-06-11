@@ -19,22 +19,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""Plugins used in this report"""
+"""Generate an overview of the plugins that are used."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
-title = "About&nbsp;Plugins"
+__title__ = 'about plugins'
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
 import webcheck
 import rptlib
 
 def generate(fp):
+    """Output a list of modules, it's authors and it's version to the file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('<tr><th>Plugin</th><th>Version</th><th>Author</th></tr>\n')
-    for plugin in webcheck.config.PLUGINS + ['problems']:
+    for plugin in webcheck.config.PLUGINS:
         report = __import__('plugins.'+plugin,globals(),locals(),[plugin])
-        fp.write('<tr><td class="pluginname">%s</td>\n' % plugin)
+        fp.write('<tr><td class="pluginname">%s</td>\n' % report.__title__)
         fp.write('    <td class="pluginversion">%s</td>\n' % report.__version__)
         fp.write('    <td class="pluginauthor">%s</td></tr>\n' % report.__author__)
     fp.write('</table>\n')

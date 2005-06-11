@@ -19,24 +19,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""Breakdown of links with problems"""
+"""Present an overview of all encoutered problems per author."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
+__title__ = 'problems by author'
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
-import webcheck
-from httpcodes import HTTP_STATUS_CODES
-from rptlib import *
-
-Link = webcheck.Link
-linkMap = Link.linkMap
-config = webcheck.config
-
-title = 'Problems (By&nbsp;Author)'
+import rptlib
 
 def generate(fp):
-    authors=problem_db.keys()
+    """Output the overview of problems to the given file descriptor."""
+    authors=rptlib.problem_db.keys()
     authors.sort()
+    # generate short list of authors
     if len(authors) > 1:
         fp.write('<p class="authorlist">\n')
         for author in authors[:-1]:
@@ -44,14 +39,13 @@ def generate(fp):
             fp.write(' | \n')
         fp.write('<a href="#%s">%s</a>\n' % (authors[-1], authors[-1]))
         fp.write('</p>\n')
+    # generate problem report
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     for author in authors:
         fp.write('<tr><th><a name="%s">%s</a></th></tr>\n' % (author,author))
-        for type,link in problem_db[author]:
-            url=`link`
-            title=get_title(url)
-            fp.write('<tr><td>%s<br>%s</td></tr>\n' % (make_link(url,title), type))
+        for type,link in rptlib.problem_db[author]:
+            fp.write('<tr><td>%s<br>%s</td></tr>\n' % (rptlib.make_link(link.URL), type))
         fp.write('<tr><td class="blank">&nbsp;</td></tr>\n')
     fp.write('</table>\n')
     fp.write('</div>\n')

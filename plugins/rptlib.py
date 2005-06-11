@@ -191,7 +191,7 @@ def nav_bar(fname,plugins):
         fp.write('<tr><th>\n')
         report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
         fp.write('<strong><a href="%s" onMouseOver="window.status=\'%s\'; return true">%s</a></strong>\n' \
-              % (filename, report.__doc__, report.title))
+              % (filename, report.__doc__, report.__title__))
         fp.write('</th></tr>\n')
     # print the page footer
     fp.write('</table>\n')
@@ -216,7 +216,7 @@ def gen_plugins(plugins):
 def doTopMain(fp,report):
     """ Write top part of html file for main content frame. """
     fp.write('<html>\n')
-    fp.write('<head><title>%s</title>\n' % report.title)
+    fp.write('<head><title>%s</title>\n' % report.__title__)
     fp.write('<style type="text/css">\n')
     fp.write('<!-- /* hide from old browsers */\n')
     fp.write(stylesheet+'\n')
@@ -229,7 +229,7 @@ def doTopMain(fp,report):
     fp.write('  <a href="%s">%s</a>\n' % (`Link.base`, get_title(`Link.base`)))
     fp.write('</h1>\n')
     fp.write('\n\n<table width="100%" cellpadding="4">\n')
-    fp.write('  <tr><th class="title">%s</th></tr>\n</table>\n' % report.title)
+    fp.write('  <tr><th class="title">%s</th></tr>\n</table>\n' % report.__title__)
 
 def doBotMain(fp):
     """ Write bottom part of html file for main content frame. """

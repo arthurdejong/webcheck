@@ -19,22 +19,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""Pages that are slow to download"""
+"""Present a list of pages that are slow to download."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
+__title__ = "what's slow"
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
 import webcheck
-from httpcodes import HTTP_STATUS_CODES
-from rptlib import *
-
-Link = webcheck.Link
-linkMap = Link.linkMap
-config = webcheck.config
-
-title = "What's Slow"
+import rptlib
 
 def generate(fp):
+    """Output the list of slow pages to the given file descriptor."""
     import time
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
@@ -42,22 +37,24 @@ def generate(fp):
     fp.write('      <th rowspan="2">Size <br>(Kb)</th>\n')
     fp.write('      <th colspan="3">Time (HH:MM:SS)</th></tr>\n')
     fp.write('  <tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>\n')
-    urls = linkMap.keys()
-    urls.sort(sort_by_size)
+    urls = webcheck.Link.linkMap.keys()
+    urls.sort(rptlib.sort_by_size)
     for url in urls:
-        link = linkMap[url]
-        if not link.html: continue
+        link = webcheck.Link.linkMap[url]
+        if not link.html:
+            continue
         sizeK = link.totalSize / 1024
         sizek = link.totalSize * 8 / 1000
-        if sizeK < config.REPORT_SLOW_URL_SIZE:
+        if sizeK < webcheck.config.REPORT_SLOW_URL_SIZE:
             break
-        fp.write('  <tr><td>%s</td>' % make_link(url, get_title(url))+'\n')
-        fp.write('      <td>%s</td><td class="time">%s</td>\n' \
-                 % (sizeK, time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8)))))
+        fp.write('  <tr><td>%s</td>' % make_link(url)+'\n')
+        fp.write('      <td>%s</td>\n' % sizeK)
         fp.write('      <td class="time">%s</td>\n' \
-              % time.strftime('%H:%M:%S',time.gmtime(int(sizek/56))))
+                 % time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8))))
+        fp.write('      <td class="time">%s</td>\n' \
+                 % time.strftime('%H:%M:%S',time.gmtime(int(sizek/56))))
         fp.write('      <td class="time">%s</td></tr>\n' \
-              % time.strftime('%H:%M:%S',time.gmtime(int(sizek/1500))))
-        add_problem('Slow Link: %sK' % sizeK, link) 
+                 % time.strftime('%H:%M:%S',time.gmtime(int(sizek/1500))))
+        rptlib.add_problem('Slow Link: %sK' % sizeK, link) 
     fp.write('</table>\n')
     fp.write('</div>\n')

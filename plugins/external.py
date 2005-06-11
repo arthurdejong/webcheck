@@ -19,21 +19,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""External links"""
+"""Present a list of external links present on the site."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
-
+__title__ = 'external links'
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
 import webcheck
-from rptlib import *
-
-title = 'External Links'
+import rptlib
 
 def generate(fp):
+    """Generate the list of external links to the given file descriptor."""
     fp.write('<ol>\n')
-    for url in Link.linkMap.keys():
-        link=Link.linkMap[url]
+    for url in webcheck.Link.linkMap.keys():
+        link=webcheck.Link.linkMap[url]
         if link.external:
-            fp.write('  <li>%s</li>\n' % make_link(url,get_title(url)))
+            fp.write('  <li>%s</li>\n' % rptlib.make_link(url))
     fp.write('</ol>\n')

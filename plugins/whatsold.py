@@ -19,34 +19,31 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""Potentially outdated pages"""
+"""Present a list of potentially outdated pages."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
+__title__ = "what's old"
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
 import webcheck
-from rptlib import *
+import rptlib
 
-linkMap = Link.linkMap
-
-title = "What's Old"
-
-# what's old
 def generate(fp):
+    """Output the list of outdated pages to the specified file descriptor."""
     fp.write('<div class="table">')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('  <tr><th>Link</th><th>Author</th><th>Age</th></tr>\n')
-    urls = linkMap.keys()
-    urls.sort(sort_by_rev_age)
+    urls = webcheck.Link.linkMap.keys()
+    urls.sort(rptlib.sort_by_rev_age)
     for url in urls:
-        link=linkMap[url]
+        link=webcheck.Link.linkMap[url]
         if not link.html:
             continue
         age = link.age
         if age and (age >= webcheck.config.REPORT_WHATSOLD_URL_AGE):
-            fp.write('  <tr><td>%s</td>\n' % make_link(url,get_title(url)))
+            fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(url))
             fp.write('      <td>%s</td>\n' % (link.author))
             fp.write('      <td class="time">%s</td></tr>' % age)
-            add_problem('Old Link: %s days old' % age ,link)
+            rptlib.add_problem('Old Link: %s days old' % age ,link)
     fp.write('</table>\n')
     fp.write('</div>\n')

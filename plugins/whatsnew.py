@@ -19,35 +19,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""Recently modified pages"""
+"""Present a list of recently modified pages."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
+__title__ = "what's new"
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
 import webcheck
-from httpcodes import HTTP_STATUS_CODES
-from rptlib import *
+import rptlib
 
-Link = webcheck.Link
-linkMap = Link.linkMap
-config = webcheck.config
-
-title = "What's New"
-
-# what's new
 def generate(fp):
+    """Output the list of recently modified pages to the specified file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('  <tr><th>Link</th><th>Author</th><th>Age</th></tr>\n')
-    urls = linkMap.keys()
-    urls.sort(sort_by_age)
+    urls = webcheck.Link.linkMap.keys()
+    urls.sort(rptlib.sort_by_age)
     for url in urls:
-        link=linkMap[url]
+        link=webcheck.Link.linkMap[url]
         if not link.html:
             continue
         age = link.age
-        if (age is not None) and (age <= config.REPORT_WHATSNEW_URL_AGE):
-            fp.write('  <tr><td>%s</td>\n' % make_link(url,get_title(url)))
+        if (age is not None) and (age <= webcheck.config.REPORT_WHATSNEW_URL_AGE):
+            fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(url))
             fp.write('      <td>%s</td>\n' % link.author)
             fp.write('      <td class="time">%s</td></tr>\n' % age)
     fp.write('</table>\n')

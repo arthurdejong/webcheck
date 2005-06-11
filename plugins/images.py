@@ -19,24 +19,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""Image Catalog"""
+"""Generate a list of images that are on the site."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
+__title__ = 'images'
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
 import webcheck
-from httpcodes import HTTP_STATUS_CODES
-from rptlib import *
+import rptlib
 
-Link = webcheck.Link
-linkMap = Link.linkMap
-config = webcheck.config
-
-title = 'Images'
-
-# images
 def generate(fp):
+    """Output a list of images to the given file descriptor."""
     fp.write('<ol>\n')
-    for url, image in Link.images.items():
-        fp.write('  <li>%s</li>\n' % make_link(url,url))
+    for url, image in webcheck.Link.images.items():
+        fp.write('  <li>%s</li>\n' % rptlib.make_link(url))
     fp.write('</ol>\n')

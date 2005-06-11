@@ -19,34 +19,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""Pages with no titles"""
+"""List pages without a title."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
+__title__ = 'missing titles'
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
 import webcheck
-from httpcodes import HTTP_STATUS_CODES
-from rptlib import *
-
-Link = webcheck.Link
-linkMap = Link.linkMap
-config = webcheck.config
-
-title = 'No Titles'
+import rptlib
 
 def generate(fp):
+    """Output the list of pages without a title to the given file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('  <tr><th>URL</th><th>Author</th></tr>\n')
-    urls = linkMap.keys()
-    urls.sort(sort_by_author)
+    urls=webcheck.Link.linkMap.keys()
+    urls.sort(rptlib.sort_by_author)
     for url in urls:
-        link = linkMap[url]
+        link = webcheck.Link.linkMap[url]
         if link.external:
             continue
         if link.html and (link.title is None):
             fp.write('  <tr><td>%s</td><td>%s</td></tr>\n' \
-                     % (make_link(url,url), link.author))
-            add_problem("No Title",link)
+                     % (rptlib.make_link(url), link.author))
+            rptlib.add_problem("No Title",link)
     fp.write('</table>\n')
     fp.write('</div>\n')

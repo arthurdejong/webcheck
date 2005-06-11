@@ -19,31 +19,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-"""Your site at-a-glance"""
+"""Present a sitemap of the visited site."""
 
-__version__ = '1.0'
-__author__ = 'mwm@mired.org'
-title = 'Site Map'
+__title__ = 'site map'
+__author__ = 'Arthur de Jong'
+__version__ = '1.1'
 
 import webcheck
 import rptlib
 
-def explore(fp, link, explored={}, level=0):
+def _explore(fp, link, explored={}, level=0):
     """Recursively do a breadth-first traversal of the graph of links
-    on the site.  Returns a list of HTML fragments that can be printed 
+    on the site.  Returns a list of HTML fragments that can be printed
     to produce a site map."""
-
     explored[link.URL]=True
     # output this link
     fp.write('<li>\n')
     if (link.URL in webcheck.Link.badLinks) and not webcheck.config.ANCHOR_BAD_LINKS:
         fp.write(link.URL+'\n')
     else:
-        fp.write(rptlib.make_link(link.URL,rptlib.get_title(link.URL))+'\n')
-
+        fp.write(rptlib.make_link(link.URL)+'\n')
     # only check children if we are not too deep yet
     if level <= webcheck.config.REPORT_SITEMAP_LEVEL:
-
         # figure out the links to follow and ensure that they are only
         # explored from here
         to_explore = []
@@ -54,18 +51,16 @@ def explore(fp, link, explored={}, level=0):
             # mark the link as explored
             explored[i]=True
             to_explore.append(i)
-
         # go over the children and present them as a list
         if len(to_explore) > 0:
             fp.write('<ul>\n')
             for i in to_explore:
-                explore(fp,webcheck.Link.linkMap[i],explored,level+1)
+                _explore(fp,webcheck.Link.linkMap[i],explored,level+1)
             fp.write('</ul>\n')
-
     fp.write('</li>\n')
 
-# site map
 def generate(fp):
+    """Output the sitemap to the specified file descriptor."""
     fp.write('<ul>\n')
-    explore(fp,webcheck.Link.base)
+    _explore(fp,webcheck.Link.linkMap[webcheck.Link.baseurl])
     fp.write('</ul>\n')
