@@ -58,13 +58,13 @@ def get_title(url):
         return url
     return link.title
 
-def make_link(url,title):
-    """ Return an <a>nchor to a url with title. If url is in the Linklist and
-    is external, insert "class=external" in the <a> tag. """
+def make_link(url,title=None):
+    """Return an <a>nchor to a url with title. If url is in the Linklist and
+    is external, insert "class=external" in the <a> tag."""
     # try to fetch the link object for this url
     cssclass='internal'
     try:
-        link=linkMap[url]
+        link=webcheck.Link.linkMap[url]
         if link.external:
             cssclass='external'
         if title is None:
