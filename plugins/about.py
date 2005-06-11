@@ -21,8 +21,6 @@
 
 """Plugins used in this report"""
 
-# This is a trivial plugin aid developers of webcheck pluggins
-
 __version__ = '1.0'
 __author__ = 'mwm@mired.org'
 title = "About&nbsp;Plugins"
@@ -30,14 +28,14 @@ title = "About&nbsp;Plugins"
 import webcheck
 import rptlib
 
-def generate():
-    print '<div class="table">'
-    print '<table border=0 cellpadding=2 cellspacing=2 width="75%">'
-    print '<tr><th>Plugin</th><th>Version</th><th>Author</th></tr>'
+def generate(fp):
+    fp.write('<div class="table">\n')
+    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
+    fp.write('<tr><th>Plugin</th><th>Version</th><th>Author</th></tr>\n')
     for plugin in webcheck.config.PLUGINS + ['problems']:
         report = __import__('plugins.'+plugin,globals(),locals(),[plugin])
-        print '<tr><td class="pluginname">%s</td>' % plugin
-        print '<td class="pluginversion">%s</td>' % report.__version__
-        print '<td class="pluginauthor">%s</td></tr>' % report.__author__
-    print '</table>'
-    print '</div>'
+        fp.write('<tr><td class="pluginname">%s</td>\n' % plugin)
+        fp.write('    <td class="pluginversion">%s</td>\n' % report.__version__)
+        fp.write('    <td class="pluginauthor">%s</td></tr>\n' % report.__author__)
+    fp.write('</table>\n')
+    fp.write('</div>\n')
