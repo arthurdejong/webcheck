@@ -32,5 +32,5 @@ def generate(fp):
     """Output a list of images to the given file descriptor."""
     fp.write('<ol>\n')
     for url, image in webcheck.Link.images.items():
-        fp.write('  <li>%s</li>\n' % rptlib.make_link(url))
+        fp.write('  <li>%s</li>\n' % rptlib.make_link(url,url))
     fp.write('</ol>\n')

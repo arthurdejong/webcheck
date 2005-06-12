@@ -33,7 +33,7 @@ def generate(fp):
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     for url in webcheck.Link.notChecked:
-        fp.write('  <tr><th colspan=4>%s</th></tr>\n' % rptlib.make_link(url))
+        fp.write('  <tr><th colspan="4">%s</th></tr>\n' % rptlib.make_link(url,url))
         fp.write('  <tr class="parent"><th rowspan="%s">Parent</th>\n' % len(webcheck.Link.linkMap[url].parents))
         for parent in webcheck.Link.linkMap[url].parents:
             fp.write('    ')

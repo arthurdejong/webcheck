@@ -41,7 +41,7 @@ def generate(fp):
             continue
         if link.html and (link.title is None):
             fp.write('  <tr><td>%s</td><td>%s</td></tr>\n' \
-                     % (rptlib.make_link(url), link.author))
+                     % (rptlib.make_link(url,url), link.author))
             rptlib.add_problem("No Title",link)
     fp.write('</table>\n')
     fp.write('</div>\n')

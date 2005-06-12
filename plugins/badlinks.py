@@ -74,7 +74,7 @@ def generate(fp):
         fp.write('  <tr><td class="blank" colspan="3">&nbsp;</td></tr>\n')
         if webcheck.config.ANCHOR_BAD_LINKS:
             fp.write('  <tr class="link"><th>Link</th>\n')
-            fp.write('    <td colspan="2" align="left">'  +rptlib.make_link(url) +'</td></tr>\n')
+            fp.write('    <td colspan="2" align="left">'  +rptlib.make_link(url,url) +'</td></tr>\n')
         else:
             fp.write('  <tr class="link"><th>Link</th>\n')
             fp.write('    <td colspan="2" align="left">%s</td></tr>\n' % url)
