@@ -227,6 +227,8 @@ class ExternalLink(Link):
 
         if config.AVOID_EXTERNAL_LINKS or yanked:
             self.init()
+            self.URL = url
+            Link.linkMap[self.URL]=self
             self.status="Not Checked"
             self.external=1
             debugio.info('  not checked')
