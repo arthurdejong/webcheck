@@ -62,5 +62,5 @@ def _explore(fp, link, explored={}, level=0):
 def generate(fp):
     """Output the sitemap to the specified file descriptor."""
     fp.write('<ul>\n')
-    _explore(fp,webcheck.Link.linkMap[webcheck.Link.baseurl])
+    _explore(fp,webcheck.Link.linkMap[webcheck.Link.base])
     fp.write('</ul>\n')

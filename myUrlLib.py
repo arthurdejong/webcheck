@@ -69,7 +69,6 @@ class Link:
     badLinks = []
     notChecked = []
     images = {}
-    baseurl = ""
     base=""
 
     # This is a static variable to indicate if the config.EXCLUDED urls have been
@@ -103,12 +102,7 @@ class Link:
             return
 
         if (parent is None):
-            Link.baseurl=self.URL
-            if hasattr(self.URL, 'rfind'):
-                Link.base=self.URL[:self.URL.rfind('/')+1]
-            else:
-                Link.base=self.URL[:string.rfind(self.URL,'/')+1]
-            if Link.base[-2:] == '//': Link.base = self.URL
+            Link.base=self.URL
             debugio.info('  base: %s' % Link.base)
             if self.scheme == 'http':
                 base_location = parsed[1]

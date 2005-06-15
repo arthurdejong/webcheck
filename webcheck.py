@@ -179,12 +179,12 @@ if __name__ == '__main__':
 
     debugio.info('checking site....')
     try:
-        Link.base = Link(URL,None) # this will take a while
+        baseLink = Link(URL,None) # this will take a while
     except KeyboardInterrupt:
         sys.stderr.write("Interrupted\n")
         sys.exit(1)
     debugio.info('done.')
-    if not hasattr(Link.base,"URL"):
+    if not hasattr(baseLink,"URL"):
         warn()
         sys.exit(1)
 
