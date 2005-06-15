@@ -25,22 +25,22 @@ __title__ = 'site map'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
 import rptlib
+import config
 
-def _explore(fp, link, explored={}, level=0):
+def _explore(fp, site, link, explored={}, level=0):
     """Recursively do a breadth-first traversal of the graph of links
     on the site.  Returns a list of HTML fragments that can be printed
     to produce a site map."""
     explored[link.URL]=True
     # output this link
     fp.write('<li>\n')
-    if (link.URL in webcheck.Link.badLinks) and not webcheck.config.ANCHOR_BAD_LINKS:
+    if (link.URL in site.badLinks) and not config.ANCHOR_BAD_LINKS:
         fp.write(link.URL+'\n')
     else:
         fp.write(rptlib.make_link(link.URL)+'\n')
     # only check children if we are not too deep yet
-    if level <= webcheck.config.REPORT_SITEMAP_LEVEL:
+    if level <= config.REPORT_SITEMAP_LEVEL:
         # figure out the links to follow and ensure that they are only
         # explored from here
         to_explore = []
@@ -55,12 +55,12 @@ def _explore(fp, link, explored={}, level=0):
         if len(to_explore) > 0:
             fp.write('<ul>\n')
             for i in to_explore:
-                _explore(fp,webcheck.Link.linkMap[i],explored,level+1)
+                _explore(fp,site,site.linkMap[i],explored,level+1)
             fp.write('</ul>\n')
     fp.write('</li>\n')
 
-def generate(fp):
+def generate(fp,site):
     """Output the sitemap to the specified file descriptor."""
     fp.write('<ul>\n')
-    _explore(fp,webcheck.Link.linkMap[webcheck.Link.base])
+    _explore(fp,site,site.linkMap[site.base])
     fp.write('</ul>\n')

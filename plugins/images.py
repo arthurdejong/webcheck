@@ -25,12 +25,11 @@ __title__ = 'images'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
 import rptlib
 
-def generate(fp):
+def generate(fp,site):
     """Output a list of images to the given file descriptor."""
     fp.write('<ol>\n')
-    for url, image in webcheck.Link.images.items():
+    for url, image in site.images.items():
         fp.write('  <li>%s</li>\n' % rptlib.make_link(url,url))
     fp.write('</ol>\n')

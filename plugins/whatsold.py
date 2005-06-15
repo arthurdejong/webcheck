@@ -25,22 +25,22 @@ __title__ = "what's old"
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
 import rptlib
+import config
 
-def generate(fp):
+def generate(fp,site):
     """Output the list of outdated pages to the specified file descriptor."""
     fp.write('<div class="table">')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('  <tr><th>Link</th><th>Author</th><th>Age</th></tr>\n')
-    urls = webcheck.Link.linkMap.keys()
+    urls = site.linkMap.keys()
     urls.sort(rptlib.sort_by_rev_age)
     for url in urls:
-        link=webcheck.Link.linkMap[url]
+        link=site.linkMap[url]
         if not link.html:
             continue
         age = link.age
-        if age and (age >= webcheck.config.REPORT_WHATSOLD_URL_AGE):
+        if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
             fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(url))
             fp.write('      <td>%s</td>\n' % (link.author))
             fp.write('      <td class="time">%s</td></tr>' % age)

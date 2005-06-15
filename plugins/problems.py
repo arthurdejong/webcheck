@@ -27,7 +27,7 @@ __version__ = '1.1'
 
 import rptlib
 
-def generate(fp):
+def generate(fp,site):
     """Output the overview of problems to the given file descriptor."""
     authors=rptlib.problem_db.keys()
     authors.sort()

@@ -1,24 +1,8 @@
-
-
-**************************************************************************
-* I'm running out of ideas ;-).  If you have any suggestions for         *
-* improvement, please let me know.   mwm@mired.org                       *
-**************************************************************************
-
-Support for authenticating proxies
-
-New config file format.
-
-Configurable time-out when retrieving a document.
-
-Cookies support (maybe)
-
-Integration with weblint
-
-If using 'file' scheme, clicking on a link will bring up the file in an editor
-
-Support for mult-threading (maybe)
-
-Option to put # of hits of a document in the Site Map obtained from log file.
-
-Export to database file.
+* support for authenticating proxies
+* new config file format.
+* configurable time-out when retrieving a document.
+* cookies support (maybe)
+* integration with weblint
+* if using 'file' scheme, clicking on a link will bring up the file in an editor
+* support for mult-threading (maybe)
+* option to put # of hits of a document in the Site Map obtained from log file.

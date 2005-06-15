@@ -29,10 +29,10 @@ import string
 import os
 import debugio
 import version
+import config
 
 Link = webcheck.Link
 linkMap = Link.linkMap
-config = webcheck.config
 proxies = config.PROXIES
 
 problem_db = {}
@@ -209,7 +209,7 @@ def gen_plugins(plugins):
         report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
         fp = open_file(filename)
         doTopMain(fp,report)
-        report.generate(fp)
+        report.generate(fp,Link)
         doBotMain(fp)
         fp.close()
 

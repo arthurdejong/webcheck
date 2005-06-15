@@ -45,9 +45,6 @@ except ImportError:
 import myUrlLib
 Link=myUrlLib.Link
 
-# myUrlLib will be looking for a 'config' module.  set it up here.
-myUrlLib.config=config
-
 import debugio
 debugio.loglevel=debugio.INFO
 

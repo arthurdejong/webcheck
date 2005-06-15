@@ -32,8 +32,8 @@ import base64
 import mimetypes
 import debugio
 import version
+import config
 
-config = myUrlLib.config
 Link = myUrlLib.Link
 proxies = config.PROXIES
 if proxies is None:

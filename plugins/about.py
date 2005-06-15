@@ -25,15 +25,14 @@ __title__ = 'about plugins'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
-import rptlib
+import config
 
-def generate(fp):
+def generate(fp,site):
     """Output a list of modules, it's authors and it's version to the file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('<tr><th>Plugin</th><th>Version</th><th>Author</th></tr>\n')
-    for plugin in webcheck.config.PLUGINS:
+    for plugin in config.PLUGINS:
         report = __import__('plugins.'+plugin,globals(),locals(),[plugin])
         fp.write('<tr><td class="pluginname">%s</td>\n' % report.__title__)
         fp.write('    <td class="pluginversion">%s</td>\n' % report.__version__)

@@ -25,10 +25,10 @@ __title__ = "what's slow"
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
 import rptlib
+import config
 
-def generate(fp):
+def generate(fp,site):
     """Output the list of slow pages to the given file descriptor."""
     import time
     fp.write('<div class="table">\n')
@@ -37,15 +37,15 @@ def generate(fp):
     fp.write('      <th rowspan="2">Size <br>(Kb)</th>\n')
     fp.write('      <th colspan="3">Time (HH:MM:SS)</th></tr>\n')
     fp.write('  <tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>\n')
-    urls = webcheck.Link.linkMap.keys()
+    urls = site.linkMap.keys()
     urls.sort(rptlib.sort_by_size)
     for url in urls:
-        link = webcheck.Link.linkMap[url]
+        link = site.linkMap[url]
         if not link.html:
             continue
         sizeK = link.totalSize / 1024
         sizek = link.totalSize * 8 / 1000
-        if sizeK < webcheck.config.REPORT_SLOW_URL_SIZE:
+        if sizeK < config.REPORT_SLOW_URL_SIZE:
             break
         fp.write('  <tr><td>%s</td>' % make_link(url)+'\n')
         fp.write('      <td>%s</td>\n' % sizeK)

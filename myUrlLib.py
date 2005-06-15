@@ -20,12 +20,12 @@
 
 """Generic library for handling urls and links"""
 
-config = None
 robot_parsers={}
 SECS_PER_DAY=60*60*24
 compiled_ex = []
 compiled_yanked = []
 
+import config
 from urllib import *
 import htmllib
 import httplib

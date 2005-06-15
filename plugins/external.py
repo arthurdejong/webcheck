@@ -25,14 +25,13 @@ __title__ = 'external links'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
 import rptlib
 
-def generate(fp):
+def generate(fp,site):
     """Generate the list of external links to the given file descriptor."""
     fp.write('<ol>\n')
-    for url in webcheck.Link.linkMap.keys():
-        link=webcheck.Link.linkMap[url]
+    for url in site.linkMap.keys():
+        link=site.linkMap[url]
         if link.external:
             fp.write('  <li>%s</li>\n' % rptlib.make_link(url))
     fp.write('</ol>\n')

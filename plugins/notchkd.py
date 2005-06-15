@@ -25,22 +25,21 @@ __title__ = 'not checked'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
 import rptlib
 
-def generate(fp):
+def generate(fp,site):
     """Output the list of not checked pages to the given file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
-    for url in webcheck.Link.notChecked:
+    for url in site.notChecked:
         fp.write('  <tr><th colspan="4">%s</th></tr>\n' % rptlib.make_link(url,url))
-        fp.write('  <tr class="parent"><th rowspan="%s">Parent</th>\n' % len(webcheck.Link.linkMap[url].parents))
-        for parent in webcheck.Link.linkMap[url].parents:
+        fp.write('  <tr class="parent"><th rowspan="%s">Parent</th>\n' % len(site.linkMap[url].parents))
+        for parent in site.linkMap[url].parents:
             fp.write('    ')
-            if parent != webcheck.Link.linkMap[url].parents[0]:
+            if parent != site.linkMap[url].parents[0]:
                 fp.write('<tr>\n')
             fp.write('<td colspan="2">%s</td>\n' % rptlib.make_link(parent))
-            fp.write('<td>%s</td></tr>\n' % (webcheck.Link.linkMap[parent].author))
+            fp.write('<td>%s</td></tr>\n' % (site.linkMap[parent].author))
         fp.write('\n  <tr><td class="blank" colspan="4">&nbsp;</td></tr>\n')
     fp.write('</table>\n')
     fp.write('</div>\n')

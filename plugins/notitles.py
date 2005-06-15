@@ -25,18 +25,17 @@ __title__ = 'missing titles'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
 import rptlib
 
-def generate(fp):
+def generate(fp,site):
     """Output the list of pages without a title to the given file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('  <tr><th>URL</th><th>Author</th></tr>\n')
-    urls=webcheck.Link.linkMap.keys()
+    urls=site.linkMap.keys()
     urls.sort(rptlib.sort_by_author)
     for url in urls:
-        link = webcheck.Link.linkMap[url]
+        link = site.linkMap[url]
         if link.external:
             continue
         if link.html and (link.title is None):

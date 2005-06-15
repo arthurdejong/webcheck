@@ -25,8 +25,8 @@ __title__ = 'bad links'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 
-import webcheck
 import rptlib
+import config
 
 HTTP_STATUS_CODES = {'100':"Continue",
                      '101':"Switching Protocols",
@@ -66,28 +66,28 @@ HTTP_STATUS_CODES = {'100':"Continue",
                      '505':"HTTP Version not supported"
                      }
 
-def generate(fp):
+def generate(fp,site):
     """Present the list of bad links to the given file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellspacing="2" width="75%">\n')
-    for url in webcheck.Link.badLinks:
+    for url in site.badLinks:
         fp.write('  <tr><td class="blank" colspan="3">&nbsp;</td></tr>\n')
-        if webcheck.config.ANCHOR_BAD_LINKS:
+        if config.ANCHOR_BAD_LINKS:
             fp.write('  <tr class="link"><th>Link</th>\n')
             fp.write('    <td colspan="2" align="left">'  +rptlib.make_link(url,url) +'</td></tr>\n')
         else:
             fp.write('  <tr class="link"><th>Link</th>\n')
             fp.write('    <td colspan="2" align="left">%s</td></tr>\n' % url)
-        status = str(webcheck.Link.linkMap[url].status)
+        status = str(site.linkMap[url].status)
         if status in HTTP_STATUS_CODES.keys():
             status = status + ": " + HTTP_STATUS_CODES[status]
         fp.write('  <tr class="status"><th>Status</th><td colspan="2">%s</td></tr>\n' % status)
-        parents = webcheck.Link.linkMap[url].parents
+        parents = site.linkMap[url].parents
         fp.write('  <tr class="parent"><th rowspan="%s">Parents</th>\n' % len(parents))
         parents.sort(rptlib.sort_by_author)
         for parent in parents:
             fp.write('    <td>%s</td>\n' % rptlib.make_link(parent))
-            fp.write('    <td>%s</td>\n  </tr>\n' % (str(webcheck.Link.linkMap[parent].author)))
-            rptlib.add_problem("Bad Link: " + url, webcheck.Link.linkMap[parent])
+            fp.write('    <td>%s</td>\n  </tr>\n' % (str(site.linkMap[parent].author)))
+            rptlib.add_problem("Bad Link: " + url, site.linkMap[parent])
     fp.write('</table>\n')
     fp.write('</div>\n')
