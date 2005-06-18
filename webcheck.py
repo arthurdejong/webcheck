@@ -162,11 +162,12 @@ def link_image(filename):
        print 'Warning: "%s": %s' % (target, errtext)
        print '         Please copy "%s" to "%s".' % (source, target)
 
-if __name__ == '__main__':
-
+def main():
+    # parse command-line arguments
     parse_args()
+    # ensure that output directory name ends in a slash
     config.OUTPUT_DIR=config.OUTPUT_DIR + '/'
-
+    # indicate that we are starting
     debugio.info('checking site....')
     try:
         site = myUrlLib.Link(URL,None) # this will take a while
@@ -177,7 +178,6 @@ if __name__ == '__main__':
     if not hasattr(site,"URL"):
         warn()
         sys.exit(1)
-
     # now we can write out the files
     # start with the frame-description page
     debugio.info('generating reports...')
@@ -193,3 +193,6 @@ if __name__ == '__main__':
     if config.LOGO_HREF == 'webcheck.png':
         link_image('webcheck.png')
     debugio.info('done.')
+
+if __name__ == '__main__':
+    main()
