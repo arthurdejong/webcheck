@@ -108,7 +108,6 @@ DEBUG_LEVEL = 1
 # there should be a corresponding .py file in the WEBCHECKHOME/reports directory
 # else bad things will occur ;-).  Place in the order for which you would like to
 # see them in the navigation bar.
-# Note: Do not include the 'problems' report as it will appear (last) on all
 # reports automatically
 PLUGINS = ['sitemap',
            'badlinks',
@@ -118,7 +117,8 @@ PLUGINS = ['sitemap',
            'slow',
            'notitles',
            'external',
-           'notchkd']
+           'notchkd',
+           'problems']
            
 # This is a URL (absolute or relative) of a level 1 Cascading Stylesheet to be
 # used in all reports.  See the default webcheck.css as well as the HTML source

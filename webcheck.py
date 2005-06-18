@@ -194,9 +194,9 @@ if __name__ == '__main__':
     # generate frameset
     plugins.rptlib.main_index(config.MAIN_FILENAME)
     # generate navigation frame
-    plugins.rptlib.nav_bar(config.NAVBAR_FILENAME,config.PLUGINS + ['problems'])
+    plugins.rptlib.nav_bar(config.NAVBAR_FILENAME,config.PLUGINS)
     # for every plugin, generate a page
-    plugins.rptlib.gen_plugins(config.PLUGINS + ['problems'])
+    plugins.rptlib.gen_plugins(config.PLUGINS)
     # put extra files in the output directory
     link_image('blackbar.png')
     if config.LOGO_HREF == 'webcheck.png':
