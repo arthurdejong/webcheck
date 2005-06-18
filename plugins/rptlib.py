@@ -129,20 +129,16 @@ def open_file(filename):
     if os.path.isdir (config.OUTPUT_DIR) == 0:
         os.mkdir(config.OUTPUT_DIR)
     fname = config.OUTPUT_DIR + filename
-    # FIXME: get rid of this once we properly write files
-    tmp = sys.stdout
-    sys.stdout = sys.__stdout__
     if os.path.exists(fname) and not config.OVERWRITE_FILES:
         # mv: overwrite `/tmp/b'?
         # cp: overwrite `/tmp/b'?
-        ow = raw_input('File %s already exists. Overwrite? y[es]/a[ll]/Q[uit] ' % `fname`)
+        ow = raw_input('File %s already exists. Overwrite? y[es]/a[ll]/Q[uit] ' % fname)
         ow = ow.lower() + " "
         if ow[0] == 'a':
             config.OVERWRITE_FILES = 1
         elif ow[0] != 'y':
             print 'Aborted.'
             sys.exit(0)
-    sys.stdout = tmp
     return open(fname,'w')
 
 def main_index(fname):
