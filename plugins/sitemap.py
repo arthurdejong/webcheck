@@ -48,6 +48,9 @@ def _explore(fp, site, link, explored={}, level=0):
             # skip pages that have already been traversed
             if explored.has_key(i):
                 continue
+            # skip external links
+            if site.linkMap[i].external:
+                continue
             # mark the link as explored
             explored[i]=True
             to_explore.append(i)
