@@ -29,8 +29,10 @@ import rptlib
 
 def generate(fp,site):
     """Generate the list of external links to the given file descriptor."""
+    urls=site.linkMap.keys();
+    urls.sort()
     fp.write('<ol>\n')
-    for url in site.linkMap.keys():
+    for url in urls:
         link=site.linkMap[url]
         if link.external:
             fp.write('  <li>%s</li>\n' % rptlib.make_link(url))
