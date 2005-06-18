@@ -20,15 +20,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-
-explored = []
-problem_db = {}
-linkMap = {}
-
 import sys
 import time
 import os
-
 
 start_time = time.ctime(time.time())
 
@@ -43,7 +37,6 @@ except ImportError:
     sys.exit(1)
 
 import myUrlLib
-Link=myUrlLib.Link
 
 import debugio
 debugio.loglevel=debugio.INFO
@@ -176,30 +169,27 @@ if __name__ == '__main__':
 
     debugio.info('checking site....')
     try:
-        baseLink = Link(URL,None) # this will take a while
+        site = myUrlLib.Link(URL,None) # this will take a while
     except KeyboardInterrupt:
         sys.stderr.write("Interrupted\n")
         sys.exit(1)
     debugio.info('done.')
-    if not hasattr(baseLink,"URL"):
+    if not hasattr(site,"URL"):
         warn()
         sys.exit(1)
-
-    linkMap = Link.linkMap
 
     # now we can write out the files
     # start with the frame-description page
     debugio.info('generating reports...')
     import plugins.rptlib
     # generate frameset
-    plugins.rptlib.main_index(config.MAIN_FILENAME)
+    plugins.rptlib.main_index(config.MAIN_FILENAME,site)
     # generate navigation frame
-    plugins.rptlib.nav_bar(config.NAVBAR_FILENAME,config.PLUGINS)
+    plugins.rptlib.nav_bar(config.NAVBAR_FILENAME,site, config.PLUGINS)
     # for every plugin, generate a page
-    plugins.rptlib.gen_plugins(config.PLUGINS)
+    plugins.rptlib.gen_plugins(site, config.PLUGINS)
     # put extra files in the output directory
     link_image('blackbar.png')
     if config.LOGO_HREF == 'webcheck.png':
         link_image('webcheck.png')
     debugio.info('done.')
-

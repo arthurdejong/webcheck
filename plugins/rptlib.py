@@ -23,17 +23,11 @@ __version__ = '1.0'
 __author__ = 'mwm@mired.org'
 
 import sys
-import webcheck
 import urllib
 import string
-import os
 import debugio
 import version
 import config
-
-Link = webcheck.Link
-linkMap = Link.linkMap
-proxies = config.PROXIES
 
 problem_db = {}
 
@@ -41,19 +35,17 @@ problem_db = {}
 # Note that I do it this way for two reasons.  One is that Netscape reportedly
 # handles stylesheets better when they are inlined.  Two is that people often
 # forget to put webcheck.css in the output directory.
-if proxies is None:
-    proxies = urllib.getproxies()
-opener = urllib.FancyURLopener(proxies)
+if config.PROXIES is None:
+    config.PROXIES = urllib.getproxies()
+opener = urllib.FancyURLopener(config.PROXIES)
 opener.addheaders = [('User-agent','Webcheck ' + version.webcheck)]
 try:
     stylesheet =  opener.open(config.STYLESHEET).read()
 except:
     stylesheet = ''
 
-def get_title(url):
-    """ Returns the title of a url if it is not None, else returns url
-    note that this implies linkMap[url]. """
-    link=linkMap[url]
+def get_title(link):
+    """Returns the title of a link if it is set otherwise returns url."""
     if link.title is None:
         return url
     return link.title
@@ -64,7 +56,8 @@ def make_link(url,title=None):
     # try to fetch the link object for this url
     cssclass='internal'
     try:
-        link=webcheck.Link.linkMap[url]
+        global mySite
+        link=mySite.linkMap[url]
         if link.external:
             cssclass='external'
         if title is None:
@@ -88,7 +81,8 @@ def add_problem(type,link):
 
 def sort_by_age(a,b):
     """ Sort helper for url's age.  a and b are urls in linkMap """
-    aage, bage = linkMap[a].age, linkMap[b].age
+    global mySite
+    aage, bage = mySite.linkMap[a].age, mySite.linkMap[b].age
     if aage < bage:
         return -1
     elif aage == bage:
@@ -97,7 +91,8 @@ def sort_by_age(a,b):
         return 1
 
 def sort_by_rev_age(a,b):
-    aage, bage = linkMap[a].age, linkMap[b].age
+    global mySite
+    aage, bage = mySite.linkMap[a].age, mySite.linkMap[b].age
     if aage > bage:
         return -1
     elif aage == bage:
@@ -106,7 +101,8 @@ def sort_by_rev_age(a,b):
         return 1
 
 def sort_by_author(a,b):
-    aauthor,bauthor = `linkMap[a].author`, `linkMap[b].author`
+    global mySite
+    aauthor,bauthor = mySite.linkMap[a].author, mySite.linkMap[b].author
     if aauthor < bauthor:
         return -1
     elif aauthor == bauthor:
@@ -115,7 +111,8 @@ def sort_by_author(a,b):
         return 1
 
 def sort_by_size(a,b):
-    asize, bsize = linkMap[a].totalSize, linkMap[b].totalSize
+    global mySite
+    asize, bsize = mySite.linkMap[a].totalSize, mySite.linkMap[b].totalSize
     if asize > bsize:
         return -1
     elif asize == bsize:
@@ -126,7 +123,8 @@ def sort_by_size(a,b):
 def open_file(filename):
     """ given config.OUTPUT_DIR checks if the directory already exists; if not, it creates it, and then opens
     filename for writing and returns the file object """
-    if os.path.isdir (config.OUTPUT_DIR) == 0:
+    import os
+    if os.path.isdir(config.OUTPUT_DIR) == 0:
         os.mkdir(config.OUTPUT_DIR)
     fname = config.OUTPUT_DIR + filename
     if os.path.exists(fname) and not config.OVERWRITE_FILES:
@@ -141,12 +139,15 @@ def open_file(filename):
             sys.exit(0)
     return open(fname,'w')
 
-def main_index(fname):
+def main_index(fname, site):
     """ Write out the frameset. """
+    # FIXME: get rid of this once we have a better way of passing this information
+    global mySite
+    mySite=site
     fp = open_file(fname)
     fp.write('<html>\n')
     fp.write('<head>\n')
-    fp.write('<title>Webcheck report for "%s"</title>\n' % get_title(Link.base))
+    fp.write('<title>Webcheck report for "%s"</title>\n' % get_title(site.linkMap[site.base]))
     fp.write('<style type="text/css">\n')
     fp.write('<!-- /* hide from old browsers */\n')
     fp.write(stylesheet+'\n')
@@ -160,7 +161,7 @@ def main_index(fname):
     fp.write('</html>\n')
     fp.close()
 
-def nav_bar(fname,plugins):
+def nav_bar(fname, site, plugins):
     """ Write out the navigation bar frame. """
     fp=open_file(fname)
     # print page header
@@ -197,19 +198,19 @@ def nav_bar(fname,plugins):
     # close file
     fp.close()
 
-def gen_plugins(plugins):
+def gen_plugins(site,plugins):
     """ Generate pages for plugins. """
     for plugin in plugins:
         debugio.info('  ' + plugin)
         filename = plugin + '.html'
         report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
         fp = open_file(filename)
-        doTopMain(fp,report)
-        report.generate(fp,Link)
+        doTopMain(fp,site,report)
+        report.generate(fp,site)
         doBotMain(fp)
         fp.close()
 
-def doTopMain(fp,report):
+def doTopMain(fp,site,report):
     """ Write top part of html file for main content frame. """
     fp.write('<html>\n')
     fp.write('<head><title>%s</title>\n' % report.__title__)
@@ -220,15 +221,15 @@ def doTopMain(fp,report):
     fp.write('<meta name="Generator" content="Webcheck ' + version.webcheck + '">\n')
     fp.write('</head>\n')
     fp.write('<body class="%s">\n' % string.split(report.__name__,'.')[1])
-    fp.write('<p class="logo"><a href="%s"><img src="%s" border="0" alt=""></a></p>\n' % (Link.base, config.LOGO_HREF))
-    fp.write('<h1 class="basename">\n')
-    fp.write('  <a href="%s">%s</a>\n' % (Link.base, get_title(Link.base)))
+    fp.write('<p class="logo"><a href="%s"><img src="%s" border="0" alt=""></a></p>\n' % (site.base, config.LOGO_HREF))
+    fp.write('<h1 class="basename">%s</h1>\n' % make_link(site.base))
     fp.write('</h1>\n')
     fp.write('\n\n<table width="100%" cellpadding="4">\n')
     fp.write('  <tr><th class="title">%s</th></tr>\n</table>\n' % report.__title__)
 
 def doBotMain(fp):
     """ Write bottom part of html file for main content frame. """
+    import webcheck
     fp.write('<hr>\n');
     fp.write('<p class="footer">\n')
     fp.write('<em>Generated %s by <a target="_top" href="%s">Webcheck %s</a></em></p>\n' % (webcheck.start_time,version.home, version.webcheck))
