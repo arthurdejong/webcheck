@@ -118,6 +118,7 @@ PLUGINS = ['sitemap',
            'notitles',
            'external',
            'notchkd',
+           'urllist',
            'problems']
            
 # This is a URL (absolute or relative) of a level 1 Cascading Stylesheet to be
@@ -153,3 +154,4 @@ REPORT_WHATSNEW_URL_AGE = 7
 
 REPORT_SLOW_URL_SIZE = 76
 
+#USER_AGENT = 'Webcheck ' + version.webcheck
