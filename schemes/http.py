@@ -38,17 +38,15 @@ Link = myUrlLib.Link
 proxies = config.PROXIES
 if proxies is None:
     proxies = urllib.getproxies()
-redirect_depth = 0
 
 opener = urllib.FancyURLopener(proxies)
 opener.addheaders = [('User-agent','Webcheck ' + version.webcheck)]
 if config.HEADERS:
     opener.addheaders = opener.addheaders + config.HEADERS
 
-def get_reply(url):
+def _get_reply(url,redirect_depth=0):
     """Open connection to url and report information given by HEAD command"""
 
-    global redirect_depth
     (scheme,location,path,query,fragment)=urlparse.urlsplit(url)
     if proxies and proxies.has_key('http'):
         host = urlparse.urlparse(proxies['http'])[1]
@@ -81,52 +79,48 @@ def get_reply(url):
     debugio.debug(errcode)
     debugio.debug(errmsg)
     if errcode == 301 or errcode == 302:
-        redirect_depth += 1
-        if redirect_depth > config.REDIRECT_DEPTH:
+        if redirect_depth >= config.REDIRECT_DEPTH:
             debugio.error('  Too many redirects!')
-            redirect_depth = 0
             return (errcode, errmsg, headers, url)
         redirect = headers['location']
         debugio.info('  redirected to: ' + redirect)
         redirect = urlparse.urljoin(url,redirect)
         if redirect == url:
             debugio.error('  redirect same as source: %s' % redirect)
-            redirect_depth = 0
             return (errcode, errmsg, headers, url)
         if Link.linkMap.has_key(redirect):
             link = Link.linkMap[redirect]
             return (link.status, link.message, link.headers, link.URL)
-        return get_reply(redirect)
-    redirect_depth = 0
+        return _get_reply(redirect,redirect_depth+1)
     return (errcode, errmsg, headers, url)
 
-def init(self, url, parent):
-    """ Here, self is a reference of the link object that is calling this
+def init(link, url, parent):
+    """ Here, link is a reference of the link object that is calling this
     pseudo-method"""
 
-    (self.status, self.message, self.headers, self.URL) = get_reply(myUrlLib.basejoin(parent,url))
-    Link.linkMap[self.URL] = self
+    (link.status, link.message, link.headers, link.URL) = _get_reply(myUrlLib.basejoin(parent,url))
+    Link.linkMap[link.URL] = link
     try:
-        self.type = self.headers.gettype()
+        link.type = link.headers.gettype()
     except AttributeError:
-        self.type = 'text/html' # is this a good enough default?
+        link.type = 'text/html' # is this a good enough default?
 
-    debugio.debug('  Content-type: ' + self.type)
+    debugio.debug('  Content-type: ' + link.type)
     try:
-        self.size = int(self.headers['content-length'])
+        link.size = int(link.headers['content-length'])
     except (KeyError, TypeError):
-        self.size = 0
+        link.size = 0
 
-    if (self.status != 200) and (self.status != 'Not Checked'):
-        self.set_bad_link(self.URL,str(self.status) + ": " +  self.message)
+    if (link.status != 200) and (link.status != 'Not Checked'):
+        link.set_bad_link(link.URL,str(link.status) + ": " +  link.message)
         return
 
     try:
-        lastMod = time.mktime(self.headers.getdate('Last-Modified'))
+        lastMod = time.mktime(link.headers.getdate('Last-Modified'))
     except (OverflowError, TypeError, ValueError):
         lastMod = None
     if lastMod:
-        self.age = int((time.time()-lastMod)/myUrlLib.SECS_PER_DAY)
+        link.age = int((time.time()-lastMod)/myUrlLib.SECS_PER_DAY)
 
 def get_document(url):
     document = opener.open(url).read()
@@ -169,4 +163,3 @@ def parse_host(location):
 
     debugio.debug("parse_host = %s %s %s %s" % (user, passw, hostname, port))
     return (user, passw, hostname, port)
-
