@@ -7,6 +7,7 @@
 
 """
 
+import urllib
 
 # if this is true, webcheck will consider external all links that do not start in 
 # the same directory level as the base url.  For example, given
@@ -54,7 +55,7 @@ SCHEMES = ['http','ftp']
 # You can define proxies for the individual schemes above.  The PROXIES config
 # variable is a python dictionary or 'None', for example:
 # PROXIES = {'http':'http://localhost:3128'}
-PROXIES = None
+PROXIES = urllib.getproxies_environment()
 # Note: according to the urllib documentation, you should also be able to set
 # proxies according to your system's environment variables, for example:
 # $ HTTP_PROXY='http://localhost:3128' ; export HTTP_PROXY # using Bourne Shell

@@ -35,11 +35,8 @@ import version
 import config
 
 Link = myUrlLib.Link
-proxies = config.PROXIES
-if proxies is None:
-    proxies = urllib.getproxies()
 
-opener = urllib.FancyURLopener(proxies)
+opener = urllib.FancyURLopener(config.PROXIES)
 opener.addheaders = [('User-agent','webcheck ' + version.webcheck)]
 if config.HEADERS:
     opener.addheaders = opener.addheaders + config.HEADERS
@@ -48,8 +45,8 @@ def _get_reply(url,redirect_depth=0):
     """Open connection to url and report information given by HEAD command"""
 
     (scheme,location,path,query,fragment)=urlparse.urlsplit(url)
-    if proxies and proxies.has_key('http'):
-        host = urlparse.urlparse(proxies['http'])[1]
+    if config.PROXIES and config.PROXIES.has_key('http'):
+        host = urlparse.urlparse(config.PROXIES['http'])[1]
         document = url
     else:
         host = location

@@ -35,8 +35,8 @@ problem_db = {}
 # Note that I do it this way for two reasons.  One is that Netscape reportedly
 # handles stylesheets better when they are inlined.  Two is that people often
 # forget to put webcheck.css in the output directory.
-if config.PROXIES is None:
-    config.PROXIES = urllib.getproxies()
+# TODO: move fetching files to main
+# TODO: use scheme system for opening files
 opener = urllib.FancyURLopener(config.PROXIES)
 opener.addheaders = [('User-agent','webcheck ' + version.webcheck)]
 try:
