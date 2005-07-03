@@ -1,9 +1,9 @@
-                                  [Webcheck]
+                                  [webcheck]
 
 
   ------------------------------------------------------------------------
 
-Installing Webcheck
+Installing webcheck
 
 Installation is relatively easy. Note these installation instructions are
 for Unix-like systems. Other operating systems may differ.
@@ -26,19 +26,19 @@ for Unix-like systems. Other operating systems may differ.
 
   ------------------------------------------------------------------------
 
-Running Webcheck
+Running webcheck
 
-It is simple to run Webcheck.
+It is simple to run webcheck.
 
-Executing Webcheck without any command-line arguments will cause it to give a
+Executing webcheck without any command-line arguments will cause it to give a
 simple synopsis of its usage and then quit.
 
 $ webcheck
 webcheck [-abvq][-l url][-x url]... [-y url]... [-r depth][-o dir][-w sec][-d level] url [location]...
 
-Before running Webcheck on a site, you should need to do a little preparation.
+Before running webcheck on a site, you should need to do a little preparation.
 
-One think that Webcheck needs is a directory in which to publish its reports.
+One think that webcheck needs is a directory in which to publish its reports.
 It is recommended that you choose a directory which is empty and will only
 contain webcheck reports. This directory must exist and be writeable by the
 user running webcheck before webcheck is run.
@@ -48,11 +48,11 @@ $ mkdir /usr/local/apache/share/htdocs/webcheck
 The report can be viewed using most web browsers. Browsers using frames can
 initially open the "index.html" file. Browsers not supporting frames or
 users who do not like frames can initially open the "navbar.html" file. Note
-these are default filenames for Webcheck and may be changed via the config
+these are default filenames for webcheck and may be changed via the config
 file.
 
 It should be decided beforehand which documents on your site should be
-considered "internal" and which should be considered "external". Webcheck
+considered "internal" and which should be considered "external". webcheck
 defines internal and external documents as such:
 
 An internal document is a part of your site that you have control of and
@@ -62,7 +62,7 @@ document is one that, if broken, you have the power to fix.
 An external document is one that an internal document points to but you have
 no jurisdiction over. It can also be a document that you have the power to
 change, but need not be checked, such as documents pointed to by CGI scripts
-or other automated tools such as Webcheck.
+or other automated tools such as webcheck.
 
 Your base url is the url pointing to the document that is the top level of
 your site. Commonly referred to as the "home page", it is the url that
@@ -75,22 +75,22 @@ would host internal documents even though your "home page" is on
 www.someplaceonthenet.com.
 
 That said, you should have a basic idea of what you do and do not want
-Webcheck to check. Don't be surprised if you do not get it exactly right the
+webcheck to check. Don't be surprised if you do not get it exactly right the
 first time. Also, consider using the robots.txt explained at
 http://info.webcrawler.com/mak/projects/robots/exclusion-admin.html.
-Currently Webcheck identifies itself as User-Agent: Webcheck.
+Currently webcheck identifies itself as User-Agent: webcheck.
 
-You can allow Webcheck to search a directory but restrict other bots, for
+You can allow webcheck to search a directory but restrict other bots, for
 example, like this:
 
 User-agent: *
 Disallow: /
 
-User-agent: Webcheck
+User-agent: webcheck
 Allow: /
 
 Okay you have heard enough and you just want to run the darn thing. The
-simplest way to run Webcheck is:
+simplest way to run webcheck is:
 
 $ webcheck http://www.someplaceonthenet.com/
 
@@ -109,55 +109,55 @@ Synopsis
 
 
 
- -x regexUse this option to tell Webcheck to consider any url matching regex
+ -x regexUse this option to tell webcheck to consider any url matching regex
          to be external. Uses perl-type regular expressions. Can be used
          multiple times.
- -y regexLike the -x flag, though this option will cause Webcheck to not
+ -y regexLike the -x flag, though this option will cause webcheck to not
          check the link matched by regex whereas -x will check the link but
          not its children. Uses perl-type regular expressions. Can be used
          multiple times.
   -l url Use url for the logo image on all reports. The url should point to
          a valid image.
-    -b   Base urls only. Tells Webcheck to consider any url that does not
+    -b   Base urls only. Tells webcheck to consider any url that does not
          start with the base url to be considered external. For example, if
          you run webcheck -b
          http://www.someplaceonthenet.com/~somebody/foo.html then
          http://www.someplaceonthenet.com/~somebody/misc/index.html will be
          considered internal whereas http://www.someplaceonthenet.com/ will
          be considered external.
-    -a   Avoid external links. Normally if Webcheck is examining an HTML page
+    -a   Avoid external links. Normally if webcheck is examining an HTML page
          and it finds a link that points to an external document, it will
          check to see if that external document exists. This flag disables
          that action. External links will not be checked.
-    -q   Quiet. Do not print out the progress as Webcheck traverses a site
+    -q   Quiet. Do not print out the progress as webcheck traverses a site
          (equivalent to -d 0).
-  -o dir Output directory. Use to specify the directory where Webcheck will
+  -o dir Output directory. Use to specify the directory where webcheck will
          dump its reports. The default is the current directory or as
          specified by config.py. If this directory does not exist it will
          be created for you (if possible).
- -r depthRedirect depth. the amount of redirects Webcheck should follow when
+ -r depthRedirect depth. the amount of redirects webcheck should follow when
          following a link. 0 implies follow all redirects.
- -w secs Wait secs between link checking. Usually Webcheck will process a url
+ -w secs Wait secs between link checking. Usually webcheck will process a url
          and immediately move on to the next. However on some loaded
-         systems it may be desirable to have Webcheck pause between requests.
+         systems it may be desirable to have webcheck pause between requests.
          This option can be set to any non-negative number.
  -d levelSet debug level to level. For programmer-level debugging use a
          level > 1.
  -W      Overwrite existing files without asking.                                                                                                              
                                                                                                                                                                
-   url   The base url. Webcheck checks this link first, then all the links it
+   url   The base url. webcheck checks this link first, then all the links it
          points to on down the "tree".
  location This specifies the hosts pointed to that are to be considered
-         internal. By default Webcheck only considers URLs pointing to the
+         internal. By default webcheck only considers URLs pointing to the
          host of the base url to be internal. However if your site resides
-         on multiple servers use this parameter to tell Webcheck what other
+         on multiple servers use this parameter to tell webcheck what other
          servers should be considered internal. May be used multiple times,
          but must follow url.
   ------------------------------------------------------------------------
 
 Examples
 
-Here are some examples of running Webcheck.
+Here are some examples of running webcheck.
 
 $ webcheck http://manson.ddns.org/ -x /webcheck starship.skyport.net
 $ webcheck -o /stats/altavista/ http://altavista.digital.com/
@@ -166,8 +166,8 @@ $ webcheck -o ~/Lang/Python/webcheck -b -l http://manson.ddns.org/images/marduk.
 
 Running Periodically
 
-Webcheck may be safely run periodically or on off-peak hours using on or at.
-It may be safely run unattended. You may want to redirect Webcheck's output to
+webcheck may be safely run periodically or on off-peak hours using on or at.
+It may be safely run unattended. You may want to redirect webcheck's output to
 the null device, log file, or have it emailed to an account. Consult your
 operating system manuals for how this can be done on your system.
 
@@ -175,7 +175,7 @@ operating system manuals for how this can be done on your system.
 
 Feedback
 
-If you have any questions about Webcheck or would like to report a
+If you have any questions about webcheck or would like to report a
 bug, it helps a lot to include a url where the problem can be found,
 an HTML file where the error occurs or a (small) tar of the site where
 the error occurs. Suggestions for improvements are also welcomed.

@@ -1,6 +1,6 @@
 """
 
- Webcheck Configuration file
+ webcheck Configuration file
  Edit this file to your choosing.  This is just a regular Python module, so
  if you want to do something fancy with it, go right ahead. Just make sure
  that all variables are defined and have an appropriate value .
@@ -40,9 +40,9 @@ YANKED_URLS = [r'http://www.amazon.com/exec/obidos/',
 # EXCLUDED_URLS list is considered external
 AVOID_EXTERNAL_LINKS = 0
 
-# Currently, Webcheck can checks http:, ftp:, and file:, schemes.  However, you may
+# Currently, webcheck can checks http:, ftp:, and file:, schemes.  However, you may
 # want to avoid certain schemes (such as file: or ftp:).  Remove the scheme
-# from this list and Webcheck will avoid it.  Avoided URLs are treated as external
+# from this list and webcheck will avoid it.  Avoided URLs are treated as external
 # Default is to not avoid any.
 # Examples:
 #SCHEMES = ['http']
@@ -79,18 +79,18 @@ HOSTS = []
 # specified via the -o command-line flag.
 OUTPUT_DIR = '.'
 
-# When listing a broken link in its published report, Webcheck can either make the
+# When listing a broken link in its published report, webcheck can either make the
 # broken link 'active' or simply list the URL.  Most users will probably not
 # want the broken link to be active.
 ANCHOR_BAD_LINKS = 1
 
-# Usually, Webcheck will processs a URL and immediately move on to the next one.
-# However, on some loaded systems, it may be more desirable to have Webcheck wait
+# Usually, webcheck will processs a URL and immediately move on to the next one.
+# However, on some loaded systems, it may be more desirable to have webcheck wait
 # a while between requests.  This option should be set to any non-negative number
 # (in seconds).  This can also be set using the command-line -w <secs> flag.
 WAIT_BETWEEN_REQUESTS = 0
 
-# When Webcheck encounters a 301 or 302 response from the server, it
+# When webcheck encounters a 301 or 302 response from the server, it
 # needs to decide how many times it will follow the indications of the
 # server. By setting this option, you may change it to your
 # tastes. Setting it to -1 means "infinite redirection" (don't say I
@@ -123,7 +123,7 @@ PLUGINS = ['sitemap',
            
 # This is a URL (absolute or relative) of a level 1 Cascading Stylesheet to be
 # used in all reports.  See the default webcheck.css as well as the HTML source
-# for ideas on making your own .css for Webcheck.
+# for ideas on making your own .css for webcheck.
 STYLESHEET = 'file:///usr/share/webcheck/webcheck.css'
 
 ##### The Navigation (menu) frame/page ############
@@ -154,4 +154,4 @@ REPORT_WHATSNEW_URL_AGE = 7
 
 REPORT_SLOW_URL_SIZE = 76
 
-#USER_AGENT = 'Webcheck ' + version.webcheck
+#USER_AGENT = 'webcheck ' + version.webcheck

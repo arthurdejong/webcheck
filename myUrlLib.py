@@ -56,7 +56,7 @@ def get_robots(location):
 def can_fetch(location, url):
     """Return true if url is allowed at location, else return 0"""
     if robot_parsers.has_key(location):
-        return robot_parsers[location].can_fetch('Webcheck',url)
+        return robot_parsers[location].can_fetch('webcheck',url)
     return 1
 
 ############################################################################

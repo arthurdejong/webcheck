@@ -38,7 +38,7 @@ problem_db = {}
 if config.PROXIES is None:
     config.PROXIES = urllib.getproxies()
 opener = urllib.FancyURLopener(config.PROXIES)
-opener.addheaders = [('User-agent','Webcheck ' + version.webcheck)]
+opener.addheaders = [('User-agent','webcheck ' + version.webcheck)]
 try:
     stylesheet =  opener.open(config.STYLESHEET).read()
 except:
@@ -147,7 +147,7 @@ def main_index(fname, site):
     fp = open_file(fname)
     fp.write('<html>\n')
     fp.write('<head>\n')
-    fp.write('<title>Webcheck report for "%s"</title>\n' % get_title(site.linkMap[site.base]))
+    fp.write('<title>webcheck report for "%s"</title>\n' % get_title(site.linkMap[site.base]))
     fp.write('<style type="text/css">\n')
     fp.write('<!-- /* hide from old browsers */\n')
     fp.write(stylesheet+'\n')
@@ -180,7 +180,7 @@ def nav_bar(fname, site, plugins):
              % (config.NAVBAR_PADDING, config.NAVBAR_SPACING))
     # webcheck title with link to homepage
     fp.write('<tr><th class="home">\n')
-    fp.write('<a target="_top" href="%s" onMouseOver="window.status=\'Webcheck Home Page\'; return true;">Webcheck %s</a></th></tr>\n' \
+    fp.write('<a target="_top" href="%s" onMouseOver="window.status=\'webcheck Home Page\'; return true;">webcheck %s</a></th></tr>\n' \
              % (version.home, version.webcheck))
     # labels pointing to each individual page
     for plugin in plugins:
@@ -218,7 +218,7 @@ def doTopMain(fp,site,report):
     fp.write('<!-- /* hide from old browsers */\n')
     fp.write(stylesheet+'\n')
     fp.write(' --> </style>\n')
-    fp.write('<meta name="Generator" content="Webcheck ' + version.webcheck + '">\n')
+    fp.write('<meta name="Generator" content="webcheck ' + version.webcheck + '">\n')
     fp.write('</head>\n')
     fp.write('<body class="%s">\n' % string.split(report.__name__,'.')[1])
     fp.write('<p class="logo"><a href="%s"><img src="%s" border="0" alt=""></a></p>\n' % (site.base, config.LOGO_HREF))
@@ -232,6 +232,6 @@ def doBotMain(fp):
     import webcheck
     fp.write('<hr>\n');
     fp.write('<p class="footer">\n')
-    fp.write('<em>Generated %s by <a target="_top" href="%s">Webcheck %s</a></em></p>\n' % (webcheck.start_time,version.home, version.webcheck))
+    fp.write('<em>Generated %s by <a target="_top" href="%s">webcheck %s</a></em></p>\n' % (webcheck.start_time,version.home, version.webcheck))
     fp.write('</body>\n')
     fp.write('</html>\n')

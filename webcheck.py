@@ -81,7 +81,7 @@ def print_help():
         "  -d, --debug    set loglevel to LEVEL, for programmer-level debugging\n" \
         "  -o DIRECTORY   the directory in which webcheck will generate the reports\n" \
         "  -f, --force    overwrite files without asking\n" \
-        "  -r N           the amount of redirects Webcheck should follow when following\n" \
+        "  -r N           the amount of redirects webcheck should follow when following\n" \
         "                 a link, 0 implies follow all redirects.\n" \
         "  -w, --wait=SECONDS\n" \
         "                 wait SECONDS between retrievals\n" \
@@ -141,14 +141,14 @@ def warn():
     """Warn the user that something has gone wrong."""
     print "*******************************************"
     print "*                                         *"
-    print "* Warning, Webcheck has found nothing to  *"
+    print "* Warning, webcheck has found nothing to  *"
     print "* report for this site.  If you feel this *"
     print "* is in error, please contact             *"
     print "* %s.                                     *" % version.author
     print "* and specify the environment that caused *"
     print "* this to occur.                          *"
     print "*                                         *"
-    print "* Webcheck %s                             *" % version.webcheck
+    print "* webcheck %s                             *" % version.webcheck
     print "*                                         *"
     print "*******************************************"
 

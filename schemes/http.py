@@ -40,7 +40,7 @@ if proxies is None:
     proxies = urllib.getproxies()
 
 opener = urllib.FancyURLopener(proxies)
-opener.addheaders = [('User-agent','Webcheck ' + version.webcheck)]
+opener.addheaders = [('User-agent','webcheck ' + version.webcheck)]
 if config.HEADERS:
     opener.addheaders = opener.addheaders + config.HEADERS
 
@@ -70,7 +70,7 @@ def _get_reply(url,redirect_depth=0):
     if username and passwd:
         auth = string.strip(base64.encodestring(username + ":" + passwd))
         h.putheader('Authorization', 'Basic %s' % auth)
-    h.putheader('User-Agent','Webcheck %s' % version.webcheck)
+    h.putheader('User-Agent','webcheck %s' % version.webcheck)
     h.endheaders()
 
     r = h.getresponse()
