@@ -79,47 +79,6 @@ def add_problem(type,link):
     else:
         problem_db[author]=[(type,link)]
 
-def sort_by_age(a,b):
-    """ Sort helper for url's age.  a and b are urls in linkMap """
-    global mySite
-    aage, bage = mySite.linkMap[a].age, mySite.linkMap[b].age
-    if aage < bage:
-        return -1
-    elif aage == bage:
-        return sort_by_author(a,b)
-    else:
-        return 1
-
-def sort_by_rev_age(a,b):
-    global mySite
-    aage, bage = mySite.linkMap[a].age, mySite.linkMap[b].age
-    if aage > bage:
-        return -1
-    elif aage == bage:
-        return sort_by_author(a,b)
-    else:
-        return 1
-
-def sort_by_author(a,b):
-    global mySite
-    aauthor,bauthor = mySite.linkMap[a].author, mySite.linkMap[b].author
-    if aauthor < bauthor:
-        return -1
-    elif aauthor == bauthor:
-        return 0
-    else:
-        return 1
-
-def sort_by_size(a,b):
-    global mySite
-    asize, bsize = mySite.linkMap[a].totalSize, mySite.linkMap[b].totalSize
-    if asize > bsize:
-        return -1
-    elif asize == bsize:
-        return 0
-    else:
-        return 1
-
 def open_file(filename):
     """ given config.OUTPUT_DIR checks if the directory already exists; if not, it creates it, and then opens
     filename for writing and returns the file object """

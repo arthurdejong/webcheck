@@ -70,24 +70,28 @@ def generate(fp,site):
     """Present the list of bad links to the given file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellspacing="2" width="75%">\n')
-    for url in site.badLinks:
+    urls=site.badLinks
+    urls.sort()
+    for url in urls:
+        link=site.linkMap[url]
         fp.write('  <tr><td class="blank" colspan="3">&nbsp;</td></tr>\n')
         if config.ANCHOR_BAD_LINKS:
             fp.write('  <tr class="link"><th>Link</th>\n')
-            fp.write('    <td colspan="2" align="left">'  +rptlib.make_link(url,url) +'</td></tr>\n')
+            fp.write('    <td colspan="2" align="left">'  +rptlib.make_link(link.URL,link.URL) +'</td></tr>\n')
         else:
             fp.write('  <tr class="link"><th>Link</th>\n')
-            fp.write('    <td colspan="2" align="left">%s</td></tr>\n' % url)
-        status = str(site.linkMap[url].status)
+            fp.write('    <td colspan="2" align="left">%s</td></tr>\n' % link.URL)
+        status = str(link.status)
         if status in HTTP_STATUS_CODES.keys():
             status = status + ": " + HTTP_STATUS_CODES[status]
         fp.write('  <tr class="status"><th>Status</th><td colspan="2">%s</td></tr>\n' % status)
-        parents = site.linkMap[url].parents
+        parents = link.parents
+        parents.sort()
         fp.write('  <tr class="parent"><th rowspan="%s">Parents</th>\n' % len(parents))
-        parents.sort(rptlib.sort_by_author)
         for parent in parents:
-            fp.write('    <td>%s</td>\n' % rptlib.make_link(parent))
-            fp.write('    <td>%s</td>\n  </tr>\n' % (str(site.linkMap[parent].author)))
-            rptlib.add_problem("Bad Link: " + url, site.linkMap[parent])
+            plink=site.linkMap[parent]
+            fp.write('    <td>%s</td>\n' % rptlib.make_link(plink.URL))
+            fp.write('    <td>%s</td>\n  </tr>\n' % (str(plink.author)))
+            rptlib.add_problem("Bad Link: " + url, plink)
     fp.write('</table>\n')
     fp.write('</div>\n')

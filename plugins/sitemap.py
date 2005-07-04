@@ -56,6 +56,7 @@ def _explore(fp, site, link, explored={}, level=0):
             to_explore.append(i)
         # go over the children and present them as a list
         if len(to_explore) > 0:
+            to_explore.sort()
             fp.write('<ul>\n')
             for i in to_explore:
                 _explore(fp,site,site.linkMap[i],explored,level+1)

@@ -37,17 +37,16 @@ def generate(fp,site):
     fp.write('      <th rowspan="2">Size <br>(Kb)</th>\n')
     fp.write('      <th colspan="3">Time (HH:MM:SS)</th></tr>\n')
     fp.write('  <tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>\n')
-    urls = site.linkMap.keys()
-    urls.sort(rptlib.sort_by_size)
-    for url in urls:
-        link = site.linkMap[url]
+    links = site.linkMap.values()
+    links.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
+    for link in links:
         if not link.html:
             continue
         sizeK = link.totalSize / 1024
         sizek = link.totalSize * 8 / 1000
         if sizeK < config.REPORT_SLOW_URL_SIZE:
             break
-        fp.write('  <tr><td>%s</td>' % make_link(url)+'\n')
+        fp.write('  <tr><td>%s</td>' % make_link(link.URL)+'\n')
         fp.write('      <td>%s</td>\n' % sizeK)
         fp.write('      <td class="time">%s</td>\n' \
                  % time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8))))

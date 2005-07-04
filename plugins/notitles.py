@@ -32,15 +32,14 @@ def generate(fp,site):
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('  <tr><th>URL</th><th>Author</th></tr>\n')
-    urls=site.linkMap.keys()
-    urls.sort(rptlib.sort_by_author)
-    for url in urls:
-        link = site.linkMap[url]
+    links=site.linkMap.values()
+    links.sort(lambda a, b: cmp(a.URL, b.URL))
+    for link in links:
         if link.external:
             continue
         if link.html and (link.title is None):
             fp.write('  <tr><td>%s</td><td>%s</td></tr>\n' \
-                     % (rptlib.make_link(url,url), link.author))
+                     % (rptlib.make_link(link.URL,link.URL), link.author))
             rptlib.add_problem("No Title",link)
     fp.write('</table>\n')
     fp.write('</div>\n')

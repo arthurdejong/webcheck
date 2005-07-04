@@ -30,6 +30,8 @@ import rptlib
 def generate(fp,site):
     """Output a list of images to the given file descriptor."""
     fp.write('<ol>\n')
-    for url, image in site.images.items():
-        fp.write('  <li>%s</li>\n' % rptlib.make_link(url,url))
+    images=site.images.values()
+    images.sort(lambda a, b: cmp(a.URL, b.URL))
+    for image in images:
+        fp.write('  <li>%s</li>\n' % rptlib.make_link(image.URL,image.URL))
     fp.write('</ol>\n')

@@ -27,9 +27,9 @@ import rptlib
 
 def generate(fp,site):
     """Output a sorted list of urls to the specified file descriptor."""
-    urls=site.linkMap.keys();
-    urls.sort()
+    links=site.linkMap.values();
+    links.sort(lambda a, b: cmp(a.URL, b.URL))
     fp.write('<ol>\n')
-    for url in urls:
-        fp.write('<li>'+rptlib.make_link(url,url)+'</li>')
+    for link in links:
+        fp.write('<li>'+rptlib.make_link(link.URL,link.URL)+'</li>')
     fp.write('</ol>\n')

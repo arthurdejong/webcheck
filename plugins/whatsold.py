@@ -33,15 +33,14 @@ def generate(fp,site):
     fp.write('<div class="table">')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('  <tr><th>Link</th><th>Author</th><th>Age</th></tr>\n')
-    urls = site.linkMap.keys()
-    urls.sort(rptlib.sort_by_rev_age)
-    for url in urls:
-        link=site.linkMap[url]
+    links=site.linkMap.values()
+    links.sort(lambda a, b: cmp(b.age, a.age))
+    for link in links:
         if not link.html:
             continue
         age = link.age
         if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
-            fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(url))
+            fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(link.URL))
             fp.write('      <td>%s</td>\n' % (link.author))
             fp.write('      <td class="time">%s</td></tr>' % age)
             rptlib.add_problem('Old Link: %s days old' % age ,link)

@@ -33,15 +33,14 @@ def generate(fp,site):
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
     fp.write('  <tr><th>Link</th><th>Author</th><th>Age</th></tr>\n')
-    urls = site.linkMap.keys()
-    urls.sort(rptlib.sort_by_age)
-    for url in urls:
-        link=site.linkMap[url]
+    links=site.linkMap.values()
+    links.sort(lambda a, b: cmp(a.age, b.age))
+    for link in links:
         if not link.html:
             continue
         age = link.age
         if (age is not None) and (age <= config.REPORT_WHATSNEW_URL_AGE):
-            fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(url))
+            fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(link.URL))
             fp.write('      <td>%s</td>\n' % link.author)
             fp.write('      <td class="time">%s</td></tr>\n' % age)
     fp.write('</table>\n')

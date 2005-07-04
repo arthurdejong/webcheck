@@ -31,6 +31,7 @@ def generate(fp,site):
     """Output the list of not checked pages to the given file descriptor."""
     fp.write('<div class="table">\n')
     fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
+    site.notChecked.sort()
     for url in site.notChecked:
         fp.write('  <tr><th colspan="4">%s</th></tr>\n' % rptlib.make_link(url,url))
         fp.write('  <tr class="parent"><th rowspan="%s">Parent</th>\n' % len(site.linkMap[url].parents))
