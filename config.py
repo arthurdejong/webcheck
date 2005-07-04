@@ -111,16 +111,17 @@ DEBUG_LEVEL = 1
 # see them in the navigation bar.
 # reports automatically
 PLUGINS = ['sitemap',
-           'badlinks',
+           'urllist',
            'images',
+           'external',
+           'notchkd',
+           'badlinks',
            'whatsold',
            'whatsnew',
            'slow',
            'notitles',
-           'external',
-           'notchkd',
-           'urllist',
-           'problems']
+           'problems',
+           'about']
            
 # This is a URL (absolute or relative) of a level 1 Cascading Stylesheet to be
 # used in all reports.  See the default webcheck.css as well as the HTML source
