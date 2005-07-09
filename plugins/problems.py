@@ -24,8 +24,12 @@
 __title__ = 'problems by author'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'This is an overview of all the problems on the site, ' \
+                  'grouped by author.'
 
 import rptlib
+import urllib
+import xml.sax.saxutils
 
 def generate(fp,site):
     """Output the overview of problems to the given file descriptor."""
@@ -33,19 +37,32 @@ def generate(fp,site):
     authors.sort()
     # generate short list of authors
     if len(authors) > 1:
-        fp.write('<p class="authorlist">\n')
-        for author in authors[:-1]:
-            fp.write('<a href="#%s">%s</a>\n' % (author, author))
-            fp.write(' | \n')
-        fp.write('<a href="#%s">%s</a>\n' % (authors[-1], authors[-1]))
-        fp.write('</p>\n')
+        fp.write('   <ul class="authorlist">\n')
+        for author in authors:
+            fp.write(
+              '    <li><a href="#%(authorref)s">Author: %(author)s</a></li>\n' \
+              % { 'authorref': urllib.quote(str(author),''),
+                  'author':    xml.sax.saxutils.escape(str(author)) })
+        fp.write('   </ul>\n')
     # generate problem report
-    fp.write('<div class="table">\n')
-    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
+    fp.write('   <ul>\n')
     for author in authors:
-        fp.write('<tr><th><a name="%s">%s</a></th></tr>\n' % (author,author))
-        for type,link in rptlib.problem_db[author]:
-            fp.write('<tr><td>%s<br>%s</td></tr>\n' % (rptlib.make_link(link.URL), type))
-        fp.write('<tr><td class="blank">&nbsp;</td></tr>\n')
-    fp.write('</table>\n')
-    fp.write('</div>\n')
+        fp.write(
+          '     <li>\n' \
+          '      <a name="%(authorref)s">Author: %(author)s</a>\n'
+          '      <ul>\n' \
+          % { 'authorref': urllib.quote(str(author),''),
+              'author':    xml.sax.saxutils.escape(str(author)) })
+        # list problems for this author
+        for problem,link in rptlib.problem_db[author]:
+            fp.write(
+              '    <li>\n' \
+              '     %(link)s\n' \
+              '     <div class="status">%(problem)s</div>\n' \
+              '    </li>\n' \
+              % { 'link':    rptlib.make_link(link.URL),
+                  'problem': xml.sax.saxutils.escape(problem) })
+        fp.write(
+          '      </ul>\n' \
+          '     </li>\n')
+    fp.write('   </ul>\n')

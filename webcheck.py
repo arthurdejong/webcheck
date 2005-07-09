@@ -24,7 +24,7 @@ import sys
 import time
 import os
 
-start_time = time.ctime(time.time())
+start_time = time.time()
 
 # importing the config.py file is a real problem if the user did not install
 # the files EXACTLY the way I said to... or even using the frozen version is
@@ -42,6 +42,7 @@ import debugio
 debugio.loglevel=debugio.INFO
 
 import version
+import plugins.rptlib
 
 def print_version():
     """print version information"""
@@ -152,21 +153,42 @@ def warn():
     print "*                                         *"
     print "*******************************************"
 
-def link_image(filename):
-    source = '/usr/share/webcheck/' + filename
-    target = config.OUTPUT_DIR + filename
-    if os.path.exists(target): return
-    try:
-       os.symlink(source, target)
-    except os.error, (errcode, errtext):
-       print 'Warning: "%s": %s' % (target, errtext)
-       print '         Please copy "%s" to "%s".' % (source, target)
+def find_file(fname):
+    """Search the python path for the file name and return full path of the file."""
+    for dname in sys.path:
+        res = os.path.join(dname,fname)
+        if os.path.isfile(res):
+            return res
+    return None
+
+def install_file(fname,text=False):
+    """Install the given file in the output directory."""
+    import shutil
+    # TODO: extend so that if
+    #  - filename has no slashes in it: search python path
+    #  - filename starts with a known scheme: use that
+    #  - filename starts with slash: treat is as a file://///// url
+    # TODO: make it possible to reference the original location instead of copying the file
+    # FIXME: check that source and target are different before opening file for writing
+    source = find_file(fname)
+    target = os.path.basename(fname)
+    # open the input file, TODO: use the scheme stuff for doing this
+    mode='r'
+    if text:
+        mode+='U'
+    sfp=open(source,mode)
+    # create file in output directory (with overwrite question)
+    tfp=plugins.rptlib.open_file(target);
+    # copy contents
+    shutil.copyfileobj(sfp,tfp)
+    # close files
+    tfp.close()
+    sfp.close()
 
 def main():
+    print os.path
     # parse command-line arguments
     parse_args()
-    # ensure that output directory name ends in a slash
-    config.OUTPUT_DIR=config.OUTPUT_DIR + '/'
     # indicate that we are starting
     debugio.info('checking site....')
     try:
@@ -181,17 +203,10 @@ def main():
     # now we can write out the files
     # start with the frame-description page
     debugio.info('generating reports...')
-    import plugins.rptlib
-    # generate frameset
-    plugins.rptlib.main_index(config.MAIN_FILENAME,site)
-    # generate navigation frame
-    plugins.rptlib.nav_bar(config.NAVBAR_FILENAME,site, config.PLUGINS)
     # for every plugin, generate a page
-    plugins.rptlib.gen_plugins(site, config.PLUGINS)
+    plugins.rptlib.generate(site, config.PLUGINS)
     # put extra files in the output directory
-    link_image('blackbar.png')
-    if config.LOGO_HREF == 'webcheck.png':
-        link_image('webcheck.png')
+    install_file('webcheck.css',True)
     debugio.info('done.')
 
 if __name__ == '__main__':

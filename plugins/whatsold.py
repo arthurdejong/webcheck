@@ -24,15 +24,14 @@
 __title__ = "what's old"
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'These pages habe been modified a long time ago and may be outdated.'
 
 import rptlib
 import config
 
 def generate(fp,site):
     """Output the list of outdated pages to the specified file descriptor."""
-    fp.write('<div class="table">')
-    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
-    fp.write('  <tr><th>Link</th><th>Author</th><th>Age</th></tr>\n')
+    fp.write('   <ul>\n')
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(b.age, a.age))
     for link in links:
@@ -40,9 +39,13 @@ def generate(fp,site):
             continue
         age = link.age
         if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
-            fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(link.URL))
-            fp.write('      <td>%s</td>\n' % (link.author))
-            fp.write('      <td class="time">%s</td></tr>' % age)
+            fp.write(
+              '    <li>\n' \
+              '     %(link)s\n' \
+              '     <div class="status">age: %(age)d days</div>\n' \
+              '    </li>\n' \
+              % { 'link':  rptlib.make_link(link.URL),
+                  'age':   age })
+            # add link to problem database
             rptlib.add_problem('Old Link: %s days old' % age ,link)
-    fp.write('</table>\n')
-    fp.write('</div>\n')
+    fp.write('   </ul>\n')

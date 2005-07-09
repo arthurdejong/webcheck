@@ -24,15 +24,14 @@
 __title__ = "what's new"
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'These pages habe been recently modified.'
 
 import config
 import rptlib
 
 def generate(fp,site):
     """Output the list of recently modified pages to the specified file descriptor."""
-    fp.write('<div class="table">\n')
-    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
-    fp.write('  <tr><th>Link</th><th>Author</th><th>Age</th></tr>\n')
+    fp.write('   <ul>\n')
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.age, b.age))
     for link in links:
@@ -40,8 +39,11 @@ def generate(fp,site):
             continue
         age = link.age
         if (age is not None) and (age <= config.REPORT_WHATSNEW_URL_AGE):
-            fp.write('  <tr><td>%s</td>\n' % rptlib.make_link(link.URL))
-            fp.write('      <td>%s</td>\n' % link.author)
-            fp.write('      <td class="time">%s</td></tr>\n' % age)
-    fp.write('</table>\n')
-    fp.write('</div>\n')
+            fp.write(
+              '    <li>\n' \
+              '     %(link)s\n' \
+              '     <div class="status">age: %(age)d days</div>\n' \
+              '    </li>\n' \
+              % { 'link':  rptlib.make_link(link.URL),
+                  'age':   age })
+    fp.write('   </ul>\n')

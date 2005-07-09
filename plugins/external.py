@@ -24,15 +24,24 @@
 __title__ = 'external links'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'This is the list of all external urls encountered ' \
+                  'during the examination of the website.'
 
 import rptlib
 
 def generate(fp,site):
     """Generate the list of external links to the given file descriptor."""
-    links=site.linkMap.values();
+    fp.write('   <ol>\n')
+    links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.URL, b.URL))
-    fp.write('<ol>\n')
     for link in links:
         if link.external:
-            fp.write('  <li>%s</li>\n' % rptlib.make_link(link.URL))
-    fp.write('</ol>\n')
+            fp.write(
+              '    <li>\n' \
+              '     %(link)s\n' \
+              % { 'link':  rptlib.make_link(link.URL) })
+            # present a list of parents
+            rptlib.print_parents(fp,link,'     ')
+            fp.write(
+              '    </li>\n')
+    fp.write('   </ol>\n')

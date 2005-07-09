@@ -19,23 +19,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""Generate an overview of the plugins that are used."""
+"""Present an overview of the plugins that are used."""
 
 __title__ = 'about plugins'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'This is a more detailed view of the used plugins.'
 
 import config
+import xml.sax.saxutils
 
 def generate(fp,site):
     """Output a list of modules, it's authors and it's version to the file descriptor."""
-    fp.write('<div class="table">\n')
-    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
-    fp.write('<tr><th>Plugin</th><th>Version</th><th>Author</th></tr>\n')
+    fp.write('   <ul>\n')
     for plugin in config.PLUGINS:
         report = __import__('plugins.'+plugin,globals(),locals(),[plugin])
-        fp.write('<tr><td class="pluginname">%s</td>\n' % report.__title__)
-        fp.write('    <td class="pluginversion">%s</td>\n' % report.__version__)
-        fp.write('    <td class="pluginauthor">%s</td></tr>\n' % report.__author__)
-    fp.write('</table>\n')
-    fp.write('</div>\n')
+        fp.write(
+          '    <li>\n' \
+          '      <strong>%s</strong><br />\n' \
+          % xml.sax.saxutils.escape(report.__title__) )
+        #if hasattr(report,"__description__"):
+        #    fp.write('      %s<br />\n' % xml.sax.saxutils.escape(report.__description__))
+        if hasattr(report,"__author__"):
+            fp.write('      author: %s<br />\n' % xml.sax.saxutils.escape(report.__author__))
+        if hasattr(report,"__version__"):
+            fp.write('      version: %s<br />\n' % xml.sax.saxutils.escape(report.__version__))
+    fp.write('   </ul>\n')

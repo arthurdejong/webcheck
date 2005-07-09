@@ -28,26 +28,14 @@ import string
 import debugio
 import version
 import config
+import xml.sax.saxutils
 
 problem_db = {}
 
-# get the stylesheet for insertion,
-# Note that I do it this way for two reasons.  One is that Netscape reportedly
-# handles stylesheets better when they are inlined.  Two is that people often
-# forget to put webcheck.css in the output directory.
-# TODO: move fetching files to main
-# TODO: use scheme system for opening files
-opener = urllib.FancyURLopener(config.PROXIES)
-opener.addheaders = [('User-agent','webcheck ' + version.webcheck)]
-try:
-    stylesheet =  opener.open(config.STYLESHEET).read()
-except:
-    stylesheet = ''
-
 def get_title(link):
     """Returns the title of a link if it is set otherwise returns url."""
-    if link.title is None:
-        return url
+    if link.title is None or link.title == '':
+        return link.URL
     return link.title
 
 def make_link(url,title=None):
@@ -55,18 +43,29 @@ def make_link(url,title=None):
     is external, insert "class=external" in the <a> tag."""
     # try to fetch the link object for this url
     cssclass='internal'
-    try:
-        global mySite
-        link=mySite.linkMap[url]
-        if link.external:
-            cssclass='external'
-        if title is None:
-            title=link.title
-    except KeyError:
-        pass
-    if title is None or title == "":
-        title=url
-    return '<a href="'+url+'" class="'+cssclass+'">'+title+'</a>'
+    global mySite
+    link=mySite.linkMap[url]
+    if hasattr(link,"external") and link.external:
+        cssclass='external'
+    if title is None:
+        title=get_title(link)
+    return '<a href="'+url+'" class="'+cssclass+'">'+xml.sax.saxutils.escape(title)+'</a>'
+
+def print_parents(fp,link,indent='     '):
+    # present a list of parents
+    parents = link.parents
+    parents.sort(lambda a, b: cmp(a.title, b.title))
+    fp.write(
+      indent+'<div class="parents">\n'+ \
+      indent+' referenced from:\n'+ \
+      indent+' <ul>\n' )
+    for parent in parents:
+        fp.write(
+          indent+'  <li>%(parent)s</li>\n'
+          % { 'parent': make_link(parent) })
+    fp.write(
+      indent+' </ul>\n'+ \
+      indent+'</div>\n' )
 
 def add_problem(type,link):
     """ Add a problem link to the 'problems' database.  Will not add external links """
@@ -85,11 +84,12 @@ def open_file(filename):
     import os
     if os.path.isdir(config.OUTPUT_DIR) == 0:
         os.mkdir(config.OUTPUT_DIR)
-    fname = config.OUTPUT_DIR + filename
+    fname = os.path.join(config.OUTPUT_DIR,filename)
     if os.path.exists(fname) and not config.OVERWRITE_FILES:
         # mv: overwrite `/tmp/b'?
         # cp: overwrite `/tmp/b'?
-        ow = raw_input('File %s already exists. Overwrite? y[es]/a[ll]/Q[uit] ' % fname)
+        # zip: replace aap.txt? [y]es, [n]o, [A]ll, [N]one, [r]ename:
+        ow = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
         ow = ow.lower() + " "
         if ow[0] == 'a':
             config.OVERWRITE_FILES = 1
@@ -98,99 +98,71 @@ def open_file(filename):
             sys.exit(0)
     return open(fname,'w')
 
-def main_index(fname, site):
-    """ Write out the frameset. """
+def generate(site,plugins):
+    """Generate pages for plugins."""
     # FIXME: get rid of this once we have a better way of passing this information
     global mySite
     mySite=site
-    fp = open_file(fname)
-    fp.write('<html>\n')
-    fp.write('<head>\n')
-    fp.write('<title>webcheck report for "%s"</title>\n' % get_title(site.linkMap[site.base]))
-    fp.write('<style type="text/css">\n')
-    fp.write('<!-- /* hide from old browsers */\n')
-    fp.write(stylesheet+'\n')
-    fp.write(' --> </style>\n')
-    fp.write('</head>\n')
-    fp.write('<frameset COLS="%s,*" border=0 framespacing=0>\n' % config.NAVBAR_WIDTH)
-    fp.write('<frame name="navbar" src="%s" marginwidth=0 marginheight=0 frameborder=0>\n' \
-             % config.NAVBAR_FILENAME)
-    fp.write('<frame name="main" src="%s" frameborder=0>\n' % (config.PLUGINS[0]+'.html'))
-    fp.write('</frameset>\n')
-    fp.write('</html>\n')
-    fp.close()
-
-def nav_bar(fname, site, plugins):
-    """ Write out the navigation bar frame. """
-    fp=open_file(fname)
-    # print page header
-    fp.write('<html>\n')
-    fp.write('<head>\n')
-    fp.write('<title>navbar</title>\n')
-    fp.write('<style type="text/css">\n')
-    fp.write('<!-- /* hide from old browsers */\n')
-    fp.write(stylesheet+'\n')
-    fp.write(' --> </style>\n')
-    fp.write('<base target="main">\n')
-    fp.write('</head>\n')
-    fp.write('<body class="navbar">\n')
-    fp.write('<div align="center">\n')
-    fp.write('<table cellpadding="%s" cellspacing="%s">\n' \
-             % (config.NAVBAR_PADDING, config.NAVBAR_SPACING))
-    # webcheck title with link to homepage
-    fp.write('<tr><th class="home">\n')
-    fp.write('<a target="_top" href="%s" onMouseOver="window.status=\'webcheck Home Page\'; return true;">webcheck %s</a></th></tr>\n' \
-             % (version.home, version.webcheck))
-    # labels pointing to each individual page
+    # generate navigation part
+    navbar='  <ul class="navbar">\n' \
+           '   <li class="header">webcheck</li>\n'
     for plugin in plugins:
+        # if this is the first plugin use index.html as filename
         filename = plugin + '.html'
-        fp.write('<tr><th>\n')
+        if plugin == plugins[0]:
+            filename = 'index.html'
+        # import the plugin
         report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
-        fp.write('<strong><a href="%s" onMouseOver="window.status=\'%s\'; return true">%s</a></strong>\n' \
-              % (filename, report.__doc__, report.__title__))
-        fp.write('</th></tr>\n')
-    # print the page footer
-    fp.write('</table>\n')
-    fp.write('</div>\n')
-    fp.write('</body>\n')
-    fp.write('</html>\n')
-    # close file
-    fp.close()
-
-def gen_plugins(site,plugins):
-    """ Generate pages for plugins. """
+        # generate a link to the plugin page
+        navbar += '   <li><a href="%(pluginfile)s" title="%(description)s">%(title)s</a></li>\n' \
+                  % { 'pluginfile':  filename,
+                      'title':       xml.sax.saxutils.escape(report.__title__),
+                      'description': xml.sax.saxutils.escape(report.__doc__) }
+    navbar+='  </ul>\n'
     for plugin in plugins:
         debugio.info('  ' + plugin)
+        # if this is the first plugin use index.html as filename
         filename = plugin + '.html'
+        if plugin == plugins[0]:
+            filename = 'index.html'
         report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
         fp = open_file(filename)
-        doTopMain(fp,site,report)
+        # write basic html head
+        # TODO: make it possible to use multiple stylesheets (possibly reference external stylesheets)
+        fp.write( \
+          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' \
+          '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n' \
+          '<html xmlns="http://www.w3.org/1999/xhtml">\n' \
+          ' <head>\n' \
+          '  <title>Webcheck report for %(sitetitle)s</title>\n' \
+          '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n' \
+          '  <meta name="Generator" content="webcheck %(version)s" />\n' \
+          ' </head>\n' \
+          ' <body>\n' \
+          '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n' \
+          % { 'sitetitle':  xml.sax.saxutils.escape(get_title(site.linkMap[site.base])),
+              'siteurl':    site.base,
+              'version':    version.webcheck })
+        # write navigation bar
+        fp.write(navbar)
+        # write plugin heading
+        fp.write('  <h2>%s</h2>\n' % xml.sax.saxutils.escape(report.__title__))
+        if hasattr(report,"__description__"):
+            fp.write('  <p class="description">\n    %s\n  </p>\n' % xml.sax.saxutils.escape(report.__description__))
+        # write plugin contents
+        fp.write('  <div class="content">\n')
         report.generate(fp,site)
-        doBotMain(fp)
+        fp.write('  </div>\n')
+        # write bottom of page
+        import webcheck
+        import time
+        fp.write( \
+          '  <p class="footer">\n' \
+          '   Generated %(time)s by <a href="%(homepage)s">webcheck %(version)s</a>\n' \
+          '  </p>\n' \
+          ' </body>\n' \
+          '</html>\n' \
+          % { 'time':     xml.sax.saxutils.escape(time.ctime(webcheck.start_time)),
+              'homepage': version.home,
+              'version':  xml.sax.saxutils.escape(version.webcheck) })
         fp.close()
-
-def doTopMain(fp,site,report):
-    """ Write top part of html file for main content frame. """
-    fp.write('<html>\n')
-    fp.write('<head><title>%s</title>\n' % report.__title__)
-    fp.write('<style type="text/css">\n')
-    fp.write('<!-- /* hide from old browsers */\n')
-    fp.write(stylesheet+'\n')
-    fp.write(' --> </style>\n')
-    fp.write('<meta name="Generator" content="webcheck ' + version.webcheck + '">\n')
-    fp.write('</head>\n')
-    fp.write('<body class="%s">\n' % string.split(report.__name__,'.')[1])
-    fp.write('<p class="logo"><a href="%s"><img src="%s" border="0" alt=""></a></p>\n' % (site.base, config.LOGO_HREF))
-    fp.write('<h1 class="basename">%s</h1>\n' % make_link(site.base))
-    fp.write('</h1>\n')
-    fp.write('\n\n<table width="100%" cellpadding="4">\n')
-    fp.write('  <tr><th class="title">%s</th></tr>\n</table>\n' % report.__title__)
-
-def doBotMain(fp):
-    """ Write bottom part of html file for main content frame. """
-    import webcheck
-    fp.write('<hr>\n');
-    fp.write('<p class="footer">\n')
-    fp.write('<em>Generated %s by <a target="_top" href="%s">webcheck %s</a></em></p>\n' % (webcheck.start_time,version.home, version.webcheck))
-    fp.write('</body>\n')
-    fp.write('</html>\n')

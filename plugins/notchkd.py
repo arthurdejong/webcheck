@@ -19,28 +19,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""Generate an overview of pages that were not checked."""
+"""Present an overview of pages that were not checked."""
 
 __title__ = 'not checked'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'This is the list of all urls that were encountered but ' \
+                  'not checked at all during the examination of the website.'
 
 import rptlib
 
 def generate(fp,site):
     """Output the list of not checked pages to the given file descriptor."""
-    fp.write('<div class="table">\n')
-    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
+    fp.write('   <ol>\n')
+    site.notChecked.sort()
     site.notChecked.sort()
     for url in site.notChecked:
-        fp.write('  <tr><th colspan="4">%s</th></tr>\n' % rptlib.make_link(url,url))
-        fp.write('  <tr class="parent"><th rowspan="%s">Parent</th>\n' % len(site.linkMap[url].parents))
-        for parent in site.linkMap[url].parents:
-            fp.write('    ')
-            if parent != site.linkMap[url].parents[0]:
-                fp.write('<tr>\n')
-            fp.write('<td colspan="2">%s</td>\n' % rptlib.make_link(parent))
-            fp.write('<td>%s</td></tr>\n' % (site.linkMap[parent].author))
-        fp.write('\n  <tr><td class="blank" colspan="4">&nbsp;</td></tr>\n')
-    fp.write('</table>\n')
-    fp.write('</div>\n')
+        fp.write(
+          '    <li>\n' \
+          '     %(link)s\n' \
+          % { 'link': rptlib.make_link(url,url) })
+        # present a list of parents
+        rptlib.print_parents(fp,site.linkMap[url],'     ')
+        fp.write(
+          '    </li>\n')
+    fp.write('   </ol>\n')

@@ -19,11 +19,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""Generate a list of images that are on the site."""
+"""Present a list of images that are on the site."""
 
 __title__ = 'images'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'This is the list of all images found linked on the ' \
+                  'website.'
 
 import rptlib
 

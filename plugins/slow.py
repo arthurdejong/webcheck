@@ -19,41 +19,34 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""Present a list of pages that are slow to download."""
+"""Present a list of pages that are large and probably slow to download."""
 
 __title__ = "what's slow"
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'These pages are probably too big which will be slow to download.'
 
 import rptlib
 import config
 
 def generate(fp,site):
-    """Output the list of slow pages to the given file descriptor."""
-    import time
-    fp.write('<div class="table">\n')
-    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
-    fp.write('  <tr><th rowspan="2">Link</th>\n')
-    fp.write('      <th rowspan="2">Size <br>(Kb)</th>\n')
-    fp.write('      <th colspan="3">Time (HH:MM:SS)</th></tr>\n')
-    fp.write('  <tr><th>28.8</th><th>ISDN</th><th>T1</th></tr>\n')
-    links = site.linkMap.values()
+    """Output the list of large pages to the given file descriptor."""
+    fp.write('   <ul>\n')
+    links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
     for link in links:
         if not link.html:
             continue
+        # TODO: print size nicely
         sizeK = link.totalSize / 1024
-        sizek = link.totalSize * 8 / 1000
         if sizeK < config.REPORT_SLOW_URL_SIZE:
-            break
-        fp.write('  <tr><td>%s</td>' % make_link(link.URL)+'\n')
-        fp.write('      <td>%s</td>\n' % sizeK)
-        fp.write('      <td class="time">%s</td>\n' \
-                 % time.strftime('%H:%M:%S',time.gmtime(int(sizek/28.8))))
-        fp.write('      <td class="time">%s</td>\n' \
-                 % time.strftime('%H:%M:%S',time.gmtime(int(sizek/56))))
-        fp.write('      <td class="time">%s</td></tr>\n' \
-                 % time.strftime('%H:%M:%S',time.gmtime(int(sizek/1500))))
-        rptlib.add_problem('Slow Link: %sK' % sizeK, link) 
-    fp.write('</table>\n')
-    fp.write('</div>\n')
+            continue
+        fp.write(
+          '    <li>\n' \
+          '     %(link)s\n' \
+          '     <div class="status">size: %(size)sK</div>\n' \
+          '    </li>\n' \
+          % { 'link': rptlib.make_link(link.URL),
+              'size': sizeK })
+        rptlib.add_problem('slow Link: %sK' % str(sizeK), link) 
+    fp.write('   </ul>\n')

@@ -24,9 +24,12 @@
 __title__ = 'bad links'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'These links had problems with retreival during the ' \
+                  'crawling of the website.'
 
 import rptlib
 import config
+import xml.sax.saxutils
 
 HTTP_STATUS_CODES = {'100':"Continue",
                      '101':"Switching Protocols",
@@ -68,30 +71,26 @@ HTTP_STATUS_CODES = {'100':"Continue",
 
 def generate(fp,site):
     """Present the list of bad links to the given file descriptor."""
-    fp.write('<div class="table">\n')
-    fp.write('<table border="0" cellspacing="2" width="75%">\n')
+    fp.write('   <ol>\n')
     urls=site.badLinks
     urls.sort()
     for url in urls:
         link=site.linkMap[url]
-        fp.write('  <tr><td class="blank" colspan="3">&nbsp;</td></tr>\n')
-        if config.ANCHOR_BAD_LINKS:
-            fp.write('  <tr class="link"><th>Link</th>\n')
-            fp.write('    <td colspan="2" align="left">'  +rptlib.make_link(link.URL,link.URL) +'</td></tr>\n')
-        else:
-            fp.write('  <tr class="link"><th>Link</th>\n')
-            fp.write('    <td colspan="2" align="left">%s</td></tr>\n' % link.URL)
         status = str(link.status)
         if status in HTTP_STATUS_CODES.keys():
-            status = status + ": " + HTTP_STATUS_CODES[status]
-        fp.write('  <tr class="status"><th>Status</th><td colspan="2">%s</td></tr>\n' % status)
-        parents = link.parents
-        parents.sort()
-        fp.write('  <tr class="parent"><th rowspan="%s">Parents</th>\n' % len(parents))
-        for parent in parents:
+            status = status + "=" + HTTP_STATUS_CODES[status]
+        fp.write(
+          '    <li>\n' \
+          '     %(badurl)s\n' \
+          '     <div class="status">%(status)s</div>\n' \
+          % { 'badurl':  rptlib.make_link(link.URL,link.URL),
+              'status':  xml.sax.saxutils.escape(status) })
+        # present a list of parents
+        link.parents.sort()
+        rptlib.print_parents(fp,link,'     ')
+        # add a reference to the problem map
+        for parent in site.linkMap[url].parents:
             plink=site.linkMap[parent]
-            fp.write('    <td>%s</td>\n' % rptlib.make_link(plink.URL))
-            fp.write('    <td>%s</td>\n  </tr>\n' % (str(plink.author)))
-            rptlib.add_problem("Bad Link: " + url, plink)
-    fp.write('</table>\n')
-    fp.write('</div>\n')
+            rptlib.add_problem("Bad Link: " + link.URL, plink)
+        fp.write('    </li>\n')
+    fp.write('   </ol>\n')

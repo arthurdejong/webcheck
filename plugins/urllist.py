@@ -22,14 +22,17 @@
 __title__ = 'url list'
 __author__ = 'Arthur de Jong'
 __version__ = '1.0'
+__description__ = 'This is the list of all urls encountered during the ' \
+                  'examination of the website. It lists internal as well ' \
+                  'as external and non-examined urls.'
 
 import rptlib
 
 def generate(fp,site):
     """Output a sorted list of urls to the specified file descriptor."""
-    links=site.linkMap.values();
+    fp.write('   <ol>\n')
+    links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.URL, b.URL))
-    fp.write('<ol>\n')
     for link in links:
-        fp.write('<li>'+rptlib.make_link(link.URL,link.URL)+'</li>')
-    fp.write('</ol>\n')
+        fp.write('    <li>'+rptlib.make_link(link.URL,link.URL)+'</li>\n')
+    fp.write('   </ol>\n')

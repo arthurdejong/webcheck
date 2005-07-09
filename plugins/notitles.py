@@ -24,22 +24,22 @@
 __title__ = 'missing titles'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'This is the list of all (internal) pages without a ' \
+                  'proper title specified.'
 
 import rptlib
 
 def generate(fp,site):
     """Output the list of pages without a title to the given file descriptor."""
-    fp.write('<div class="table">\n')
-    fp.write('<table border="0" cellpadding="2" cellspacing="2" width="75%">\n')
-    fp.write('  <tr><th>URL</th><th>Author</th></tr>\n')
+    fp.write('   <ol>\n')
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.URL, b.URL))
     for link in links:
         if link.external:
             continue
         if link.html and (link.title is None):
-            fp.write('  <tr><td>%s</td><td>%s</td></tr>\n' \
-                     % (rptlib.make_link(link.URL,link.URL), link.author))
-            rptlib.add_problem("No Title",link)
-    fp.write('</table>\n')
-    fp.write('</div>\n')
+            fp.write(
+              '    <li>%(link)s</li>\n' \
+              % { 'link': rptlib.make_link(link.URL,link.URL) })
+            rptlib.add_problem("missing title",link)
+    fp.write('   </ol>\n')

@@ -19,26 +19,24 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""Present a sitemap of the visited site."""
+"""Present a sitemap of the checked site."""
 
 __title__ = 'site map'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
+__description__ = 'This an overview of the crawled site.'
 
 import rptlib
 import config
 
-def _explore(fp, site, link, explored={}, level=0):
+def _explore(fp, site, link, explored={}, level=0, indent='    '):
     """Recursively do a breadth-first traversal of the graph of links
     on the site.  Returns a list of HTML fragments that can be printed
     to produce a site map."""
     explored[link.URL]=True
     # output this link
-    fp.write('<li>\n')
-    if (link.URL in site.badLinks) and not config.ANCHOR_BAD_LINKS:
-        fp.write(link.URL+'\n')
-    else:
-        fp.write(rptlib.make_link(link.URL)+'\n')
+    fp.write(indent+'<li>\n')
+    fp.write(indent+' '+rptlib.make_link(link.URL)+'\n')
     # only check children if we are not too deep yet
     if level <= config.REPORT_SITEMAP_LEVEL:
         # figure out the links to follow and ensure that they are only
@@ -56,15 +54,15 @@ def _explore(fp, site, link, explored={}, level=0):
             to_explore.append(i)
         # go over the children and present them as a list
         if len(to_explore) > 0:
+            fp.write(indent+' <ul>\n')
             to_explore.sort()
-            fp.write('<ul>\n')
             for i in to_explore:
-                _explore(fp,site,site.linkMap[i],explored,level+1)
-            fp.write('</ul>\n')
-    fp.write('</li>\n')
+                _explore(fp,site,site.linkMap[i],explored,level+1,indent+'  ')
+            fp.write(indent+' </ul>\n')
+    fp.write(indent+'</li>\n')
 
 def generate(fp,site):
     """Output the sitemap to the specified file descriptor."""
-    fp.write('<ul>\n')
+    fp.write('   <ul>\n')
     _explore(fp,site,site.linkMap[site.base])
-    fp.write('</ul>\n')
+    fp.write('   </ul>\n')

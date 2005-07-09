@@ -1,126 +1,163 @@
-/* "Global" Settings */
-BODY {
-	background: #ffffff;
-	font-size: 10pt;
+/*
+   webcheck.css - style informtion for webcheck results
+
+   Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions
+   are met:
+   1. Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in
+      the documentation and/or other materials provided with the
+      distribution.
+   3. The name of the author may not be used to endorse or promote
+      products derived from this software without specific prior
+      written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+   IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+   GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+   IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+   OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/* general page definitions */
+
+body {
+  background: white;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 10px;
+  font-size: 10pt;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
-A:link {
-	color: #0000cd;
+a {
+  color: black;
 }
 
-A.external:link {
-	font-style: italic;
+h1 {
+  font-size: 120%;
+  margin-left: 10%;
+  font-weight: bold;
+  text-align: center;
+  font-family: sans-serif;
+  color: #cc1010;
 }
 
-A:active {
-	color: #0000ff;
+h1 a {
+  color: #cc1010;
 }
 
-A:visited {
-	color: #bc0000;
+h2 {
+  display: block;
+  font-size: 110%;
+  font-weight: bold;
+  font-family: sans-serif;
+  background: #cc3333;
+  color: white;
+  padding: 4px;
+  border: 1px solid #e59999;
 }
 
-TH {
-	background: #cccc99;
-	color: #000000;
+/* naviagtion part definitions */
+
+ul.navbar {
+  position: absolute;
+  display: block;
+  top: 0px;
+  left: 5%;
+  width: auto;
+  height: 1em;
+  padding: 2px;
+  background: #cc3333;
+  border: 1px solid #e59999;
+  text-align: left;
+  color: white;
+  font-size: 95%;
 }
 
-TD {
-	background: #eeeee0;
-	color: #000000;
+ul.navbar:hover {
+  height: auto;
 }
 
-BODY.navbar {
-	background:
-	url(blackbar.png);
-}
-.navbar TH {
-	background: #000000 url(blackbar.png);
-	color: #ffffff;
-	font-family: arial, sans-serif;
+ul.navbar li {
+  display: none;
 }
 
-.highlight TH {
-	background: #ffffff;
-	color: #000000;
+ul.navbar:hover li {
+  display: block;
 }
 
-.navbar A:link { 
-	background: none;
-	color: #ffffff;
+ul.navbar li.header {
+  display: block;
 }
 
-.navbar A:active {
-	background: none;
-	color: #00ff00;
+ul.navbar:hover li.header {
+  display: none;
 }
 
-.navbar A:visited {
-	background: none;
-	color: #ffffff;
+ul.navbar a {
+  background: none;
+  color: white;
+  display: block;
+  text-decoration: none;
 }
 
-.navbar TH.home {
-	background: #cd0000;
-	color: #ffffff;
+ul.navbar a:active {
+  background: #ffeeee;
+  color: #cc1010;
 }
 
-P.logo {
-	text-align: center;
+ul.navbar a:hover {
+  background: #ffeeee;
+  color: #cc1010;
 }
 
-H1 {
-	font-size: 1.5em;
-}
-H1.basename {
-	text-align: center;
-}
+/* definitions for stuff in main content */
 
-TH.title {
-	background: #cd0000;
-	color: #ffffff;
-	font-family: "comic sans ms", verdana, sans-serif;
-	font-size: 1.3em;
-	text-align: left;
+.internal {
+  background: #fff2f2;
 }
 
-TR.link  {
-	background: #cccc99;
-	color: #000000;
+.external {
+  font-style: italic;
+  background: #f2f5ff;
 }
 
-TR.status {
-	background: #bbbbb0;
-	color: #000000;
+.status {
+  color: red;
+  font-weight: bold;
 }
 
-TR.parent {
-	background: #ddddd0;
-	color: #000000;
+.parents {
+  font-size: 80%;
+  padding-bottom: 0.5em;
 }
 
-/* time/age fields */
-TD.time {
-	b
-	background: #ddddd0;
-	color: #000000;
-	text-align: right;
+ul {
+  margin-left: 0;
+  padding-left: 1.5em;
 }
 
-TD.blank {
-	background: #ffffff;
+/* definitions for footer */
+
+p.footer {
+  margin-top: 30px;
+  font-style: italic;
+  line-height: 90%;
+  color: gray;
 }
 
-DIV.table {
-	/* the only way I know of to align tables via CSS */
-	text-align: center;
+p.footer a {
+  text-decoration: none;
+  color: gray;
 }
-
-
-P.authorlist {
-	font-family: helvetica, sans-serif;
-	font-size: smaller;
-	font-weight: bold;
-	text-align: center;
-}
-
