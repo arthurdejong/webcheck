@@ -1,8 +1,9 @@
 
-# htmlparse.py - html parsing functions
+# html.py - parser functions for html content
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,43 +19,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-
-"""Utilites for parsing HTML and urls"""
+"""Parser functions for processing HTML content."""
 
 import htmllib
 import string
 import debugio
-from urlparse import urlparse, urljoin, urlunparse
-from formatter import NullFormatter
+import formatter
+import sgmllib
 
-def urlformat(url,parent=None):
-    """ returns a formatted version of URL, which, adds trailing '/'s, if 
-    necessary, deletes fragmentation identifiers '#' and expands partial url's 
-    based on parent"""
-    
-    method=urlparse(url)[0]
-    if (method=='') and (parent != None):
-        url=urljoin(parent,url)
-        #url=basejoin(parent,url)
-    parsedlist = list(urlparse(url))
-    parsedlist[5]='' # remove fragment
-    # parsedlist[4]='' # remove query string
-    url = urlunparse(tuple(parsedlist))
-    return url
+# TODO: switch to using HTMLParser (not from htmllib)
 
+class _MyHTMLParser(htmllib.HTMLParser):
 
-class MyHTMLParser(htmllib.HTMLParser):
-    
     def __init__(self,formatter):
         self.imagelist = []
         self.title = None
         self.author = None
         self.base = None
         htmllib.HTMLParser.__init__(self,formatter)
-        
-    # override handle_image() 
+
+    # override handle_image()
     def handle_image(self,src,alt,*stuff):
-        if src not in self.imagelist: self.imagelist.append(src)
+        if src not in self.imagelist:
+            self.imagelist.append(src)
 
     def do_frame(self,attrs):
         for name, val in attrs:
@@ -63,7 +50,6 @@ class MyHTMLParser(htmllib.HTMLParser):
 
     def save_bgn(self):
         self.savedata = ''
-        
 
     def save_end(self):
         data = self.savedata
@@ -86,9 +72,7 @@ class MyHTMLParser(htmllib.HTMLParser):
         if fields.has_key('name'):
             if string.lower(fields['name']) == 'author':
                 if fields.has_key('content'):
-                    author = fields['content']
-                    self.author = author
-                    debugio.info('  author: ' + author)
+                    self.author = fields['content']
 
     # stylesheet links
     def do_link(self,attrs):
@@ -109,29 +93,34 @@ class MyHTMLParser(htmllib.HTMLParser):
             if name=="href":
                 self.base = val
 
-def pageLinks(url,page):
-    """ returns a list of all the url's in a page.  page should be a file object
-    Partial urls will be expanded using <url> parameter unless the page contains
-    the <BASE HREF=> tag."""
-
-    parser = MyHTMLParser(NullFormatter())
-    parser.feed(page)
-    parser.close()
+def parse(content):
+    """Parse the specified content and extract an url list, a list of images a
+    title and an author. The content is assumed to contain HMTL."""
+    # parse the file
+    parser = _MyHTMLParser(formatter.NullFormatter())
+    try:
+        parser.feed(content)
+        parser.close()
+    except sgmllib.SGMLParseError, e:
+        debugio.warn('problem parsing html: %s' % (str(e)))
+        #FIXME: flag a problem with this link
+    # generate list of links
     urllist = []
-    imagelist = []
-        
-    title = parser.title
-    author = parser.author
-    if parser.base is not None:
-        parent = parser.base
-    else:
-        parent = url
     for anchor in parser.anchorlist:
-        anchor=urlformat(anchor,parent)
-        if anchor not in urllist: urllist.append(anchor)
-        
+        # create absolute url based on <base> tag
+        if parser.base is not None:
+            anchor = urllib.join(parser.base,anchor)
+        # add anchor to urllist
+        if anchor not in urllist:
+            urllist.append(anchor)
+    # generate list of images
+    imagelist = []
     for image in parser.imagelist:
-        image=urlformat(image,parent)
-        if image not in imagelist: imagelist.append(image)
-
-    return (urllist, imagelist, title, author)
+        # create absolute url based on <base> tag
+        if parser.base is not None:
+            image = urllib.join(parser.base,image)
+        # add image to imageslist
+        if image not in imagelist:
+            imagelist.append(image)
+    # return the data
+    return (urllist, imagelist, parser.title, parser.author)

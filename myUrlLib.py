@@ -27,7 +27,6 @@ compiled_yanked = []
 
 import config
 from urllib import *
-import htmllib
 import httplib
 import robotparser
 import string
@@ -36,11 +35,11 @@ string.whitespace = string.whitespace + '\012\015'
 import time
 import re
 import stat
-import htmlparse
 import debugio
 import sys
 import socket
 import types
+import urlparse
 
 def get_robots(location):
     global robot_parsers
@@ -58,6 +57,15 @@ def can_fetch(location, url):
     if robot_parsers.has_key(location):
         return robot_parsers[location].can_fetch('webcheck',url)
     return 1
+
+def urlclean(url,parent=None):
+    """Return a cleaned up absolute url, possibly using parent as a base.
+    This function strips fragment (#...) from the url."""
+    # make an absolute url
+    if parent is not None:
+        url=urlparse.urljoin(parent,url)
+    # remove any fragments
+    return urlparse.urldefrag(url)[0]
 
 ############################################################################
 class Link:
@@ -79,15 +87,14 @@ class Link:
         self.init()
 
         debugio.debug('  parent = ' + str(parent))
-        from urlparse import urlparse
 
-        parsed = urlparse(url)
+        parsed = urlparse.urlparse(url)
         self.scheme = parsed[0]
         location = parsed[1]
 
         if parent not in self.parents:
             if parent: self.parents.append(parent)
-            
+
         self.URL = url
         Link.linkMap[self.URL]=self
 
@@ -141,11 +148,11 @@ class Link:
                 self.set_bad_link(url,str(data))
         except KeyboardInterrupt:
             raise KeyboardInterrupt
-        except:
-            self.set_bad_link(url,"Error: Malformed URL?")
-            debugio.debug("  %s: %s" % (sys.exc_type, sys.exc_value))
-            return
-        
+#         except:
+#             self.set_bad_link(url,"Error: Malformed URL?")
+#             debugio.debug("  %s: %s" % (sys.exc_type, sys.exc_value))
+#             return
+
     def explore_children(self):
         for child in self.children:
             if not Link.linkMap.has_key(child):
@@ -191,32 +198,32 @@ class Link:
 
     def _handleHTML(self,url,htmlfile):
         """examines and html file and updates the Link object"""
-        # get anchorlist
-        (anchorlist, imagelist, title, author) = htmlparse.pageLinks(url,htmlfile)
-
+        # parse the html content
+        import parsers.html
+        (anchorlist, imagelist, title, author) = parsers.html.parse(htmlfile)
         debugio.info('  title: %s' % str(title))
         for child in anchorlist:
+            child=urlclean(child,url)
             if child not in self.children:
                 self.children.append(child)
-                    
         self.totalSize = self.size
         self.title = title
         self.author = author
         self.html = 1
         # get image list
         for image in imagelist:
+            image=urlclean(image,url)
             if image not in Link.images.keys():
                 debugio.info('  adding image: %s' % image)
                 Link.images[image] = Image(image, self.URL)
             self.totalSize = self.totalSize + int(Link.images[image].size)
-        if not self.external: self.explore_children()
-        return
-
+        if not self.external:
+            self.explore_children()
 
 
 class ExternalLink(Link):
     """ this class is just like Link, but it does not explore it's children """
-    
+
     def __init__(self,url,parent,yanked=0):
 
         if config.AVOID_EXTERNAL_LINKS or yanked:
@@ -237,7 +244,8 @@ class ExternalLink(Link):
 
     def _handleHTML(self,url,htmlfile):
         # ignore links and images, but use the title
-        self.title = htmlparse.pageLinks(url,htmlfile)[2]
+        import parsers.html
+        self.title = parsers.html.parse(htmlfile)[2]
         debugio.info('  title: %s' % str(self.title))
         self.children=[]
 
@@ -255,8 +263,7 @@ class Image(Link):
 
 def is_external(url):
     """ returns true if url is an external link """
-    from urlparse import urlparse
-    parsed = urlparse(url)
+    parsed = urlparse.urlparse(url)
     scheme = parsed[0]
     location = parsed[1]
     if (location not in config.HOSTS) and (scheme in ['http','ftp']):
