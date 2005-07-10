@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ def init(self, url, parent):
     self.size = stats[6]
     
     lastMod = stats[8]
-    self.age = int((time.time()-lastMod)/myUrlLib.SECS_PER_DAY)
+    self.mtime = lastMod
     
     self.type = mimetypes.guess_type(url)[0]
     if self.type is None: self.type = 'application/octet-stream' # good enough?

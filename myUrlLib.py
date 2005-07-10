@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +22,6 @@
 """Generic library for handling urls and links"""
 
 robot_parsers={}
-SECS_PER_DAY=60*60*24
 compiled_ex = []
 compiled_yanked = []
 
@@ -172,7 +172,7 @@ class Link:
 
     def init(self):
         """ initialize some variables """
-        self.age = None
+        self.mtime = None
         self.scheme = None
         self.headers = None
         self.parents= []
@@ -254,7 +254,6 @@ class Image(Link):
     def __init__(self, url, parent):
         #self.init()
         Link.__init__(self, url, parent)
-        #self.age = getAge(self)
 
     def _handleHTML(self,url,htmlfile):
         """Don't handle HTML, this is an image"""

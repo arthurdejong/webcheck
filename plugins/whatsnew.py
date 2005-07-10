@@ -28,16 +28,21 @@ __description__ = 'These pages habe been recently modified.'
 
 import config
 import rptlib
+import time
+
+SECS_PER_DAY=60*60*24
 
 def generate(fp,site):
     """Output the list of recently modified pages to the specified file descriptor."""
     fp.write('   <ul>\n')
     links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.age, b.age))
+    links.sort(lambda a, b: cmp(b.mtime, a.mtime))
     for link in links:
         if not link.html:
             continue
-        age = link.age
+        if link.mtime is None:
+            continue
+        age = (time.time()-link.mtime)/SECS_PER_DAY
         if (age is not None) and (age <= config.REPORT_WHATSNEW_URL_AGE):
             fp.write(
               '    <li>\n' \

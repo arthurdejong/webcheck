@@ -117,7 +117,7 @@ def init(link, url, parent):
     except (OverflowError, TypeError, ValueError):
         lastMod = None
     if lastMod:
-        link.age = int((time.time()-lastMod)/myUrlLib.SECS_PER_DAY)
+        link.mtime = lastMod
 
 def get_document(url):
     document = opener.open(url).read()

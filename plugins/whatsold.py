@@ -28,16 +28,21 @@ __description__ = 'These pages habe been modified a long time ago and may be out
 
 import rptlib
 import config
+import time
+
+SECS_PER_DAY=60*60*24
 
 def generate(fp,site):
     """Output the list of outdated pages to the specified file descriptor."""
     fp.write('   <ul>\n')
     links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(b.age, a.age))
+    links.sort(lambda a, b: cmp(a.mtime, b.mtime))
     for link in links:
         if not link.html:
             continue
-        age = link.age
+        if link.mtime is None:
+            continue
+        age = (time.time()-link.mtime)/SECS_PER_DAY
         if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
             fp.write(
               '    <li>\n' \
