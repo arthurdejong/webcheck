@@ -186,7 +186,6 @@ def install_file(fname,text=False):
     sfp.close()
 
 def main():
-    print os.path
     # parse command-line arguments
     parse_args()
     # indicate that we are starting

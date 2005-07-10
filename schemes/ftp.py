@@ -27,7 +27,6 @@ import ftplib
 import urlparse
 import myUrlLib
 import string
-import posixpath
 import debugio
 
 Link = myUrlLib.Link
