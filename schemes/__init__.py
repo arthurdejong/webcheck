@@ -1,2 +1,46 @@
 
-# __init__.py - empty file
+# __init__.py - general scheme interface
+#
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+"""This package groups all the supported schemes.
+
+A scheme module can be requested by the get_schememodule function.
+Each module should export the following functions:
+
+    get_info(link)
+        Fetch the link and get some basic information from the
+        document.
+
+    get_document(link)
+        Fetch the content of the referenced link."""
+
+# Note: the difference between calling both methods is that the
+#       content is only fetched if the link does not have a proble
+#       and has a supported mimetype
+
+# a map of schemes to modules
+_schememodules={}
+
+def get_schememodule(scheme):
+    """Look up the correct module for the specified scheme."""
+    if not _schememodules.has_key(scheme):
+        try:
+            _schememodules[scheme]=__import__('schemes.'+scheme,globals(),locals(),[scheme])
+        except ImportError:
+            _schememodules[scheme]=None
+    return _schememodules[scheme]

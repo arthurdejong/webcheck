@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 """This module defines the functions needed for creating Link objects for urls
-using the http scheme"""
+using the http scheme."""
 
 import myUrlLib
 import string
@@ -42,39 +42,39 @@ if config.HEADERS:
     opener.addheaders = opener.addheaders + config.HEADERS
 
 def _get_reply(url,redirect_depth=0):
-    """Open connection to url and report information given by HEAD command"""
-
-    (scheme,location,path,query,fragment)=urlparse.urlsplit(url)
+    """Open connection to url and report information given by HEAD command."""
+    (scheme,netloc,path,query,fragment)=urlparse.urlsplit(url)
     if config.PROXIES and config.PROXIES.has_key('http'):
         host = urlparse.urlparse(config.PROXIES['http'])[1]
         document = url
     else:
-        host = location
+        host = netloc
         document = string.join((path,query),'')
-
     if not document:
         document = '/'
-    debugio.debug('document=%s' % document)
-
-    (username, passwd, realhost, port) = parse_host(host)
-
-    if port:
-        h=httplib.HTTPConnection(realhost,port)
+    (userpass, host) = urllib.splituser(netloc)
+    if userpass is None:
+        (user, passwd) = (None, None)
     else:
-        h=httplib.HTTPConnection(realhost)
-
+        (user, passwd) = urllib.splitpasswd(userpass)
+    (host, port) = urllib.splitport(host)
+    if port:
+        h=httplib.HTTPConnection(host,port)
+    else:
+        h=httplib.HTTPConnection(host)
     h.putrequest('HEAD', document)
-    if username and passwd:
-        auth = string.strip(base64.encodestring(username + ":" + passwd))
+    if user and passwd:
+        auth = string.strip(base64.encodestring(user + ":" + passwd))
         h.putheader('Authorization', 'Basic %s' % auth)
     h.putheader('User-Agent','webcheck %s' % version.webcheck)
     h.endheaders()
-
     r = h.getresponse()
     errcode, errmsg, headers = r.status, r.reason, r.msg
     h.close()
     debugio.debug(errcode)
     debugio.debug(errmsg)
+    # handle redirects
+    # TODO: probably handle this better in myUrlLib
     if errcode == 301 or errcode == 302:
         if redirect_depth >= config.REDIRECT_DEPTH:
             debugio.error('  Too many redirects!')
@@ -91,27 +91,23 @@ def _get_reply(url,redirect_depth=0):
         return _get_reply(redirect,redirect_depth+1)
     return (errcode, errmsg, headers, url)
 
-def init(link, url, parent):
+def get_info(link):
     """ Here, link is a reference of the link object that is calling this
     pseudo-method"""
-
-    (link.status, link.message, link.headers, link.URL) = _get_reply(myUrlLib.basejoin(parent,url))
+    (link.status, link.message, link.headers, link.URL) = _get_reply(link.URL)
     Link.linkMap[link.URL] = link
     try:
         link.type = link.headers.gettype()
     except AttributeError:
         link.type = 'text/html' # is this a good enough default?
-
     debugio.debug('  Content-type: ' + link.type)
     try:
         link.size = int(link.headers['content-length'])
     except (KeyError, TypeError):
         link.size = 0
-
     if (link.status != 200) and (link.status != 'Not Checked'):
         link.set_bad_link(link.URL,str(link.status) + ": " +  link.message)
         return
-
     try:
         lastMod = time.mktime(link.headers.getdate('Last-Modified'))
     except (OverflowError, TypeError, ValueError):
@@ -119,44 +115,7 @@ def init(link, url, parent):
     if lastMod:
         link.mtime = lastMod
 
-def get_document(url):
-    document = opener.open(url).read()
+def get_document(link):
+    document = opener.open(link.URL).read()
     opener.cleanup()
     return document
-
-def parse_host(location):
-    """Return a tuple (user, password, host, port)
-       
-       takes string http://user:password@hostname:hostport and
-       returns a tuple.  If a field is null in the string it will be
-       returned as None in the tuple.
-    """
-
-    #location = urlparse.urlparse(host)[1]
-    debugio.debug("network location= %s" % location)
-
-    at = string.find(location, "@")
-    if at > -1:
-        userpass = location[:at]
-        colon = string.find(userpass, ":")
-        if colon > -1:
-            user = userpass[:colon]
-            passw = userpass[colon+1:]
-        else:
-            user = userpass
-            passw = None
-        hostport = location[at+1:]
-    else:
-        user = passw = None
-        hostport = location
-
-    colon = string.find(hostport, ":")
-    if colon > -1:
-        hostname = hostport[:colon]
-        port = hostport[colon+1:]
-    else:
-        hostname = hostport
-        port = None
-
-    debugio.debug("parse_host = %s %s %s %s" % (user, passw, hostname, port))
-    return (user, passw, hostname, port)

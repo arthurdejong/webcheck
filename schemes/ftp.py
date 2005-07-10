@@ -3,6 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 """This module defines the functions needed for creating Link objects for urls
-using the ftp scheme"""
+using the ftp scheme."""
 
 import urllib
 import mimetypes
@@ -31,117 +32,76 @@ import debugio
 
 Link = myUrlLib.Link
 
-def init(self, url, parent):
-    
-    self.URL = myUrlLib.basejoin(parent,url)
-    self.type = mimetypes.guess_type(url)[0]
+# FIXME: honor ftp proxy settings
+# TODO: if browsing an FTP directory, also make it crawlable
 
-    host, port, user, passwd, pathname = parseurl(url)
+def get_info(link):
+    link.type = mimetypes.guess_type(link.URL)[0]
+    (host, port, user, passwd, path) = _spliturl(link.URL)
     try:
         ftp = ftplib.FTP()
         ftp.connect(host, port)
         ftp.login(user, passwd)
-        dirs, filename = split_dirs(pathname)
-        cwd(dirs, ftp)
+        dirs, filename = _split_dirs(path)
+        _cwd(dirs, ftp)
         if filename:
             try:  # FTP.size raises an exception instead of returning None!
-                self.size = ftp.size(filename)
+                link.size = ftp.size(filename)
             except ftplib.error_perm:
-                self.size = 0
+                link.size = 0
                 if filename not in ftp.nlst():
                     raise ftplib.error_perm, "No such file or directory"
-    except ftplib.all_errors, errtext:
-        self.set_bad_link(self.URL, str(errtext))
+    except ftplib.all_errors, e:
+        link.set_bad_link(link.URL, str(e))
     try:
         ftp.quit()
     except:
         ftp.close()
 
-def callback(line):
+def _callback(line):
     """Read a line of text and do nothing with it"""
     return
 
-def stat(pathname, ftpobject):
-    # This is not completely implemented
-    # Note: ftp servers do not respond with a 5xx error when a file does not
-    # exist except for GET, which I'm trying to GET around ;-)  Anyway, an
-    # error code will be reported if you try to change to a directory that
-    # does not exist, so this is not totally useless
-    # In addition to the above, all of the ftp servers i tested this on
-    # did not report the correct code (211,212,213) when responding to STAT
-    # per RFC959.  What the hell is up with that?  Can checking ftp links be
-    # done reliably?
-    # FTP should be replaced by a new protocol that produces machine-readable
-    # responses and actually lets you get the status of a file without having to
-    # download it.  Oh wait, that's what HTTP is.
-    dirs, filename = split_dirs(pathname)
-    cwd(dirs, ftpobject)
-    response = ftpobject.retrlines('NLST %s' % filename,callback)
-    debugio.debug(response)
-
-def get_document(url):
-    host, port, user, passwd, pathname = parseurl(url)
-    dirs, filename = split_dirs(pathname)
+def get_document(link):
+    (host, port, user, passwd, path) = _spliturl(link.URL)
+    dirs, filename = _split_dirs(path)
     ftp = ftplib.FTP()
     ftp.connect(host, port)
     ftp.login(user, passwd)
-    cwd(dirs, ftp)
-
+    _cwd(dirs, ftp)
     ftp.voidcmd('TYPE I')
     conn, size = ftp.ntransfercmd('RETR ' + filename)
     if size:
        page = conn.makefile().read(size)
     else:
        page = conn.makefile().read()
-
     try:
        ftp.quit()
     except ftplib.all_errors:
        ftp.close()
     return page
 
-def split_dirs(pathname):
+def _split_dirs(path):
     """Given pathname, split it into a tuple consisting of a list of dirs and
     a filename"""
-    
-    dirs = map(urllib.unquote, string.split(pathname, '/'))
+    dirs = map(urllib.unquote, string.split(path, '/'))
     filename = dirs.pop()
-    if len(dirs) and not dirs[0]: del dirs[0]
+    if len(dirs) and not dirs[0]:
+        del dirs[0]
     return (dirs, filename)
 
-def size(pathname,ftpobject):
-    if pathname == '': pathname = '/'
-    dirs, filename = split_dirs(pathname)
-    debugio.debug('pathname =%s' % pathname)
-    debugio.debug('dirs= %s' % dirs)
-    debugio.debug('filename= %s' % filename)
-    cwd(dirs, ftpobject)
-    return ftpobject.size(filename)
-
-def cwd(dirs, ftpobject):
+def _cwd(dirs, ftpobject):
     for dir in dirs:
         ftpobject.cwd(dir)
 
-def parseurl(url):
-    parsed = urlparse.urlparse(url)
-    host = parsed[1]
-    if '@' in host:
-        userpass, host = string.split(host,'@')
-        if ':' in userpass:
-            user, passwd = string.split(userpass,':')
-        else:
-            user = userpass
-            passwd = None
+def _spliturl(url):
+    """Split the specified url in host, port, user, password and path
+    components, falling back to reasonable defaults for the ftp protocol."""
+    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(url)
+    (userpass, host) = urllib.splituser(netloc)
+    if userpass is not None:
+        (user, passwd) = urllib.splitpasswd(userpass)
     else:
-        user = 'anonymous'
-        passwd = ''  # Filled in by ftplib.
-
-    if ':' in host:
-        host, port = string.split(host,':')
-        port = int(port)
-    else:
-        port = ftplib.FTP_PORT
-
-    pathname = parsed[2]
-    if not port: port = ftplib.FTP_PORT
-    return (host, port, user, passwd, pathname)
+        (user, passwd) = ('anonymous', '')
+    (host, port) = urllib.splitnport(host,ftplib.FTP_PORT)
+    return (host, port, user, passwd, path)

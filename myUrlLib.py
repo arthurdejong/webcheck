@@ -40,6 +40,7 @@ import sys
 import socket
 import types
 import urlparse
+import schemes
 
 def get_robots(location):
     global robot_parsers
@@ -99,7 +100,7 @@ class Link:
         Link.linkMap[self.URL]=self
 
         # see if we can import module for this scheme
-        self.schememodule=get_schememodule(self.scheme)
+        self.schememodule=schemes.get_schememodule(self.scheme)
         if self.schememodule is None:
             debugio.info("  unsupported scheme ("+self.scheme+")")
             self.status="Not Checked"
@@ -131,9 +132,9 @@ class Link:
                 return
 
         try:
-            self.schememodule.init(self, url, parent)
+            self.schememodule.get_info(self)
             if (self.URL not in Link.badLinks) and (self.type == 'text/html'):
-                page = self.schememodule.get_document(self.URL)
+                page = self.schememodule.get_document(self)
                 self._handleHTML(self.URL, page)
         except IOError, data:
             self.set_bad_link(url,str(data.errno) + ': ' + str(data.strerror))
@@ -299,15 +300,3 @@ def is_yanked(url):
         if x.search(url) is not None:
             return 1
     return 0
-
-# a map of schemes to modules
-schememodules={}
-
-def get_schememodule(scheme):
-    """look up the correct module for the specified scheme"""
-    if not schememodules.has_key(scheme):
-        try:
-            schememodules[scheme]=__import__('schemes.'+scheme,globals(),locals(),[scheme])
-        except ImportError:
-            schememodules[scheme]=None
-    return schememodules[scheme]

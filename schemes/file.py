@@ -20,42 +20,38 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 """This module defines the functions needed for creating Link objects for urls
-using the file scheme"""
+using the file scheme."""
 
 import urlparse
+import urllib
 import os
 import time
 import mimetypes
 import myUrlLib
 import re
 
-mimetypes.types_map['.shtml']='text/html'
+# FIXME: store this extension somewhere else
+mimetypes.add_type('text/html','.shtml')
 
-def init(self, url, parent):
-    self.URL = myUrlLib.basejoin(parent,url)
-    parsed = urlparse.urlparse(self.URL,'file',0)
-    filename = parsed[2]
-    if os.name != 'posix':
-        filename = re.sub("^/\(//\)?\([a-zA-Z]\)[|:]","\\2:",filename)
+def get_info(link):
+    """Retreive some basic information about the file.
+    Store the results in the link object."""
+    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.URL)
+    path=urllib.url2pathname(path)
     try:
-        stats = os.stat(filename)
-    except os.error:
-        self.set_bad_link(self.URL, "No such file or directory")
+        stats = os.stat(path)
+    except os.error, e:
+        link.set_bad_link(link.URL, str(e))
         return
+    link.size = stats[6]
+    link.mtime = stats[8]
+    # guess mimetype, falling back to application/octet-stream
+    link.type = mimetypes.guess_type(link.URL)[0]
+    if link.type is None:
+        link.type = 'application/octet-stream'
 
-    self.size = stats[6]
-    
-    lastMod = stats[8]
-    self.mtime = lastMod
-    
-    self.type = mimetypes.guess_type(url)[0]
-    if self.type is None: self.type = 'application/octet-stream' # good enough?
-
-def get_document(url):
-    parsed = urlparse.urlparse(url,'file',0)
-    filename = parsed[2]
-    if os.name != 'posix':
-        filename = re.sub("^/\(//\)?\([a-zA-Z]\)[|:]","\\2:",filename)
-    
-    return open(filename,'r').read()
-    
+def get_document(link):
+    """Return the contents of the document pointed to by the link."""
+    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.URL)
+    path=urllib.url2pathname(path)
+    return open(path,'r').read()
