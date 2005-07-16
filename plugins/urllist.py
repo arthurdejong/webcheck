@@ -26,7 +26,7 @@ __description__ = 'This is the list of all urls encountered during the ' \
                   'examination of the website. It lists internal as well ' \
                   'as external and non-examined urls.'
 
-import rptlib
+import plugins
 
 def generate(fp,site):
     """Output a sorted list of urls to the specified file descriptor."""
@@ -34,5 +34,5 @@ def generate(fp,site):
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.URL, b.URL))
     for link in links:
-        fp.write('    <li>'+rptlib.make_link(link.URL,link.URL)+'</li>\n')
+        fp.write('    <li>'+plugins.make_link(link.URL,link.URL)+'</li>\n')
     fp.write('   </ol>\n')

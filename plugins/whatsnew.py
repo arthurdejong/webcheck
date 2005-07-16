@@ -27,7 +27,7 @@ __version__ = '1.1'
 __description__ = 'These pages habe been recently modified.'
 
 import config
-import rptlib
+import plugins
 import time
 
 SECS_PER_DAY=60*60*24
@@ -49,6 +49,6 @@ def generate(fp,site):
               '     %(link)s\n' \
               '     <div class="status">age: %(age)d days</div>\n' \
               '    </li>\n' \
-              % { 'link':  rptlib.make_link(link.URL),
+              % { 'link':  plugins.make_link(link.URL),
                   'age':   age })
     fp.write('   </ul>\n')

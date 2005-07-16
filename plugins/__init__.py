@@ -1,5 +1,5 @@
 
-# rptlib.py - plugin function module
+# __init__.py - plugin function module
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike Meyer <mwm@mired.org>

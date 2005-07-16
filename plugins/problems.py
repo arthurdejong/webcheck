@@ -27,13 +27,13 @@ __version__ = '1.1'
 __description__ = 'This is an overview of all the problems on the site, ' \
                   'grouped by author.'
 
-import rptlib
+import plugins
 import urllib
 import xml.sax.saxutils
 
 def generate(fp,site):
     """Output the overview of problems to the given file descriptor."""
-    authors=rptlib.problem_db.keys()
+    authors=plugins.problem_db.keys()
     authors.sort()
     # generate short list of authors
     if len(authors) > 1:
@@ -54,13 +54,13 @@ def generate(fp,site):
           % { 'authorref': urllib.quote(str(author),''),
               'author':    xml.sax.saxutils.escape(str(author)) })
         # list problems for this author
-        for problem,link in rptlib.problem_db[author]:
+        for problem,link in plugins.problem_db[author]:
             fp.write(
               '    <li>\n' \
               '     %(link)s\n' \
               '     <div class="status">%(problem)s</div>\n' \
               '    </li>\n' \
-              % { 'link':    rptlib.make_link(link.URL),
+              % { 'link':    plugins.make_link(link.URL),
                   'problem': xml.sax.saxutils.escape(problem) })
         fp.write(
           '      </ul>\n' \

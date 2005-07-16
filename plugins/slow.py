@@ -26,8 +26,8 @@ __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 __description__ = 'These pages are probably too big which will be slow to download.'
 
-import rptlib
 import config
+import plugins
 
 def generate(fp,site):
     """Output the list of large pages to the given file descriptor."""
@@ -46,7 +46,7 @@ def generate(fp,site):
           '     %(link)s\n' \
           '     <div class="status">size: %(size)sK</div>\n' \
           '    </li>\n' \
-          % { 'link': rptlib.make_link(link.URL),
+          % { 'link': plugins.make_link(link.URL),
               'size': sizeK })
-        rptlib.add_problem('slow Link: %sK' % str(sizeK), link) 
+        plugins.add_problem('slow Link: %sK' % str(sizeK), link) 
     fp.write('   </ul>\n')

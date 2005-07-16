@@ -42,7 +42,7 @@ import debugio
 debugio.loglevel=debugio.INFO
 
 import version
-import plugins.rptlib
+import plugins
 
 def print_version():
     """print version information"""
@@ -178,7 +178,7 @@ def install_file(fname,text=False):
         mode+='U'
     sfp=open(source,mode)
     # create file in output directory (with overwrite question)
-    tfp=plugins.rptlib.open_file(target);
+    tfp=plugins.open_file(target);
     # copy contents
     shutil.copyfileobj(sfp,tfp)
     # close files
@@ -203,7 +203,7 @@ def main():
     # start with the frame-description page
     debugio.info('generating reports...')
     # for every plugin, generate a page
-    plugins.rptlib.generate(site, config.PLUGINS)
+    plugins.generate(site, config.PLUGINS)
     # put extra files in the output directory
     install_file('webcheck.css',True)
     debugio.info('done.')

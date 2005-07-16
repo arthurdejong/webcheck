@@ -27,8 +27,8 @@ __version__ = '1.1'
 __description__ = 'These links had problems with retreival during the ' \
                   'crawling of the website.'
 
-import rptlib
 import config
+import plugins
 import xml.sax.saxutils
 
 HTTP_STATUS_CODES = {'100':"Continue",
@@ -83,14 +83,14 @@ def generate(fp,site):
           '    <li>\n' \
           '     %(badurl)s\n' \
           '     <div class="status">%(status)s</div>\n' \
-          % { 'badurl':  rptlib.make_link(link.URL,link.URL),
+          % { 'badurl':  plugins.make_link(link.URL,link.URL),
               'status':  xml.sax.saxutils.escape(status) })
         # present a list of parents
         link.parents.sort()
-        rptlib.print_parents(fp,link,'     ')
+        plugins.print_parents(fp,link,'     ')
         # add a reference to the problem map
         for parent in site.linkMap[url].parents:
             plink=site.linkMap[parent]
-            rptlib.add_problem("Bad Link: " + link.URL, plink)
+            plugins.add_problem("Bad Link: " + link.URL, plink)
         fp.write('    </li>\n')
     fp.write('   </ol>\n')

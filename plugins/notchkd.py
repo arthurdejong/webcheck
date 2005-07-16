@@ -27,7 +27,7 @@ __version__ = '1.1'
 __description__ = 'This is the list of all urls that were encountered but ' \
                   'not checked at all during the examination of the website.'
 
-import rptlib
+import plugins
 
 def generate(fp,site):
     """Output the list of not checked pages to the given file descriptor."""
@@ -38,9 +38,9 @@ def generate(fp,site):
         fp.write(
           '    <li>\n' \
           '     %(link)s\n' \
-          % { 'link': rptlib.make_link(url,url) })
+          % { 'link': plugins.make_link(url,url) })
         # present a list of parents
-        rptlib.print_parents(fp,site.linkMap[url],'     ')
+        plugins.print_parents(fp,site.linkMap[url],'     ')
         fp.write(
           '    </li>\n')
     fp.write('   </ol>\n')

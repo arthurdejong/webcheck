@@ -26,8 +26,8 @@ __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 __description__ = 'These pages habe been modified a long time ago and may be outdated.'
 
-import rptlib
 import config
+import plugins
 import time
 
 SECS_PER_DAY=60*60*24
@@ -49,8 +49,8 @@ def generate(fp,site):
               '     %(link)s\n' \
               '     <div class="status">age: %(age)d days</div>\n' \
               '    </li>\n' \
-              % { 'link':  rptlib.make_link(link.URL),
+              % { 'link':  plugins.make_link(link.URL),
                   'age':   age })
             # add link to problem database
-            rptlib.add_problem('Old Link: %s days old' % age ,link)
+            plugins.add_problem('Old Link: %s days old' % age ,link)
     fp.write('   </ul>\n')

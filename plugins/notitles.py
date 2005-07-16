@@ -27,7 +27,7 @@ __version__ = '1.1'
 __description__ = 'This is the list of all (internal) pages without a ' \
                   'proper title specified.'
 
-import rptlib
+import plugins
 
 def generate(fp,site):
     """Output the list of pages without a title to the given file descriptor."""
@@ -40,6 +40,6 @@ def generate(fp,site):
         if link.html and (link.title is None):
             fp.write(
               '    <li>%(link)s</li>\n' \
-              % { 'link': rptlib.make_link(link.URL,link.URL) })
-            rptlib.add_problem("missing title",link)
+              % { 'link': plugins.make_link(link.URL,link.URL) })
+            plugins.add_problem("missing title",link)
     fp.write('   </ol>\n')

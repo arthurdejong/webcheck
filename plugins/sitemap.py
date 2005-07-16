@@ -26,8 +26,8 @@ __author__ = 'Arthur de Jong'
 __version__ = '1.1'
 __description__ = 'This an overview of the crawled site.'
 
-import rptlib
 import config
+import plugins
 
 def _explore(fp, site, link, explored={}, level=0, indent='    '):
     """Recursively do a breadth-first traversal of the graph of links
@@ -36,7 +36,7 @@ def _explore(fp, site, link, explored={}, level=0, indent='    '):
     explored[link.URL]=True
     # output this link
     fp.write(indent+'<li>\n')
-    fp.write(indent+' '+rptlib.make_link(link.URL)+'\n')
+    fp.write(indent+' '+plugins.make_link(link.URL)+'\n')
     # only check children if we are not too deep yet
     if level <= config.REPORT_SITEMAP_LEVEL:
         # figure out the links to follow and ensure that they are only

@@ -27,7 +27,7 @@ __version__ = '1.1'
 __description__ = 'This is the list of all images found linked on the ' \
                   'website.'
 
-import rptlib
+import plugins
 
 def generate(fp,site):
     """Output a list of images to the given file descriptor."""
@@ -35,5 +35,5 @@ def generate(fp,site):
     images=site.images.values()
     images.sort(lambda a, b: cmp(a.URL, b.URL))
     for image in images:
-        fp.write('  <li>%s</li>\n' % rptlib.make_link(image.URL,image.URL))
+        fp.write('  <li>%s</li>\n' % plugins.make_link(image.URL,image.URL))
     fp.write('</ol>\n')

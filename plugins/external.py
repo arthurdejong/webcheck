@@ -27,7 +27,7 @@ __version__ = '1.1'
 __description__ = 'This is the list of all external urls encountered ' \
                   'during the examination of the website.'
 
-import rptlib
+import plugins
 
 def generate(fp,site):
     """Generate the list of external links to the given file descriptor."""
@@ -39,9 +39,9 @@ def generate(fp,site):
             fp.write(
               '    <li>\n' \
               '     %(link)s\n' \
-              % { 'link':  rptlib.make_link(link.URL) })
+              % { 'link':  plugins.make_link(link.URL) })
             # present a list of parents
-            rptlib.print_parents(fp,link,'     ')
+            plugins.print_parents(fp,link,'     ')
             fp.write(
               '    </li>\n')
     fp.write('   </ol>\n')
