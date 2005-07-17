@@ -33,7 +33,7 @@ def generate(fp,site):
     """Output a list of images to the given file descriptor."""
     fp.write('<ol>\n')
     images=site.images.values()
-    images.sort(lambda a, b: cmp(a.URL, b.URL))
+    images.sort(lambda a, b: cmp(a.url, b.url))
     for image in images:
-        fp.write('  <li>%s</li>\n' % plugins.make_link(image.URL,image.URL))
+        fp.write('  <li>%s</li>\n' % plugins.make_link(image.url,image.url))
     fp.write('</ol>\n')

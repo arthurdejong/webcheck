@@ -87,15 +87,15 @@ def _get_reply(url,redirect_depth=0):
             return (errcode, errmsg, headers, url)
         if Link.linkMap.has_key(redirect):
             link = Link.linkMap[redirect]
-            return (link.status, link.message, link.headers, link.URL)
+            return (link.status, link.message, link.headers, link.url)
         return _get_reply(redirect,redirect_depth+1)
     return (errcode, errmsg, headers, url)
 
 def get_info(link):
     """ Here, link is a reference of the link object that is calling this
     pseudo-method"""
-    (link.status, link.message, link.headers, link.URL) = _get_reply(link.URL)
-    Link.linkMap[link.URL] = link
+    (link.status, link.message, link.headers, link.url) = _get_reply(link.url)
+    Link.linkMap[link.url] = link
     try:
         link.type = link.headers.gettype()
     except AttributeError:
@@ -106,7 +106,7 @@ def get_info(link):
     except (KeyError, TypeError):
         link.size = 0
     if (link.status != 200) and (link.status != 'Not Checked'):
-        link.set_bad_link(link.URL,str(link.status) + ": " +  link.message)
+        link.set_bad_link(link.url,str(link.status) + ": " +  link.message)
         return
     try:
         lastMod = time.mktime(link.headers.getdate('Last-Modified'))
@@ -116,6 +116,6 @@ def get_info(link):
         link.mtime = lastMod
 
 def get_document(link):
-    document = opener.open(link.URL).read()
+    document = opener.open(link.url).read()
     opener.cleanup()
     return document

@@ -49,7 +49,7 @@ def generate(fp,site):
               '     %(link)s\n' \
               '     <div class="status">age: %(age)d days</div>\n' \
               '    </li>\n' \
-              % { 'link':  plugins.make_link(link.URL),
+              % { 'link':  plugins.make_link(link.url),
                   'age':   age })
             # add link to problem database
             plugins.add_problem('Old Link: %s days old' % age ,link)

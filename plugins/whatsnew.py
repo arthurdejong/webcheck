@@ -49,6 +49,6 @@ def generate(fp,site):
               '     %(link)s\n' \
               '     <div class="status">age: %(age)d days</div>\n' \
               '    </li>\n' \
-              % { 'link':  plugins.make_link(link.URL),
+              % { 'link':  plugins.make_link(link.url),
                   'age':   age })
     fp.write('   </ul>\n')

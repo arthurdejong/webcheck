@@ -33,13 +33,13 @@ def generate(fp,site):
     """Output the list of pages without a title to the given file descriptor."""
     fp.write('   <ol>\n')
     links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.URL, b.URL))
+    links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
         if link.external:
             continue
         if link.html and (link.title is None):
             fp.write(
               '    <li>%(link)s</li>\n' \
-              % { 'link': plugins.make_link(link.URL,link.URL) })
+              % { 'link': plugins.make_link(link.url,link.url) })
             plugins.add_problem("missing title",link)
     fp.write('   </ol>\n')

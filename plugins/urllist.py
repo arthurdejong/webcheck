@@ -32,7 +32,7 @@ def generate(fp,site):
     """Output a sorted list of urls to the specified file descriptor."""
     fp.write('   <ol>\n')
     links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.URL, b.URL))
+    links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
-        fp.write('    <li>'+plugins.make_link(link.URL,link.URL)+'</li>\n')
+        fp.write('    <li>'+plugins.make_link(link.url,link.url)+'</li>\n')
     fp.write('   </ol>\n')

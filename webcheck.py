@@ -196,7 +196,7 @@ def main():
         sys.stderr.write("Interrupted\n")
         sys.exit(1)
     debugio.info('done.')
-    if not hasattr(site,"URL"):
+    if not hasattr(site,"url"):
         warn()
         sys.exit(1)
     # now we can write out the files

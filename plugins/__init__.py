@@ -35,7 +35,7 @@ problem_db = {}
 def get_title(link):
     """Returns the title of a link if it is set otherwise returns url."""
     if link.title is None or link.title == '':
-        return link.URL
+        return link.url
     return link.title
 
 def make_link(url,title=None):

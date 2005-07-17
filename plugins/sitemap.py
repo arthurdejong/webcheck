@@ -33,10 +33,10 @@ def _explore(fp, site, link, explored={}, level=0, indent='    '):
     """Recursively do a breadth-first traversal of the graph of links
     on the site.  Returns a list of HTML fragments that can be printed
     to produce a site map."""
-    explored[link.URL]=True
+    explored[link.url]=True
     # output this link
     fp.write(indent+'<li>\n')
-    fp.write(indent+' '+plugins.make_link(link.URL)+'\n')
+    fp.write(indent+' '+plugins.make_link(link.url)+'\n')
     # only check children if we are not too deep yet
     if level <= config.REPORT_SITEMAP_LEVEL:
         # figure out the links to follow and ensure that they are only

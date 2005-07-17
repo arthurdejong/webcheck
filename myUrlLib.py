@@ -71,7 +71,7 @@ def urlclean(url,parent=None):
 ############################################################################
 class Link:
     """ my class of url's which includes parents, HTTP status number, and
-        a list of URL's in that link urls.
+        a list of urls in that link urls.
     """
 
     linkMap = {}
@@ -96,8 +96,8 @@ class Link:
         if parent not in self.parents:
             if parent: self.parents.append(parent)
 
-        self.URL = url
-        Link.linkMap[self.URL]=self
+        self.url = url
+        Link.linkMap[self.url]=self
 
         # see if we can import module for this scheme
         self.schememodule=schemes.get_schememodule(self.scheme)
@@ -105,12 +105,12 @@ class Link:
             debugio.info("  unsupported scheme ("+self.scheme+")")
             self.status="Not Checked"
             self.external=True
-            Link.notChecked.append(self.URL)
-            Link.linkMap[self.URL]=self
+            Link.notChecked.append(self.url)
+            Link.linkMap[self.url]=self
             return
 
         if (parent is None):
-            Link.base=self.URL
+            Link.base=self.url
             debugio.info('  base: %s' % Link.base)
             if self.scheme == 'http':
                 base_location = parsed[1]
@@ -133,9 +133,9 @@ class Link:
 
         try:
             self.schememodule.get_info(self)
-            if (self.URL not in Link.badLinks) and (self.type == 'text/html'):
+            if (self.url not in Link.badLinks) and (self.type == 'text/html'):
                 page = self.schememodule.get_document(self)
-                self._handleHTML(self.URL, page)
+                self._handleHTML(self.url, page)
         except IOError, data:
             self.set_bad_link(url,str(data.errno) + ': ' + str(data.strerror))
             return
@@ -150,7 +150,7 @@ class Link:
         except KeyboardInterrupt:
             raise KeyboardInterrupt
 #         except:
-#             self.set_bad_link(url,"Error: Malformed URL?")
+#             self.set_bad_link(url,"Error: Malformed url?")
 #             debugio.debug("  %s: %s" % (sys.exc_type, sys.exc_value))
 #             return
 
@@ -162,13 +162,13 @@ class Link:
                     time.sleep(config.WAIT_BETWEEN_REQUESTS)
                 debugio.debug("adding url: %s" % child)
                 if is_yanked(child):
-                    Link.linkMap[child]=ExternalLink(child,self.URL,1)
+                    Link.linkMap[child]=ExternalLink(child,self.url,1)
                 elif is_external(child) or is_excluded(child):
-                    Link.linkMap[child]=ExternalLink(child,self.URL)
+                    Link.linkMap[child]=ExternalLink(child,self.url)
                 else:
-                    Link.linkMap[child]=Link(child,self.URL)
-            elif self.URL not in Link.linkMap[child].parents:
-                Link.linkMap[child].parents.append(self.URL)
+                    Link.linkMap[child]=Link(child,self.url)
+            elif self.url not in Link.linkMap[child].parents:
+                Link.linkMap[child].parents.append(self.url)
         return # __init__
 
     def init(self):
@@ -187,15 +187,15 @@ class Link:
         self.author = None
 
     def __repr__(self):
-        return self.URL
+        return self.url
 
     def set_bad_link(self,url,status):
         """ flags the link as bad """
         debugio.info('  ' + str(status))
         self.status = str(status)
-        self.URL=url
-        Link.linkMap[self.URL]=self
-        Link.badLinks.append(self.URL)
+        self.url=url
+        Link.linkMap[self.url]=self
+        Link.badLinks.append(self.url)
 
     def _handleHTML(self,url,htmlfile):
         """examines and html file and updates the Link object"""
@@ -216,7 +216,7 @@ class Link:
             image=urlclean(image,url)
             if image not in Link.images.keys():
                 debugio.info('  adding image: %s' % image)
-                Link.images[image] = Image(image, self.URL)
+                Link.images[image] = Image(image, self.url)
             self.totalSize = self.totalSize + int(Link.images[image].size)
         if not self.external:
             self.explore_children()
@@ -229,8 +229,8 @@ class ExternalLink(Link):
 
         if config.AVOID_EXTERNAL_LINKS or yanked:
             self.init()
-            self.URL = url
-            Link.linkMap[self.URL]=self
+            self.url = url
+            Link.linkMap[self.url]=self
             self.status="Not Checked"
             self.external=1
             debugio.info('  not checked')
@@ -273,7 +273,7 @@ def is_external(url):
     return 0
 
 def compile_re():
-    """Compile EXCLUDED URLSs and set flag"""
+    """Compile EXCLUDED urls and set flag"""
     global compiled_ex
     for i in config.EXCLUDED_URLS:
         debugio.debug('compiling %s' % i)

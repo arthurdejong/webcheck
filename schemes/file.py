@@ -36,22 +36,22 @@ mimetypes.add_type('text/html','.shtml')
 def get_info(link):
     """Retreive some basic information about the file.
     Store the results in the link object."""
-    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.URL)
+    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.url)
     path=urllib.url2pathname(path)
     try:
         stats = os.stat(path)
     except os.error, e:
-        link.set_bad_link(link.URL, str(e))
+        link.set_bad_link(link.url, str(e))
         return
     link.size = stats[6]
     link.mtime = stats[8]
     # guess mimetype, falling back to application/octet-stream
-    link.type = mimetypes.guess_type(link.URL)[0]
+    link.type = mimetypes.guess_type(link.url)[0]
     if link.type is None:
         link.type = 'application/octet-stream'
 
 def get_document(link):
     """Return the contents of the document pointed to by the link."""
-    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.URL)
+    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.url)
     path=urllib.url2pathname(path)
     return open(path,'r').read()

@@ -36,8 +36,8 @@ Link = myUrlLib.Link
 # TODO: if browsing an FTP directory, also make it crawlable
 
 def get_info(link):
-    link.type = mimetypes.guess_type(link.URL)[0]
-    (host, port, user, passwd, path) = _spliturl(link.URL)
+    link.type = mimetypes.guess_type(link.url)[0]
+    (host, port, user, passwd, path) = _spliturl(link.url)
     try:
         ftp = ftplib.FTP()
         ftp.connect(host, port)
@@ -52,7 +52,7 @@ def get_info(link):
                 if filename not in ftp.nlst():
                     raise ftplib.error_perm, "No such file or directory"
     except ftplib.all_errors, e:
-        link.set_bad_link(link.URL, str(e))
+        link.set_bad_link(link.url, str(e))
     try:
         ftp.quit()
     except:
@@ -63,7 +63,7 @@ def _callback(line):
     return
 
 def get_document(link):
-    (host, port, user, passwd, path) = _spliturl(link.URL)
+    (host, port, user, passwd, path) = _spliturl(link.url)
     dirs, filename = _split_dirs(path)
     ftp = ftplib.FTP()
     ftp.connect(host, port)
