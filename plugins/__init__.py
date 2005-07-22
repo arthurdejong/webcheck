@@ -105,8 +105,7 @@ def generate(site,plugins):
     global mySite
     mySite=site
     # generate navigation part
-    navbar='  <ul class="navbar">\n' \
-           '   <li class="header">webcheck</li>\n'
+    navbar='  <ul class="navbar">\n'
     for plugin in plugins:
         # if this is the first plugin use index.html as filename
         filename = plugin + '.html'

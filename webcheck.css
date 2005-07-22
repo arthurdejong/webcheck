@@ -71,38 +71,19 @@ h2 {
 /* naviagtion part definitions */
 
 ul.navbar {
-  position: absolute;
+  float: right;
   display: block;
-  top: 0px;
-  left: 5%;
-  width: auto;
-  height: 1em;
-  padding: 2px;
-  background: #cc3333;
-  border: 1px solid #e59999;
-  text-align: left;
-  color: white;
   font-size: 95%;
-}
-
-ul.navbar:hover {
-  height: auto;
+  text-align: left;
+  background: #cc3333;
+  color: white;
+  padding: 2px;
+  border: 1px solid #e59999;
+  margin-top: 3px;
 }
 
 ul.navbar li {
-  display: none;
-}
-
-ul.navbar:hover li {
   display: block;
-}
-
-ul.navbar li.header {
-  display: block;
-}
-
-ul.navbar:hover li.header {
-  display: none;
 }
 
 ul.navbar a {
