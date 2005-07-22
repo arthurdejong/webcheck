@@ -19,12 +19,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""debugio.py: debugging and input/output module
+"""Debugging and message output module.
 
-   This module contains facilities for logging program output.  The use of
-   this module is really simple: import it, set loglevel, and use debug(),
-   info(), warn() and error() whenever you want to print something.
-"""
+This module contains facilities for logging program output.  The use of
+this module is really simple: import it, set loglevel, and use debug(),
+info(), warn() and error() whenever you want to print something."""
 
 import sys
 
@@ -38,22 +37,21 @@ DEBUG=3
 loglevel=INFO
 
 def debug(msg):
-    """log the message to stderr if loglevel will allow it"""
+    """Log the message to stderr if loglevel will allow it."""
     if loglevel>=DEBUG:
         print >>sys.stderr,"webcheck: DEBUG: "+str(msg)
 
 def info(msg):
-    """log the message to stdout if loglevel will allow it"""
+    """Log the message to stdout if loglevel will allow it."""
     if loglevel>=INFO:
-        # FIXME: remove ">>sys.stderr," part once plugin system is rewritten
-        print >>sys.stderr,"webcheck: "+str(msg)
+        print >>sys.stdout,"webcheck: "+str(msg)
 
 def warn(msg):
-    """log a warning to stderr if loglevel will allow it"""
+    """Log a warning to stderr if loglevel will allow it."""
     if loglevel>=WARN:
         print >>sys.stderr,"webcheck: Warning: "+str(msg)
 
 def error(msg):
-    """log an error to stderr if loglevel will allow it"""
+    """Log an error to stderr if loglevel will allow it."""
     if loglevel>=ERROR:
         print >>sys.stderr,"webcheck: Error: "+str(msg)
