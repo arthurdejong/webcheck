@@ -29,16 +29,6 @@ import sys
 import time
 import os
 
-# importing the config.py file is a real problem if the user did not install
-# the files EXACTLY the way I said to... or even using the frozen version is
-# becoming a real bitch.  I will just have to tell them right out how to fix
-# it.
-try:
-    sys.path = ['.'] + sys.path
-except ImportError:
-    sys.stdout.write('Please verify that PYTHONPATH knows where to find "config.py"\n')
-    sys.exit(1)
-
 debugio.loglevel=debugio.INFO
 
 def print_version():
@@ -111,6 +101,8 @@ def parse_args():
             config.AVOID_EXTERNAL_LINKS=1
         elif flag in ("-q","--quiet","--silent"):
             debugio.loglevel=debugio.ERROR
+        elif flag in("-d","--debug"):
+            debugio.loglevel=debugio.DEBUG
         elif flag=='-o':
             config.OUTPUT_DIR=arg
         elif flag in ("-f","--force"):
@@ -125,8 +117,6 @@ def parse_args():
         elif flag in ("-h","--help"):
             print_help()
             sys.exit(0)
-        elif flag in("-d","--debug"):
-            debugio.loglevel=debugio.DEBUG
     if len(args)==0:
         print_usage()
         print_tryhelp()
