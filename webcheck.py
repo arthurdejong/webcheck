@@ -29,8 +29,6 @@ import sys
 import time
 import os
 
-start_time = time.time()
-
 # importing the config.py file is a real problem if the user did not install
 # the files EXACTLY the way I said to... or even using the frozen version is
 # becoming a real bitch.  I will just have to tell them right out how to fix

@@ -155,7 +155,6 @@ def generate(site,plugins):
         report.generate(fp,site)
         fp.write('  </div>\n')
         # write bottom of page
-        import webcheck
         import time
         fp.write( \
           '  <p class="footer">\n' \
@@ -163,7 +162,7 @@ def generate(site,plugins):
           '  </p>\n' \
           ' </body>\n' \
           '</html>\n' \
-          % { 'time':     xml.sax.saxutils.escape(time.ctime(webcheck.start_time)),
+          % { 'time':     xml.sax.saxutils.escape(time.ctime(time.time())),
               'homepage': version.home,
               'version':  xml.sax.saxutils.escape(version.webcheck) })
         fp.close()
