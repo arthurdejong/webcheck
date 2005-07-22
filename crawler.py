@@ -181,6 +181,10 @@ class Site:
             for embed in link.embedded:
                 if not embed.isyanked and not embed.isfetched:
                     tocheck.append(embed)
+            # sleep between requests if configured
+            if config.WAIT_BETWEEN_REQUESTS > 0:
+                debugio.debug('sleeping %s seconds' %  config.WAIT_BETWEEN_REQUESTS)
+                time.sleep(config.WAIT_BETWEEN_REQUESTS)
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
         res = [ self.linkMap[self._internal_urls[0]].follow_link(True) ]
