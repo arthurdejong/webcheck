@@ -29,11 +29,12 @@ __description__ = 'This an overview of the crawled site.'
 import config
 import plugins
 
-def _explore(fp, site, link, explored={}, level=0, indent='    '):
+def _explore(fp, site, link, explored=None, level=0, indent='    '):
     """Recursively do a breadth-first traversal of the graph of links
     on the site.  Returns a list of HTML fragments that can be printed
     to produce a site map."""
-    explored[link.url]=True
+    if explored is None:
+        explored = [ link ]
     # output this link
     fp.write(indent+'<li>\n')
     fp.write(indent+' '+plugins.make_link(link.url)+'\n')
@@ -42,22 +43,27 @@ def _explore(fp, site, link, explored={}, level=0, indent='    '):
         # figure out the links to follow and ensure that they are only
         # explored from here
         to_explore = []
-        for i in link.children:
+        for child in link.children:
+            child = child.follow_link()
             # skip pages that have already been traversed
-            if explored.has_key(i):
+            if child in explored:
                 continue
             # skip external links
-            if site.linkMap[i].external:
+            if not child.isinternal:
+                continue
+            # FIXME: find a solution for redirects
+            # skip non-page links
+            if not child.ispage:
                 continue
             # mark the link as explored
-            explored[i]=True
-            to_explore.append(i)
+            explored.append(child)
+            to_explore.append(child)
         # go over the children and present them as a list
         if len(to_explore) > 0:
             fp.write(indent+' <ul>\n')
-            to_explore.sort()
+            to_explore.sort(lambda a, b: cmp(a.url, b.url))
             for i in to_explore:
-                _explore(fp,site,site.linkMap[i],explored,level+1,indent+'  ')
+                _explore(fp,site,i,explored,level+1,indent+'  ')
             fp.write(indent+' </ul>\n')
     fp.write(indent+'</li>\n')
 

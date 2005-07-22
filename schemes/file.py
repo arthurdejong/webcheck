@@ -27,7 +27,6 @@ import urllib
 import os
 import time
 import mimetypes
-import myUrlLib
 import re
 
 # FIXME: store this extension somewhere else
@@ -41,7 +40,7 @@ def get_info(link):
     try:
         stats = os.stat(path)
     except os.error, e:
-        link.set_bad_link(link.url, str(e))
+        link.add_problem(str(e))
         return
     link.size = stats[6]
     link.mtime = stats[8]
@@ -55,3 +54,7 @@ def get_document(link):
     (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.url)
     path=urllib.url2pathname(path)
     return open(path,'r').read()
+
+def fetch(link):
+    get_info(link)
+    return get_document(link)

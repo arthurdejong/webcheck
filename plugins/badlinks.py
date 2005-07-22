@@ -72,10 +72,11 @@ HTTP_STATUS_CODES = {'100':"Continue",
 def generate(fp,site):
     """Present the list of bad links to the given file descriptor."""
     fp.write('   <ol>\n')
-    urls=site.badLinks
-    urls.sort()
-    for url in urls:
-        link=site.linkMap[url]
+    links=site.linkMap.values()
+    links.sort(lambda a, b: cmp(a.url, b.url))
+    for link in links:
+        if link.status is None:
+            continue
         status = str(link.status)
         if status in HTTP_STATUS_CODES.keys():
             status = status + "=" + HTTP_STATUS_CODES[status]
@@ -89,8 +90,7 @@ def generate(fp,site):
         link.parents.sort()
         plugins.print_parents(fp,link,'     ')
         # add a reference to the problem map
-        for parent in site.linkMap[url].parents:
-            plink=site.linkMap[parent]
-            plugins.add_problem("Bad Link: " + link.url, plink)
+        for parent in link.parents:
+            plugins.add_problem("Bad Link: " + link.url, parent)
         fp.write('    </li>\n')
     fp.write('   </ol>\n')

@@ -35,9 +35,9 @@ def generate(fp,site):
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
-        if link.external:
+        if not link.isinternal:
             continue
-        if link.html and (link.title is None):
+        if link.ispage and (link.title is None):
             fp.write(
               '    <li>%(link)s</li>\n' \
               % { 'link': plugins.make_link(link.url,link.url) })

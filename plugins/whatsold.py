@@ -38,7 +38,7 @@ def generate(fp,site):
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.mtime, b.mtime))
     for link in links:
-        if not link.html:
+        if not link.ispage:
             continue
         if link.mtime is None:
             continue
@@ -52,5 +52,5 @@ def generate(fp,site):
               % { 'link':  plugins.make_link(link.url),
                   'age':   age })
             # add link to problem database
-            plugins.add_problem('Old Link: %s days old' % age ,link)
+            plugins.add_problem('Old Link: %d days old' % age ,link)
     fp.write('   </ul>\n')

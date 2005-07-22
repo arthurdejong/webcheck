@@ -32,16 +32,23 @@ import plugins
 def generate(fp,site):
     """Generate the list of external links to the given file descriptor."""
     fp.write('   <ol>\n')
-    links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.url, b.url))
-    for link in links:
-        if link.external:
-            fp.write(
-              '    <li>\n' \
-              '     %(link)s\n' \
-              % { 'link':  plugins.make_link(link.url) })
-            # present a list of parents
-            plugins.print_parents(fp,link,'     ')
-            fp.write(
-              '    </li>\n')
+    urls=site.linkMap.keys()
+    urls.sort()
+    last = None
+    for url in urls:
+        link = site.linkMap[url]
+        if link.isinternal:
+            continue
+        # filter out duplicates
+        if link is last:
+            continue
+        last = link
+        fp.write(
+          '    <li>\n' \
+          '     %(link)s\n' \
+          % { 'link':  plugins.make_link(url) })
+        # present a list of parents
+        plugins.print_parents(fp,link,'     ')
+        fp.write(
+          '    </li>\n')
     fp.write('   </ol>\n')

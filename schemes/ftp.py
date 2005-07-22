@@ -26,11 +26,8 @@ import urllib
 import mimetypes
 import ftplib
 import urlparse
-import myUrlLib
 import string
 import debugio
-
-Link = myUrlLib.Link
 
 # FIXME: honor ftp proxy settings
 # TODO: if browsing an FTP directory, also make it crawlable
@@ -52,7 +49,7 @@ def get_info(link):
                 if filename not in ftp.nlst():
                     raise ftplib.error_perm, "No such file or directory"
     except ftplib.all_errors, e:
-        link.set_bad_link(link.url, str(e))
+        link.add_problem(str(e))
     try:
         ftp.quit()
     except:
@@ -105,3 +102,7 @@ def _spliturl(url):
         (user, passwd) = ('anonymous', '')
     (host, port) = urllib.splitnport(host,ftplib.FTP_PORT)
     return (host, port, user, passwd, path)
+
+def fetch(link):
+    get_info(link)
+    return get_document(link)

@@ -29,18 +29,39 @@ __description__ = 'These pages are probably too big which will be slow to downlo
 import config
 import plugins
 
+def _getsize(link,done=[]):
+    """Return the size of the link and all its embedded links, counting each
+    link only once."""
+    done.append(link)
+    if not hasattr(link,"totalSize"):
+        size = 0
+        if link.size is not None:
+            size = link.size
+        for l in link.embedded:
+            if l not in done:
+                size += _getsize(l,done)
+        link.totalSize = size
+    return link.totalSize
+
 def generate(fp,site):
     """Output the list of large pages to the given file descriptor."""
-    fp.write('   <ul>\n')
-    links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
+    # first go over all the links and calculate size if needed
+    links = site.linkMap.values()
+    reslinks = []
     for link in links:
-        if not link.html:
+        if not link.ispage:
             continue
+        # calculate size
+        size = _getsize(link)
         # TODO: print size nicely
-        sizeK = link.totalSize / 1024
+        sizeK = size / 1024
         if sizeK < config.REPORT_SLOW_URL_SIZE:
             continue
+        reslinks.append(link)
+    # present results
+    reslinks.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
+    fp.write('   <ul>\n')
+    for link in reslinks:
         fp.write(
           '    <li>\n' \
           '     %(link)s\n' \

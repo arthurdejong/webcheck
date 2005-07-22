@@ -26,6 +26,9 @@ import string
 import debugio
 import formatter
 import sgmllib
+import urlparse
+
+mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 
 # TODO: switch to using HTMLParser (not from htmllib)
 
@@ -93,7 +96,7 @@ class _MyHTMLParser(htmllib.HTMLParser):
             if name=="href":
                 self.base = val
 
-def parse(content):
+def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
     title and an author. The content is assumed to contain HMTL."""
     # parse the file
@@ -103,24 +106,26 @@ def parse(content):
         parser.close()
     except sgmllib.SGMLParseError, e:
         debugio.warn('problem parsing html: %s' % (str(e)))
-        #FIXME: flag a problem with this link
-    # generate list of links
-    urllist = []
+        link.add_problem('problem parsing html: %s' % (str(e)))
+    # flag that the link contains a valid page
+    link.ispage = True
+    # figure out a base url to use for creating absolute urls
+    base = link.url
+    if parser.base is not None:
+        base = parser.base
+    # save the title
+    if parser.title is not None:
+        link.title = parser.title
+    # save the author
+    if parser.author is not None:
+        link.author = parser.author
+    # if the link is external we are not interested in the rest
+    if not link.isinternal:
+        return
+    # save the list of children (make links absolute)
     for anchor in parser.anchorlist:
-        # create absolute url based on <base> tag
-        if parser.base is not None:
-            anchor = urllib.join(parser.base,anchor)
-        # add anchor to urllist
-        if anchor not in urllist:
-            urllist.append(anchor)
-    # generate list of images
-    imagelist = []
+        link.add_child(urlparse.urljoin(base,anchor))
+    # save list of images (make links absolute)
     for image in parser.imagelist:
         # create absolute url based on <base> tag
-        if parser.base is not None:
-            image = urllib.join(parser.base,image)
-        # add image to imageslist
-        if image not in imagelist:
-            imagelist.append(image)
-    # return the data
-    return (urllist, imagelist, parser.title, parser.author)
+        link.add_embed(urlparse.urljoin(base,image))

@@ -38,7 +38,7 @@ def generate(fp,site):
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(b.mtime, a.mtime))
     for link in links:
-        if not link.html:
+        if not link.ispage:
             continue
         if link.mtime is None:
             continue

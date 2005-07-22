@@ -19,19 +19,13 @@
 
 """This package groups all the supported schemes.
 
-A scheme module can be requested by the get_schememodule function.
-Each module should export the following functions:
+A scheme module can be requested by the get_schememodule() function.
+Each module should export the following function:
 
-    get_info(link)
-        Fetch the link and get some basic information from the
-        document.
-
-    get_document(link)
-        Fetch the content of the referenced link."""
-
-# Note: the difference between calling both methods is that the
-#       content is only fetched if the link does not have a proble
-#       and has a supported mimetype
+    fetch(link)
+        Fetch the link. Some basic information about the document is provided
+        if possible (size, mimetype, mtime, status in case of errors, etc).
+        Also the contents of the link is fetched and returned."""
 
 # a map of schemes to modules
 _schememodules={}

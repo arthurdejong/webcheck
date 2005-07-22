@@ -28,12 +28,18 @@ __description__ = 'This is the list of all images found linked on the ' \
                   'website.'
 
 import plugins
+import re
 
 def generate(fp,site):
     """Output a list of images to the given file descriptor."""
     fp.write('<ol>\n')
-    images=site.images.values()
-    images.sort(lambda a, b: cmp(a.url, b.url))
-    for image in images:
-        fp.write('  <li>%s</li>\n' % plugins.make_link(image.url,image.url))
+    links=site.linkMap.values()
+    links.sort(lambda a, b: cmp(a.url, b.url))
+    # this finds all links with a reasonable content-type
+    matcher=re.compile("^image/.*$")
+    for link in links:
+        if link.ispage or (link.mimetype is None):
+            continue
+        if matcher.search(link.mimetype):
+            fp.write('  <li>%s</li>\n' % plugins.make_link(link.url,link.url))
     fp.write('</ol>\n')

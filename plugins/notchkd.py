@@ -32,15 +32,17 @@ import plugins
 def generate(fp,site):
     """Output the list of not checked pages to the given file descriptor."""
     fp.write('   <ol>\n')
-    site.notChecked.sort()
-    site.notChecked.sort()
-    for url in site.notChecked:
+    links=site.linkMap.values()
+    links.sort(lambda a, b: cmp(a.url, b.url))
+    for link in links:
+        if not link.isyanked:
+            continue
         fp.write(
           '    <li>\n' \
           '     %(link)s\n' \
-          % { 'link': plugins.make_link(url,url) })
+          % { 'link': plugins.make_link(link.url,link.url) })
         # present a list of parents
-        plugins.print_parents(fp,site.linkMap[url],'     ')
+        plugins.print_parents(fp,link,'     ')
         fp.write(
           '    </li>\n')
     fp.write('   </ol>\n')

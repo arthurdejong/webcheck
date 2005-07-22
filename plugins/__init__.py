@@ -42,10 +42,11 @@ def make_link(url,title=None):
     """Return an <a>nchor to a url with title. If url is in the Linklist and
     is external, insert "class=external" in the <a> tag."""
     # try to fetch the link object for this url
-    cssclass='internal'
     global mySite
     link=mySite.linkMap[url]
-    if hasattr(link,"external") and link.external:
+    if link.isinternal:
+        cssclass='internal'
+    else:
         cssclass='external'
     if title is None:
         title=get_title(link)
@@ -62,14 +63,14 @@ def print_parents(fp,link,indent='     '):
     for parent in parents:
         fp.write(
           indent+'  <li>%(parent)s</li>\n'
-          % { 'parent': make_link(parent) })
+          % { 'parent': make_link(parent.url) })
     fp.write(
       indent+' </ul>\n'+ \
       indent+'</div>\n' )
 
 def add_problem(type,link):
     """ Add a problem link to the 'problems' database.  Will not add external links """
-    if link.external:
+    if not link.isinternal:
         return
     global problem_db
     author = link.author

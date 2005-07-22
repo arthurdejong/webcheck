@@ -20,6 +20,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
+import config
+import version
+import crawler
+import plugins
+import debugio
 import sys
 import time
 import os
@@ -28,21 +33,15 @@ start_time = time.time()
 
 # importing the config.py file is a real problem if the user did not install
 # the files EXACTLY the way I said to... or even using the frozen version is
-# becoming a real bitch.  I will just have to tell them right out how to fix it.
+# becoming a real bitch.  I will just have to tell them right out how to fix
+# it.
 try:
     sys.path = ['.'] + sys.path
-    import config
 except ImportError:
     sys.stdout.write('Please verify that PYTHONPATH knows where to find "config.py"\n')
     sys.exit(1)
 
-import myUrlLib
-
-import debugio
 debugio.loglevel=debugio.INFO
-
-import version
-import plugins
 
 def print_version():
     """print version information"""
@@ -58,7 +57,7 @@ def print_version():
 def print_usage():
     """print short usage information"""
     print >>sys.stderr, \
-        "Usage: webcheck [OPTION]... URL"
+        "Usage: webcheck [OPTION]... URL..."
 
 def print_tryhelp():
     """print friendly pointer to more information"""
@@ -68,8 +67,8 @@ def print_tryhelp():
 def print_help():
     """print option list"""
     print \
-        "Usage: webcheck [OPTION]... URL\n" \
-        "Generate a report for the given URL\n" \
+        "Usage: webcheck [OPTION]... URL...\n" \
+        "Generate a report for the given URLs\n" \
         "\n" \
         "  -x PATTERN     mark URLs matching PATTERN as external\n" \
         "  -y PATTERN     do not check URLs matching PATTERN\n" \
@@ -92,6 +91,7 @@ def print_help():
 def parse_args():
     """parse command-line arguments"""
     import getopt
+    global site
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
             "x:y:l:baqdo:fr:w:Vh",
@@ -133,28 +133,12 @@ def parse_args():
         print_usage()
         print_tryhelp()
         sys.exit(1)
-    else:
-        global URL
-        URL = args[0]
-    config.HOSTS = config.HOSTS + args[1:]
-
-def warn():
-    """Warn the user that something has gone wrong."""
-    print "*******************************************"
-    print "*                                         *"
-    print "* Warning, webcheck has found nothing to  *"
-    print "* report for this site.  If you feel this *"
-    print "* is in error, please contact             *"
-    print "* %s.                                     *" % version.author
-    print "* and specify the environment that caused *"
-    print "* this to occur.                          *"
-    print "*                                         *"
-    print "* webcheck %s                             *" % version.webcheck
-    print "*                                         *"
-    print "*******************************************"
+    for arg in args:
+        site.add_internal(arg)
 
 def find_file(fname):
-    """Search the python path for the file name and return full path of the file."""
+    """Search the python path for the file name and return full path of the
+    file."""
     for dname in sys.path:
         res = os.path.join(dname,fname)
         if os.path.isfile(res):
@@ -162,7 +146,9 @@ def find_file(fname):
     return None
 
 def install_file(fname,text=False):
-    """Install the given file in the output directory."""
+    """Install the given file in the output directory.
+    If the text flag is set to true it is assumed the file is text,
+    translating line endings."""
     import shutil
     # TODO: extend so that if
     #  - filename has no slashes in it: search python path
@@ -186,19 +172,18 @@ def install_file(fname,text=False):
     sfp.close()
 
 def main():
+    global site
+    site = crawler.Site()
     # parse command-line arguments
     parse_args()
-    # indicate that we are starting
+    # crawl through the website
     debugio.info('checking site....')
     try:
-        site = myUrlLib.Link(URL,None) # this will take a while
+        site.crawl() # this will take a while
     except KeyboardInterrupt:
         sys.stderr.write("Interrupted\n")
         sys.exit(1)
     debugio.info('done.')
-    if not hasattr(site,"url"):
-        warn()
-        sys.exit(1)
     # now we can write out the files
     # start with the frame-description page
     debugio.info('generating reports...')
