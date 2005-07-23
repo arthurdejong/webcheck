@@ -3,7 +3,7 @@
 # webcheck.py - main module of webcheck doing command-line checking
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
-# Copyright (C) 2002 Mike Meyer <mwm@mired.org>
+# Copyright (C) 2002 Mike W. Meyer <mwm@mired.org>
 # Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -35,9 +35,9 @@ def print_version():
     """print version information"""
     print \
         "webcheck "+version.webcheck+"\n" \
-        "Written by Albert Hopkins (marduk), Mike Meyer and Arthur de Jong.\n" \
+        "Written by Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n" \
         "\n" \
-        "Copyright (C) 1998, 1999, 2002, 2005 Albert Hopkins (marduk), Mike Meyer\n" \
+        "Copyright (C) 1998, 1999, 2002, 2005 Albert Hopkins (marduk), Mike W. Meyer\n" \
         "and Arthur de Jong.\n" \
         "This is free software; see the source for copying conditions.  There is NO\n" \
         "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
