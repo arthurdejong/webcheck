@@ -1,5 +1,5 @@
 
-# file.py handle urls with a file scheme
+# file.py - handle urls with a file scheme
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
 # Copyright (C) 2002 Mike W. Meyer <mwm@mired.org>
@@ -28,9 +28,6 @@ import os
 import time
 import mimetypes
 import re
-
-# FIXME: store this extension somewhere else
-mimetypes.add_type('text/html','.shtml')
 
 def get_info(link):
     """Retreive some basic information about the file.
