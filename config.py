@@ -137,10 +137,6 @@ NAVBAR_SPACING = 0
 MAIN_FILENAME      = 'index.html'
 OVERWRITE_FILES    = 0
 
-# url to logo (image) shown on all pages.  If you change this you will also
-# want to change the LOGO_ALT option below
-LOGO_HREF="webcheck.png"
-
 ##### Configuratin for specific plugins #####
 REPORT_SITEMAP_LEVEL = 5 # How many levels deep to display the site map
 

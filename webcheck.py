@@ -60,7 +60,6 @@ def print_help():
         "\n" \
         "  -x PATTERN     mark URLs matching PATTERN as external\n" \
         "  -y PATTERN     do not check URLs matching PATTERN\n" \
-        "  -l URL         use URL as logo for the report\n" \
         "  -b             base URLs only: consider any URL not starting with the base\n" \
         "                 URL to be external\n" \
         "  -a             do not check external URLs\n" \
@@ -93,8 +92,6 @@ def parse_args():
             config.EXCLUDED_URLS.append(arg)
         elif flag=='-y':
             config.YANKED_URLS.append(arg)
-        elif flag=='-l':
-            config.LOGO_HREF=arg
         elif flag=='-b':
             config.BASE_URLS_ONLY=1
         elif flag=='-a':
