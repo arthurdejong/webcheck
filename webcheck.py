@@ -21,7 +21,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 import config
-import version
 import crawler
 import plugins
 import debugio
@@ -34,7 +33,7 @@ debugio.loglevel=debugio.INFO
 def print_version():
     """print version information"""
     print \
-        "webcheck "+version.webcheck+"\n" \
+        "webcheck "+config.VERSION+"\n" \
         "Written by Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n" \
         "\n" \
         "Copyright (C) 1998, 1999, 2002, 2005 Albert Hopkins (marduk), Mike W. Meyer\n" \
@@ -89,25 +88,25 @@ def parse_args():
         sys.exit(1)
     for flag,arg in optlist:
         if flag=='-x':
-            config.EXCLUDED_URLS.append(arg)
+            site.add_external_re(arg)
         elif flag=='-y':
-            config.YANKED_URLS.append(arg)
+            site.add_yanked_re(arg)
         elif flag=='-b':
-            config.BASE_URLS_ONLY=1
+            config.BASE_URLS_ONLY = True
         elif flag=='-a':
-            config.AVOID_EXTERNAL_LINKS=1
+            config.AVOID_EXTERNAL_LINKS = True
         elif flag in ("-q","--quiet","--silent"):
-            debugio.loglevel=debugio.ERROR
+            debugio.loglevel = debugio.ERROR
         elif flag in("-d","--debug"):
-            debugio.loglevel=debugio.DEBUG
+            debugio.loglevel = debugio.DEBUG
         elif flag=='-o':
-            config.OUTPUT_DIR=arg
+            config.OUTPUT_DIR = arg
         elif flag in ("-f","--force"):
-            config.OVERWRITE_FILES=1
+            config.OVERWRITE_FILES = True
         elif flag=='-r':
-            config.REDIRECT_DEPTH=int(arg)
+            config.REDIRECT_DEPTH = int(arg)
         elif flag in ("-w","--wait"):
-            config.WAIT_BETWEEN_REQUESTS=int(arg)
+            config.WAIT_BETWEEN_REQUESTS = int(arg)
         elif flag in ("-V","--version"):
             print_version()
             sys.exit(0)

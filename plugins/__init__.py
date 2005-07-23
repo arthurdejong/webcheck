@@ -26,7 +26,6 @@ import sys
 import urllib
 import string
 import debugio
-import version
 import config
 import xml.sax.saxutils
 
@@ -93,7 +92,7 @@ def open_file(filename):
         ow = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
         ow = ow.lower() + " "
         if ow[0] == 'a':
-            config.OVERWRITE_FILES = 1
+            config.OVERWRITE_FILES = True
         elif ow[0] != 'y':
             print 'Aborted.'
             sys.exit(0)
@@ -142,7 +141,7 @@ def generate(site,plugins):
           '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n' \
           % { 'sitetitle':  xml.sax.saxutils.escape(get_title(site.linkMap[site.base])),
               'siteurl':    site.base,
-              'version':    version.webcheck })
+              'version':    config.VERSION })
         # write navigation bar
         fp.write(navbar)
         # write plugin heading
@@ -162,6 +161,6 @@ def generate(site,plugins):
           ' </body>\n' \
           '</html>\n' \
           % { 'time':     xml.sax.saxutils.escape(time.ctime(time.time())),
-              'homepage': version.home,
-              'version':  xml.sax.saxutils.escape(version.webcheck) })
+              'homepage': config.HOMEPAGE,
+              'version':  xml.sax.saxutils.escape(config.VERSION) })
         fp.close()

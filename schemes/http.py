@@ -32,11 +32,10 @@ import urlparse
 import base64
 import mimetypes
 import debugio
-import version
 import config
 
 opener = urllib.FancyURLopener(config.PROXIES)
-opener.addheaders = [('User-agent','webcheck ' + version.webcheck)]
+opener.addheaders = [('User-agent','webcheck ' + config.VERSION)]
 if config.HEADERS:
     opener.addheaders = opener.addheaders + config.HEADERS
 
