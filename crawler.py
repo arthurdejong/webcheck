@@ -30,6 +30,7 @@ import urlparse
 import robotparser
 import schemes
 import parsers
+import re
 
 class Site:
     """Class to represent gathered data of a site.
@@ -63,12 +64,12 @@ class Site:
     def add_external_re(self,exp):
         """Adds the gived regular expression as a pattern to match external
         urls."""
-        self._external_res.append(re.compule(exp,re.IGNORECASE))
+        self._external_res.append(re.compile(exp,re.IGNORECASE))
 
     def add_yanked_re(self,exp):
         """Adds the gived regular expression as a pattern to match urls that
         will not be checked at all."""
-        self._yanked_res.append(re.compule(exp,re.IGNORECASE))
+        self._yanked_res.append(re.compile(exp,re.IGNORECASE))
 
     def _is_internal(self,link):
         """Check whether the specified url is external or internal.
