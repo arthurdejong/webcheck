@@ -15,7 +15,8 @@
 .\" Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 .\" .nh
 .\" 
-.TH "webcheck" "1" "Jun 2005" "Version 1.0" "User Commands"
+.TH "webcheck" "1" "Jul 2005" "Version 1.9,0" "User Commands"
+.nh
 .SH "NAME"
 webcheck \- website link checker
 
@@ -124,11 +125,38 @@ Check the site www.example.com but exclude any path with "/webckeck" in it.
     webcheck http://www.example.com/ \-x /webcheck
 .ft R
 
+.SH "NOTES"
+
+When checking internal urls webcheck honors the robots.txt file, identifying
+itself as user-agent webcheck. Disallowed links will not be checked at all as
+if the -y option was specified for that url. To allow webcheck to crawl parts
+of a site that other robots are disallowed, use something like:
+.ft B
+    User-agent: *
+    Disallow: /foo
+
+    User-agent: webcheck
+    Allow: /foo
+.ft R
+
 .SH "ENVIRONMENT"
 
 .TP
 .BI <scheme>_proxy
 Proxy url for <scheme>.
+
+.SH "REPORTING BUGS"
+
+Bug reports shoult be sent to the webcheck mailing list <webcheck@mired.org>
+or failing that to the current maintainer <arthur@tiefighter.et.tudelft.nl>.
+More information on reporting bugs can be found on the webcheck homepage:
+.br
+http://tiefighter.et.tudelft.nl/~arthur/webcheck/
+
+There is an old known issue with IIS that under some conditions seems te
+return illegal return codes. Since much of the HTTP core of webcheck
+has been rewritten it is likely that this is no longer uccurs. This problem
+can sometimes be worked around by adding "\-y /_" to the webcheck command.
 
 .SH "COPYRIGHT"
 Copyright \(co 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
