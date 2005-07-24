@@ -63,7 +63,7 @@ def _get_reply(link):
     if user and passwd:
         auth = string.strip(base64.encodestring(user + ":" + passwd))
         h.putheader('Authorization', 'Basic %s' % auth)
-    h.putheader('User-Agent','webcheck %s' % version.webcheck)
+    h.putheader('User-Agent','webcheck %s' % config.VERSION)
     h.endheaders()
     try:
         r = h.getresponse()
