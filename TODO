@@ -1,8 +1,50 @@
+before next release
+-------------------
+* test CSS with IE
+* clean up documentation
+* go over all FIXMEs in code
+* for basename matching: ignore case
+* remove whats from whats*.py plugins
+
+probably before 2.0 release
+---------------------------
+* rewrite html parsing code with newer libraries and detect more tags
+* parse css
+* maybe choose a different license for webcheck.css
+* make it possible to copy or reference webcheck.css
+* make it possible to copy http:.../webcheck.css into place (use scheme system)
+* create onmouseover information for linkgs containing useful information for url
+* make more things configurable
+* make a Debian package
+* maybe generate a list of page children and page parents (combining embedded links and following redirects) (this is useful to list proper parent links for problem pages and helps generate the sitemap)
+* figure out if we need parents and pageparents
+* configurable time-out when retrieving a document
+* support for mult-threading (maybe)
+* divide problems in transfer problems and page problems (transfer problems result in a bad link problem on a page)
+* clean up printing of messages, especially needed for multi-threading
+* rewrite scheme modules to make proper use of new calling method
+* only download complete documents if the mime type is supported
+* rewrite http module with newer libraries
+* rewrite ftp module to be more robust
+* go over command line options and see if we need long equivalents
+
+wishlist
+--------
+* make code for stripping last part of a url (e.g. foo/index.html -> foo/)
+* translate file paths to file:/// urls on the command line
+* maybe set referer (configurable)
+* maybe created a no-author specified error plugin
 * support for authenticating proxies
-* new config file format.
-* configurable time-out when retrieving a document.
+* new config file format (if we want a configfile at all)
 * cookies support (maybe)
 * integration with weblint
-* if using 'file' scheme, clicking on a link will bring up the file in an editor
-* support for mult-threading (maybe)
-* option to put # of hits of a document in the Site Map obtained from log file.
+* combine with a logfile checker to also show number of hits per link
+* performance and other improvements (we can switch to sets with python 2.4)
+* make linking to a permanent redirect (301) a problem
+
+new/unsorted
+------------
+* remove email addresses from copyrights notices
+* write section on internal and external urls in the manual page
+* fix misc TODOs and FIXMEs in the source
+* maybe find a new name as there are a lot of webchecks out there

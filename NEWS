@@ -1,3 +1,15 @@
+changes from 1.0 to 1.9.0
+-------------------------
+
+* maintainership transferred to Arthur de Jong
+* major structural rewrites of crawling code and plugin structure
+* the documentation was combined and partially rewritten in the README for
+  installation instructions and the manual page for usage information
+* changed output to no longer use frames and produce valid XHTML 1.1 and use
+  CSS for layout
+* config.py is no longer really a configuration file
+
+
 changes from 1.0b10 to 1.0
 --------------------------
 
