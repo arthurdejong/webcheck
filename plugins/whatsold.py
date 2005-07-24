@@ -42,6 +42,8 @@ def generate(fp,site):
             continue
         if link.mtime is None:
             continue
+        if not link.isinternal:
+            continue
         age = (time.time()-link.mtime)/SECS_PER_DAY
         if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
             fp.write(
