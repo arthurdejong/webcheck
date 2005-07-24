@@ -44,7 +44,7 @@ def generate(fp,site):
           '    <li>\n' \
           '     %(badurl)s\n' \
           '     <div class="status">%(status)s</div>\n' \
-          % { 'badurl':  plugins.make_link(link.url,link.url),
+          % { 'badurl':  plugins.make_link(link,link.url),
               'status':  xml.sax.saxutils.escape(status) })
         # present a list of parents
         link.parents.sort()

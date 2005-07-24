@@ -60,7 +60,7 @@ def generate(fp,site):
               '     %(link)s\n' \
               '     <div class="status">%(problem)s</div>\n' \
               '    </li>\n' \
-              % { 'link':    plugins.make_link(link.url),
+              % { 'link':    plugins.make_link(link),
                   'problem': xml.sax.saxutils.escape(problem) })
         fp.write(
           '      </ul>\n' \

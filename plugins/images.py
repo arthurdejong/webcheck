@@ -35,11 +35,11 @@ def generate(fp,site):
     fp.write('<ol>\n')
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.url, b.url))
-    # this finds all links with a reasonable content-type
+    # this finds all links with a reasonable image-like content-type
     matcher=re.compile("^image/.*$")
     for link in links:
         if link.ispage or (link.mimetype is None):
             continue
         if matcher.search(link.mimetype):
-            fp.write('  <li>%s</li>\n' % plugins.make_link(link.url,link.url))
+            fp.write('  <li>%s</li>\n' % plugins.make_link(link,link.url))
     fp.write('</ol>\n')

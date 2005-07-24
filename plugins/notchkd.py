@@ -40,7 +40,7 @@ def generate(fp,site):
         fp.write(
           '    <li>\n' \
           '     %(link)s\n' \
-          % { 'link': plugins.make_link(link.url,link.url) })
+          % { 'link': plugins.make_link(link,link.url) })
         # present a list of parents
         plugins.print_parents(fp,link,'     ')
         fp.write(

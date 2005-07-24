@@ -37,7 +37,7 @@ def _explore(fp, site, link, explored=None, level=0, indent='    '):
         explored = [ link ]
     # output this link
     fp.write(indent+'<li>\n')
-    fp.write(indent+' '+plugins.make_link(link.url)+'\n')
+    fp.write(indent+' '+plugins.make_link(link)+'\n')
     # only check children if we are not too deep yet
     if level <= config.REPORT_SITEMAP_LEVEL:
         # figure out the links to follow and ensure that they are only

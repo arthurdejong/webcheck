@@ -39,14 +39,11 @@ def generate(fp,site):
         link = site.linkMap[url]
         if link.isinternal:
             continue
-        # filter out duplicates
-        if link is last:
-            continue
         last = link
         fp.write(
           '    <li>\n' \
           '     %(link)s\n' \
-          % { 'link':  plugins.make_link(url) })
+          % { 'link':  plugins.make_link(link) })
         # present a list of parents
         plugins.print_parents(fp,link,'     ')
         fp.write(

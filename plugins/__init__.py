@@ -37,19 +37,17 @@ def get_title(link):
         return link.url
     return link.title
 
-def make_link(url,title=None):
+def make_link(link,title=None):
     """Return an <a>nchor to a url with title. If url is in the Linklist and
     is external, insert "class=external" in the <a> tag."""
     # try to fetch the link object for this url
-    global mySite
-    link=mySite.linkMap[url]
     if link.isinternal:
         cssclass='internal'
     else:
         cssclass='external'
     if title is None:
         title=get_title(link)
-    return '<a href="'+url+'" class="'+cssclass+'">'+xml.sax.saxutils.escape(title)+'</a>'
+    return '<a href="'+link.url+'" class="'+cssclass+'">'+xml.sax.saxutils.escape(title)+'</a>'
 
 def print_parents(fp,link,indent='     '):
     # present a list of parents
@@ -62,7 +60,7 @@ def print_parents(fp,link,indent='     '):
     for parent in parents:
         fp.write(
           indent+'  <li>%(parent)s</li>\n'
-          % { 'parent': make_link(parent.url) })
+          % { 'parent': make_link(parent) })
     fp.write(
       indent+' </ul>\n'+ \
       indent+'</div>\n' )
@@ -100,9 +98,6 @@ def open_file(filename):
 
 def generate(site,plugins):
     """Generate pages for plugins."""
-    # FIXME: get rid of this once we have a better way of passing this information
-    global mySite
-    mySite=site
     # generate navigation part
     navbar='  <ul class="navbar">\n'
     for plugin in plugins:

@@ -34,5 +34,5 @@ def generate(fp,site):
     urls=site.linkMap.keys()
     urls.sort()
     for url in urls:
-        fp.write('    <li>'+plugins.make_link(url,url)+'</li>\n')
+        fp.write('    <li>'+plugins.make_link(site.linkMap[url],url)+'</li>\n')
     fp.write('   </ol>\n')

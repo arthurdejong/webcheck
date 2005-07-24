@@ -40,6 +40,6 @@ def generate(fp,site):
         if link.ispage and (link.title is None):
             fp.write(
               '    <li>%(link)s</li>\n' \
-              % { 'link': plugins.make_link(link.url,link.url) })
+              % { 'link': plugins.make_link(link,link.url) })
             plugins.add_problem("missing title",link)
     fp.write('   </ol>\n')
