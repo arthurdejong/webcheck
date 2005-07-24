@@ -33,6 +33,7 @@ import base64
 import mimetypes
 import debugio
 import config
+import socket
 
 opener = urllib.FancyURLopener(config.PROXIES)
 opener.addheaders = [('User-agent','webcheck ' + config.VERSION)]
@@ -103,7 +104,11 @@ def _get_reply(link):
 def fetch(link):
     """Here, link is a reference of the link object that is calling this
     pseudo-method."""
-    (status, message, headers) = _get_reply(link)
+    try:
+        (status, message, headers) = _get_reply(link)
+    except socket.error, e:
+        link.add_problem(str(e))
+        (status, message, headers) = (-1, "error reading HTTP response: "+str(e), [])
     try:
         link.mimetype = headers.gettype()
     except AttributeError:
