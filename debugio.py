@@ -45,6 +45,7 @@ def info(msg):
     """Log the message to stdout if loglevel will allow it."""
     if loglevel>=INFO:
         print >>sys.stdout,"webcheck: "+str(msg)
+        sys.stdout.flush()
 
 def warn(msg):
     """Log a warning to stderr if loglevel will allow it."""
