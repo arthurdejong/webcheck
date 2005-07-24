@@ -176,11 +176,11 @@ class Site:
             link.fetch()
             # add children to tocheck
             for child in link.children:
-                if not child.isyanked and not child.isfetched:
+                if not child.isyanked and not child.isfetched and not child in tocheck:
                     tocheck.append(child)
             # add embedded content
             for embed in link.embedded:
-                if not embed.isyanked and not embed.isfetched:
+                if not embed.isyanked and not embed.isfetched and not embed in tocheck:
                     tocheck.append(embed)
             # sleep between requests if configured
             if config.WAIT_BETWEEN_REQUESTS > 0:
