@@ -51,6 +51,8 @@ def generate(fp,site):
     for link in links:
         if not link.ispage:
             continue
+        if not link.isinternal:
+            continue
         # calculate size
         size = _getsize(link)
         # TODO: print size nicely
