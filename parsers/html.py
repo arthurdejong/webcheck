@@ -66,7 +66,8 @@ class _MyHTMLParser(htmllib.HTMLParser):
         #if not self.savedata:
         #    self.title = None
         #    return
-        self.title = string.join(string.split(self.save_end()))
+        if self.savedata and not self.title:
+            self.title = string.join(string.split(self.save_end()))
 
     def do_meta(self,attrs):
         fields={}
