@@ -1,3 +1,10 @@
+changes from 1.9.0 to 1.9.1
+---------------------------
+
+* ship an empty css.py to actually run
+* small bugfixes for pages with multiple titles and slow plugin
+
+
 changes from 1.0 to 1.9.0
 -------------------------
 

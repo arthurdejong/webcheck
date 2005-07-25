@@ -1,3 +1,29 @@
+2005-07-25 17:17  arthur
+
+	* webcheck.1: fix typo, thanks to Stefan Schröder
+	  <stefan@tokonoma.de>
+
+2005-07-25 17:16  arthur
+
+	* plugins/slow.py: only report on internal links
+
+2005-07-25 17:13  arthur
+
+	* parsers/css.py: empty module as placeholder to parse css
+	  (referenced from __init__.py already)
+
+2005-07-25 17:11  arthur
+
+	* parsers/html.py: don't replace an allready set title
+
+2005-07-24 09:32  arthur
+
+	* ChangeLog: add ChangeLog for release
+
+2005-07-24 09:30  arthur
+
+	* NEWS, TODO: get files ready for release
+
 2005-07-24 08:56  arthur
 
 	* README: clean up README removing sections that should be in the
@@ -34,7 +60,7 @@
 
 2005-07-24 08:47  arthur
 
-	* plugins/whatsnew.py, plugins/whatsold.py: only report on ternal
+	* plugins/whatsnew.py, plugins/whatsold.py: only report on internal
 	  links
 
 2005-07-24 08:46  arthur
