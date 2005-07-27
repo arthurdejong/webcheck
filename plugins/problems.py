@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""Present an overview of all encoutered problems per author."""
+"""Present an overview of all encountered problems per author."""
 
 __title__ = 'problems by author'
 __author__ = 'Arthur de Jong'

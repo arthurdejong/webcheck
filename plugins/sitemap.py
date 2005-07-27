@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""Present a sitemap of the checked site."""
+"""Present a site map of the checked site."""
 
 __title__ = 'site map'
 __author__ = 'Arthur de Jong'

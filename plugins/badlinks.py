@@ -19,12 +19,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-"""Present a listing of links that point to non-existant pages."""
+"""Present a listing of links that point to non-existent pages."""
 
 __title__ = 'bad links'
 __author__ = 'Arthur de Jong'
 __version__ = '1.1'
-__description__ = 'These links had problems with retreival during the ' \
+__description__ = 'These links had problems with retrieval during the ' \
                   'crawling of the website.'
 
 import config

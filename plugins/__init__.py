@@ -77,8 +77,9 @@ def add_problem(type,link):
         problem_db[author]=[(type,link)]
 
 def open_file(filename):
-    """ given config.OUTPUT_DIR checks if the directory already exists; if not, it creates it, and then opens
-    filename for writing and returns the file object """
+    """ given config.OUTPUT_DIR checks if the directory already exists; if
+    not, it creates it, and then opens filename for writing and returns the
+    file object """
     import os
     if os.path.isdir(config.OUTPUT_DIR) == 0:
         os.mkdir(config.OUTPUT_DIR)
