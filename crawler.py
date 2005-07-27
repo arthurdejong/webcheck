@@ -168,7 +168,7 @@ class Site:
         while len(tocheck) > 0:
             debugio.debug("crawler.crawl(): items left to check: %d" % len(tocheck))
             # choose a link from the tocheck list
-            link=tocheck.pop()
+            link=tocheck.pop(0)
             # skip link it there is nothing to check
             if link.isyanked or link.isfetched:
                 continue
