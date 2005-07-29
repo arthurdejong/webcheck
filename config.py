@@ -30,7 +30,7 @@ import urllib
 VERSION = "1.9.1"
 
 # The homepage of webcheck.
-HOMEPAGE = "http://tiefighter.et.tudelft.nl/~arthur/webcheck/"
+HOMEPAGE = "http://ch.tudelft.nl/~arthur/webcheck/"
 
 # Whether to consider any URL not starting with the base URL to be external.
 # This is the state of the -b command line option.
