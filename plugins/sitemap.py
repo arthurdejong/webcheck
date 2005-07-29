@@ -29,46 +29,40 @@ __description__ = 'This an overview of the crawled site.'
 import config
 import plugins
 
-def _explore(fp, site, link, explored=None, level=0, indent='    '):
-    """Recursively do a breadth-first traversal of the graph of links
-    on the site.  Returns a list of HTML fragments that can be printed
-    to produce a site map."""
+def _explore(fp, link, explored=None, depth=0, indent='    '):
+    """Recursively do a depth first traversal of the graph of links on the
+    site. Prints the html results to the file descriptor."""
+    # set up explored
     if explored is None:
         explored = [ link ]
     # output this link
     fp.write(indent+'<li>\n')
     fp.write(indent+' '+plugins.make_link(link)+'\n')
     # only check children if we are not too deep yet
-    if level <= config.REPORT_SITEMAP_LEVEL:
+    if depth <= config.REPORT_SITEMAP_LEVEL:
         # figure out the links to follow and ensure that they are only
         # explored from here
-        to_explore = []
-        for child in link.children:
-            child = child.follow_link()
-            # skip pages that have already been traversed
-            if child in explored:
+        children = []
+        for child in link.pagechildren:
+            # skip pages that have the wrong depth, are not internal or have
+            # already been visited
+            if child.depth != depth+1 or not child.isinternal or child in explored:
                 continue
-            # skip external links
-            if not child.isinternal:
-                continue
-            # FIXME: find a solution for redirects
-            # skip non-page links
-            if not child.ispage:
-                continue
-            # mark the link as explored
+            # set child as explored and add to to explore list
             explored.append(child)
-            to_explore.append(child)
+            children.append(child)
         # go over the children and present them as a list
-        if len(to_explore) > 0:
+        if len(children) > 0:
             fp.write(indent+' <ul>\n')
-            to_explore.sort(lambda a, b: cmp(a.url, b.url))
-            for i in to_explore:
-                _explore(fp,site,i,explored,level+1,indent+'  ')
+            children.sort(lambda a, b: cmp(a.url, b.url))
+            for child in children:
+                _explore(fp,child,explored,depth+1,indent+'  ')
             fp.write(indent+' </ul>\n')
     fp.write(indent+'</li>\n')
 
 def generate(fp,site):
     """Output the sitemap to the specified file descriptor."""
+    # output the site structure using depth first traversal
     fp.write('   <ul>\n')
-    _explore(fp,site,site.linkMap[site.base])
+    _explore(fp,site.linkMap[site.base])
     fp.write('   </ul>\n')

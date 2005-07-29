@@ -188,15 +188,32 @@ class Site:
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
-        res = [ self.linkMap[self._internal_urls[0]].follow_link(True) ]
+        bases = [ self.linkMap[self._internal_urls[0]].follow_link(True) ]
         for u in self._internal_urls[1:]:
             l = self.linkMap[u].follow_link(True)
             # if the link has no parent add it to the result list
-            if (len(l.parents) == 0):
-                res.append(l)
+            if len(l.parents) == 0:
+                bases.append(l)
+        # do a breadth first traversal of the website to determin depth and
+        # figure out page children
+        tocheck = []
+        for link in bases:
+            link.depth = 0
+            tocheck.append(link)
+        # repeat until we have nothing more to check
+        while len(tocheck) > 0:
+            debugio.debug("crawler.crawl(): items left to check: %d" % len(tocheck))
+            # choose a link from the tocheck list
+            link = tocheck.pop(0)
+            # figure out page children
+            for child in link._pagechildren():
+                # skip children already in our list or the wrong depth
+                if child in tocheck or child.depth != link.depth+1:
+                    continue
+                tocheck.append(child)
         # set some compatibility properties
         # TODO: figure out a better way to get to this to the plugins
-        self.base = res[0].url
+        self.base = bases[0].url
 
 class Link:
     """This is a basic class representing a url.
@@ -210,7 +227,9 @@ class Link:
       query      - the query part of the url
       parents    - list of parent links (all the Links that link to this page)
       children   - list of child links (the Links that this page links to)
+      pagechildren - list of child pages, including children of embedded elements
       embedded   - list of links to embeded content
+      depth      - the number of clicks from the base urls this page to find
       isinternal - whether the link is considered to be internal
       isyanked   - whether the link should be checked at all
       isfetched  - whether the lis is fetched already
@@ -245,7 +264,9 @@ class Link:
         # initialize some properties
         self.parents = []
         self.children = []
+        self.pagechildren = None
         self.embedded = []
+        self.depth = None
         self.isfetched = False
         self.ispage = False
         self.mtime = None
@@ -323,9 +344,9 @@ class Link:
         """If this link represents a redirect return the redirect target,
         otherwise return self. If delifunref is set this link is discarded
         if it has no parents."""
+        # FIXME: add checking for loops
         if (self.redirectdepth == 0) or (len(self.children) == 0):
             return self
-        link = self
         # remove link if this is the only place that it's used
         if (len(self.parents) == 0):
            # remove me from the linkMap
@@ -333,3 +354,38 @@ class Link:
            # remove me from parents of child
            self.children[0].parents.remove(self)
         return self.children[0].follow_link(delifunref)
+
+    def _pagechildren(self):
+        """Determin the page children of this link, combining the children of
+        embedded items and following redirects."""
+        # if we already have pagechildren defined we're done
+        if self.pagechildren is not None:
+            return self.pagechildren
+        self.pagechildren = []
+        # add my own children, following redirects
+        for child in self.children:
+            # follow redirects
+            child=child.follow_link()
+            # skip children we already have
+            if child in self.pagechildren:
+                continue
+            # set depth of child if it is not already set
+            if child.depth is None:
+                child.depth = self.depth+1
+            # add child pages to out pagechildren
+            if child.ispage:
+                self.pagechildren.append(child)
+        # add my embedded element's children
+        for embed in self.embedded:
+            # set depth of embed if it is not already set
+            if embed.depth is None:
+                embed.depth = self.depth
+            # merge in children of embeds
+            for child in embed._pagechildren():
+                # skip children we already have
+                if child in self.pagechildren:
+                    continue
+                # add it to our list
+                self.pagechildren.append(child)
+        # return the results
+        return self.pagechildren
