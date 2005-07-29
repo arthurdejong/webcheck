@@ -31,6 +31,7 @@ import robotparser
 import schemes
 import parsers
 import re
+import time
 
 class Site:
     """Class to represent gathered data of a site.
