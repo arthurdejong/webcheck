@@ -1,7 +1,7 @@
 
 # __init__.py - general scheme interface
 #
-# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
+# Copyright (C) 2005 Arthur de Jong
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

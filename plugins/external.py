@@ -1,9 +1,9 @@
 
 # external.py - plugin to list external links
 #
-# Copyright (C) 1998, 1999 Albert Hopkins (marduk) <marduk@python.net>
-# Copyright (C) 2002 Mike W. Meyer <mwm@mired.org>
-# Copyright (C) 2005 Arthur de Jong <arthur@tiefighter.et.tudelft.nl>
+# Copyright (C) 1998, 1999 Albert Hopkins (marduk)
+# Copyright (C) 2002 Mike W. Meyer
+# Copyright (C) 2005 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
