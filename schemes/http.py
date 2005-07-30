@@ -22,110 +22,104 @@
 """This module defines the functions needed for filling in information in Link
 objects for urls using the http scheme."""
 
-# http://www.ietf.org/rfc/rfc2616.txt
-
+import config
+import debugio
 import string
 import httplib
 import urllib
 import time
 import urlparse
 import base64
-import mimetypes
-import debugio
-import config
 import socket
 
-opener = urllib.FancyURLopener(config.PROXIES)
-opener.addheaders = [('User-agent','webcheck ' + config.VERSION)]
-if config.HEADERS:
-    opener.addheaders = opener.addheaders + config.HEADERS
-
-def _get_reply(link):
-    """Open connection to url and report information given by HEAD command."""
-    if config.PROXIES and config.PROXIES.has_key('http'):
-        host = urlparse.urlparse(config.PROXIES['http'])[1]
-        path = link.url
-    else:
-        host = link.netloc
-        path = string.join((link.path,link.query),'')
-    if not path:
-        path = '/'
-    userpass = urllib.splituser(link.netloc)[0]
-    if userpass is None:
-        (user, passwd) = (None, None)
-    else:
-        (user, passwd) = urllib.splitpasswd(userpass)
-    (host, port) = urllib.splitport(host)
-    if port:
-        h=httplib.HTTPConnection(host,port)
-    else:
-        h=httplib.HTTPConnection(host)
-    h.putrequest('HEAD', path)
-    if user and passwd:
-        auth = string.strip(base64.encodestring(user + ":" + passwd))
-        h.putheader('Authorization', 'Basic %s' % auth)
-    h.putheader('User-Agent','webcheck %s' % config.VERSION)
-    h.endheaders()
-    try:
-        r = h.getresponse()
-        errcode, errmsg, headers = r.status, r.reason, r.msg
-        h.close()
-        debugio.debug("HTTP response: %s %s" % (errcode, errmsg))
-    except httplib.BadStatusLine, e:
-        return (-1, "error reading HTTP response: "+str(e),[])
-    # handle redirects
-    #  301 = moved permanently
-    #  302 = found
-    #  303 = see other
-    #  307 = temporary redirect
-    if errcode == 301 or errcode == 302 or errcode == 303 or errcode == 307:
-        # TODO: consider pages linking to 301 (moved permanently) an error
-        # determin depth
-        redirectdepth = 0
-        for p in link.parents:
-            redirectdepth = max(redirectdepth,p.redirectdepth)
-        link.redirectdepth = redirectdepth + 1
-        # check depth
-        if link.redirectdepth >= config.REDIRECT_DEPTH:
-            debugio.error("too many redirects")
-            return (errcode, errmsg, headers)
-        # find url that is redirected to
-        location = headers['location']
-        debugio.info('    redirected to: ' + location)
-        location = urlparse.urljoin(link.url,location)
-        if location == link.url:
-            debugio.error("redirect same as source: %s" % location)
-            return (errcode, errmsg, headers)
-        # add child
-        link.add_child(location)
-        # TODO: add check for redirect loop detection
-    return (errcode, errmsg, headers)
-
 def fetch(link):
-    """Here, link is a reference of the link object that is calling this
-    pseudo-method."""
+    """Open connection to url and report information given by GET command."""
+    # TODO: HTTP connection pooling?
+    # split netloc in user:pass part and host:port part
+    (userpass,netloc) = urllib.splituser(link.netloc)
+    host = urllib.splitport(netloc)[0]
+    # check which host to connect to (if using proxies)
+    if config.PROXIES and config.PROXIES.has_key(link.scheme):
+        # pass the complete url in the request, connecting to the proxy
+        # TODO: implement proxy authentication
+        path = urlparse.urlunsplit((link.scheme,netloc,link.path,link.query,""))
+        netloc = urlparse.urlsplit(config.PROXIES[link.scheme])[1]
+    else:
+        # otherwise direct connect to the server with partial url
+        path = urlparse.urlunsplit(("","",link.path,link.query,""))
+    conn=None
     try:
-        (status, message, headers) = _get_reply(link)
-    except socket.error, e:
-        link.add_problem(str(e))
-        (status, message, headers) = (-1, "error reading HTTP response: "+str(e), [])
-    try:
-        link.mimetype = headers.gettype()
-    except AttributeError:
-        link.mimetype = 'text/html' # is this a good enough default?
-    debugio.debug('content-type: ' + link.mimetype)
-    try:
-        link.size = int(headers['content-length'])
-    except (KeyError, TypeError):
-        link.size = 0
-    debugio.debug('size: ' + str(link.size))
-    if (status != 200):
-        link.add_problem(str(status) + ": " +  message)
-        return
-    try:
-        link.mtime = time.mktime(headers.getdate('Last-Modified'))
-    except (OverflowError, TypeError, ValueError):
-        pass
-    document = opener.open(link.url).read()
-    opener.cleanup()
-    return document
+        try:
+            # create the connection
+            if link.scheme == "http":
+                conn=httplib.HTTPConnection(netloc)
+            elif link.scheme == "https":
+                conn=httplib.HTTPSConnection(netloc)
+            # the requests adds a correct host header for us
+            conn.putrequest("GET", path)
+            if userpass is not None:
+                (user, passwd) = urllib.splitpasswd(userpass)
+                conn.putheader("Authorization", "Basic "+string.strip(base64.encodestring(user + ":" + passwd)))
+            conn.putheader("User-Agent","webcheck %s" % config.VERSION)
+            conn.endheaders()
+            # wait for the response
+            response = conn.getresponse()
+            debugio.debug("schemes.http.fetch(): HTTP response: %s %s" % (response.status, response.reason))
+            # retrieve some information from the headers
+            try:
+                link.mimetype = response.msg.gettype()
+                debugio.debug("schemes.http.fetch(): mimetype: %s" % str(link.mimetype))
+            except AttributeError:
+                pass
+            try:
+                link.size = int(response.getheader("Content-length"))
+                debugio.debug("schemes.http.fetch(): size: %s" % str(link.size))
+            except (KeyError, TypeError):
+                pass
+            try:
+                link.mtime = time.mktime(response.msg.getdate("Last-Modified"))
+                debugio.debug("schemes.http.fetch(): mtime: %s" % time.strftime("%c",time.localtime(link.mtime)))
+            except (OverflowError, TypeError, ValueError):
+                pass
+            # handle redirects
+            # 301=moved permanently, 302=found, 303=see other, 307=temporary redirect
+            if response.status == 301 or response.status == 302 or response.status == 303 or response.status == 307:
+                # consider a 301 (moved permanently) a problem
+                if response.status == 301:
+                    link.add_problem(str(response.status) + ": " +  response.reason)
+                # determin depth
+                redirectdepth = 0
+                for p in link.parents:
+                    redirectdepth = max(redirectdepth,p.redirectdepth)
+                link.redirectdepth = redirectdepth + 1
+                # check depth
+                if link.redirectdepth >= config.REDIRECT_DEPTH:
+                    link.add_problem("too many redirects (%d)" % link.redirectdepth)
+                    return None
+                # find url that is redirected to
+                location = urlparse.urljoin(link.url,response.getheader("Location",""))
+                if location == link.url:
+                    link.add_problem("redirect same as source: %s" % location)
+                    return None
+                # add child
+                link.add_child(location)
+                return None
+                # FIXME: add check for redirect loop detection
+            elif response.status != 200:
+                # handle error responses
+                link.add_problem(str(response.status) + ": " +  response.reason)
+                return None
+            else:
+                # return succesful responses
+                # TODO: support gzipped content
+                return response.read()
+        except httplib.BadStatusLine, e:
+            link.add_problem("error reading HTTP response: "+str(e))
+            return None
+        except socket.error, (errnr,errmsg):
+            link.add_problem("error reading HTTP response: "+errmsg)
+            return None
+    finally:
+        # close the connection before returning
+        if conn is not None:
+            conn.close()
