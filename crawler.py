@@ -125,7 +125,7 @@ class Site:
                 rp.set_url(urlparse.urlunsplit((link.scheme, link.netloc, "/robots.txt", "", "")))
                 rp.read()
                 self._robotparsers[location] = rp
-            except TypeError:
+            except (TypeError, IOError):
                 pass
         return self._robotparsers[location]
 
