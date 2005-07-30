@@ -43,10 +43,6 @@ AVOID_EXTERNAL_LINKS = False
 # The proxy configuration.
 PROXIES = urllib.getproxies_environment()
 
-# A list of pairs of extra headers that will be added to each outgoing HTTP
-# request. A User-agent header will be added by the http module.
-HEADERS = None
-
 # Output directory. This is the state of the -o command line option.
 OUTPUT_DIR = "."
 
