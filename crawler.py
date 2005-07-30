@@ -205,7 +205,7 @@ class Site:
             if l == None:
                 continue
             # if the link has no parent add it to the result list unless it is the first one
-            if len(l.parents) == 0 and len(bases) > 0:
+            if len(l.parents) == 0 or len(bases) == 0:
                 bases.append(l)
         # do a breadth first traversal of the website to determin depth and
         # figure out page children
