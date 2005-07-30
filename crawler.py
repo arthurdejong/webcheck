@@ -200,7 +200,7 @@ class Site:
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
         bases = [ ]
-        for u in self._internal_urls[]:
+        for u in self._internal_urls:
             l = self.linkMap[u].follow_link(True)
             if l == None:
                 continue
