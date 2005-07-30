@@ -46,7 +46,7 @@ Features of webcheck include:
 INSTALLING WEBCHECK
 ===================
 
-Installation is relatively easy. Note these installation instructions are for
+Installation is relatively easy. These installation instructions are for
 Unix-like systems. Other operating systems may differ.
 
   1. Unpack the tarball in the location that you want to have it installed.
@@ -64,19 +64,20 @@ RUNNING WEBCHECK
 
 Executing webcheck without any command line arguments will cause it to give a
 simple synopsis of its usage and then quit. Giving it the --help option will
-get it to print out all command line options.
+cause it to print out all command line options.
 
-Webcheck writes it's reports to an output directory. This is the current
+Webcheck writes its reports to an output directory. This is the current
 directory by default. Running webcheck as something like:
 
   % webcheck -o /tmp/myreport http://www.example.com/
 
-Should crawl the site and write the reports to /tmp/myreport. The reports are
-simple HMTL pages that should look fine with most modern browsers.
+Should crawl the site and write the reports to the /tmp/myreport directory.
+The reports are simple HMTL pages that should look fine with most modern
+browsers.
 
 For more information on webcheck usage and command line options see the
 webcheck manual page. If the manual page is not in the MANPATH you can
-probably open the page with something like:
+probably open the manual with something like:
   % man -l /opt/webcheck-1.9.?/webcheck.1
 
 FEEDBACK AND BUG REPORTS
@@ -87,3 +88,5 @@ bug, it helps a lot to include a url where the problem can be found,
 an HTML file where the error occurs or a (small) tar of the site where
 the error occurs. Suggestions for improvements are also welcomed.
 Patches and code contributions are even better.
+
+Please send all your reports to Arthur de Jong <arthur@ch.tudelft.nl>.
