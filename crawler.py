@@ -33,6 +33,16 @@ import parsers
 import re
 import time
 
+def _urlclean(url):
+    """Clean the url of uneccesary parts."""
+    # split the url in useful parts (discarding fragment)
+    (scheme, netloc, path, query) = urlparse.urlsplit(url)[0:4]
+    # http(s) urls should have a non-empty path
+    if ( scheme == "http" or scheme == "https" or scheme == "ftp" ) and path == "":
+        path="/"
+    # put the url back together again
+    return urlparse.urlunsplit((scheme, netloc, path, query, ""))
+
 class Site:
     """Class to represent gathered data of a site.
 
@@ -149,8 +159,8 @@ class Site:
         """Return a link object for the given url.
         This function checks the map of cached link objects for an
         instance."""
-        # clean the url (remove fragment)
-        url = urlparse.urldefrag(url)[0]
+        # clean the url
+        url = _urlclean(url)
         # check if we have an object ready
         if self.linkMap.has_key(url):
             return self.linkMap[url]
