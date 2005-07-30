@@ -199,11 +199,13 @@ class Site:
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
-        bases = [ self.linkMap[self._internal_urls[0]].follow_link(True) ]
-        for u in self._internal_urls[1:]:
+        bases = [ ]
+        for u in self._internal_urls[]:
             l = self.linkMap[u].follow_link(True)
-            # if the link has no parent add it to the result list
-            if len(l.parents) == 0:
+            if l == None:
+                continue
+            # if the link has no parent add it to the result list unless it is the first one
+            if len(l.parents) == 0 and len(bases) > 0:
                 bases.append(l)
         # do a breadth first traversal of the website to determin depth and
         # figure out page children
@@ -291,6 +293,9 @@ class Link:
     def add_child(self, child):
         """Add a link object to the child relation of this link.
         The reverse relation is also made."""
+        # ignore children for external links
+        if not self.isinternal:
+            return
         # convert the url to a link object if we were called with a url
         if type(child) is str:
             child = self.site._get_link(child)
@@ -303,6 +308,9 @@ class Link:
 
     def add_embed(self, link):
         """Mark the given link object as used as an image on this page."""
+        # ignore embeds for external links
+        if not self.isinternal:
+            return
         # convert the url to a link object if we were called with a url
         if type(link) is str:
             link = self.site._get_link(link)
@@ -354,10 +362,13 @@ class Link:
     def follow_link(self,delifunref=False):
         """If this link represents a redirect return the redirect target,
         otherwise return self. If delifunref is set this link is discarded
-        if it has no parents."""
+        if it has no parents. If this redirect does not find a referenced
+        link None is returned."""
         # FIXME: add checking for loops
-        if (self.redirectdepth == 0) or (len(self.children) == 0):
+        if self.redirectdepth == 0:
             return self
+        if len(self.children) == 0:
+            return None
         # remove link if this is the only place that it's used
         if (len(self.parents) == 0):
            # remove me from the linkMap
@@ -378,7 +389,7 @@ class Link:
             # follow redirects
             child=child.follow_link()
             # skip children we already have
-            if child in self.pagechildren:
+            if child is None or child in self.pagechildren:
                 continue
             # set depth of child if it is not already set
             if child.depth is None:
