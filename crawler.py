@@ -213,7 +213,7 @@ class Site:
             tocheck.append(link)
         # repeat until we have nothing more to check
         while len(tocheck) > 0:
-            debugio.debug("crawler.crawl(): items left to check: %d" % len(tocheck))
+            debugio.debug("crawler.crawl(): items left to examine: %d" % len(tocheck))
             # choose a link from the tocheck list
             link = tocheck.pop(0)
             # figure out page children
