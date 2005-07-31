@@ -23,6 +23,7 @@ import config
 import debugio
 import HTMLParser
 import urlparse
+import re
 
 # the list of mimetypes this module should be able to handle
 mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
@@ -123,6 +124,14 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         if self.collect is not None:
             self.collect += data
 
+def _cleanurl(url):
+    """Do some translations of url."""
+    # replace &#nnn; entity refs with proper characters
+    charEntityPattern = re.compile('&#[0-9]{1,3};')
+    for charEntity in charEntityPattern.findall(url):
+        url = url.replace(charEntity,chr(int(charEntity[2:-1])))
+    return url
+
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
     title and an author. The content is assumed to contain HMTL."""
@@ -152,6 +161,6 @@ def parse(content, link):
         base = parser.base
     # list embedded and children
     for embed in parser.embedded:
-        link.add_embed(urlparse.urljoin(base,embed))
+        link.add_embed(urlparse.urljoin(base,_cleanurl(embed)))
     for child in parser.children:
-        link.add_child(urlparse.urljoin(base,child))
+        link.add_child(urlparse.urljoin(base,_cleanurl(child)))
