@@ -27,6 +27,7 @@ class that holds all the link related properties."""
 import config
 import debugio
 import urlparse
+import urllib
 import robotparser
 import schemes
 import parsers
@@ -37,9 +38,15 @@ def _urlclean(url):
     """Clean the url of uneccesary parts."""
     # split the url in useful parts (discarding fragment)
     (scheme, netloc, path, query) = urlparse.urlsplit(url)[0:4]
-    # http(s) urls should have a non-empty path
-    if ( scheme == "http" or scheme == "https" or scheme == "ftp" ) and path == "":
-        path="/"
+    if ( scheme == "http" or scheme == "https" or scheme == "ftp" ):
+        # http(s) urls should have a non-empty path
+        if path == "":
+            path="/"
+        # make hostname lower case
+        (userpass, hostport) = urllib.splituser(netloc)
+        netloc=hostport.lower()
+        if userpass is not None:
+            netloc = userpass+"@"+netloc
     # put the url back together again
     return urlparse.urlunsplit((scheme, netloc, path, query, ""))
 
@@ -69,6 +76,7 @@ class Site:
     def add_internal(self,url):
         """Add the given url and consider all urls below it to be internal.
         These links are all marked for checking with the crawl() function."""
+        url=_urlclean(url)
         if url not in self._internal_urls:
             self._internal_urls.append(url)
 
