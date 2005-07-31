@@ -140,7 +140,7 @@ def parse(content, link):
     try:
         parser.feed(content)
         parser.close()
-    except HTMLParser.HTMLParseError:
+    except (HTMLParser.HTMLParseError, AttributeError):
         pass
     # check for parser errors
     if parser.errmsg is not None:
