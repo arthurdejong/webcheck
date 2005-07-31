@@ -1,8 +1,6 @@
 
 # html.py - parser functions for html content
 #
-# Copyright (C) 1998, 1999 Albert Hopkins (marduk)
-# Copyright (C) 2002 Mike W. Meyer
 # Copyright (C) 2005 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
@@ -21,112 +19,139 @@
 
 """Parser functions for processing HTML content."""
 
-import htmllib
-import string
+import config
 import debugio
-import formatter
-import sgmllib
+import HTMLParser
 import urlparse
 
+# the list of mimetypes this module should be able to handle
 mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 
-# TODO: switch to using HTMLParser (not from htmllib)
+class _MyHTMLParser(HTMLParser.HTMLParser):
+    """A simple subclass of HTMLParser.HTMLParser continuing after errors
+    and gathering some information from the parsed content."""
 
-class _MyHTMLParser(htmllib.HTMLParser):
-
-    def __init__(self,formatter):
-        self.imagelist = []
+    def __init__(self):
+        """Inialize the menbers in which we collect data from parsing the
+        document."""
+        self.collect = None
+        self.base = None
         self.title = None
         self.author = None
-        self.base = None
-        htmllib.HTMLParser.__init__(self,formatter)
+        self.embedded = []
+        self.children = []
+        self.errmsg = None
+        self.errcount = 0
+        HTMLParser.HTMLParser.__init__(self)
 
-    # override handle_image()
-    def handle_image(self,src,alt,*stuff):
-        if src not in self.imagelist:
-            self.imagelist.append(src)
+    def error(self, message):
+        """Override superclass' error() method to ignore errors."""
+        # construct error message
+        (lineno, offset) = self.getpos()
+        if lineno is not None:
+            message += ", at line %d" % lineno
+        if offset is not None:
+            message += ", column %d" % (offset + 1)
+        # store error message
+        debugio.debug("parsers.html._MyHTMLParser.error(): problem parsing html: "+message)
+        if self.errmsg is None:
+            self.errmsg = message
+        # increment error count
+        self.errcount += 1
+        if self.errcount > 10:
+            raise HTMLParser.HTMLParseError(message, self.getpos())
 
-    def do_frame(self,attrs):
-        for name, val in attrs:
-            if name=="src":
-                self.anchorlist.append(val)
+    def check_for_whole_start_tag(self, i):
+        """Override to catch assertion exception."""
+        try:
+            return HTMLParser.HTMLParser.check_for_whole_start_tag(self, i)
+        except AssertionError, e:
+            debugio.debug("parsers.html._MyHTMLParser.check_for_whole_start_tag(): caugt assertion error")
 
-    def save_bgn(self):
-        self.savedata = ''
+    def handle_starttag(self, tag, attrs):
+        """Handle start tags in html."""
+        # turn attrs into hash
+        attrs=dict(attrs)
+        # <title>content</title>
+        if tag == "title":
+            self.collect = ""
+        # <base href="url">
+        elif tag == "base" and attrs.has_key("href"):
+            self.base = attrs["href"]
+        # <link rel="type" href="url">
+        elif tag == "link" and attrs.has_key("rel") and attrs.has_key("href"):
+            if attrs["rel"].lower() in ("stylesheet", "alternate stylesheet", "icon", "shortcut icon"):
+                self.embedded.append(attrs["href"])
+        # <meta name="author" content="...">
+        elif tag == "meta" and attrs.has_key("name") and attrs.has_key("content") and attrs["name"].lower() == "author":
+            if self.author is None:
+                self.author = attrs["content"]
+        # <meta http-equiv="refresh" content="0;url=http://ch.tudelft.nl/~arthur/">
+        elif tag == "meta" and attrs.has_key("http-equiv") and attrs.has_key("content") and attrs["http-equiv"].lower() == "refresh":
+            pass # TODO: implement
+        # <img src="url">
+        elif tag == "img" and attrs.has_key("src"):
+            self.embedded.append(attrs["src"])
+        # <a href="url">
+        elif tag == "a" and attrs.has_key("href"):
+            self.children.append(attrs["href"])
+        # <frameset><frame src="url"...>...</frameset>
+        elif tag == "frame" and attrs.has_key("src"):
+            self.embedded.append(attrs["src"])
+        # <map><area href="url"...>...</map>
+        elif tag == "area" and attrs.has_key("href"):
+            self.children.append(attrs["href"])
+        # <applet code="url"...>
+        elif tag == "applet" and attrs.has_key("code"):
+            self.embedded.append(attrs["code"])
+        # <embed src="url"...>
+        elif tag == "embed" and attrs.has_key("src"):
+            self.embedded.append(attrs["src"])
+        # <embed><param name="movie" value="url"></embed>
+        elif tag == "param" and attrs.has_key("name") and attrs.has_key("value"):
+            if attrs["name"].lower() == "movie":
+                self.embedded.append(attrs["value"])
 
-    def save_end(self):
-        data = self.savedata
-        self.savedata = None
-        return data
+    def handle_endtag(self, tag):
+        """Handle end tags in html."""
+        if tag == 'title' and self.title is None:
+            self.title = self.collect
+            self.collect = None
 
-    def start_title(self, attrs):
-        self.save_bgn()
-
-    def end_title(self):
-        #if not self.savedata:
-        #    self.title = None
-        #    return
-        if self.savedata and not self.title:
-            self.title = string.join(string.split(self.save_end()))
-
-    def do_meta(self,attrs):
-        fields={}
-        for name, value in attrs:
-            fields[name]=value
-        if fields.has_key('name'):
-            if string.lower(fields['name']) == 'author':
-                if fields.has_key('content'):
-                    self.author = fields['content']
-
-    # stylesheet links
-    def do_link(self,attrs):
-        for name, val in attrs:
-            if name=="href":
-                if val not in self.anchorlist:
-                    self.anchorlist.append(val)
-
-    # <AREA> for client-side image maps
-    def do_area(self,attrs):
-        for name, val in attrs:
-            if name=="href":
-                if val not in self.anchorlist:
-                    self.anchorlist.append(val)
-
-    def do_base(self,attrs):
-        for name,val in attrs:
-            if name=="href":
-                self.base = val
+    def handle_data(self, data):
+        """Collect data if we were collecting data."""
+        if self.collect is not None:
+            self.collect += data
 
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
     title and an author. The content is assumed to contain HMTL."""
-    # parse the file
-    parser = _MyHTMLParser(formatter.NullFormatter())
+    # create parser and feed it the content
+    parser = _MyHTMLParser()
     try:
         parser.feed(content)
         parser.close()
-    except sgmllib.SGMLParseError, e:
-        debugio.warn('problem parsing html: %s' % (str(e)))
-        link.add_problem('problem parsing html: %s' % (str(e)))
+    except HTMLParser.HTMLParseError:
+        pass
+    # check for parser errors
+    if parser.errmsg is not None:
+        debugio.debug("parsers.html.parse(): problem parsing html: "+parser.errmsg)
+        link.add_problem('problem parsing html: %s' % parser.errmsg)
+        pass
     # flag that the link contains a valid page
     link.ispage = True
-    # figure out a base url to use for creating absolute urls
-    base = link.url
-    if parser.base is not None:
-        base = parser.base
     # save the title
     if parser.title is not None:
         link.title = parser.title
     # save the author
     if parser.author is not None:
         link.author = parser.author
-    # if the link is external we are not interested in the rest
-    if not link.isinternal:
-        return
-    # save the list of children (make links absolute)
-    for anchor in parser.anchorlist:
-        link.add_child(urlparse.urljoin(base,anchor))
-    # save list of images (make links absolute)
-    for image in parser.imagelist:
-        # create absolute url based on <base> tag
-        link.add_embed(urlparse.urljoin(base,image))
+    # figure out the base of the document (for building the other urls)
+    base = link.url
+    if parser.base is not None:
+        base = parser.base
+    # list embedded and children
+    for embed in parser.embedded:
+        link.add_embed(urlparse.urljoin(base,embed))
+    for child in parser.children:
+        link.add_child(urlparse.urljoin(base,child))
