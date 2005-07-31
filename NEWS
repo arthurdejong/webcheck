@@ -1,3 +1,14 @@
+changes from 1.9.1 to 1.9.2
+---------------------------
+
+* complete reimiplementation of the html and http modules
+* added https support
+* some spelling and typo fixes contributed by several people
+* site map now does a proper breadth first traversal of the site structure
+* webcheck homepage has been changed to http://ch.tudelft.nl/~arthur/webcheck/
+* several minor bugfixes and tweaks
+
+
 changes from 1.9.0 to 1.9.1
 ---------------------------
 
