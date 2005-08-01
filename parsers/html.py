@@ -140,7 +140,8 @@ def parse(content, link):
     try:
         parser.feed(content)
         parser.close()
-    except (HTMLParser.HTMLParseError, AttributeError):
+    except:
+        # ignore all errors
         pass
     # check for parser errors
     if parser.errmsg is not None:
@@ -161,6 +162,8 @@ def parse(content, link):
         base = parser.base
     # list embedded and children
     for embed in parser.embedded:
-        link.add_embed(urlparse.urljoin(base,_cleanurl(embed)))
+        if embed:
+            link.add_embed(urlparse.urljoin(base,_cleanurl(embed)))
     for child in parser.children:
-        link.add_child(urlparse.urljoin(base,_cleanurl(child)))
+        if child:
+            link.add_child(urlparse.urljoin(base,_cleanurl(child)))
