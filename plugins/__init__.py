@@ -25,6 +25,7 @@ import string
 import debugio
 import config
 import xml.sax.saxutils
+import time
 
 problem_db = {}
 
@@ -33,6 +34,62 @@ def get_title(link):
     if link.title is None or link.title == '':
         return link.url
     return link.title
+
+def _floatformat(f):
+    """Return a float as a string while trying to keep it within three
+    characters."""
+    r = '%.1f' % f
+    if len(r) > 3:
+        r = r[:r.find('.')]
+    return r
+
+def get_size(i):
+    """Return the size in bytes as a readble string."""
+    K = 1024
+    M = K*1024
+    G = M*1024
+    if i > 1024*1024*999:
+        return _floatformat(float(i)/float(G))+'G'
+    elif i > 1024*999:
+        return _floatformat(float(i)/float(M))+'M'
+    elif i >= 1024:
+        return _floatformat(float(i)/float(K))+'K'
+    else:
+        return '%d' % i
+
+def get_info(link):
+    """Return a string with a summary of the information in the link."""
+    info = 'url: %s\n' % link.url
+    if link.title:
+        info += 'title: %s\n' % link.title.strip()
+    if link.author:
+        info += 'author: %s\n' % link.author.strip()
+    if link.isinternal:
+        info += 'internal link'
+    else:
+        info += 'external link'
+    if link.isyanked:
+        info += ', not checked\n'
+    else:
+        info += '\n'
+    if link.redirectdepth > 0:
+        if len(link.children) > 0:
+            info += 'redirect: %s' % link.children[0].url
+        else:
+            info += 'redirect (not followed)\n'
+    if len(link.parents) == 1:
+        info += 'linked from 1 page\n'
+    elif len(link.parents) > 1:
+        info += 'linked from %d pages\n' % len(link.parents)
+    if link.mtime:
+        info += 'last modified: %s\n' % time.ctime(link.mtime)
+    if link.size:
+        info += 'size: %s\n' % get_size(link.size)
+    if link.mimetype:
+        info += 'mime-type: %s\n' % link.mimetype
+    if link.status:
+        info += 'status: %s\n' % link.status
+    return info
 
 def make_link(link,title=None):
     """Return an <a>nchor to a url with title. If url is in the Linklist and
@@ -44,7 +101,9 @@ def make_link(link,title=None):
         cssclass='external'
     if title is None:
         title=get_title(link)
-    return '<a href="'+link.url+'" class="'+cssclass+'">'+xml.sax.saxutils.escape(title)+'</a>'
+    # gather some information about the link to report
+    info = xml.sax.saxutils.quoteattr(get_info(link),{'\n':'&#10;'})
+    return '<a href="'+link.url+'" class="'+cssclass+'" title='+info+'>'+xml.sax.saxutils.escape(title)+'</a>'
 
 def print_parents(fp,link,indent='     '):
     # present a list of parents
@@ -146,7 +205,6 @@ def generate(site,plugins):
         report.generate(fp,site)
         fp.write('  </div>\n')
         # write bottom of page
-        import time
         fp.write( \
           '  <p class="footer">\n' \
           '   Generated %(time)s by <a href="%(homepage)s">webcheck %(version)s</a>\n' \
