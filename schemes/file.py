@@ -22,36 +22,64 @@
 """This module defines the functions needed for creating Link objects for urls
 using the file scheme."""
 
+import debugio
 import urlparse
 import urllib
 import os
-import time
 import mimetypes
-import re
 
-def get_info(link):
-    """Retreive some basic information about the file.
-    Store the results in the link object."""
-    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.url)
-    path=urllib.url2pathname(path)
+def _fetch_directory(link, path, acceptedtypes):
+    # if the name does not end with a slash, redirect
+    if path[-1:] != os.path.sep:
+        debugio.debug('directory referenced without trailing slash')
+        link.redirectdepth = 1
+        link.add_child(urlparse.urljoin(link.url,link.path+'/'))
+        return
+    if os.path.isfile(os.path.join(path,'index.html')):
+        debugio.debug('pick up index.html from directory')
+        # the the directory contains an index.html, use that
+        return _fetch_file(link, os.path.join(path,'index.html'), acceptedtypes)
+    else:
+        # otherwise add the directory's files as children
+        debugio.debug('add files as children of this page')
+        try:
+            link.ispage = True
+            for f in os.listdir(path):
+                link.add_child(urlparse.urljoin(link.url,urllib.pathname2url(f)))
+        except os.error, e:
+            link.add_problem(str(e))
+
+def _fetch_file(link, path, acceptedtypes):
+    # get stats of file
     try:
         stats = os.stat(path)
+        link.size = stats.st_size
+        link.mtime = stats.st_mtime
     except os.error, e:
         link.add_problem(str(e))
         return
-    link.size = stats[6]
-    link.mtime = stats[8]
-    # guess mimetype, falling back to application/octet-stream
-    link.type = mimetypes.guess_type(link.url)[0]
-    if link.type is None:
-        link.type = 'application/octet-stream'
-
-def get_document(link):
-    """Return the contents of the document pointed to by the link."""
-    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(link.url)
-    path=urllib.url2pathname(path)
-    return open(path,'r').read()
+    # guess mimetype
+    if link.mimetype is None:
+        link.mimetype = mimetypes.guess_type(path)[0]
+    debugio.debug('mimetype='+str(link.mimetype))
+    debugio.debug('acceptedtypes='+str(acceptedtypes))
+    # fetch the document if there is any point
+    if link.mimetype in acceptedtypes:
+        debugio.debug('FETCH')
+        try:
+            # TODO: add size checking
+            return open(path,'r').read()
+        except IOError, e:
+            debugio.debug('PROBLEM: '+str(e))
+            ink.add_problem(str(e))
 
 def fetch(link, acceptedtypes):
-    get_info(link)
-    return get_document(link)
+    """Retreive some basic information about the file.
+    Store the results in the link object."""
+    # get the local path component
+    path=urllib.url2pathname(link.path)
+    # do special things if we are a directory
+    if os.path.isdir(path):
+        return _fetch_directory(link, path, acceptedtypes)
+    else:
+        return _fetch_file(link, path, acceptedtypes)
