@@ -83,7 +83,7 @@ ul.navbar {
 }
 
 ul.navbar li {
-  display: block;
+  display: inline;
 }
 
 ul.navbar a {
