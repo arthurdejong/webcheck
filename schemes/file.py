@@ -52,6 +52,6 @@ def get_document(link):
     path=urllib.url2pathname(path)
     return open(path,'r').read()
 
-def fetch(link, mimetypes):
+def fetch(link, acceptedtypes):
     get_info(link)
     return get_document(link)
