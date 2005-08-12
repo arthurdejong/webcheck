@@ -34,6 +34,9 @@ import parsers
 import re
 import time
 
+# pattern for matching spaces
+_spacepattern = re.compile(" ")
+
 def _urlclean(url):
     """Clean the url of uneccesary parts."""
     # split the url in useful parts (discarding fragment)
@@ -298,6 +301,15 @@ class Link:
         self.status = None
         self.redirectdepth = 0
 
+    def _checkurl(self, url):
+        """Check to see if the url is formatted properly, correct formatting
+        if possible and log an error in the formatting."""
+        if _spacepattern.search(url):
+            self.add_problem("url contains unescaped spaces: "+url)
+            # replace spaces by %20
+            url=_spacepattern.sub("%20",url)
+        return url
+
     def add_child(self, child):
         """Add a link object to the child relation of this link.
         The reverse relation is also made."""
@@ -306,7 +318,7 @@ class Link:
             return
         # convert the url to a link object if we were called with a url
         if type(child) is str:
-            child = self.site._get_link(child)
+            child = self.site._get_link(self._checkurl(child))
         # add to children
         if child not in self.children:
             self.children.append(child)
@@ -321,7 +333,7 @@ class Link:
             return
         # convert the url to a link object if we were called with a url
         if type(link) is str:
-            link = self.site._get_link(link)
+            link = self.site._get_link(self._checkurl(link))
         # add to embedded
         if link not in self.embedded:
             self.embedded.append(link)
