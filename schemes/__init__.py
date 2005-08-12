@@ -22,10 +22,11 @@
 A scheme module can be requested by the get_schememodule() function.
 Each module should export the following function:
 
-    fetch(link)
+    fetch(link, mimetypes)
         Fetch the link. Some basic information about the document is provided
         if possible (size, mimetype, mtime, status in case of errors, etc).
-        Also the contents of the link is fetched and returned."""
+        Also the contents of the link is fetched and returned if
+        the content type is mentioned in the mimetypes list."""
 
 # a map of schemes to modules
 _schememodules={}

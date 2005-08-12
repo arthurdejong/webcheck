@@ -366,7 +366,7 @@ class Link:
         #        parsers to schemes (or have first scheme method return some
         #        kind of handle) fetch the content
         debugio.info("  %s" % self.url)
-        content=schememodule.fetch(self)
+        content=schememodule.fetch(self, parsers.get_mimetypes())
         self.isfetched = True
         # skip parsing of content if we were returned nothing
         if content is None:
@@ -377,9 +377,9 @@ class Link:
             debugio.debug("crawler.Link.fetch(): unsupported content-type: %s" % self.mimetype)
             return
         # parse the content
-        parsermodule.parse(content,self)
+        parsermodule.parse(content, self)
 
-    def follow_link(self,delifunref=False):
+    def follow_link(self, delifunref=False):
         """If this link represents a redirect return the redirect target,
         otherwise return self. If delifunref is set this link is discarded
         if it has no parents. If this redirect does not find a referenced

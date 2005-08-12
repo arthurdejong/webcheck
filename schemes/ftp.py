@@ -103,6 +103,6 @@ def _spliturl(url):
     (host, port) = urllib.splitnport(host,ftplib.FTP_PORT)
     return (host, port, user, passwd, path)
 
-def fetch(link):
+def fetch(link, mimetypes):
     get_info(link)
     return get_document(link)

@@ -32,7 +32,7 @@ import urlparse
 import base64
 import socket
 
-def fetch(link):
+def fetch(link, mimetypes):
     """Open connection to url and report information given by GET command."""
     # TODO: HTTP connection pooling?
     # split netloc in user:pass part and host:port part
@@ -109,9 +109,10 @@ def fetch(link):
                 # handle error responses
                 link.add_problem(str(response.status) + ": " +  response.reason)
                 return None
-            else:
+            elif link.mimetype in mimetypes:
                 # return succesful responses
                 # TODO: support gzipped content
+                # TODO: add checking for size
                 return response.read()
         except httplib.BadStatusLine, e:
             link.add_problem("error reading HTTP response: "+str(e))

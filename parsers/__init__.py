@@ -25,18 +25,30 @@ Each module should export the following function:
     parse(content,link)
         Based on the content fill in the common fields of the link object."""
 
-# a map of schemes to modules
+# the modules that should be imported
+_modules = ('html', 'css')
+
+# a map of mimetypes to modules
 _parsermodules = {}
+
+def _init_modules():
+    """Initialize the modules."""
+    # go throught all known modules to probe the content-types (do this only once)
+    for m in _modules:
+        p = __import__('parsers.'+m,globals(),locals(),[m])
+        for t in p.mimetypes:
+            _parsermodules[t] = p
 
 def get_parsermodule(mimetype):
     """Look up the correct module for the specified mimetype."""
-    # go throught all known modules to probe the content-types (do this only once)
     if _parsermodules == {}:
-        for m in ('html', 'css'):
-            p = __import__('parsers.'+m,globals(),locals(),[m])
-            for t in p.mimetypes:
-                _parsermodules[t] = p
+        _init_modules()
     # check if we have a supported content-type
     if _parsermodules.has_key(mimetype):
         return _parsermodules[mimetype]
     return None
+
+def get_mimetypes():
+    if _parsermodules == {}:
+        _init_modules()
+    return _parsermodules.keys()
