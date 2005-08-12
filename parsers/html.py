@@ -28,6 +28,9 @@ import re
 # the list of mimetypes this module should be able to handle
 mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 
+# pattern for matching numeric html entities
+_charentitypattern = re.compile('&#[0-9]{1,3};')
+
 class _MyHTMLParser(HTMLParser.HTMLParser):
     """A simple subclass of HTMLParser.HTMLParser continuing after errors
     and gathering some information from the parsed content."""
@@ -127,8 +130,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
 def _cleanurl(url):
     """Do some translations of url."""
     # replace &#nnn; entity refs with proper characters
-    charEntityPattern = re.compile('&#[0-9]{1,3};')
-    for charEntity in charEntityPattern.findall(url):
+    for charEntity in _charentitypattern.findall(url):
         url = url.replace(charEntity,chr(int(charEntity[2:-1])))
     return url
 
