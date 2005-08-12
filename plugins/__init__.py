@@ -108,6 +108,9 @@ def make_link(link,title=None):
 def print_parents(fp,link,indent='     '):
     # present a list of parents
     parents = link.parents
+    # if there are no parents print nothing
+    if len(parents) == 0:
+        return
     parents.sort(lambda a, b: cmp(a.title, b.title))
     fp.write(
       indent+'<div class="parents">\n'+ \
