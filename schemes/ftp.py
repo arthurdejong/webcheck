@@ -30,20 +30,35 @@ import string
 import debugio
 
 # FIXME: honor ftp proxy settings
-# FIXME: keep connection open and only close after we're done
 
-def _spliturl(url):
-    """Split the specified url in host, port, user, password and path
-    components, falling back to reasonable defaults for the ftp protocol."""
-    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(url)
+# TODO: figure out a nicer way to close the connections with something like:
+#try:
+#    debugio.debug("FTP: "+ftp.quit())
+#except:
+#    debugio.debug("FTP: "+ftp.close())
+
+# a map of netlocs to ftp connections
+_ftpconnections = {}
+
+def _getconnection(netloc):
+    """Return a FTP connection object to the specified server."""
+    # NOTE: this method is not thread safe
+    if _ftpconnections.has_key(netloc):
+        return _ftpconnections[netloc]
+    # split url into useful parts
     (userpass, host) = urllib.splituser(netloc)
     if userpass is not None:
         (user, passwd) = urllib.splitpasswd(userpass)
     else:
         (user, passwd) = ('anonymous', '')
     (host, port) = urllib.splitnport(host,ftplib.FTP_PORT)
-    path=urllib.unquote(path)
-    return (host, port, user, passwd, path)
+    # initialize a new connection
+    ftp = ftplib.FTP()
+    debugio.debug("FTP: "+ftp.connect(host, port))
+    debugio.debug("FTP: "+ftp.login(user, passwd))
+    debugio.debug("FTP: "+ftp.voidcmd('TYPE I'))
+    _ftpconnections[netloc] = ftp
+    return ftp
 
 def _cwd(ftp, path):
     """Go down the path on the ftp server returning the part that cannot be
@@ -62,16 +77,13 @@ def _cwd(ftp, path):
 
 def fetch(link, acceptedtypes):
     """Fetch the specified link."""
-    # split url into useful parts
-    (host, port, user, passwd, path) = _spliturl(link.url)
     # try to fetch the document
     content = None
     try:
-        ftp = ftplib.FTP()
-        debugio.debug("FTP: "+ftp.connect(host, port))
-        debugio.debug("FTP: "+ftp.login(user, passwd))
-        debugio.debug("FTP: "+ftp.voidcmd('TYPE I'))
+        ftp = _getconnection(link.netloc)
+        debugio.debug("FTP: "+ftp.cwd('/'))
         # descend down the directory tree as far as we can go
+        path=urllib.unquote(link.path)
         path=_cwd(ftp, path)
         # check if we are dealing with an (exising) directory
         if path is None:
@@ -101,10 +113,5 @@ def fetch(link, acceptedtypes):
                    content = conn.makefile().read()
     except ftplib.all_errors, e:
         link.add_problem(str(e))
-    # finally close the ftp connection
-    try:
-        debugio.debug("FTP: "+ftp.quit())
-    except:
-        debugio.debug("FTP: "+ftp.close())
     # we're done
     return content
