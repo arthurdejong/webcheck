@@ -30,66 +30,7 @@ import string
 import debugio
 
 # FIXME: honor ftp proxy settings
-# TODO: if browsing an FTP directory, also make it crawlable
-
-def get_info(link):
-    link.type = mimetypes.guess_type(link.url)[0]
-    (host, port, user, passwd, path) = _spliturl(link.url)
-    try:
-        ftp = ftplib.FTP()
-        ftp.connect(host, port)
-        ftp.login(user, passwd)
-        dirs, filename = _split_dirs(path)
-        _cwd(dirs, ftp)
-        if filename:
-            try:  # FTP.size raises an exception instead of returning None!
-                link.size = ftp.size(filename)
-            except ftplib.error_perm:
-                link.size = 0
-                if filename not in ftp.nlst():
-                    raise ftplib.error_perm, "No such file or directory"
-    except ftplib.all_errors, e:
-        link.add_problem(str(e))
-    try:
-        ftp.quit()
-    except:
-        ftp.close()
-
-def _callback(line):
-    """Read a line of text and do nothing with it"""
-    return
-
-def get_document(link):
-    (host, port, user, passwd, path) = _spliturl(link.url)
-    dirs, filename = _split_dirs(path)
-    ftp = ftplib.FTP()
-    ftp.connect(host, port)
-    ftp.login(user, passwd)
-    _cwd(dirs, ftp)
-    ftp.voidcmd('TYPE I')
-    conn, size = ftp.ntransfercmd('RETR ' + filename)
-    if size:
-       page = conn.makefile().read(size)
-    else:
-       page = conn.makefile().read()
-    try:
-       ftp.quit()
-    except ftplib.all_errors:
-       ftp.close()
-    return page
-
-def _split_dirs(path):
-    """Given pathname, split it into a tuple consisting of a list of dirs and
-    a filename"""
-    dirs = map(urllib.unquote, string.split(path, '/'))
-    filename = dirs.pop()
-    if len(dirs) and not dirs[0]:
-        del dirs[0]
-    return (dirs, filename)
-
-def _cwd(dirs, ftpobject):
-    for dir in dirs:
-        ftpobject.cwd(dir)
+# FIXME: keep connection open and only close after we're done
 
 def _spliturl(url):
     """Split the specified url in host, port, user, password and path
@@ -101,8 +42,69 @@ def _spliturl(url):
     else:
         (user, passwd) = ('anonymous', '')
     (host, port) = urllib.splitnport(host,ftplib.FTP_PORT)
+    path=urllib.unquote(path)
     return (host, port, user, passwd, path)
 
+def _cwd(ftp, path):
+    """Go down the path on the ftp server returning the part that cannot be
+    changed into."""
+    # split the path into directories
+    dirs = path.split('/')
+    try:
+        # decend down the tree
+        while len(dirs) > 0:
+            d = dirs[0]
+            debugio.debug("FTP: "+ftp.cwd(d))
+            dirs.pop(0)
+        return None
+    except ftplib.error_perm:
+        return string.join(dirs,'/')
+
 def fetch(link, acceptedtypes):
-    get_info(link)
-    return get_document(link)
+    """Fetch the specified link."""
+    # split url into useful parts
+    (host, port, user, passwd, path) = _spliturl(link.url)
+    # try to fetch the document
+    content = None
+    try:
+        ftp = ftplib.FTP()
+        debugio.debug("FTP: "+ftp.connect(host, port))
+        debugio.debug("FTP: "+ftp.login(user, passwd))
+        debugio.debug("FTP: "+ftp.voidcmd('TYPE I'))
+        # descend down the directory tree as far as we can go
+        path=_cwd(ftp, path)
+        # check if we are dealing with an (exising) directory
+        if path is None:
+            # check that the url ends with a slash
+            if link.path[-1:] != '/':
+                debugio.debug('directory referenced without trailing slash')
+                link.redirectdepth = 1
+                link.add_child(urlparse.urljoin(link.url,link.path+'/'))
+            else:
+                # add children
+                debugio.debug('add files as children of this page')
+                link.ispage = True
+                for f in ftp.nlst():
+                    link.add_child(urlparse.urljoin(link.url,urllib.quote(f)))
+        else:
+            # figure out the size of the document
+            link.size = ftp.size(path)
+            # guess the mimetype of the document
+            if link.mimetype is None:
+                link.mimetype = mimetypes.guess_type(path)[0]
+            # try to fetch file
+            if link.mimetype in acceptedtypes:
+                (conn, size) = ftp.ntransfercmd('RETR ' + path)
+                if size:
+                   content = conn.makefile().read(size)
+                else:
+                   content = conn.makefile().read()
+    except ftplib.all_errors, e:
+        link.add_problem(str(e))
+    # finally close the ftp connection
+    try:
+        debugio.debug("FTP: "+ftp.quit())
+    except:
+        debugio.debug("FTP: "+ftp.close())
+    # we're done
+    return content
