@@ -74,7 +74,7 @@ def get_info(link):
         info += '\n'
     if link.redirectdepth > 0:
         if len(link.children) > 0:
-            info += 'redirect: %s' % link.children[0].url
+            info += 'redirect: %s\n' % link.children[0].url
         else:
             info += 'redirect (not followed)\n'
     if len(link.parents) == 1:
@@ -89,7 +89,8 @@ def get_info(link):
         info += 'mime-type: %s\n' % link.mimetype
     if link.status:
         info += 'status: %s\n' % link.status
-    return info
+    # trim trailing newline
+    return info.strip()
 
 def make_link(link,title=None):
     """Return an <a>nchor to a url with title. If url is in the Linklist and
