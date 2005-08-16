@@ -1,16 +1,15 @@
 before next release
 -------------------
 * go over all FIXMEs in code
-* rewrite ftp scheme module
-* rewrite file scheme module
+* parse css (see debian bugs?)
+* make sure all characters in urls are properly url encoded (and make it an error in the checked page)
+* close streams properly when not downloading files
 
 probably before 2.0 release
 ---------------------------
-* parse css
 * maybe choose a different license for webcheck.css
 * make it possible to copy or reference webcheck.css
-* make it possible to copy http:.../webcheck.css into place (use scheme system)
-* create onmouseover information for links containing useful information for url
+* make it possible to copy http:.../webcheck.css into place (maybe use scheme system, probably just urllib)
 * make more things configurable
 * make a Debian package
 * maybe generate a list of page parents (this is useful to list proper parent links for problem pages)
@@ -19,12 +18,9 @@ probably before 2.0 release
 * support for mult-threading (maybe)
 * divide problems in transfer problems and page problems (transfer problems result in a bad link problem on a page)
 * clean up printing of messages, especially needed for multi-threading
-* rewrite scheme modules to make proper use of new calling method
-* only download complete documents if the mime type is supported
 * go over command line options and see if we need long equivalents
 * implement a fix for redirecting stdout and stderr to work properly
 * put a maximum transfer size for downloading files and things over http
-* make error handling of html parser more robust
 
 wishlist
 --------
@@ -33,19 +29,23 @@ wishlist
 * maybe set referer (configurable)
 * support for authenticating proxies
 * new config file format (if we want a configfile at all)
+* support ftp proxies
 * cookies support (maybe)
 * integration with weblint
 * combine with a logfile checker to also show number of hits per link
-* performance and other improvements (we can switch to sets with python 2.4)
 * write a guide to writing plugins
-* form checking
-* spelling checking
-* test w3c conformance of pages
-* maybe make broken links not clickable
+* do form checking
+* do spelling checking
+* test w3c conformance of pages (already done a little)
+* maybe make broken links not clickable in report
 * maybe store crawled site's data in some format for later processing or continuing after interruption
 * create output directory if it does not exist
-* add support for fetching gzipped content
-* write section on internal and external urls in the manual page
+* add support for fetching gzipped content to improve performance
+* maybe do http pipelining
 * add a favicon to reports
 * add a test to see if python supports https and fail elegantly otherwise
 * maybe follow redirects of external links
+* make error handling of html parser more robust (maybe send a patch for html parser upstream)
+* improve tooltips
+* maybe use this as a html parser: http://www.crummy.com/software/BeautifulSoup/examples.html
+* maybe have a way to output google sitemap files: http://www.google.com/webmasters/sitemaps/docs/en/protocol.html

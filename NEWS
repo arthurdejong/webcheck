@@ -1,3 +1,19 @@
+changes from 1.9.2 to 1.9.3
+---------------------------
+
+* several improvements to the generated reports, including tooltips with some
+  useful information for the links (does not seem to work very well in
+  firefox)
+* stability improvements to the html parser (thanks to everyone who reported
+  problems) not all problems have been solved but it shouldn't stop webcheck
+  any more
+* reimplementation of the file and ftp modules to read directory contents or
+  read index.html file if present (there are known problems in the ftp module
+  regarding empty directories and recovering from errors)
+* improvements to the url parsing code to warn about spaces in urls
+* only fetch content if we can parse it
+
+
 changes from 1.9.1 to 1.9.2
 ---------------------------
 

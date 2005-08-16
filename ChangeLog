@@ -1,3 +1,83 @@
+2005-08-16 20:36  arthur
+
+	* [r135] config.py, schemes/file.py, schemes/ftp.py: pick up
+	  configured filenames if present in directories
+
+2005-08-16 18:25  arthur
+
+	* [r134] schemes/ftp.py: add extra debugging info
+
+2005-08-13 19:19  arthur
+
+	* [r133] schemes/ftp.py: use a pool of ftp connections to keep ftp
+	  connection to a host open to do multiple requests (this greatly
+	  speeds up crawling of ftp sites)
+
+2005-08-13 19:08  arthur
+
+	* [r132] schemes/ftp.py: almost complete reimplementation of the
+	  ftp scheme, handling errors more gracefully and also crawl
+	  normal ftp directories
+
+2005-08-13 19:06  arthur
+
+	* [r131] plugins/__init__.py: add missing newline and trim
+	  trailing newline of extra link info
+
+2005-08-12 19:04  arthur
+
+	* [r130] schemes/file.py: complete reimplementation of file
+	  module, reading index.html from directory, otherwise read
+	  directory contents
+
+2005-08-12 18:20  arthur
+
+	* [r129] schemes/__init__.py, schemes/file.py, schemes/ftp.py,
+	  schemes/http.py: rename parameter to acceptedtypes to not
+	  conflict with mimetypes module
+
+2005-08-12 17:27  arthur
+
+	* [r128] crawler.py, parsers/__init__.py, schemes/__init__.py,
+	  schemes/file.py, schemes/ftp.py, schemes/http.py: also pass
+	  mimetypes to scheme modules to only fetch content if we can
+	  parse the content type
+
+2005-08-12 17:02  arthur
+
+	* [r127] plugins/__init__.py: don't print referenced from if there
+	  are no parents
+
+2005-08-12 16:57  arthur
+
+	* [r126] crawler.py: add checkurl method to clean up urls and
+	  report problems (currently only checks for spaces in urls)
+
+2005-08-12 16:55  arthur
+
+	* [r125] parsers/html.py: put compiled regular expression on
+	  module level so that it is compiled only once
+
+2005-08-12 16:52  arthur
+
+	* [r124] webcheck.css: small fix to render menu better under MSIE
+
+2005-08-11 21:41  arthur
+
+	* [r123] plugins/__init__.py: add some extra information to every
+	  link with a nicely formatted size
+
+2005-08-01 17:58  arthur
+
+	* [r122] parsers/html.py: make parsing handle errors a little more
+	  gracefully, thanks to Stefan Schröder <stefan@tokonoma.de> for
+	  all the testing
+
+2005-07-31 20:58  arthur
+
+	* [r120] ChangeLog, NEWS, TODO, config.py: get files ready for
+	  1.9.2 release
+
 2005-07-31 20:44  arthur
 
 	* [r119] parsers/html.py: also catch AttributeError for problem in
@@ -10,7 +90,7 @@
 2005-07-31 09:45  arthur
 
 	* [r117] parsers/html.py: replace numeric entity refs with their
-	  proper values based on patch by UNKNOWN
+	  proper values based on patch by Eric W.Brown <eric@saugus.net>
 
 2005-07-31 09:21  arthur
 
