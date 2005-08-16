@@ -22,6 +22,7 @@
 """This module defines the functions needed for creating Link objects for urls
 using the ftp scheme."""
 
+import config
 import urllib
 import mimetypes
 import ftplib
@@ -73,52 +74,69 @@ def _cwd(ftp, path):
             dirs.pop(0)
         return None
     except ftplib.error_perm, e:
-        debugio.debug('schemes.ftp._cwd(): CWD '+d+' : '+str(e))
+        debugio.debug('schemes.ftp._cwd(): CWD '+d+': '+str(e))
         return string.join(dirs,'/')
+
+def _fetch_directory(link, ftp, acceptedtypes):
+    """Handle the ftp directory."""
+    # check that the url ends with a slash
+    if link.path[-1:] != '/':
+        debugio.debug('schemes.ftp._fetch_directory(): directory referenced without trailing slash')
+        link.redirectdepth = 1
+        link.add_child(urlparse.urljoin(link.url,link.path+'/'))
+        return
+    # retreive the contents of the directory
+    # FIXME: this raises an exception for empty directories, probably replace with own command
+    contents = ftp.nlst()
+    # check contents of directory for some common files
+    for f in config.FTP_INDEXES:
+        if f in contents:
+            debugio.debug('schemes.ftp._fetch_directory(): pick up %s from directory' % f)
+            # the the directory contains an index.html, use that
+            return _fetch_file(link, ftp, f, acceptedtypes)
+    # just add files in directory as children
+    debugio.debug('schemes.ftp._fetch_directory(): add files as children of this page')
+    link.ispage = True
+    debugio.debug('schemes.ftp._fetch_directory(): TYPE A: '+ftp.voidcmd('TYPE A'))
+    # FIXME: this raises an exception for empty directories
+    for f in contents:
+        link.add_child(urlparse.urljoin(link.url,urllib.quote(f)))
+
+def _fetch_file(link, ftp, path, acceptedtypes):
+    """Try to download the file in path that should be in the current
+    directory of the ftp instance. The path can also point to a non-existant
+    file or directory."""
+    # figure out the size of the document
+    link.size = ftp.size(path)
+    debugio.debug('schemes.ftp.fetch(): size='+str(link.size))
+    # guess the mimetype of the document
+    if link.mimetype is None:
+        link.mimetype = mimetypes.guess_type(path)[0]
+    # try to fetch file
+    if link.mimetype in acceptedtypes:
+        debugio.debug('schemes.ftp.fetch(): TYPE I: '+ftp.voidcmd('TYPE I'))
+        (conn, size) = ftp.ntransfercmd('RETR ' + path)
+        if size:
+           content = conn.makefile().read(size)
+        else:
+           content = conn.makefile().read()
+        debugio.debug('schemes.ftp.fetch(): fetched, size=%d' % len(content))
+        return content
 
 def fetch(link, acceptedtypes):
     """Fetch the specified link."""
     # try to fetch the document
-    content = None
     try:
         ftp = _getconnection(link.netloc)
-        debugio.debug('schemes.ftp.fetch(): FTP: CWD / : '+ftp.cwd('/'))
+        debugio.debug('schemes.ftp.fetch(): CWD /: '+ftp.cwd('/'))
         # descend down the directory tree as far as we can go
         path=urllib.unquote(link.path)
         path=_cwd(ftp, path)
         # check if we are dealing with an (exising) directory
         if path is None:
-            # check that the url ends with a slash
-            if link.path[-1:] != '/':
-                debugio.debug('schemes.ftp.fetch(): directory referenced without trailing slash')
-                link.redirectdepth = 1
-                link.add_child(urlparse.urljoin(link.url,link.path+'/'))
-            else:
-                # add children
-                debugio.debug('schemes.ftp.fetch(): add files as children of this page')
-                link.ispage = True
-                debugio.debug('schemes.ftp.fetch(): TYPE A: '+ftp.voidcmd('TYPE A'))
-                # FIXME: this raises an exception for empty directories
-                for f in ftp.nlst():
-                    link.add_child(urlparse.urljoin(link.url,urllib.quote(f)))
+            return _fetch_directory(link, ftp, acceptedtypes)
         else:
-            # figure out the size of the document
-            link.size = ftp.size(path)
-            debugio.debug('schemes.ftp.fetch(): size='+str(link.size))
-            # guess the mimetype of the document
-            if link.mimetype is None:
-                link.mimetype = mimetypes.guess_type(path)[0]
-            # try to fetch file
-            if link.mimetype in acceptedtypes:
-                debugio.debug('schemes.ftp.fetch(): TYPE I: '+ftp.voidcmd('TYPE I'))
-                (conn, size) = ftp.ntransfercmd('RETR ' + path)
-                if size:
-                   content = conn.makefile().read(size)
-                else:
-                   content = conn.makefile().read()
-                debugio.debug('schemes.ftp.fetch(): fetched, size=%d' % len(content))
+            return _fetch_file(link, ftp, path, acceptedtypes)
     except ftplib.all_errors, e:
         debugio.debug('schemes.ftp.fetch(): CAUGHT '+str(e))
         link.add_problem(str(e))
-    # we're done
-    return content

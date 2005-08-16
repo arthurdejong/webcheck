@@ -83,3 +83,13 @@ REPORT_WHATSNEW_URL_AGE = 7
 
 # The size of a page in kilobytes after which the page is considered too big.
 REPORT_SLOW_URL_SIZE = 76
+
+# A list of names that will be checked when encountering an file:///
+# directory. This file will be picked up instead of the directory list.
+FILE_INDEXES = [ 'index.html', 'index.htm' ]
+
+# A list of names that will be checked when encountering an ftp://
+# directory. This file will be picked up instead of the directory list.
+FTP_INDEXES = [ 'index.html', 'index.htm' ]
+
+

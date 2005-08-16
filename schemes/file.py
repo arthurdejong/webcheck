@@ -22,6 +22,7 @@
 """This module defines the functions needed for creating Link objects for urls
 using the file scheme."""
 
+import config
 import debugio
 import urlparse
 import urllib
@@ -35,19 +36,20 @@ def _fetch_directory(link, path, acceptedtypes):
         link.redirectdepth = 1
         link.add_child(urlparse.urljoin(link.url,link.path+'/'))
         return
-    if os.path.isfile(os.path.join(path,'index.html')):
-        debugio.debug('pick up index.html from directory')
-        # the the directory contains an index.html, use that
-        return _fetch_file(link, os.path.join(path,'index.html'), acceptedtypes)
-    else:
-        # otherwise add the directory's files as children
-        debugio.debug('add files as children of this page')
-        try:
-            link.ispage = True
-            for f in os.listdir(path):
-                link.add_child(urlparse.urljoin(link.url,urllib.pathname2url(f)))
-        except os.error, e:
-            link.add_problem(str(e))
+    # check contents of directory for some common files
+    for f in config.FILE_INDEXES:
+        if os.path.isfile(os.path.join(path,f)):
+            debugio.debug('pick up %s from directory' % f)
+            # the the directory contains an index.html, use that
+            return _fetch_file(link, os.path.join(path,f), acceptedtypes)
+    # otherwise add the directory's files as children
+    debugio.debug('add files as children of this page')
+    try:
+        link.ispage = True
+        for f in os.listdir(path):
+            link.add_child(urlparse.urljoin(link.url,urllib.pathname2url(f)))
+    except os.error, e:
+        link.add_problem(str(e))
 
 def _fetch_file(link, path, acceptedtypes):
     # get stats of file
