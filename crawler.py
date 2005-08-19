@@ -411,23 +411,26 @@ class Link:
         # parse the content
         parsermodule.parse(content, self)
 
-    def follow_link(self, delifunref=False):
+    def follow_link(self, delifunref=False, visited=[]):
         """If this link represents a redirect return the redirect target,
         otherwise return self. If delifunref is set this link is discarded
         if it has no parents. If this redirect does not find a referenced
         link None is returned."""
-        # FIXME: add checking for loops
         if self.redirectdepth == 0:
             return self
         if len(self.children) == 0:
             return None
+        # check for loops
+        visited.append(self)
+        if self.children[0] in visited:
+            return None
         # remove link if this is the only place that it's used
-        if (len(self.parents) == 0):
+        if (len(self.parents) == 0) and delifunref:
            # remove me from the linkMap
            del self.site.linkMap[self.url]
            # remove me from parents of child
            self.children[0].parents.remove(self)
-        return self.children[0].follow_link(delifunref)
+        return self.children[0].follow_link(delifunref, visited)
 
     def _pagechildren(self):
         """Determin the page children of this link, combining the children of
