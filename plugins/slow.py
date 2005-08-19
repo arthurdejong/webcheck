@@ -71,5 +71,5 @@ def generate(fp,site):
           '    </li>\n' \
           % { 'link': plugins.make_link(link),
               'size': sizeK })
-        plugins.add_problem('slow Link: %sK' % str(sizeK), link) 
+        link.add_pageproblem('slow Link: %sK' % str(sizeK)) 
     fp.write('   </ul>\n')

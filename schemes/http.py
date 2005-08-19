@@ -86,7 +86,7 @@ def fetch(link, acceptedtypes):
             if response.status == 301 or response.status == 302 or response.status == 303 or response.status == 307:
                 # consider a 301 (moved permanently) a problem
                 if response.status == 301:
-                    link.add_problem(str(response.status) + ": " +  response.reason)
+                    link.add_linkproblem(str(response.status) + ": " +  response.reason)
                 # determin depth
                 redirectdepth = 0
                 for p in link.parents:
@@ -94,12 +94,12 @@ def fetch(link, acceptedtypes):
                 link.redirectdepth = redirectdepth + 1
                 # check depth
                 if link.redirectdepth >= config.REDIRECT_DEPTH:
-                    link.add_problem("too many redirects (%d)" % link.redirectdepth)
+                    link.add_linkproblem("too many redirects (%d)" % link.redirectdepth)
                     return None
                 # find url that is redirected to
                 location = urlparse.urljoin(link.url,response.getheader("Location",""))
                 if location == link.url:
-                    link.add_problem("redirect same as source: %s" % location)
+                    link.add_linkproblem("redirect same as source: %s" % location)
                     return None
                 # add child
                 link.add_child(location)
@@ -107,7 +107,7 @@ def fetch(link, acceptedtypes):
                 # FIXME: add check for redirect loop detection
             elif response.status != 200:
                 # handle error responses
-                link.add_problem(str(response.status) + ": " +  response.reason)
+                link.add_linkproblem(str(response.status) + ": " +  response.reason)
                 return None
             elif link.mimetype in acceptedtypes:
                 # return succesful responses
@@ -115,10 +115,10 @@ def fetch(link, acceptedtypes):
                 # TODO: add checking for size
                 return response.read()
         except httplib.BadStatusLine, e:
-            link.add_problem("error reading HTTP response: "+str(e))
+            link.add_linkproblem("error reading HTTP response: "+str(e))
             return None
         except socket.error, (errnr,errmsg):
-            link.add_problem("error reading HTTP response: "+errmsg)
+            link.add_linkproblem("error reading HTTP response: "+errmsg)
             return None
     finally:
         # close the connection before returning

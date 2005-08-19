@@ -33,7 +33,18 @@ import xml.sax.saxutils
 
 def generate(fp,site):
     """Output the overview of problems to the given file descriptor."""
-    authors=plugins.problem_db.keys()
+    # make a list of problems per author
+    problem_db = {}
+    for link in site.linkMap.values():
+        # skip external pages
+        if not link.isinternal or len(link.pageproblems) == 0:
+            continue
+        if problem_db.has_key(link.author):
+            problem_db[link.author].append(link)
+        else:
+            problem_db[link.author] = [link]
+    # get a list of authors
+    authors=problem_db.keys()
     authors.sort()
     # generate short list of authors
     if len(authors) > 1:
@@ -54,14 +65,20 @@ def generate(fp,site):
           % { 'authorref': urllib.quote(str(author),''),
               'author':    xml.sax.saxutils.escape(str(author)) })
         # list problems for this author
-        for problem,link in plugins.problem_db[author]:
+        for link in problem_db[author]:
+            # present the links
             fp.write(
               '    <li>\n' \
               '     %(link)s\n' \
-              '     <div class="status">%(problem)s</div>\n' \
-              '    </li>\n' \
-              % { 'link':    plugins.make_link(link),
-                  'problem': xml.sax.saxutils.escape(problem) })
+              % { 'link':    plugins.make_link(link) })
+            # list the problems
+            for problem in link.pageproblems:
+                fp.write(
+                  '     <div class="status">%(problem)s</div>\n' \
+                  % { 'problem':  xml.sax.saxutils.escape(problem) })
+            # end the list item
+            fp.write(
+              '    </li>\n' )
         fp.write(
           '      </ul>\n' \
           '     </li>\n')

@@ -54,5 +54,5 @@ def generate(fp,site):
               % { 'link':  plugins.make_link(link),
                   'age':   age })
             # add link to problem database
-            plugins.add_problem('Old Link: %d days old' % age ,link)
+            link.add_pageproblem('this page is %d days old' % age)
     fp.write('   </ul>\n')

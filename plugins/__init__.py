@@ -27,8 +27,6 @@ import config
 import xml.sax.saxutils
 import time
 
-problem_db = {}
-
 def get_title(link):
     """Returns the title of a link if it is set otherwise returns url."""
     if link.title is None or link.title == '':
@@ -87,8 +85,8 @@ def get_info(link):
         info += 'size: %s\n' % get_size(link.size)
     if link.mimetype:
         info += 'mime-type: %s\n' % link.mimetype
-    if link.status:
-        info += 'status: %s\n' % link.status
+    for problem in link.linkproblems:
+        info += 'problem: %s\n' % xml.sax.saxutils.escape(problem)
     # trim trailing newline
     return info.strip()
 
@@ -124,17 +122,6 @@ def print_parents(fp,link,indent='     '):
     fp.write(
       indent+' </ul>\n'+ \
       indent+'</div>\n' )
-
-def add_problem(type,link):
-    """ Add a problem link to the 'problems' database.  Will not add external links """
-    if not link.isinternal:
-        return
-    global problem_db
-    author = link.author
-    if problem_db.has_key(author):
-        problem_db[author].append((type,link))
-    else:
-        problem_db[author]=[(type,link)]
 
 def open_file(filename):
     """ given config.OUTPUT_DIR checks if the directory already exists; if

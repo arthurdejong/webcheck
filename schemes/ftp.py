@@ -37,6 +37,7 @@ import debugio
 #    debugio.debug("FTP: "+ftp.quit())
 #except:
 #    debugio.debug("FTP: "+ftp.close())
+# TODO: handle some exceptions earlier or use different commands
 
 # a map of netlocs to ftp connections
 _ftpconnections = {}
@@ -139,4 +140,4 @@ def fetch(link, acceptedtypes):
             return _fetch_file(link, ftp, path, acceptedtypes)
     except ftplib.all_errors, e:
         debugio.debug('schemes.ftp.fetch(): CAUGHT '+str(e))
-        link.add_problem(str(e))
+        link.add_linkproblem(str(e))

@@ -49,7 +49,7 @@ def _fetch_directory(link, path, acceptedtypes):
         for f in os.listdir(path):
             link.add_child(urlparse.urljoin(link.url,urllib.pathname2url(f)))
     except os.error, e:
-        link.add_problem(str(e))
+        link.add_linkproblem(str(e))
 
 def _fetch_file(link, path, acceptedtypes):
     # get stats of file
@@ -58,7 +58,7 @@ def _fetch_file(link, path, acceptedtypes):
         link.size = stats.st_size
         link.mtime = stats.st_mtime
     except os.error, e:
-        link.add_problem(str(e))
+        link.add_linkproblem(str(e))
         return
     # guess mimetype
     if link.mimetype is None:
@@ -73,7 +73,7 @@ def _fetch_file(link, path, acceptedtypes):
             return open(path,'r').read()
         except IOError, e:
             debugio.debug('PROBLEM: '+str(e))
-            ink.add_problem(str(e))
+            ink.add_linkproblem(str(e))
 
 def fetch(link, acceptedtypes):
     """Retreive some basic information about the file.

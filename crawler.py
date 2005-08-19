@@ -263,7 +263,8 @@ class Link:
       mimetype   - the content-type of the document
       title      - the title of this document
       author     - the author of this document
-      status     - status of fetching this url (not None indicates a problem)
+      linkproblems - list of problems with retrieving the link
+      pageproblems - list of problems in the parsed page
       redirectdepth - the number of this redirect (=0 not a redirect)
    """
 
@@ -298,14 +299,15 @@ class Link:
         self.mimetype = None
         self.title = None
         self.author = None
-        self.status = None
+        self.linkproblems = []
+        self.pageproblems = []
         self.redirectdepth = 0
 
     def _checkurl(self, url):
         """Check to see if the url is formatted properly, correct formatting
-        if possible and log an error in the formatting."""
+        if possible and log an error in the formatting to the current page."""
         if _spacepattern.search(url):
-            self.add_problem("url contains unescaped spaces: "+url)
+            self.add_pageproblem("url contains unescaped spaces: "+url)
             # replace spaces by %20
             url=_spacepattern.sub("%20",url)
         return url
@@ -341,9 +343,16 @@ class Link:
         if self not in link.parents:
             link.parents.append(self)
 
-    def add_problem(self, problem):
+    def add_linkproblem(self, problem):
         """Indicate that something went wrong while retreiving this link."""
-        self.status=problem
+        self.linkproblems.append(problem)
+
+    def add_pageproblem(self, problem):
+        """Indicate that something went wrong with parsing the document."""
+        # only think about problems on internal pages
+        if not self.isinternal:
+            return
+        self.pageproblems.append(problem)
 
     def fetch(self):
         """Attempt to fetch the url (if isyanked is not True) and fill in link

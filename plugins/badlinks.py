@@ -37,20 +37,23 @@ def generate(fp,site):
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
-        if link.status is None:
+        if len(link.linkproblems) == 0:
             continue
-        status = str(link.status)
+        # list the link
         fp.write(
           '    <li>\n' \
           '     %(badurl)s\n' \
-          '     <div class="status">%(status)s</div>\n' \
-          % { 'badurl':  plugins.make_link(link,link.url),
-              'status':  xml.sax.saxutils.escape(status) })
+          % { 'badurl':  plugins.make_link(link,link.url) })
+        # list the problems
+        for problem in link.linkproblems:
+            fp.write(
+              '     <div class="status">%(problem)s</div>\n' \
+              % { 'problem':  xml.sax.saxutils.escape(problem) })
         # present a list of parents
         link.parents.sort()
         plugins.print_parents(fp,link,'     ')
         # add a reference to the problem map
         for parent in link.parents:
-            plugins.add_problem("Bad Link: " + link.url, parent)
+            parent.add_pageproblem("Bad Link: " + link.url)
         fp.write('    </li>\n')
     fp.write('   </ol>\n')

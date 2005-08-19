@@ -148,7 +148,7 @@ def parse(content, link):
     # check for parser errors
     if parser.errmsg is not None:
         debugio.debug("parsers.html.parse(): problem parsing html: "+parser.errmsg)
-        link.add_problem('problem parsing html: %s' % parser.errmsg)
+        link.add_pageproblem('problem parsing html: %s' % parser.errmsg)
         pass
     # flag that the link contains a valid page
     link.ispage = True
