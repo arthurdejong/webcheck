@@ -70,14 +70,16 @@ def generate(fp,site):
             fp.write(
               '    <li>\n' \
               '     %(link)s\n' \
+              '     <ul class="problems">\n' \
               % { 'link':    plugins.make_link(link) })
             # list the problems
             for problem in link.pageproblems:
                 fp.write(
-                  '     <div class="status">%(problem)s</div>\n' \
+                  '      <li>%(problem)s</li>\n' \
                   % { 'problem':  xml.sax.saxutils.escape(problem) })
             # end the list item
             fp.write(
+              '     </ul>\n' \
               '    </li>\n' )
         fp.write(
           '      </ul>\n' \

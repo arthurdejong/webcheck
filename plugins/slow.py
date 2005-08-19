@@ -67,9 +67,11 @@ def generate(fp,site):
         fp.write(
           '    <li>\n' \
           '     %(link)s\n' \
-          '     <div class="status">size: %(size)sK</div>\n' \
+          '     <ul class="problem">\n' \
+          '      <li>size: %(size)sK</li>\n' \
+          '     </ul>\n' \
           '    </li>\n' \
           % { 'link': plugins.make_link(link),
               'size': sizeK })
-        link.add_pageproblem('slow Link: %sK' % str(sizeK)) 
+        link.add_pageproblem('this page %sK' % str(sizeK)) 
     fp.write('   </ul>\n')

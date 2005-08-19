@@ -43,11 +43,12 @@ def generate(fp,site):
         fp.write(
           '    <li>\n' \
           '     %(badurl)s\n' \
+          '     <ul class="problems">\n' \
           % { 'badurl':  plugins.make_link(link,link.url) })
         # list the problems
         for problem in link.linkproblems:
             fp.write(
-              '     <div class="status">%(problem)s</div>\n' \
+              '      <li>%(problem)s</li>\n' \
               % { 'problem':  xml.sax.saxutils.escape(problem) })
         # present a list of parents
         link.parents.sort()
@@ -55,5 +56,7 @@ def generate(fp,site):
         # add a reference to the problem map
         for parent in link.parents:
             parent.add_pageproblem("Bad Link: " + link.url)
-        fp.write('    </li>\n')
+        fp.write(
+          '     </ul>\n' \
+          '    </li>\n')
     fp.write('   </ol>\n')
