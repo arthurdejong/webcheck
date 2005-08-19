@@ -343,6 +343,34 @@ class Link:
         if self not in link.parents:
             link.parents.append(self)
 
+    def redirect(self, url):
+        """Indicate that this link redirects to the specified url. Maximum
+        redirect counting is done as well as loop detection."""
+        # figure out determin depth
+        redirectdepth = 0
+        redirectlist = []
+        for p in self.parents:
+            if p.redirectdepth > redirectdepth:
+                redirectdepth = p.redirectdepth
+                redirectlist = p.redirectlist
+        self.redirectdepth = redirectdepth + 1
+        self.redirectlist = redirectlist
+        self.redirectlist.append(self.url)
+        # check depth
+        if self.redirectdepth >= config.REDIRECT_DEPTH:
+            self.add_linkproblem("too many redirects (%d)" % self.redirectdepth)
+            return None
+        # check for redirect to self
+        url = self._checkurl(url)
+        if url == self.url:
+            self.add_linkproblem("redirect same as source: %s" % url)
+            return None
+        # check for redirect loop
+        if url in self.redirectlist:
+            self.add_linkproblem("redirect loop %s" % url)
+        # add child
+        self.add_child(url)
+
     def add_linkproblem(self, problem):
         """Indicate that something went wrong while retreiving this link."""
         self.linkproblems.append(problem)
@@ -369,11 +397,6 @@ class Link:
             debugio.info("  %s" % self.url)
             debugio.info("    "+self.isyanked)
             return
-        # FIXME: figure out which mimetypes to support before completely
-        #        fetching document in memory
-        # FIXME: figure out some way to communicate accepted mimetypes from
-        #        parsers to schemes (or have first scheme method return some
-        #        kind of handle) fetch the content
         debugio.info("  %s" % self.url)
         content=schememodule.fetch(self, parsers.get_mimetypes())
         self.isfetched = True

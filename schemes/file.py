@@ -33,8 +33,7 @@ def _fetch_directory(link, path, acceptedtypes):
     # if the name does not end with a slash, redirect
     if path[-1:] != os.path.sep:
         debugio.debug('directory referenced without trailing slash')
-        link.redirectdepth = 1
-        link.add_child(urlparse.urljoin(link.url,link.path+'/'))
+        link.redirect(urlparse.urljoin(link.url,link.path+'/'))
         return
     # check contents of directory for some common files
     for f in config.FILE_INDEXES:

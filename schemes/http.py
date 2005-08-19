@@ -87,24 +87,11 @@ def fetch(link, acceptedtypes):
                 # consider a 301 (moved permanently) a problem
                 if response.status == 301:
                     link.add_linkproblem(str(response.status) + ": " +  response.reason)
-                # determin depth
-                redirectdepth = 0
-                for p in link.parents:
-                    redirectdepth = max(redirectdepth,p.redirectdepth)
-                link.redirectdepth = redirectdepth + 1
-                # check depth
-                if link.redirectdepth >= config.REDIRECT_DEPTH:
-                    link.add_linkproblem("too many redirects (%d)" % link.redirectdepth)
-                    return None
                 # find url that is redirected to
                 location = urlparse.urljoin(link.url,response.getheader("Location",""))
-                if location == link.url:
-                    link.add_linkproblem("redirect same as source: %s" % location)
-                    return None
-                # add child
-                link.add_child(location)
+                # create the redirect
+                link.redirect(location)
                 return None
-                # FIXME: add check for redirect loop detection
             elif response.status != 200:
                 # handle error responses
                 link.add_linkproblem(str(response.status) + ": " +  response.reason)

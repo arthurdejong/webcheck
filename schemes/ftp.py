@@ -83,8 +83,7 @@ def _fetch_directory(link, ftp, acceptedtypes):
     # check that the url ends with a slash
     if link.path[-1:] != '/':
         debugio.debug('schemes.ftp._fetch_directory(): directory referenced without trailing slash')
-        link.redirectdepth = 1
-        link.add_child(urlparse.urljoin(link.url,link.path+'/'))
+        link.redirect(urlparse.urljoin(link.url,link.path+'/'))
         return
     # retreive the contents of the directory
     # FIXME: this raises an exception for empty directories, probably replace with own command
