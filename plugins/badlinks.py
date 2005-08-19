@@ -50,13 +50,14 @@ def generate(fp,site):
             fp.write(
               '      <li>%(problem)s</li>\n' \
               % { 'problem':  xml.sax.saxutils.escape(problem) })
+        fp.write(
+          '     </ul>\n')
         # present a list of parents
         link.parents.sort()
         plugins.print_parents(fp,link,'     ')
         # add a reference to the problem map
         for parent in link.parents:
-            parent.add_pageproblem("Bad Link: " + link.url)
+            parent.add_pageproblem("bad link: " + link.url)
         fp.write(
-          '     </ul>\n' \
           '    </li>\n')
     fp.write('   </ol>\n')
