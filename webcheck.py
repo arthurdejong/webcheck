@@ -74,10 +74,9 @@ def print_help():
         "  -V, --version  output version information and exit\n" \
         "  -h, --help     display this help and exit"
 
-def parse_args():
+def parse_args(site):
     """parse command-line arguments"""
     import getopt
-    global site
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
             "x:y:l:baqdo:fr:w:Vh",
@@ -156,10 +155,9 @@ def install_file(fname,text=False):
     sfp.close()
 
 def main():
-    global site
     site = crawler.Site()
     # parse command-line arguments
-    parse_args()
+    parse_args(site)
     # crawl through the website
     debugio.info('checking site....')
     try:
