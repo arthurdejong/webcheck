@@ -31,13 +31,17 @@ mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 # pattern for matching numeric html entities
 _charentitypattern = re.compile('&#[0-9]{1,3};')
 
+# pattern for matching spaces
+_spacepattern = re.compile(" ")
+
 class _MyHTMLParser(HTMLParser.HTMLParser):
     """A simple subclass of HTMLParser.HTMLParser continuing after errors
     and gathering some information from the parsed content."""
 
-    def __init__(self):
+    def __init__(self, link):
         """Inialize the menbers in which we collect data from parsing the
         document."""
+        self.link = link
         self.collect = None
         self.base = None
         self.title = None
@@ -48,14 +52,33 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         self.errcount = 0
         HTMLParser.HTMLParser.__init__(self)
 
+    def _location(self):
+        """Return the current parser location as a string."""
+        (lineno, offset) = self.getpos()
+        if lineno is not None:
+            msg = 'at line %d' % lineno
+        else:
+            msg = 'at unknown line'
+        if offset is not None:
+            msg += ', column %d' % (offset + 1)
+        return msg
+
+    def _cleanurl(self, url):
+        """Do some translations of url."""
+        # check for spaces in urls
+        if _spacepattern.search(url):
+            self.link.add_pageproblem('link contains unescaped spaces: ' + url + ', ' + self._location())
+            # replace spaces by %20
+            url=_spacepattern.sub('%20',url)
+        # replace &#nnn; entity refs with proper characters
+        for charEntity in _charentitypattern.findall(url):
+            url = url.replace(charEntity,chr(int(charEntity[2:-1])))
+        return url
+
     def error(self, message):
         """Override superclass' error() method to ignore errors."""
         # construct error message
-        (lineno, offset) = self.getpos()
-        if lineno is not None:
-            message += ", at line %d" % lineno
-        if offset is not None:
-            message += ", column %d" % (offset + 1)
+        message += ', ' + self._location()
         # store error message
         debugio.debug("parsers.html._MyHTMLParser.error(): problem parsing html: "+message)
         if self.errmsg is None:
@@ -81,11 +104,11 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             self.collect = ""
         # <base href="url">
         elif tag == "base" and attrs.has_key("href"):
-            self.base = attrs["href"]
+            self.base = self._cleanurl(attrs["href"])
         # <link rel="type" href="url">
         elif tag == "link" and attrs.has_key("rel") and attrs.has_key("href"):
             if attrs["rel"].lower() in ("stylesheet", "alternate stylesheet", "icon", "shortcut icon"):
-                self.embedded.append(attrs["href"])
+                self.embedded.append(self._cleanurl(attrs["href"]))
         # <meta name="author" content="...">
         elif tag == "meta" and attrs.has_key("name") and attrs.has_key("content") and attrs["name"].lower() == "author":
             if self.author is None:
@@ -95,26 +118,26 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             pass # TODO: implement
         # <img src="url">
         elif tag == "img" and attrs.has_key("src"):
-            self.embedded.append(attrs["src"])
+            self.embedded.append(self._cleanurl(attrs["src"]))
         # <a href="url">
         elif tag == "a" and attrs.has_key("href"):
-            self.children.append(attrs["href"])
+            self.children.append(self._cleanurl(attrs["href"]))
         # <frameset><frame src="url"...>...</frameset>
         elif tag == "frame" and attrs.has_key("src"):
-            self.embedded.append(attrs["src"])
+            self.embedded.append(self._cleanurl(attrs["src"]))
         # <map><area href="url"...>...</map>
         elif tag == "area" and attrs.has_key("href"):
-            self.children.append(attrs["href"])
+            self.children.append(self._cleanurl(attrs["href"]))
         # <applet code="url"...>
         elif tag == "applet" and attrs.has_key("code"):
-            self.embedded.append(attrs["code"])
+            self.embedded.append(self._cleanurl(attrs["code"]))
         # <embed src="url"...>
         elif tag == "embed" and attrs.has_key("src"):
-            self.embedded.append(attrs["src"])
+            self.embedded.append(self._cleanurl(attrs["src"]))
         # <embed><param name="movie" value="url"></embed>
         elif tag == "param" and attrs.has_key("name") and attrs.has_key("value"):
             if attrs["name"].lower() == "movie":
-                self.embedded.append(attrs["value"])
+                self.embedded.append(self._cleanurl(attrs["value"]))
 
     def handle_endtag(self, tag):
         """Handle end tags in html."""
@@ -127,18 +150,11 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         if self.collect is not None:
             self.collect += data
 
-def _cleanurl(url):
-    """Do some translations of url."""
-    # replace &#nnn; entity refs with proper characters
-    for charEntity in _charentitypattern.findall(url):
-        url = url.replace(charEntity,chr(int(charEntity[2:-1])))
-    return url
-
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
     title and an author. The content is assumed to contain HMTL."""
     # create parser and feed it the content
-    parser = _MyHTMLParser()
+    parser = _MyHTMLParser(link)
     try:
         parser.feed(content)
         parser.close()
@@ -165,7 +181,7 @@ def parse(content, link):
     # list embedded and children
     for embed in parser.embedded:
         if embed:
-            link.add_embed(urlparse.urljoin(base,_cleanurl(embed)))
+            link.add_embed(urlparse.urljoin(base,embed))
     for child in parser.children:
         if child:
-            link.add_child(urlparse.urljoin(base,_cleanurl(child)))
+            link.add_child(urlparse.urljoin(base,child))
