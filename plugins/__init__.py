@@ -58,6 +58,8 @@ def get_size(i):
 def get_info(link):
     """Return a string with a summary of the information in the link."""
     info = 'url: %s\n' % link.url
+    if link.status:
+        info += '%s\n' % link.status
     if link.title:
         info += 'title: %s\n' % link.title.strip()
     if link.author:

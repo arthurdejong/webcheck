@@ -64,7 +64,8 @@ def fetch(link, acceptedtypes):
             conn.endheaders()
             # wait for the response
             response = conn.getresponse()
-            debugio.debug("schemes.http.fetch(): HTTP response: %s %s" % (response.status, response.reason))
+            link.status = '%s %s' % (response.status, response.reason)
+            debugio.debug("schemes.http.fetch(): HTTP response: %s" % link.status)
             # retrieve some information from the headers
             try:
                 link.mimetype = response.msg.gettype()

@@ -263,6 +263,7 @@ class Link:
       mimetype   - the content-type of the document
       title      - the title of this document
       author     - the author of this document
+      status     - the result of retreiving the document
       linkproblems - list of problems with retrieving the link
       pageproblems - list of problems in the parsed page
       redirectdepth - the number of this redirect (=0 not a redirect)
@@ -299,6 +300,7 @@ class Link:
         self.mimetype = None
         self.title = None
         self.author = None
+        self.status = None
         self.linkproblems = []
         self.pageproblems = []
         self.redirectdepth = 0
@@ -307,7 +309,7 @@ class Link:
         """Check to see if the url is formatted properly, correct formatting
         if possible and log an error in the formatting to the current page."""
         if _spacepattern.search(url):
-            self.add_pageproblem("url contains unescaped spaces: "+url)
+            self.add_pageproblem('link contains unescaped spaces: %s' % url)
             # replace spaces by %20
             url=_spacepattern.sub("%20",url)
         return url
