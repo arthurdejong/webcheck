@@ -138,12 +138,19 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         elif tag == "param" and attrs.has_key("name") and attrs.has_key("value"):
             if attrs["name"].lower() == "movie":
                 self.embedded.append(self._cleanurl(attrs["value"]))
+        # <style>content</style>
+        elif tag == "style":
+            self.collect = ""
 
     def handle_endtag(self, tag):
         """Handle end tags in html."""
         if tag == 'title' and self.title is None:
             self.title = self.collect
             self.collect = None
+        elif tag == 'style' and self.collect is not None:
+            # delegate handling of inline css to css module
+            import parsers.css
+            parsers.css.parse(self.collect, self.link)
 
     def handle_data(self, data):
         """Collect data if we were collecting data."""
