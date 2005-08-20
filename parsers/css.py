@@ -34,14 +34,11 @@ _urlpattern = re.compile('url\(["\']?(.*?)["\']?\)')
 def parse(content, link):
     """Parse the specified content and extract information for crawling the
     site further."""
-    print "PARSE CSS"
     # strip out comments from the content
     content = _commentpattern.sub('', content)
     # handler @imports
     for i in _importpattern.findall(content):
-        print "IMPORT="+i
         link.add_embed(urlparse.urljoin(link.url, i))
     # handle url()s
     for i in _urlpattern.findall(content):
-        print "URL="+i
         link.add_embed(urlparse.urljoin(link.url, i))
