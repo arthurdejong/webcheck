@@ -38,8 +38,8 @@ def generate(fp,site):
           '    <li>\n' \
           '      <strong>%s</strong><br />\n' \
           % xml.sax.saxutils.escape(report.__title__) )
-        #if hasattr(report,"__description__"):
-        #    fp.write('      %s<br />\n' % xml.sax.saxutils.escape(report.__description__))
+        if hasattr(report,"__doc__"):
+            fp.write('      %s<br />\n' % xml.sax.saxutils.escape(report.__doc__))
         if hasattr(report,"__author__"):
             fp.write('      author: %s<br />\n' % xml.sax.saxutils.escape(report.__author__))
         if hasattr(report,"__version__"):
