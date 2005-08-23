@@ -119,34 +119,37 @@ def parse_args(site):
     for arg in args:
         site.add_internal(arg)
 
-def find_file(fname):
-    """Search the python path for the file name and return full path of the
-    file."""
-    for dname in sys.path:
-        res = os.path.join(dname,fname)
-        if os.path.isfile(res):
-            return res
-    return None
-
-def install_file(fname,text=False):
+def install_file(fname, text=False):
     """Install the given file in the output directory.
     If the text flag is set to true it is assumed the file is text,
     translating line endings."""
     import shutil
-    # TODO: extend so that if
-    #  - filename has no slashes in it: search python path
-    #  - filename starts with a known scheme: use that
-    #  - filename starts with slash: treat is as a file://///// url
-    # TODO: make it possible to reference the original location instead of copying the file
-    # FIXME: check that source and target are different before opening file for writing
-    source = find_file(fname)
-    target = os.path.basename(fname)
-    # open the input file, TODO: use the scheme stuff for doing this
+    import urlparse
+    # figure out mode to open the file with
     mode='r'
     if text:
         mode+='U'
-    sfp=open(source,mode)
+    # check with what kind of argument we are called
+    scheme = urlparse.urlsplit(fname)[0]
+    if scheme == 'file':
+        # this is a file:/// url, translate to normal path and open
+        fname = urllib.url2pathname(urlparse.urlsplit(fname)[2])
+        sfp = open(fname, mode)
+    elif scheme == '' and os.path.isabs(fname):
+        # this is an absolute path, just open it
+        sfp = open(fname, mode)
+    elif scheme == '':
+        # this is a relavite path, try to fetch it from the python path
+        for d in sys.path:
+            tst = os.path.join(d,fname)
+            if os.path.isfile(tst):
+                fname = tst
+                break
+        sfp = open(fname, mode)
+    # TODO: support more schemes here
     # create file in output directory (with overwrite question)
+    target = os.path.basename(fname)
+    # FIXME: check that source and target are different before opening file for writing
     tfp=plugins.open_file(target);
     # copy contents
     shutil.copyfileobj(sfp,tfp)
