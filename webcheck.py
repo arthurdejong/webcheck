@@ -117,6 +117,11 @@ def parse_args(site):
         print_tryhelp()
         sys.exit(1)
     for arg in args:
+        # if it does not look like a url it is probably a local file
+        import urlparse
+        import urllib
+        if urlparse.urlsplit(arg)[0] == '':
+            arg = 'file://' + urllib.pathname2url(os.path.abspath(arg))
         site.add_internal(arg)
 
 def install_file(fname, text=False):
