@@ -56,8 +56,9 @@ def generate(fp,site):
         link.parents.sort()
         plugins.print_parents(fp,link,'     ')
         # add a reference to the problem map
-        for parent in link.parents:
-            parent.add_pageproblem("bad link: " + link.url)
+        for problem in link.linkproblems:
+            for parent in link.parents:
+                parent.add_pageproblem("bad link: " + link.url + ": " + problem)
         fp.write(
           '    </li>\n')
     fp.write('   </ol>\n')
