@@ -64,6 +64,8 @@ def generate(fp,site):
           '      <ul>\n' \
           % { 'authorref': urllib.quote(str(author),''),
               'author':    xml.sax.saxutils.escape(str(author)) })
+        # sort pages by url
+        problem_db[author].sort(lambda a, b: cmp(a.url, b.url))
         # list problems for this author
         for link in problem_db[author]:
             # present the links
@@ -72,6 +74,8 @@ def generate(fp,site):
               '     %(link)s\n' \
               '     <ul class="problems">\n' \
               % { 'link':    plugins.make_link(link) })
+            # sort problems by name
+            link.pageproblems.sort()
             # list the problems
             for problem in link.pageproblems:
                 fp.write(
