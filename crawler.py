@@ -267,6 +267,9 @@ class Link:
       linkproblems - list of problems with retrieving the link
       pageproblems - list of problems in the parsed page
       redirectdepth - the number of this redirect (=0 not a redirect)
+
+   Instances of this class should be made through a site instance
+   by adding internal urls and calling crawl().
    """
 
     def __init__(self, site, url):
