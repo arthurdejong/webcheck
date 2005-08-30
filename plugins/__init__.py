@@ -102,9 +102,13 @@ def make_link(link,title=None):
         cssclass='external'
     if title is None:
         title=get_title(link)
+    if config.REPORT_LINKS_IN_NEW_WINDOW:
+        target='target="_blank" '
+    else:
+        taget=''
     # gather some information about the link to report
     info = xml.sax.saxutils.quoteattr(get_info(link),{'\n':'&#10;'})
-    return '<a href="'+link.url+'" class="'+cssclass+'" title='+info+'>'+xml.sax.saxutils.escape(title)+'</a>'
+    return '<a href="'+link.url+'" '+target+'class="'+cssclass+'" title='+info+'>'+xml.sax.saxutils.escape(title)+'</a>'
 
 def print_parents(fp,link,indent='     '):
     # present a list of parents
