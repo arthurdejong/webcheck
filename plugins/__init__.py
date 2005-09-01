@@ -134,12 +134,15 @@ def open_file(filename):
     file object """
     import os
     if os.path.isdir(config.OUTPUT_DIR) == 0:
-        os.mkdir(config.OUTPUT_DIR)
+        try:
+            os.mkdir(config.OUTPUT_DIR)
+        except OSError, (errno, strerror):
+            debugio.error('error creating directory %(dir)s: %(strerror)s' %
+                          { 'dir': config.OUTPUT_DIR,
+                            'strerror': strerror })
+            sys.exit(1)
     fname = os.path.join(config.OUTPUT_DIR,filename)
     if os.path.exists(fname) and not config.OVERWRITE_FILES:
-        # mv: overwrite `/tmp/b'?
-        # cp: overwrite `/tmp/b'?
-        # zip: replace aap.txt? [y]es, [n]o, [A]ll, [N]one, [r]ename:
         ow = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
         ow = ow.lower() + " "
         if ow[0] == 'a':
@@ -147,7 +150,13 @@ def open_file(filename):
         elif ow[0] != 'y':
             print 'Aborted.'
             sys.exit(0)
-    return open(fname,'w')
+    try:
+        return open(fname,'w')
+    except IOError, (errno, strerror):
+        debugio.error('error creating output file %(fname)s: %(strerror)s' %
+                      { 'fname': fname,
+                        'strerror': strerror })
+        sys.exit(1)
 
 def print_navbar(fp, plugins, current):
     """Return a html fragement representing the navigation bar for a page."""

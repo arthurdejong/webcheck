@@ -161,10 +161,10 @@ def install_file(source, text=False):
     sfp = None
     try:
         sfp = open(source, mode)
-    except IOError, e:
-        debugio.error('error opening %(fname)s: %(error)s' %
+    except IOError, (errno, strerror):
+        debugio.error('error opening %(fname)s: %(strerror)s' %
                       { 'fname': source,
-                        'error': str(e) })
+                        'strerror': strerror })
         sys.exit(1)
     # create file in output directory (with overwrite question)
     tfp=plugins.open_file(target);
