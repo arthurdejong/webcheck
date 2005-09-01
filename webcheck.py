@@ -124,7 +124,7 @@ def parse_args(site):
             arg = 'file://' + urllib.pathname2url(os.path.abspath(arg))
         site.add_internal(arg)
 
-def install_file(fname, text=False):
+def install_file(source, text=False):
     """Install the given file in the output directory.
     If the text flag is set to true it is assumed the file is text,
     translating line endings."""
@@ -135,26 +135,38 @@ def install_file(fname, text=False):
     if text:
         mode+='U'
     # check with what kind of argument we are called
-    scheme = urlparse.urlsplit(fname)[0]
+    scheme = urlparse.urlsplit(source)[0]
     if scheme == 'file':
         # this is a file:/// url, translate to normal path and open
-        fname = urllib.url2pathname(urlparse.urlsplit(fname)[2])
-        sfp = open(fname, mode)
-    elif scheme == '' and os.path.isabs(fname):
-        # this is an absolute path, just open it
-        sfp = open(fname, mode)
+        source = urllib.url2pathname(urlparse.urlsplit(source)[2])
+    elif scheme == '' and os.path.isabs(source):
+        # this is an absolute path, just open it as is
+        pass
     elif scheme == '':
         # this is a relavite path, try to fetch it from the python path
         for d in sys.path:
-            tst = os.path.join(d,fname)
+            tst = os.path.join(d,source)
             if os.path.isfile(tst):
-                fname = tst
+                source = tst
                 break
-        sfp = open(fname, mode)
     # TODO: support more schemes here
+    # figure out the destination name
+    target = os.path.join(config.OUTPUT_DIR, os.path.basename(source))
+    # test if source and target are the same
+    source = os.path.realpath(source)
+    if source == os.path.realpath(target):
+        debugio.error('attempt to overwrite %(fname)s with itself' % {'fname': source})
+        return
+    # open the input file
+    sfp = None
+    try:
+        sfp = open(source, mode)
+    except IOError, e:
+        debugio.error('error opening %(fname)s: %(error)s' %
+                      { 'fname': source,
+                        'error': str(e) })
+        sys.exit(1)
     # create file in output directory (with overwrite question)
-    target = os.path.basename(fname)
-    # FIXME: check that source and target are different before opening file for writing
     tfp=plugins.open_file(target);
     # copy contents
     shutil.copyfileobj(sfp,tfp)
