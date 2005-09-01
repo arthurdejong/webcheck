@@ -150,30 +150,37 @@ def open_file(filename):
             sys.exit(0)
     return open(fname,'w')
 
-def generate(site,plugins):
-    """Generate pages for plugins."""
-    # generate navigation part
-    navbar='  <ul class="navbar">\n'
-    for plugin in plugins:
-        # if this is the first plugin use index.html as filename
-        filename = plugin + '.html'
-        if plugin == plugins[0]:
+def print_navbar(fp, plugins, current):
+    """Return a html fragement representing the navigation bar for a page."""
+    fp.write('  <ul class="navbar">\n')
+    for p in plugins:
+        # if this is the first plugin, use index.html as filename
+        filename = p + '.html'
+        if p == plugins[0]:
             filename = 'index.html'
         # import the plugin
-        report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
+        report = __import__('plugins.' + p, globals(), locals(), [p])
         # generate a link to the plugin page
-        navbar += '   <li><a href="%(pluginfile)s" title="%(description)s">%(title)s</a></li>\n' \
-                  % { 'pluginfile':  filename,
-                      'title':       xml.sax.saxutils.escape(report.__title__),
-                      'description': xml.sax.saxutils.escape(report.__doc__) }
-    navbar+='  </ul>\n'
-    for plugin in plugins:
-        debugio.info('  ' + plugin)
-        # if this is the first plugin use index.html as filename
-        filename = plugin + '.html'
-        if plugin == plugins[0]:
+        selected = ''
+        if p == current:
+            selected = ' class="selected"'
+        fp.write(
+          '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n' \
+          % { 'pluginfile' : filename,
+              'selected'   : selected,
+              'title'      : xml.sax.saxutils.escape(report.__title__),
+              'description': xml.sax.saxutils.escape(report.__doc__) })
+    fp.write('  </ul>\n')
+
+def generate(site, plugins):
+    """Generate pages for plugins."""
+    for p in plugins:
+        debugio.info('  ' + p)
+        # if this is the first plugin, use index.html as filename
+        filename = p + '.html'
+        if p == plugins[0]:
             filename = 'index.html'
-        report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
+        report = __import__('plugins.' + p, globals(), locals(), [p])
         fp = open_file(filename)
         # write basic html head
         # TODO: make it possible to use multiple stylesheets (possibly reference external stylesheets)
@@ -192,7 +199,7 @@ def generate(site,plugins):
               'siteurl':    site.base,
               'version':    config.VERSION })
         # write navigation bar
-        fp.write(navbar)
+        print_navbar(fp, plugins, p)
         # write plugin heading
         fp.write('  <h2>%s</h2>\n' % xml.sax.saxutils.escape(report.__title__))
         if hasattr(report,"__description__"):

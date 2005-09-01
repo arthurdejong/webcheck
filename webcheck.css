@@ -98,6 +98,11 @@ ul.navbar a:active {
   color: #cc1010;
 }
 
+ul.navbar a.selected {
+  background: #ffcccc;
+  color: #cc1010;
+}
+
 ul.navbar a:hover {
   background: #ffeeee;
   color: #cc1010;
