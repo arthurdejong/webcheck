@@ -12,9 +12,6 @@ changes from 1.9.3 tp 1.9.4
 * better error handling of problems writing generated pages and check that we
   are not overwriting input files
 
-[done r162]
-
-
 
 changes from 1.9.2 to 1.9.3
 ---------------------------
