@@ -1,8 +1,7 @@
 before next release
 -------------------
 * go over all FIXMEs in code
-* parse css (see debian bugs?)
-* make sure all characters in urls are properly url encoded (and make it an error in the checked page)
+* make sure all characters in urls are properly url encoded (and make it an error in the checked page) (see rfc 2396)
 * close streams properly when not downloading files
 
 probably before 2.0 release
@@ -15,37 +14,48 @@ probably before 2.0 release
 * maybe generate a list of page parents (this is useful to list proper parent links for problem pages)
 * figure out if we need parents and pageparents
 * make configurable time-out when retrieving a document
-* support for mult-threading (maybe)
-* divide problems in transfer problems and page problems (transfer problems result in a bad link problem on a page)
+* support for mult-threading (use -t, --threads as option)
 * clean up printing of messages, especially needed for multi-threading
 * go over command line options and see if we need long equivalents
 * implement a fix for redirecting stdout and stderr to work properly
 * put a maximum transfer size for downloading files and things over http
+* make sure all html output is properly escaped
+* support ftp proxies
 
 wishlist
 --------
 * make code for stripping last part of a url (e.g. foo/index.html -> foo/)
-* translate file paths to file:/// urls on the command line
 * maybe set referer (configurable)
 * support for authenticating proxies
 * new config file format (if we want a configfile at all)
-* support ftp proxies
 * cookies support (maybe)
 * integration with weblint
-* combine with a logfile checker to also show number of hits per link
-* write a guide to writing plugins
-* do form checking
-* do spelling checking
+* maybe combine with a logfile checker to also show number of hits per link
+* do form checking of crawled pages
+* do spelling checking of crawled pages
 * test w3c conformance of pages (already done a little)
-* maybe make broken links not clickable in report
+* maybe make broken links not clickable in report (configurable?)
 * maybe store crawled site's data in some format for later processing or continuing after interruption
-* create output directory if it does not exist
 * add support for fetching gzipped content to improve performance
 * maybe do http pipelining
 * add a favicon to reports
-* add a test to see if python supports https and fail elegantly otherwise
 * maybe follow redirects of external links
 * make error handling of html parser more robust (maybe send a patch for html parser upstream)
-* improve tooltips
 * maybe use this as a html parser: http://www.crummy.com/software/BeautifulSoup/examples.html
 * maybe have a way to output google sitemap files: http://www.google.com/webmasters/sitemaps/docs/en/protocol.html
+* maybe trim titles that are too long
+* maybe check that documents referenced in <img> tags are really images
+* maybe split out plugins in check() and generate() functions
+* make FAQ
+* create onmouseover information for links containing useful information for the link
+* maybe report unknown/unsupported content in the report
+* use gettext to present output to enable translations of messages and html
+* maybe se cache control header (see http://bugs.debian.org/159648)
+* add "nothing to report" if we have empty report
+* maybe mark embedded content that is external
+* present an overview of problem pages: "100 problems in 10 pages" (per author)
+* check of email addresses that they are formatted properly and check that host part has an MX record (make it a problem for no record or only an A record)
+* have a limit for the amount of data to download
+* output a csv file with some useful information
+* maybe implement news, nntp, gopher and telnet schemes (if there is anyone that wants them)
+* maybe add custom bullets in problem lists, depending on problem type

@@ -1,3 +1,21 @@
+changes from 1.9.3 tp 1.9.4
+---------------------------
+
+* split problems into link problems (errors retreiving the document) and page
+  problems (parsing errors, wrong links, etc)
+* some fixes and improvements to the layout of the generated pages
+* redirect loops are not detected
+* transfer result status is now stored
+* addition of a limited css parser that handles imports and url() entries
+* support reading file names for checking from the command line (turning them
+  into file:// urls internally)
+* better error handling of problems writing generated pages and check that we
+  are not overwriting input files
+
+[done r162]
+
+
+
 changes from 1.9.2 to 1.9.3
 ---------------------------
 

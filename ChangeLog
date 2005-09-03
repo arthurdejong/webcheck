@@ -1,3 +1,140 @@
+2005-09-01 21:04  arthur
+
+	* [r162] plugins/__init__.py, webcheck.py: make error handling
+	  more robust and have consisten error messages
+
+2005-09-01 20:12  arthur
+
+	* [r161] AUTHORS: add Herbert Weinhandl <weinhand@unileoben.ac.at>
+	  to contributors
+
+2005-09-01 20:11  arthur
+
+	* [r160] README: add some design notes for developers
+
+2005-09-01 20:10  arthur
+
+	* [r159] webcheck.py: add extra checks not to overwrite our own
+	  input file while copying files into place
+
+2005-09-01 20:06  arthur
+
+	* [r158] plugins/__init__.py: typo fix
+
+2005-09-01 18:47  arthur
+
+	* [r157] plugins/__init__.py, webcheck.css: highlight current
+	  plugin in the navigation, based on a patch by Herbert Weinhandl
+	  <weinhand@unileoben.ac.at>
+
+2005-08-30 17:47  arthur
+
+	* [r156] config.py, plugins/__init__.py: make specifying of target
+	  in links configurable (disabled by default to keep page valid
+	  xhtml 1.1)
+
+2005-08-25 19:27  arthur
+
+	* [r155] crawler.py: add note about making instances of Link class
+
+2005-08-23 15:15  arthur
+
+	* [r154] webcheck.py: handle passing file names (instead of urls)
+	  on the command line
+
+2005-08-23 15:14  arthur
+
+	* [r153] webcheck.py: add initial support for passing urls to
+	  install_file() function
+
+2005-08-23 14:29  arthur
+
+	* [r152] plugins/badlinks.py: include transfer problem in
+	  pageproblem description
+
+2005-08-23 14:28  arthur
+
+	* [r151] plugins/problems.py: make problem lists sorted by url and
+	  problem description
+
+2005-08-21 18:18  arthur
+
+	* [r150] plugins/about.py: include short description in plugin
+	  overview page
+
+2005-08-21 14:23  arthur
+
+	* [r149] AUTHORS: add some other people to the AUTHORS file,
+	  mostly based on contents of the Debian bug tracking system
+
+2005-08-20 16:32  arthur
+
+	* [r148] parsers/html.py: also feed style tag content to the css
+	  parser to parse inline css
+
+2005-08-20 16:31  arthur
+
+	* [r147] parsers/css.py: remove some debugging functions from css
+	  parser
+
+2005-08-20 16:30  arthur
+
+	* [r146] parsers/css.py: firt attempt at a very simple css parser
+	  that just summarises links to images and imported css files
+
+2005-08-20 09:24  arthur
+
+	* [r145] crawler.py, plugins/__init__.py, schemes/http.py: set
+	  status to result of fetching the document (not an error
+	  indicator)
+
+2005-08-20 08:06  arthur
+
+	* [r144] parsers/html.py: add checking of unescaped spaces to the
+	  html parser, including line and column information
+
+2005-08-19 20:48  arthur
+
+	* [r143] webcheck.py: pass site as parameter to parse_args()
+	  instead of declaring it global
+
+2005-08-19 20:44  arthur
+
+	* [r142] crawler.py: fix bug with following redirects where
+	  otherwise unreferenced links were removed and implement redirect
+	  loop detection
+
+2005-08-19 20:27  arthur
+
+	* [r141] crawler.py, schemes/file.py, schemes/ftp.py,
+	  schemes/http.py: move redirect handling code to crawler module,
+	  including redirect loop detection code
+
+2005-08-19 20:24  arthur
+
+	* [r140] plugins/badlinks.py: fix html bug and improve bad link
+	  string
+
+2005-08-19 18:16  arthur
+
+	* [r139] plugins/badlinks.py, plugins/new.py, plugins/old.py,
+	  plugins/problems.py, plugins/slow.py, webcheck.css: change html
+	  display of problems to a nicer list
+
+2005-08-19 18:14  arthur
+
+	* [r138] crawler.py, parsers/html.py, plugins/__init__.py,
+	  plugins/badlinks.py, plugins/notitles.py, plugins/old.py,
+	  plugins/problems.py, plugins/slow.py, schemes/file.py,
+	  schemes/ftp.py, schemes/http.py: split problems into page
+	  problems (parsing errors, wrong links, etc) and link problems
+	  (errors retreiving the document)
+
+2005-08-16 20:50  arthur
+
+	* [r136] ChangeLog, NEWS, TODO, config.py, webcheck.1: get files
+	  ready for 1.9.3 release
+
 2005-08-16 20:36  arthur
 
 	* [r135] config.py, schemes/file.py, schemes/ftp.py: pick up
