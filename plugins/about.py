@@ -23,7 +23,6 @@
 
 __title__ = 'about plugins'
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'This is a more detailed view of the used plugins.'
 
 import config
@@ -42,6 +41,4 @@ def generate(fp,site):
             fp.write('      %s<br />\n' % xml.sax.saxutils.escape(report.__doc__))
         if hasattr(report,"__author__"):
             fp.write('      author: %s<br />\n' % xml.sax.saxutils.escape(report.__author__))
-        if hasattr(report,"__version__"):
-            fp.write('      version: %s<br />\n' % xml.sax.saxutils.escape(report.__version__))
     fp.write('   </ul>\n')

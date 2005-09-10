@@ -23,7 +23,6 @@
 
 __title__ = 'problems by author'
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'This is an overview of all the problems on the site, ' \
                   'grouped by author.'
 

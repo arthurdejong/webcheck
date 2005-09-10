@@ -23,7 +23,6 @@
 
 __title__ = 'missing titles'
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'This is the list of all (internal) pages without a ' \
                   'proper title specified.'
 

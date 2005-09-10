@@ -23,7 +23,6 @@
 
 __title__ = 'images'
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'This is the list of all images found linked on the ' \
                   'website.'
 

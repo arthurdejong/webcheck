@@ -23,7 +23,6 @@
 
 __title__ = "what's new"
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'These pages have been recently modified.'
 
 import config

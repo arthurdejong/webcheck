@@ -23,7 +23,6 @@
 
 __title__ = 'external links'
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'This is the list of all external urls encountered ' \
                   'during the examination of the website.'
 

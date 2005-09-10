@@ -23,7 +23,6 @@
 
 __title__ = 'not checked'
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'This is the list of all urls that were encountered but ' \
                   'not checked at all during the examination of the website.'
 

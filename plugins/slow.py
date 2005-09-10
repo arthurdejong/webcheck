@@ -23,7 +23,6 @@
 
 __title__ = "what's slow"
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'These pages are probably too big which will be slow to download.'
 
 import config

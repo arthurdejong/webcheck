@@ -21,7 +21,6 @@
 
 __title__ = 'url list'
 __author__ = 'Arthur de Jong'
-__version__ = '1.0'
 __description__ = 'This is the list of all urls encountered during the ' \
                   'examination of the website. It lists internal as well ' \
                   'as external and non-examined urls.'

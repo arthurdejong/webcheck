@@ -23,7 +23,6 @@
 
 __title__ = 'bad links'
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'These links had problems with retrieval during the ' \
                   'crawling of the website.'
 

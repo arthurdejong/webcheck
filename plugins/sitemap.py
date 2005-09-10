@@ -23,7 +23,6 @@
 
 __title__ = 'site map'
 __author__ = 'Arthur de Jong'
-__version__ = '1.1'
 __description__ = 'This an overview of the crawled site.'
 
 import config
