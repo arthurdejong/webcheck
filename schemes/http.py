@@ -35,31 +35,37 @@ import socket
 def fetch(link, acceptedtypes):
     """Open connection to url and report information given by GET command."""
     # TODO: HTTP connection pooling?
+    # TODO: implement proxy requests for https
     # split netloc in user:pass part and host:port part
     (userpass,netloc) = urllib.splituser(link.netloc)
     host = urllib.splitport(netloc)[0]
+    proxyuserpass = None
+    scheme = link.scheme
     # check which host to connect to (if using proxies)
     if config.PROXIES and config.PROXIES.has_key(link.scheme):
         # pass the complete url in the request, connecting to the proxy
-        # TODO: implement proxy authentication
         path = urlparse.urlunsplit((link.scheme,netloc,link.path,link.query,""))
-        netloc = urlparse.urlsplit(config.PROXIES[link.scheme])[1]
+        (scheme, netloc) = urlparse.urlsplit(config.PROXIES[link.scheme])[0:2]
+        (proxyuserpass,netloc) = urllib.splituser(netloc)
     else:
         # otherwise direct connect to the server with partial url
         path = urlparse.urlunsplit(("","",link.path,link.query,""))
-    conn=None
+    conn = None
     try:
         try:
             # create the connection
-            if link.scheme == "http":
+            if scheme == "http":
                 conn=httplib.HTTPConnection(netloc)
-            elif link.scheme == "https":
+            elif scheme == "https":
                 conn=httplib.HTTPSConnection(netloc)
             # the requests adds a correct host header for us
             conn.putrequest("GET", path)
             if userpass is not None:
                 (user, passwd) = urllib.splitpasswd(userpass)
                 conn.putheader("Authorization", "Basic "+string.strip(base64.encodestring(user + ":" + passwd)))
+            if proxyuserpass is not None:
+                (user, passwd) = urllib.splitpasswd(proxyuserpass)
+                conn.putheader("Proxy-Authorization", "Basic "+string.strip(base64.encodestring(user + ":" + passwd)))
             conn.putheader("User-Agent","webcheck %s" % config.VERSION)
             conn.endheaders()
             # wait for the response
