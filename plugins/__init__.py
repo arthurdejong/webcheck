@@ -128,12 +128,14 @@ def print_parents(fp,link,indent='     '):
       indent+' </ul>\n'+ \
       indent+'</div>\n' )
 
-def open_file(filename):
-    """ given config.OUTPUT_DIR checks if the directory already exists; if
-    not, it creates it, and then opens filename for writing and returns the
-    file object """
+def open_file(filename, istext=True):
+    """This returns an open file object which can be used for writing. This
+    file is created in the output directory. The output directory (stored in
+    config.OUTPUT_DIR is created if it does not yet exist. If the second
+    parameter is True (default) the file is opened as an UTF-8 text file."""
     import os
-    if os.path.isdir(config.OUTPUT_DIR) == 0:
+    # check if output directory exists and create it if needed
+    if not os.path.isdir(config.OUTPUT_DIR):
         try:
             os.mkdir(config.OUTPUT_DIR)
         except OSError, (errno, strerror):
@@ -141,7 +143,9 @@ def open_file(filename):
                           { 'dir': config.OUTPUT_DIR,
                             'strerror': strerror })
             sys.exit(1)
+    # build the output file name
     fname = os.path.join(config.OUTPUT_DIR,filename)
+    # check if file exists and ask to overwrite
     if os.path.exists(fname) and not config.OVERWRITE_FILES:
         ow = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
         ow = ow.lower() + " "
@@ -149,9 +153,13 @@ def open_file(filename):
             config.OVERWRITE_FILES = True
         elif ow[0] != 'y':
             print 'Aborted.'
-            sys.exit(0)
+            sys.exit(1)
+    # open the file for writing
     try:
-        return open(fname,'w')
+        if istext:
+            return open(fname, 'w')
+        else
+            return open(fname, 'wb')
     except IOError, (errno, strerror):
         debugio.error('error creating output file %(fname)s: %(strerror)s' %
                       { 'fname': fname,
