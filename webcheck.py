@@ -155,7 +155,7 @@ def install_file(source, text=False):
     # test if source and target are the same
     source = os.path.realpath(source)
     if source == os.path.realpath(target):
-        debugio.error('attempt to overwrite %(fname)s with itself' % {'fname': source})
+        debugio.warn('attempt to overwrite %(fname)s with itself' % {'fname': source})
         return
     # open the input file
     sfp = None
