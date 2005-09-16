@@ -167,7 +167,7 @@ def install_file(source, text=False):
                         'strerror': strerror })
         sys.exit(1)
     # create file in output directory (with overwrite question)
-    tfp=plugins.open_file(target);
+    tfp=plugins.open_file(os.path.basename(source));
     # copy contents
     shutil.copyfileobj(sfp,tfp)
     # close files
