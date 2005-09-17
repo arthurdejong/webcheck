@@ -28,7 +28,6 @@ __description__ = 'This is an overview of all the problems on the site, ' \
 
 import plugins
 import urllib
-import xml.sax.saxutils
 
 def generate(fp,site):
     """Output the overview of problems to the given file descriptor."""
@@ -57,8 +56,8 @@ def generate(fp,site):
         for author in authors:
             fp.write(
               '    <li><a href="#%(authorref)s">Author: %(author)s</a></li>\n' \
-              % { 'authorref': urllib.quote(author.encode('utf-8'),''),
-                  'author':    xml.sax.saxutils.escape(author.encode('utf-8')) })
+              % { 'authorref': urllib.quote(author,''),
+                  'author':    plugins.escape(author) })
         fp.write('   </ul>\n')
     # generate problem report
     fp.write('   <ul>\n')
@@ -67,8 +66,8 @@ def generate(fp,site):
           '     <li>\n' \
           '      <a name="%(authorref)s">Author: %(author)s</a>\n'
           '      <ul>\n' \
-          % { 'authorref': urllib.quote(author.encode('utf-8'),''),
-              'author':    xml.sax.saxutils.escape(author.encode('utf-8')) })
+          % { 'authorref': urllib.quote(author,''),
+              'author':    plugins.escape(author) })
         # sort pages by url
         problem_db[author].sort(lambda a, b: cmp(a.url, b.url))
         # list problems for this author
@@ -85,7 +84,7 @@ def generate(fp,site):
             for problem in link.pageproblems:
                 fp.write(
                   '      <li>%(problem)s</li>\n' \
-                  % { 'problem':  xml.sax.saxutils.escape(problem) })
+                  % { 'problem':  plugins.escape(problem) })
             # end the list item
             fp.write(
               '     </ul>\n' \

@@ -24,14 +24,39 @@ import urllib
 import string
 import debugio
 import config
-import xml.sax.saxutils
 import time
+
+def escape(txt, inattr=False):
+    """HTML escape the given string and return an ASCII clean string with
+    known entities and character entities for the other values."""
+    import htmlentitydefs
+    # the output string
+    out = ''
+    # convert to unicode object
+    if isinstance(txt, str):
+        txt = unicode(txt, 'utf-8')
+    # loop over the characters of the string
+    for c in txt:
+        if c == '"':
+            if inattr:
+                out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
+            else:
+                out += '"'
+        elif htmlentitydefs.codepoint2name.has_key(ord(c)):
+            out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
+        elif ord(c) > 126:
+            out += '&#%d;'% ord(c)
+        elif inattr and c == u'\n':
+            out += '&#10;'
+        else:
+            out += c.encode('utf-8')
+    return out
 
 def get_title(link):
     """Returns the title of a link if it is set otherwise returns url."""
     if link.title is None or link.title == '':
         return link.url
-    return link.title.encode('utf-8')
+    return link.title
 
 def _floatformat(f):
     """Return a float as a string while trying to keep it within three
@@ -57,13 +82,13 @@ def get_size(i):
 
 def get_info(link):
     """Return a string with a summary of the information in the link."""
-    info = 'url: %s\n' % link.url
+    info = u'url: %s\n' % link.url
     if link.status:
         info += '%s\n' % link.status
     if link.title:
-        info += 'title: %s\n' % link.title.strip().encode('utf-8')
+        info += 'title: %s\n' % link.title.strip()
     if link.author:
-        info += 'author: %s\n' % link.author.strip().encode('utf-8')
+        info += 'author: %s\n' % link.author.strip()
     if link.isinternal:
         info += 'internal link'
     else:
@@ -108,8 +133,7 @@ def make_link(link,title=None):
     if config.REPORT_LINKS_IN_NEW_WINDOW:
         target='target="_blank" '
     # gather some information about the link to report
-    info = xml.sax.saxutils.quoteattr(get_info(link),{'\n':'&#10;'})
-    return '<a href="'+link.url+'" '+target+'class="'+cssclass+'" title='+info+'>'+xml.sax.saxutils.escape(title)+'</a>'
+    return '<a href="'+link.url+'" '+target+'class="'+cssclass+'" title="'+escape(get_info(link),True)+'">'+escape(title)+'</a>'
 
 def print_parents(fp,link,indent='     '):
     # present a list of parents
@@ -186,8 +210,8 @@ def print_navbar(fp, plugins, current):
           '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n' \
           % { 'pluginfile' : filename,
               'selected'   : selected,
-              'title'      : xml.sax.saxutils.escape(report.__title__),
-              'description': xml.sax.saxutils.escape(report.__doc__) })
+              'title'      : escape(report.__title__),
+              'description': escape(report.__doc__) })
     fp.write('  </ul>\n')
 
 def generate(site, plugins):
@@ -214,15 +238,15 @@ def generate(site, plugins):
           ' </head>\n' \
           ' <body>\n' \
           '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n' \
-          % { 'sitetitle':  xml.sax.saxutils.escape(get_title(site.linkMap[site.base])),
+          % { 'sitetitle':  escape(get_title(site.linkMap[site.base])),
               'siteurl':    site.base,
               'version':    config.VERSION })
         # write navigation bar
         print_navbar(fp, plugins, p)
         # write plugin heading
-        fp.write('  <h2>%s</h2>\n' % xml.sax.saxutils.escape(report.__title__))
+        fp.write('  <h2>%s</h2>\n' % escape(report.__title__))
         if hasattr(report,"__description__"):
-            fp.write('  <p class="description">\n    %s\n  </p>\n' % xml.sax.saxutils.escape(report.__description__))
+            fp.write('  <p class="description">\n    %s\n  </p>\n' % escape(report.__description__))
         # write plugin contents
         fp.write('  <div class="content">\n')
         report.generate(fp,site)
@@ -234,7 +258,7 @@ def generate(site, plugins):
           '  </p>\n' \
           ' </body>\n' \
           '</html>\n' \
-          % { 'time':     xml.sax.saxutils.escape(time.ctime(time.time())),
+          % { 'time':     escape(time.ctime(time.time())),
               'homepage': config.HOMEPAGE,
-              'version':  xml.sax.saxutils.escape(config.VERSION) })
+              'version':  escape(config.VERSION) })
         fp.close()

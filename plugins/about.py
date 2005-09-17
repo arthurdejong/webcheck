@@ -26,7 +26,7 @@ __author__ = 'Arthur de Jong'
 #__description__ = 'This is a more detailed view of the used plugins.'
 
 import config
-import xml.sax.saxutils
+import plugins
 import time
 
 def generate(fp,site):
@@ -47,8 +47,8 @@ def generate(fp,site):
       '   <p>\n' \
       '    This report was generated on %(time)s, a total of %(numurls)d links were found.\n'
       '   </p>\n\n' \
-      % { 'version':  xml.sax.saxutils.escape(config.VERSION),
-          'time':     xml.sax.saxutils.escape(time.ctime(time.time())),
+      % { 'version':  plugins.escape(config.VERSION),
+          'time':     plugins.escape(time.ctime(time.time())),
           'numurls':  len(site.linkMap),
           'homepage': config.HOMEPAGE } )
     # output copyright information
@@ -94,9 +94,9 @@ def generate(fp,site):
         fp.write(
           '    <li>\n' \
           '      <strong>%s</strong><br />\n' \
-          % xml.sax.saxutils.escape(report.__title__) )
+          % plugins.escape(report.__title__) )
         if hasattr(report,"__doc__"):
-            fp.write('      %s<br />\n' % xml.sax.saxutils.escape(report.__doc__))
+            fp.write('      %s<br />\n' % plugins.escape(report.__doc__))
         #if hasattr(report,"__author__"):
-        #    fp.write('      author: %s<br />\n' % xml.sax.saxutils.escape(report.__author__))
+        #    fp.write('      author: %s<br />\n' % plugins.escape(report.__author__))
     fp.write('   </ul>\n')

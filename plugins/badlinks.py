@@ -28,7 +28,6 @@ __description__ = 'These links had problems with retrieval during the ' \
 
 import config
 import plugins
-import xml.sax.saxutils
 
 def generate(fp,site):
     """Present the list of bad links to the given file descriptor."""
@@ -48,7 +47,7 @@ def generate(fp,site):
         for problem in link.linkproblems:
             fp.write(
               '      <li>%(problem)s</li>\n' \
-              % { 'problem':  xml.sax.saxutils.escape(problem) })
+              % { 'problem':  plugins.escape(problem) })
         fp.write(
           '     </ul>\n')
         # present a list of parents
