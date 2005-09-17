@@ -34,6 +34,12 @@ _charentitypattern = re.compile('&#[0-9]{1,3};')
 # pattern for matching spaces
 _spacepattern = re.compile(" ")
 
+# pattern for matching charset declaration for http-equiv tag
+_charsetpattern = re.compile('charset=([^ ]*)', re.I)
+
+# pattern for matching the encoding part of an xml declaration
+_encodingpattern = re.compile('^xml .*encoding="([^"]*)"', re.I)
+
 class _MyHTMLParser(HTMLParser.HTMLParser):
     """A simple subclass of HTMLParser.HTMLParser continuing after errors
     and gathering some information from the parsed content."""
@@ -116,6 +122,13 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # <meta http-equiv="refresh" content="0;url=http://ch.tudelft.nl/~arthur/">
         elif tag == "meta" and attrs.has_key("http-equiv") and attrs.has_key("content") and attrs["http-equiv"].lower() == "refresh":
             pass # TODO: implement
+        # <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        elif tag == "meta" and attrs.has_key("http-equiv") and attrs.has_key("content") and attrs["http-equiv"].lower() == "content-type":
+            if self.link.encoding is None:
+                try:
+                    self.link.encoding = _charsetpattern.search(attrs["content"]).group(1)
+                except AttributeError:
+                    pass
         # <img src="url">
         elif tag == "img" and attrs.has_key("src"):
             self.embedded.append(self._cleanurl(attrs["src"]))
@@ -166,6 +179,15 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         """Handle entity references (e.g. &eacute;) by passing the data to
         handle_data()."""
         self.handle_data('&'+name+';')
+
+    def handle_pi(self, data):
+        """Hanlde xml declaration."""
+        # find character encoding from declaration
+        if self.link.encoding is None:
+            try:
+                self.link.encoding = _encodingpattern.search(data).group(1)
+            except AttributeError:
+                pass
 
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
