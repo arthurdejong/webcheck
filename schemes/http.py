@@ -31,6 +31,10 @@ import time
 import urlparse
 import base64
 import socket
+import re
+
+# pattern for extracting character set information from content-type header
+_charsetpattern = re.compile('charset=([^ ]*)', re.I)
 
 def fetch(link, acceptedtypes):
     """Open connection to url and report information given by GET command."""
@@ -76,6 +80,10 @@ def fetch(link, acceptedtypes):
             try:
                 link.mimetype = response.msg.gettype()
                 debugio.debug("schemes.http.fetch(): mimetype: %s" % str(link.mimetype))
+            except AttributeError:
+                pass
+            try:
+                link.encoding = _charsetpattern.search(response.getheader('Content-type')).group(1)
             except AttributeError:
                 pass
             try:

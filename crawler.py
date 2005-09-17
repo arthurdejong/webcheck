@@ -261,6 +261,7 @@ class Link:
       mtime      - modification time (in seconds since the Epoch)
       size       - the size of this document
       mimetype   - the content-type of the document
+      encoding   - the character set used in the document
       title      - the title of this document
       author     - the author of this document
       status     - the result of retreiving the document
@@ -301,6 +302,7 @@ class Link:
         self.mtime = None
         self.size = None
         self.mimetype = None
+        self.encoding = None
         self.title = None
         self.author = None
         self.status = None
