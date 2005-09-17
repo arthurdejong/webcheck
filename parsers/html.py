@@ -157,6 +157,16 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         if self.collect is not None:
             self.collect += data
 
+    def handle_charref(self, name):
+        """Handle character references (e.g. &#65;) by passing the data to
+        handle_data()."""
+        self.handle_data('&#'+name+';')
+
+    def handle_entityref(self, name):
+        """Handle entity references (e.g. &eacute;) by passing the data to
+        handle_data()."""
+        self.handle_data('&'+name+';')
+
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
     title and an author. The content is assumed to contain HMTL."""
