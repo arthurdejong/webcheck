@@ -158,7 +158,7 @@ def open_file(filename, istext=True):
     try:
         if istext:
             return open(fname, 'w')
-        else
+        else:
             return open(fname, 'wb')
     except IOError, (errno, strerror):
         debugio.error('error creating output file %(fname)s: %(strerror)s' %
