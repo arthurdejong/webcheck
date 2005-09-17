@@ -38,10 +38,16 @@ def generate(fp,site):
         # skip external pages
         if not link.isinternal or len(link.pageproblems) == 0:
             continue
-        if problem_db.has_key(link.author):
-            problem_db[link.author].append(link)
+        # make a normal name for the author
+        if link.author:
+            author = link.author.strip()
         else:
-            problem_db[link.author] = [link]
+            author = unicode('Unknown')
+        # store the problem
+        if problem_db.has_key(author):
+            problem_db[author].append(link)
+        else:
+            problem_db[author] = [link]
     # get a list of authors
     authors=problem_db.keys()
     authors.sort()
@@ -51,8 +57,8 @@ def generate(fp,site):
         for author in authors:
             fp.write(
               '    <li><a href="#%(authorref)s">Author: %(author)s</a></li>\n' \
-              % { 'authorref': urllib.quote(str(author),''),
-                  'author':    xml.sax.saxutils.escape(str(author)) })
+              % { 'authorref': urllib.quote(author.encode('utf-8'),''),
+                  'author':    xml.sax.saxutils.escape(author.encode('utf-8')) })
         fp.write('   </ul>\n')
     # generate problem report
     fp.write('   <ul>\n')
@@ -61,8 +67,8 @@ def generate(fp,site):
           '     <li>\n' \
           '      <a name="%(authorref)s">Author: %(author)s</a>\n'
           '      <ul>\n' \
-          % { 'authorref': urllib.quote(str(author),''),
-              'author':    xml.sax.saxutils.escape(str(author)) })
+          % { 'authorref': urllib.quote(author.encode('utf-8'),''),
+              'author':    xml.sax.saxutils.escape(author.encode('utf-8')) })
         # sort pages by url
         problem_db[author].sort(lambda a, b: cmp(a.url, b.url))
         # list problems for this author

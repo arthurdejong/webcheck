@@ -262,8 +262,8 @@ class Link:
       size       - the size of this document
       mimetype   - the content-type of the document
       encoding   - the character set used in the document
-      title      - the title of this document
-      author     - the author of this document
+      title      - the title of this document (unicode)
+      author     - the author of this document (unicode)
       status     - the result of retreiving the document
       linkproblems - list of problems with retrieving the link
       pageproblems - list of problems in the parsed page

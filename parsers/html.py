@@ -31,6 +31,9 @@ mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 # pattern for matching numeric html entities
 _charentitypattern = re.compile('&#[0-9]{1,3};')
 
+# pattern for matching all html entities
+_entitypattern = re.compile('&[^ ;]+;')
+
 # pattern for matching spaces
 _spacepattern = re.compile(" ")
 
@@ -189,6 +192,24 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             except AttributeError:
                 pass
 
+def _maketxt(txt, encoding):
+    """Return an unicode text of the specified string do correct character
+    conversions and replacing html entities with normal characters."""
+    import htmlentitydefs
+    # FIXME: have some sensible default for when encoding is not specified
+    if encoding:
+        txt = unicode(txt, encoding, 'replace')
+    else:
+        txt = unicode(txt, errors='replace')
+    # replace &#nnn; entity refs with proper characters
+    for charEntity in _charentitypattern.findall(txt):
+        txt = txt.replace(charEntity, chr(int(charEntity[2:-1])))
+    # replace html entity refs with proper characters
+    for entity in _entitypattern.findall(txt):
+        if (htmlentitydefs.name2codepoint.has_key(entity[1:-1])):
+            txt = txt.replace(entity, unichr(htmlentitydefs.name2codepoint[entity[1:-1]]))
+    return txt
+
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
     title and an author. The content is assumed to contain HMTL."""
@@ -209,10 +230,10 @@ def parse(content, link):
     link.ispage = True
     # save the title
     if parser.title is not None:
-        link.title = parser.title
+        link.title = _maketxt(parser.title, link.encoding)
     # save the author
     if parser.author is not None:
-        link.author = parser.author
+        link.author = _maketxt(parser.author, link.encoding)
     # figure out the base of the document (for building the other urls)
     base = link.url
     if parser.base is not None:

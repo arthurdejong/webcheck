@@ -31,7 +31,7 @@ def get_title(link):
     """Returns the title of a link if it is set otherwise returns url."""
     if link.title is None or link.title == '':
         return link.url
-    return link.title
+    return link.title.encode('utf-8')
 
 def _floatformat(f):
     """Return a float as a string while trying to keep it within three
@@ -61,9 +61,9 @@ def get_info(link):
     if link.status:
         info += '%s\n' % link.status
     if link.title:
-        info += 'title: %s\n' % link.title.strip()
+        info += 'title: %s\n' % link.title.strip().encode('utf-8')
     if link.author:
-        info += 'author: %s\n' % link.author.strip()
+        info += 'author: %s\n' % link.author.strip().encode('utf-8')
     if link.isinternal:
         info += 'internal link'
     else:
@@ -87,8 +87,10 @@ def get_info(link):
         info += 'size: %s\n' % get_size(link.size)
     if link.mimetype:
         info += 'mime-type: %s\n' % link.mimetype
+    if link.encoding:
+        info += 'encoding: %s\n' % link.encoding
     for problem in link.linkproblems:
-        info += 'problem: %s\n' % xml.sax.saxutils.escape(problem)
+        info += 'problem: %s\n' % problem
     # trim trailing newline
     return info.strip()
 
@@ -205,6 +207,7 @@ def generate(site, plugins):
           '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n' \
           '<html xmlns="http://www.w3.org/1999/xhtml">\n' \
           ' <head>\n' \
+          '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n' \
           '  <title>Webcheck report for %(sitetitle)s</title>\n' \
           '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n' \
           '  <meta name="Generator" content="webcheck %(version)s" />\n' \
