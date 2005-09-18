@@ -70,6 +70,10 @@ def fetch(link, acceptedtypes):
             if proxyuserpass is not None:
                 (user, passwd) = urllib.splitpasswd(proxyuserpass)
                 conn.putheader("Proxy-Authorization", "Basic "+string.strip(base64.encodestring(user + ":" + passwd)))
+            # bypass proxy cache
+            if config.BYPASSHTTPCACHE:
+                conn.putheader('Cache-control', 'no-cache')
+                conn.putheader('Pragma', 'no-cache')
             conn.putheader("User-Agent","webcheck %s" % config.VERSION)
             conn.endheaders()
             # wait for the response

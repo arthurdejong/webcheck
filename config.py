@@ -72,6 +72,10 @@ PLUGINS = ["sitemap",
 # command line option.
 OVERWRITE_FILES = False
 
+# Whether to add extra headers to outgoing requests, requesting to
+# disable caching, ensuring that a fresh page is returned
+BYPASSHTTPCACHE = False
+
 # The number of levels the sitemap plugin should show.
 REPORT_SITEMAP_LEVEL = 8
 
