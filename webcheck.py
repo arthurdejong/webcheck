@@ -52,64 +52,65 @@ def print_tryhelp():
         "Try `webcheck --help' for more information."
 
 def print_help():
-    """print option list"""
+    """Print the option list."""
     print \
-        "Usage: webcheck [OPTION]... URL...\n" \
-        "Generate a report for the given URLs\n" \
-        "\n" \
-        "  -x PATTERN     mark URLs matching PATTERN as external\n" \
-        "  -y PATTERN     do not check URLs matching PATTERN\n" \
-        "  -b             base URLs only: consider any URL not starting with the base\n" \
-        "                 URL to be external\n" \
-        "  -a             do not check external URLs\n" \
-        "  -q, --quiet, --silent\n" \
-        "                 do not print out progress as webcheck traverses a site\n" \
-        "  -d, --debug    set loglevel to LEVEL, for programmer-level debugging\n" \
-        "  -o DIRECTORY   the directory in which webcheck will generate the reports\n" \
-        "  -f, --force    overwrite files without asking\n" \
-        "  -r N           the amount of redirects webcheck should follow when following\n" \
-        "                 a link, 0 implies follow all redirects.\n" \
-        "  -w, --wait=SECONDS\n" \
-        "                 wait SECONDS between retrievals\n" \
-        "  -V, --version  output version information and exit\n" \
-        "  -h, --help     display this help and exit"
+        'Usage: webcheck [OPTION]... URL...\n' \
+        'Generate a report for the given URLs\n' \
+        '\n' \
+        '  -x, --external=PATTERN mark URLs matching PATTERN as external\n' \
+        '  -y, --yank=PATTERN     do not check URLs matching PATTERN\n' \
+        '  -b, --base-only        base URLs only: consider any URL not starting with\n' \
+        '                         the base URL to be external\n' \
+        '  -a, --avoid-external   do not check external URLs\n' \
+        '  -q, --quiet, --silent  suppress progress messages\n' \
+        '  -d, --debug            do programmer-level debugging\n' \
+        '  -o, --output=DIRECTORY store the generated reports in the specified\n' \
+        '                         directory\n' \
+        '  -f, --force            overwrite files without asking\n' \
+        '  -r, --redirects=N      the number of redirects webcheck should follow,\n' \
+        '                         0 implies to follow all redirects\n' \
+        '  -w, --wait=SECONDS     wait SECONDS between retrievals\n' \
+        '  -V, --version          output version information and exit\n' \
+        '  -h, --help             display this help and exit' \
 
 def parse_args(site):
-    """parse command-line arguments"""
+    """Parse command-line arguments."""
     import getopt
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
-            "x:y:l:baqdo:fr:w:Vh",
-            ["quiet","silent","debug","force","wait=","version","help"])
+            'x:y:l:baqdo:fr:w:Vh',
+            ('external=', 'yank=', 'base-only', 'avoid-external',
+             'quiet', 'silent', 'debug', 'output=',
+             'force', 'redirects=', 'wait=', 'version', 'help'))
     except getopt.error, reason:
         print >>sys.stderr,"webcheck: %s" % reason;
         print_tryhelp()
         sys.exit(1)
     for flag,arg in optlist:
-        if flag=='-x':
+        if flag in ('-x', '--external'):
             site.add_external_re(arg)
-        elif flag=='-y':
+        elif flag in ('-y', '--yank'):
             site.add_yanked_re(arg)
-        elif flag=='-b':
+        elif flag in ('-b', '--base-only'):
             config.BASE_URLS_ONLY = True
-        elif flag=='-a':
+        elif flag in ('-a', '--avoid-external'):
             config.AVOID_EXTERNAL_LINKS = True
-        elif flag in ("-q","--quiet","--silent"):
+        elif flag in ('-q', '--quiet', '--silent'):
             debugio.loglevel = debugio.ERROR
-        elif flag in("-d","--debug"):
+        elif flag in ('-d', '--debug'):
             debugio.loglevel = debugio.DEBUG
-        elif flag=='-o':
+        elif flag in ('-o', '--output'):
             config.OUTPUT_DIR = arg
-        elif flag in ("-f","--force"):
+        elif flag in ('-f', '--force'):
             config.OVERWRITE_FILES = True
-        elif flag=='-r':
+        elif flag in ('-r', '--redirects'):
             config.REDIRECT_DEPTH = int(arg)
-        elif flag in ("-w","--wait"):
+        elif flag in ('-w', '--wait'):
             config.WAIT_BETWEEN_REQUESTS = int(arg)
-        elif flag in ("-V","--version"):
+        elif flag in ('-V', '--version'):
             print_version()
             sys.exit(0)
-        elif flag in ("-h","--help"):
+        elif flag in ('-h', '--help'):
             print_help()
             sys.exit(0)
     if len(args)==0:

@@ -30,7 +30,7 @@ webcheck \- website link checker
 follow these links recursively and generate an HTML report.
 
 .TP 
-.BI \-x " PATTERN"
+.BI "\-x,  \-\-external=" "PATTERN"
 Mark URLs matching the
 .I PATTERN
 (perl\-type regular expression) as an external link.
@@ -38,7 +38,7 @@ Can be used multiple times.
 Note that the PATTERN is matched against the full url.
 
 .TP 
-.BI \-y " PATTERN"
+.BI "\-y, \-\-yank=" "PATTERN"
 Do not check URLs matching the
 .I PATTERN
 (perl\-type regular expression).
@@ -49,7 +49,7 @@ Can be used multiple times.
 Note that the PATTERN is matched against the full url.
 
 .TP 
-.B \-b
+.B \-b, \-\-base\-only
 Consider any URL not starting with the base URL to be external.
 For example, if you run
 .ft B
@@ -62,7 +62,7 @@ be considered external.
 By default all the pages on the site will be considered internal.
 
 .TP 
-.B \-a
+.B \-a, \-\-avoid\-external
 Avoid external links.
 Normally if webcheck is examining an HTML page
 and it finds a link that points to an external document, it will
@@ -79,7 +79,7 @@ Print debugging information while crawling the site.
 This option is mainly useful for developers.
 
 .TP 
-.BI \-o " DIRECTORY"
+.BI "\-o, \-\-output=" "DIRECTORY"
 Output directory. Use to specify the directory where webcheck will
 dump its reports. The default is the current directory or as
 specified by config.py. If this directory does not exist it will
@@ -90,7 +90,7 @@ be created for you (if possible).
 Overwrite files without asking.
 
 .TP 
-.BI \-r " N"
+.BI "\-r, \-\-redirects=" "N"
 Redirect depth. the number of redirects webcheck should follow when
 following a link. 0 implies to follow all redirects.
 
