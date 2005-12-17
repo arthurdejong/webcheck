@@ -63,7 +63,7 @@ def print_help():
         '  -x, --external=PATTERN mark URLs matching PATTERN as external\n' \
         '  -y, --yank=PATTERN     do not check URLs matching PATTERN\n' \
         '  -b, --base-only        base URLs only: consider any URL not starting with\n' \
-        '                         the base URL to be external\n' \
+        '                         any of the base URLs to be external\n' \
         '  -a, --avoid-external   do not check external URLs\n' \
         '  -q, --quiet, --silent  suppress progress messages\n' \
         '  -d, --debug            do programmer-level debugging\n' \
