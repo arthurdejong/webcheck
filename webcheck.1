@@ -111,6 +111,23 @@ Show version of program.
 .B \-h, \-\-help
 Show short summary of options.
 
+.SH "URL CLASSES"
+
+URLs are devided into three classes:
+
+.B Internal
+URLs are retreived and the retreived item is checked for syntax.
+Also, the retreived item is searched for links to other items (of any class)
+and these links are followed.
+
+.B External
+URLSs are only retreived to test whether they are valid and to gather some
+basic information from them (title, size, content-type, etc).
+The retreived items are not inspected for links to other items.
+
+.B Yanked
+URLs will not be retreived or checked at all.
+
 .SH "EXAMPLES"
 
 Check the site www.example.com but exclude any path with "/webcheck" in it.
