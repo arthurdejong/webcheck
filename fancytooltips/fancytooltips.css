@@ -1,0 +1,91 @@
+/*
+Name: FancyTooltips
+Version: 1.2.1
+URI: http://www.victr.lm85.com/fancytooltips/
+Description: FancyTooltips creates dynamic tooltips from anchors (links), acronyms, inserts, deletions, and images.
+Author: Victor Kulinski
+Author URI: http://www.victr.lm85.com/
+
+As originally released by Stuart Langridge, this script is licensed under MIT - http://www.opensource.org/licenses/mit-license.php
+
+"THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+*/
+
+/* The FancyTooltip itself. */
+
+div.fancytooltip {
+	background-color: #CCCCCC;
+	border: 1px solid #888888;
+	color: #333333;
+	height: auto;
+	left: 0;
+	padding: 4px;
+	position: absolute;
+	top: 0;
+	width: 25em;
+	width: auto;
+	z-index: 20;
+	
+	-moz-border-radius-bottomleft: 7px;
+	-moz-border-radius-bottomright: 7px;
+	-moz-border-radius-topleft: 0;
+	-moz-border-radius-topright: 7px;
+	-moz-opacity: .91;
+}
+	
+/* The title/alt within the FancyTooltip. */
+
+div.fancytooltip p {
+	border-bottom: 0px;
+	font-size: 12px;
+    margin: 0;
+	padding: 0 3px;
+	
+	-moz-opacity: 1;
+}
+
+/* The URI below the title of an anchor FancyTooltip. */
+
+div.fancytooltip p.destination {
+	border-bottom: 0px;
+    font-size: 9px;
+    padding-top: 3px;
+	text-align: left;
+	
+	-moz-opacity: 1;
+}
+
+/*- The Access Key of an anchor. */
+
+div.fancytooltip p span.accesskey {
+	color: #D11717;
+}
+
+/* Display the help cursore in Abbreviations, Acronyms, Deletions and Inserts.-->
+To turn off, comment around the style. To turn on, remove comment from around the style. Note, img is turned off by default. */
+
+abbr {
+	cursor: help;
+}
+
+acronym {
+	cursor: help;
+}
+
+del {
+	cursor: help;
+}
+
+ins {
+	cursor: help;
+}
+
+/*
+img {
+	cursor: help;
+}
+*/
