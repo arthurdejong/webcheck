@@ -197,6 +197,7 @@ def main():
     plugins.generate(site, config.PLUGINS)
     # put extra files in the output directory
     install_file('webcheck.css',True)
+    install_file('fancytooltips/fancytooltips.js',True)
     debugio.info('done.')
 
 if __name__ == '__main__':

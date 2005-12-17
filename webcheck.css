@@ -147,3 +147,34 @@ p.footer a {
   text-decoration: none;
   color: gray;
 }
+
+/* css styles for fancytooltips, see http://www.victr.lm85.com/fancytooltips/
+   for informtion about fancytooltips */
+
+div.fancytooltip {
+  background-color: #ffcccc;
+  border: 1px solid white;
+  color: black;
+  height: auto;
+  left: 0px;
+  padding: 4px;
+  position: absolute;
+  top: 0px;
+  width: 25em;
+  width: auto;
+  z-index: 20;
+  -moz-border-radius: 10px;
+  -moz-opacity: .8;
+}
+
+div.fancytooltip p {
+  border-bottom: 0px;
+  font-size: 12px;
+  margin: 0px;
+  padding: 0px 3px;
+  -moz-opacity: 1;
+}
+
+div.fancytooltip p.destination {
+  display: none;
+}

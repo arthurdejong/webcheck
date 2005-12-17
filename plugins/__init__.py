@@ -237,6 +237,7 @@ def generate(site, plugins):
           '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n' \
           '  <title>Webcheck report for %(sitetitle)s</title>\n' \
           '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n' \
+          '  <script language="javascript" type="text/javascript" src="fancytooltips.js"></script>\n' \
           '  <meta name="Generator" content="webcheck %(version)s" />\n' \
           ' </head>\n' \
           ' <body>\n' \
