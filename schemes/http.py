@@ -54,6 +54,9 @@ def fetch(link, acceptedtypes):
     else:
         # otherwise direct connect to the server with partial url
         path = urlparse.urlunsplit(("","",link.path,link.query,""))
+    # remove trailing : from netloc
+    if netloc[-1] == ':':
+        netloc = netloc[:-1]
     conn = None
     try:
         try:
