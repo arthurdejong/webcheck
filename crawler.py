@@ -242,18 +242,22 @@ class Site:
 class Link:
     """This is a basic class representing a url.
 
-    Some basic information about a url is stored in instances of this class:
+    Some basic information about a url is stored in instances of this
+    class:
 
       url        - the url this link represents
       scheme     - the scheme part of the url
       netloc     - the netloc part of the url
       path       - the path part of the url
       query      - the query part of the url
-      parents    - list of parent links (all the Links that link to this page)
+      parents    - list of parent links (all the Links that link to this
+                   page)
       children   - list of child links (the Links that this page links to)
-      pagechildren - list of child pages, including children of embedded elements
+      pagechildren - list of child pages, including children of embedded
+                     elements
       embedded   - list of links to embeded content
-      depth      - the number of clicks from the base urls this page to find
+      depth      - the number of clicks from the base urls this page to
+                   find
       isinternal - whether the link is considered to be internal
       isyanked   - whether the link should be checked at all
       isfetched  - whether the lis is fetched already
