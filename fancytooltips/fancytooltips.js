@@ -33,7 +33,7 @@ function FancyTooltips(sTemplate, nDelay, nStringMaxLength, nMarginX, nMarginY, 
 	
 	if(!sTemplate){ sTemplate = "attr(fancytooltip)";}
 	if(!nDelay || nDelay <= 0){ nDelay = false;}
-	if(!nStringMaxLength){ nStringMaxLength = 80; }
+	if(!nStringMaxLength){ nStringMaxLength = 8000; }
 	if(!nMarginX){ nMarginX = 15; }
 	if(!nMarginY){ nMarginY = 35; }
 	if(!sContainerID){ sContainerID = "fancytooltipcontainer";}
@@ -110,6 +110,7 @@ function FancyTooltips(sTemplate, nDelay, nStringMaxLength, nMarginX, nMarginY, 
 
 	function setContainerContent(sOutput){
 		sOutput = sOutput.replace(/&/g, "&amp;");
+		sOutput = sOutput.replace(/\n/g, "<br />");
 		if(document.createElementNS && window.DOMParser){
 			var oXMLDoc = (new DOMParser()).parseFromString("<root xmlns=\""+sNameSpaceURI+"\">"+sOutput+"</root>", "text/xml");
 			var oOutputNode = document.importNode(oXMLDoc.documentElement, true);
