@@ -199,14 +199,14 @@ def _maketxt(txt, encoding):
     """Return an unicode text of the specified string do correct character
     conversions and replacing html entities with normal characters."""
     import htmlentitydefs
-    # FIXME: have some sensible default for when encoding is not specified
+    # convert string to unicode
     if encoding:
         txt = unicode(txt, encoding, 'replace')
     else:
         txt = unicode(txt, errors='replace')
     # replace &#nnn; entity refs with proper characters
     for charEntity in _charentitypattern.findall(txt):
-        txt = txt.replace(charEntity, chr(int(charEntity[2:-1])))
+        txt = txt.replace(charEntity, unichr(int(charEntity[2:-1])))
     # replace html entity refs with proper characters
     for entity in _entitypattern.findall(txt):
         if (htmlentitydefs.name2codepoint.has_key(entity[1:-1])):
