@@ -94,7 +94,7 @@ def fetch(link, acceptedtypes):
                 pass
             try:
                 link.encoding = _charsetpattern.search(response.getheader('Content-type')).group(1)
-            except AttributeError:
+            except (AttributeError, TypeError):
                 pass
             try:
                 link.size = int(response.getheader("Content-length"))
