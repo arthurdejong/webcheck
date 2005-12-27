@@ -87,6 +87,22 @@ def generate(fp,site):
       '    <a href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/gpl.html</a>.\n' \
       '    You can also obtain it by writing to the Free Software Foundation, Inc.,\n' \
       '    51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA.\n' \
+      '   </p>\n' \
+      '   <p>\n' \
+      '    The files produced as output from the software do not automatically fall\n' \
+      '    under the copyright of the software, unless explicitly stated otherwise.\n' \
+      '   </p>\n' \
+      '   <p>\n' \
+      '    <tt>webcheck</tt> includes the\n' \
+      '    <a href="http://www.victr.lm85.com/projects/fancytooltips/" title="FancyTooltips homepage">FancyTooltips</a>\n' \
+      '    javascript library to display readable tooltips. FancyTooltips is distributed\n' \
+      '    under the MIT license and has the following copyright notices (see\n' \
+      '    <tt>fancytooltips/fancytooltips.js</tt> for details):\n' \
+      '   </p>\n' \
+      '   <p>\n' \
+      '    Copyright &copy; 2005 Victor Kulinski<br />\n' \
+      '    Copyright &copy; 2003 Dunstan Orchard, Ethan Marcotte, Mark Wubben<br />\n' \
+      '    Copyright &copy; 2003 Stuart Langridge, Paul McLanahan, Peter Janes, Brad Choate\n' \
       '   </p>\n\n' )
     # output plugin information
     fp.write(
