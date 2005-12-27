@@ -58,7 +58,7 @@ def generate(fp,site):
         fp.write('   <ul class="authorlist">\n')
         for author in authors:
             fp.write(
-              '    <li><a href="#%(authorref)s">Author: %(author)s</a></li>\n' \
+              '    <li><a href="#%(authorref)s">Author: %(author)s</a></li>\n'
               % { 'authorref': urllib.quote(author,''),
                   'author':    plugins.escape(author) })
         fp.write('   </ul>\n')
@@ -66,9 +66,9 @@ def generate(fp,site):
     fp.write('   <ul>\n')
     for author in authors:
         fp.write(
-          '     <li>\n' \
+          '     <li>\n'
           '      <a name="%(authorref)s">Author: %(author)s</a>\n'
-          '      <ul>\n' \
+          '      <ul>\n'
           % { 'authorref': urllib.quote(author,''),
               'author':    plugins.escape(author) })
         # sort pages by url
@@ -77,22 +77,22 @@ def generate(fp,site):
         for link in problem_db[author]:
             # present the links
             fp.write(
-              '    <li>\n' \
-              '     %(link)s\n' \
-              '     <ul class="problems">\n' \
+              '    <li>\n'
+              '     %(link)s\n'
+              '     <ul class="problems">\n'
               % { 'link':    plugins.make_link(link) })
             # sort problems by name
             link.pageproblems.sort()
             # list the problems
             for problem in link.pageproblems:
                 fp.write(
-                  '      <li>%(problem)s</li>\n' \
+                  '      <li>%(problem)s</li>\n'
                   % { 'problem':  plugins.escape(problem) })
             # end the list item
             fp.write(
-              '     </ul>\n' \
+              '     </ul>\n'
               '    </li>\n' )
         fp.write(
-          '      </ul>\n' \
+          '      </ul>\n'
           '     </li>\n')
     fp.write('   </ul>\n')

@@ -67,12 +67,12 @@ def generate(fp,site):
     fp.write('   <ul>\n')
     for link in reslinks:
         fp.write(
-          '    <li>\n' \
-          '     %(link)s\n' \
-          '     <ul class="problem">\n' \
-          '      <li>size: %(size)sK</li>\n' \
-          '     </ul>\n' \
-          '    </li>\n' \
+          '    <li>\n'
+          '     %(link)s\n'
+          '     <ul class="problem">\n'
+          '      <li>size: %(size)sK</li>\n'
+          '     </ul>\n'
+          '    </li>\n'
           % { 'link': plugins.make_link(link),
               'size': sizeK })
         link.add_pageproblem('this page %sK' % str(sizeK)) 

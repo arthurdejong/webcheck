@@ -42,14 +42,14 @@ def generate(fp,site):
             continue
         # list the link
         fp.write(
-          '    <li>\n' \
-          '     %(badurl)s\n' \
-          '     <ul class="problems">\n' \
+          '    <li>\n'
+          '     %(badurl)s\n'
+          '     <ul class="problems">\n'
           % { 'badurl':  plugins.make_link(link,link.url) })
         # list the problems
         for problem in link.linkproblems:
             fp.write(
-              '      <li>%(problem)s</li>\n' \
+              '      <li>%(problem)s</li>\n'
               % { 'problem':  plugins.escape(problem) })
         fp.write(
           '     </ul>\n')

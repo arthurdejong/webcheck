@@ -40,8 +40,8 @@ def generate(fp,site):
         if not link.isyanked:
             continue
         fp.write(
-          '    <li>\n' \
-          '     %(link)s\n' \
+          '    <li>\n'
+          '     %(link)s\n'
           % { 'link': plugins.make_link(link,link.url) })
         # present a list of parents
         plugins.print_parents(fp,link,'     ')

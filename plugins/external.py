@@ -43,8 +43,8 @@ def generate(fp,site):
             continue
         last = link
         fp.write(
-          '    <li>\n' \
-          '     %(link)s\n' \
+          '    <li>\n'
+          '     %(link)s\n'
           % { 'link':  plugins.make_link(link) })
         # present a list of parents
         plugins.print_parents(fp,link,'     ')

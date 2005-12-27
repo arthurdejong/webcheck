@@ -49,12 +49,12 @@ def generate(fp,site):
         age = (time.time()-link.mtime)/SECS_PER_DAY
         if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
             fp.write(
-              '    <li>\n' \
-              '     %(link)s\n' \
-              '     <ul class="problems">\n' \
-              '      <li>age: %(age)d days</li>\n' \
-              '     </ul>\n' \
-              '    </li>\n' \
+              '    <li>\n'
+              '     %(link)s\n'
+              '     <ul class="problems">\n'
+              '      <li>age: %(age)d days</li>\n'
+              '     </ul>\n'
+              '    </li>\n'
               % { 'link':  plugins.make_link(link),
                   'age':   age })
             # add link to problem database

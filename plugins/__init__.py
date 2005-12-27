@@ -146,15 +146,15 @@ def print_parents(fp,link,indent='     '):
         return
     parents.sort(lambda a, b: cmp(a.title, b.title))
     fp.write(
-      indent+'<div class="parents">\n'+ \
-      indent+' referenced from:\n'+ \
+      indent+'<div class="parents">\n'+
+      indent+' referenced from:\n'+
       indent+' <ul>\n' )
     for parent in parents:
         fp.write(
           indent+'  <li>%(parent)s</li>\n'
           % { 'parent': make_link(parent) })
     fp.write(
-      indent+' </ul>\n'+ \
+      indent+' </ul>\n'+
       indent+'</div>\n' )
 
 def open_file(filename, istext=True):
@@ -210,7 +210,7 @@ def print_navbar(fp, plugins, current):
         if p == current:
             selected = ' class="selected"'
         fp.write(
-          '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n' \
+          '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n'
           % { 'pluginfile' : filename,
               'selected'   : selected,
               'title'      : escape(report.__title__),
@@ -229,19 +229,19 @@ def generate(site, plugins):
         fp = open_file(filename)
         # write basic html head
         # TODO: make it possible to use multiple stylesheets (possibly reference external stylesheets)
-        fp.write( \
-          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' \
-          '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n' \
-          '<html xmlns="http://www.w3.org/1999/xhtml">\n' \
-          ' <head>\n' \
-          '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n' \
-          '  <title>Webcheck report for %(sitetitle)s</title>\n' \
-          '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n' \
-          '  <script language="javascript" type="text/javascript" src="fancytooltips.js"></script>\n' \
-          '  <meta name="Generator" content="webcheck %(version)s" />\n' \
-          ' </head>\n' \
-          ' <body>\n' \
-          '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n' \
+        fp.write(
+          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+          '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n'
+          '<html xmlns="http://www.w3.org/1999/xhtml">\n'
+          ' <head>\n'
+          '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n'
+          '  <title>Webcheck report for %(sitetitle)s</title>\n'
+          '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n'
+          '  <script language="javascript" type="text/javascript" src="fancytooltips.js"></script>\n'
+          '  <meta name="Generator" content="webcheck %(version)s" />\n'
+          ' </head>\n'
+          ' <body>\n'
+          '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n'
           % { 'sitetitle':  escape(get_title(site.linkMap[site.base])),
               'siteurl':    site.base,
               'version':    config.VERSION })
@@ -256,12 +256,12 @@ def generate(site, plugins):
         report.generate(fp,site)
         fp.write('  </div>\n')
         # write bottom of page
-        fp.write( \
-          '  <p class="footer">\n' \
-          '   Generated %(time)s by <a href="%(homepage)s">webcheck %(version)s</a>\n' \
-          '  </p>\n' \
-          ' </body>\n' \
-          '</html>\n' \
+        fp.write(
+          '  <p class="footer">\n'
+          '   Generated %(time)s by <a href="%(homepage)s">webcheck %(version)s</a>\n'
+          '  </p>\n'
+          ' </body>\n'
+          '</html>\n'
           % { 'time':     escape(time.ctime(time.time())),
               'homepage': config.HOMEPAGE,
               'version':  escape(config.VERSION) })

@@ -42,7 +42,7 @@ def generate(fp,site):
         # also check that we're testing html content
         if link.ispage and (link.title is None):
             fp.write(
-              '    <li>%(link)s</li>\n' \
+              '    <li>%(link)s</li>\n'
               % { 'link': plugins.make_link(link,link.url) })
             link.add_pageproblem("missing title")
     fp.write('   </ol>\n')
