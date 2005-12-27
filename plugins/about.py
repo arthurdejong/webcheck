@@ -112,10 +112,9 @@ def generate(fp,site):
         report = __import__('plugins.'+plugin,globals(),locals(),[plugin])
         fp.write(
           '    <li>\n'
-          '      <strong>%s</strong><br />\n'
+          '     <strong>%s</strong><br />\n'
           % plugins.escape(report.__title__) )
         if hasattr(report,"__doc__"):
-            fp.write('      %s<br />\n' % plugins.escape(report.__doc__))
-        #if hasattr(report,"__author__"):
-        #    fp.write('      author: %s<br />\n' % plugins.escape(report.__author__))
+            fp.write('     %s<br />\n' % plugins.escape(report.__doc__))
+        fp.write('    </li>\n')
     fp.write('   </ul>\n')
