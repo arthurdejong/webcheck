@@ -30,7 +30,7 @@
    The files produced as output from the software do not automatically fall
    under the copyright of the software, unless explicitly stated otherwise.
 
-   Webcheck contains the FancyTooltips javascript library to display readable
+   webcheck includes the FancyTooltips javascript library to display readable
    tooltips. FancyTooltips is distributed under the MIT license and has the
    following copyright notices (see fancytooltips/fancytooltips.js for
    details):
