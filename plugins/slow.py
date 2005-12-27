@@ -26,7 +26,6 @@
 
 __title__ = "what's slow"
 __author__ = 'Arthur de Jong'
-__description__ = 'These pages are probably too big which will be slow to download.'
 
 import config
 import plugins
@@ -64,7 +63,11 @@ def generate(fp,site):
         reslinks.append(link)
     # present results
     reslinks.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
-    fp.write('   <ul>\n')
+    fp.write(
+      '   <p class="description">\n'
+      '    These pages are probably too big which will be slow to download.\n'
+      '   </p>\n'
+      '   <ul>\n' )
     for link in reslinks:
         fp.write(
           '    <li>\n'
@@ -76,4 +79,5 @@ def generate(fp,site):
           % { 'link': plugins.make_link(link),
               'size': sizeK })
         link.add_pageproblem('this page %sK' % str(sizeK)) 
-    fp.write('   </ul>\n')
+    fp.write(
+      '   </ul>\n' )

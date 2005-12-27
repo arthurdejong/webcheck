@@ -26,13 +26,12 @@
 
 __title__ = 'site map'
 __author__ = 'Arthur de Jong'
-__description__ = 'This an overview of the crawled site.'
 
 import config
 import plugins
 
 def _explore(fp, link, explored=None, depth=0, indent='    '):
-    """Recursively do a depth first traversal of the graph of links on the
+    """Recursively do a breadth first traversal of the graph of links on the
     site. Prints the html results to the file descriptor."""
     # set up explored
     if explored is None:
@@ -64,7 +63,12 @@ def _explore(fp, link, explored=None, depth=0, indent='    '):
 
 def generate(fp,site):
     """Output the sitemap to the specified file descriptor."""
-    # output the site structure using depth first traversal
-    fp.write('   <ul>\n')
+    # output the site structure using breadth first traversal
+    fp.write(
+      '   <p class="description">\n'
+      '    This an overview of the crawled site.\n'
+      '   </p>\n'
+      '   <ul>\n' )
     _explore(fp,site.linkMap[site.base])
-    fp.write('   </ul>\n')
+    fp.write(
+      '   </ul>\n' )

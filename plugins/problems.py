@@ -26,14 +26,18 @@
 
 __title__ = 'problems by author'
 __author__ = 'Arthur de Jong'
-__description__ = 'This is an overview of all the problems on the site, ' \
-                  'grouped by author.'
 
 import plugins
 import urllib
 
 def generate(fp,site):
     """Output the overview of problems to the given file descriptor."""
+    # print description
+    fp.write(
+      '   <p class="description">\n'
+      '    This is an overview of all the problems on the site, grouped by\n'
+      '    author.\n'
+      '   </p>\n' )
     # make a list of problems per author
     problem_db = {}
     for link in site.linkMap.values():
@@ -94,5 +98,6 @@ def generate(fp,site):
               '    </li>\n' )
         fp.write(
           '      </ul>\n'
-          '     </li>\n')
-    fp.write('   </ul>\n')
+          '     </li>\n' )
+    fp.write(
+      '   </ul>\n' )

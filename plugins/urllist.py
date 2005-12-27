@@ -24,17 +24,21 @@
 
 __title__ = 'url list'
 __author__ = 'Arthur de Jong'
-__description__ = 'This is the list of all urls encountered during the ' \
-                  'examination of the website. It lists internal as well ' \
-                  'as external and non-examined urls.'
 
 import plugins
 
 def generate(fp,site):
     """Output a sorted list of urls to the specified file descriptor."""
-    fp.write('   <ol>\n')
+    fp.write(
+      '   <p class="description">\n'
+      '    This is the list of all urls encountered during the examination of\n'
+      '    the website. It lists internal as well as external and\n'
+      '    non-examined urls.\n'
+      '   </p>\n'
+      '   <ol>\n' )
     urls=site.linkMap.keys()
     urls.sort()
     for url in urls:
         fp.write('    <li>'+plugins.make_link(site.linkMap[url],url)+'</li>\n')
-    fp.write('   </ol>\n')
+    fp.write(
+      '   </ol>\n' )

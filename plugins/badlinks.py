@@ -26,15 +26,17 @@
 
 __title__ = 'bad links'
 __author__ = 'Arthur de Jong'
-__description__ = 'These links had problems with retrieval during the ' \
-                  'crawling of the website.'
 
 import config
 import plugins
 
 def generate(fp,site):
     """Present the list of bad links to the given file descriptor."""
-    fp.write('   <ol>\n')
+    fp.write(
+      '   <p class="description">\n'
+      '    These links could not be retrieved during the crawling of the website.\n'
+      '   </p>\n'
+      '   <ol>\n' )
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
@@ -62,4 +64,5 @@ def generate(fp,site):
                 parent.add_pageproblem("bad link: " + link.url + ": " + problem)
         fp.write(
           '    </li>\n')
-    fp.write('   </ol>\n')
+    fp.write(
+      '   </ol>\n' )

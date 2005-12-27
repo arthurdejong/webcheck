@@ -249,8 +249,6 @@ def generate(site, plugins):
         print_navbar(fp, plugins, p)
         # write plugin heading
         fp.write('  <h2>%s</h2>\n' % escape(report.__title__))
-        if hasattr(report,"__description__"):
-            fp.write('  <p class="description">\n    %s\n  </p>\n' % escape(report.__description__))
         # write plugin contents
         fp.write('  <div class="content">\n')
         report.generate(fp,site)

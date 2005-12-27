@@ -26,14 +26,17 @@
 
 __title__ = 'not checked'
 __author__ = 'Arthur de Jong'
-__description__ = 'This is the list of all urls that were encountered but ' \
-                  'not checked at all during the examination of the website.'
 
 import plugins
 
 def generate(fp,site):
     """Output the list of not checked pages to the given file descriptor."""
-    fp.write('   <ol>\n')
+    fp.write(
+      '   <p class="description">\n'
+      '    This is the list of all urls that were encountered but not checked\n'
+      '    at all during the examination of the website.\n'
+      '   </p>\n'
+      '   <ol>\n')
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
@@ -47,4 +50,5 @@ def generate(fp,site):
         plugins.print_parents(fp,link,'     ')
         fp.write(
           '    </li>\n')
-    fp.write('   </ol>\n')
+    fp.write(
+      '   </ol>\n' )

@@ -26,14 +26,17 @@
 
 __title__ = 'missing titles'
 __author__ = 'Arthur de Jong'
-__description__ = 'This is the list of all (internal) pages without a ' \
-                  'proper title specified.'
 
 import plugins
 
 def generate(fp,site):
     """Output the list of pages without a title to the given file descriptor."""
-    fp.write('   <ol>\n')
+    fp.write(
+      '   <p class="description">\n'
+      '    This is the list of all (internal) pages without a proper title\n'
+      '    specified.\n'
+      '   </p>\n'
+      '   <ol>\n')
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
@@ -45,4 +48,5 @@ def generate(fp,site):
               '    <li>%(link)s</li>\n'
               % { 'link': plugins.make_link(link,link.url) })
             link.add_pageproblem("missing title")
-    fp.write('   </ol>\n')
+    fp.write(
+      '   </ol>\n' )

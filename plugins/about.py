@@ -26,7 +26,6 @@
 
 __title__ = 'about webcheck'
 __author__ = 'Arthur de Jong'
-#__description__ = 'This is a more detailed view of the used plugins.'
 
 import config
 import plugins
@@ -117,4 +116,5 @@ def generate(fp,site):
         if hasattr(report,"__doc__"):
             fp.write('     %s<br />\n' % plugins.escape(report.__doc__))
         fp.write('    </li>\n')
-    fp.write('   </ul>\n')
+    fp.write(
+      '   </ul>\n' )

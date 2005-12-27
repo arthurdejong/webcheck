@@ -26,14 +26,17 @@
 
 __title__ = 'external links'
 __author__ = 'Arthur de Jong'
-__description__ = 'This is the list of all external urls encountered ' \
-                  'during the examination of the website.'
 
 import plugins
 
 def generate(fp,site):
     """Generate the list of external links to the given file descriptor."""
-    fp.write('   <ol>\n')
+    fp.write(
+      '   <p class="description">'
+      '    This is the list of all external urls encountered during the'
+      '    examination of the website.'
+      '   </p>\n'
+      '   <ol>\n' )
     urls=site.linkMap.keys()
     urls.sort()
     last = None
@@ -50,4 +53,5 @@ def generate(fp,site):
         plugins.print_parents(fp,link,'     ')
         fp.write(
           '    </li>\n')
-    fp.write('   </ol>\n')
+    fp.write(
+      '   </ol>\n' )

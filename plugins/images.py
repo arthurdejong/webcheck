@@ -26,15 +26,17 @@
 
 __title__ = 'images'
 __author__ = 'Arthur de Jong'
-__description__ = 'This is the list of all images found linked on the ' \
-                  'website.'
 
 import plugins
 import re
 
 def generate(fp,site):
     """Output a list of images to the given file descriptor."""
-    fp.write('<ol>\n')
+    fp.write(
+      '   <p class="description">\n'
+      '    This is the list of all images found linked on the website.\n'
+      '   </p>\n'
+      '   <ol>\n' )
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.url, b.url))
     # this finds all links with a reasonable image-like content-type
@@ -43,5 +45,6 @@ def generate(fp,site):
         if link.ispage or (link.mimetype is None):
             continue
         if matcher.search(link.mimetype):
-            fp.write('  <li>%s</li>\n' % plugins.make_link(link,link.url))
-    fp.write('</ol>\n')
+            fp.write('    <li>%s</li>\n' % plugins.make_link(link,link.url))
+    fp.write(
+      '   </ol>\n' )

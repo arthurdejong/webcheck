@@ -26,7 +26,6 @@
 
 __title__ = "what's new"
 __author__ = 'Arthur de Jong'
-__description__ = 'These pages have been recently modified.'
 
 import config
 import plugins
@@ -36,7 +35,11 @@ SECS_PER_DAY=60*60*24
 
 def generate(fp,site):
     """Output the list of recently modified pages to the specified file descriptor."""
-    fp.write('   <ul>\n')
+    fp.write(
+      '   <p class="description">\n'
+      '    These pages have been recently modified.\n'
+      '   </p>\n'
+      '   <ul>\n')
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(b.mtime, a.mtime))
     for link in links:

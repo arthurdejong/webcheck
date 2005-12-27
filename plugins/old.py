@@ -26,7 +26,6 @@
 
 __title__ = "what's old"
 __author__ = 'Arthur de Jong'
-__description__ = 'These pages have been modified a long time ago and may be outdated.'
 
 import config
 import plugins
@@ -36,7 +35,11 @@ SECS_PER_DAY=60*60*24
 
 def generate(fp,site):
     """Output the list of outdated pages to the specified file descriptor."""
-    fp.write('   <ul>\n')
+    fp.write(
+      '   <p class="description">\n'
+      '    These pages have been modified a long time ago and may be outdated.\n'
+      '   </p>\n'
+      '   <ul>\n' )
     links=site.linkMap.values()
     links.sort(lambda a, b: cmp(a.mtime, b.mtime))
     for link in links:
@@ -59,4 +62,5 @@ def generate(fp,site):
                   'age':   age })
             # add link to problem database
             link.add_pageproblem('this page is %d days old' % age)
-    fp.write('   </ul>\n')
+    fp.write(
+      '   </ul>\n' )
