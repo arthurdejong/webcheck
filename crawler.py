@@ -70,6 +70,8 @@ class Site:
         state of the site."""
         # list of internal urls
         self._internal_urls = []
+        # list of regexps considered internal
+        self._internal_res = []
         # list of regexps considered external
         self._external_res = []
         # list of regexps matching links that should not be checked
@@ -86,6 +88,11 @@ class Site:
         if url not in self._internal_urls:
             self._internal_urls.append(url)
 
+    def add_internal_re(self,exp):
+        """Adds the gived regular expression as a pattern to match internal
+        urls."""
+        self._internal_res.append(re.compile(exp,re.IGNORECASE))
+
     def add_external_re(self,exp):
         """Adds the gived regular expression as a pattern to match external
         urls."""
@@ -100,6 +107,10 @@ class Site:
         """Check whether the specified url is external or internal.
         This uses the urls marked with add_internal() and the regular
         expressions passed with add_external_re()."""
+        # check if it is internal through the regexps
+        for x in self._internal_res:
+            if x.search(link.url) is not None:
+                return True
         res = False
         # check that the url starts with an internal url
         if config.BASE_URLS_ONLY:
@@ -110,6 +121,9 @@ class Site:
             # the netloc must match a netloc of an _internal_url
             for i in self._internal_urls:
                 res |= (urlparse.urlsplit(i)[1]==link.netloc)
+            # if the url matches it is external and we can stop
+            if x.search(link.url) is not None:
+                return False
         # if it is not internal now, it never will be
         if not res:
             return False

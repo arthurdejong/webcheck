@@ -30,6 +30,14 @@ webcheck \- website link checker
 documents, follow these links recursively and generate an HTML report.
 
 .TP 
+.BI "\-i,  \-\-internal=" "PATTERN"
+Mark URLs matching the
+.I PATTERN
+(perl\-type regular expression) as an internal link.
+Can be used multiple times.
+Note that the PATTERN is matched against the full URL.
+
+.TP 
 .BI "\-x,  \-\-external=" "PATTERN"
 Mark URLs matching the
 .I PATTERN

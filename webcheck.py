@@ -60,6 +60,7 @@ def print_help():
         'Usage: webcheck [OPTION]... URL...\n' \
         'Generate a report for the given URLs\n' \
         '\n' \
+        '  -i, --internal=PATTERN mark URLs matching PATTERN as internal\n' \
         '  -x, --external=PATTERN mark URLs matching PATTERN as external\n' \
         '  -y, --yank=PATTERN     do not check URLs matching PATTERN\n' \
         '  -b, --base-only        base URLs only: consider any URL not starting with\n' \
@@ -81,8 +82,8 @@ def parse_args(site):
     import getopt
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
-            'x:y:l:baqdo:fr:w:Vh',
-            ('external=', 'yank=', 'base-only', 'avoid-external',
+            'i:x:y:l:baqdo:fr:w:Vh',
+            ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
              'quiet', 'silent', 'debug', 'output=',
              'force', 'redirects=', 'wait=', 'version', 'help'))
     except getopt.error, reason:
@@ -90,7 +91,9 @@ def parse_args(site):
         print_tryhelp()
         sys.exit(1)
     for flag,arg in optlist:
-        if flag in ('-x', '--external'):
+        if flag in ('-i', '--internal'):
+            site.add_internal_re(arg)
+        elif flag in ('-x', '--external'):
             site.add_external_re(arg)
         elif flag in ('-y', '--yank'):
             site.add_yanked_re(arg)
