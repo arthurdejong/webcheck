@@ -32,12 +32,6 @@ import urllib
 
 def generate(fp,site):
     """Output the overview of problems to the given file descriptor."""
-    # print description
-    fp.write(
-      '   <p class="description">\n'
-      '    This is an overview of all the problems on the site, grouped by\n'
-      '    author.\n'
-      '   </p>\n' )
     # make a list of problems per author
     problem_db = {}
     for link in site.linkMap.values():
@@ -54,6 +48,18 @@ def generate(fp,site):
             problem_db[author].append(link)
         else:
             problem_db[author] = [link]
+    if not problem_db:
+        fp.write(
+          '   <p class="description">\n'
+          '    No problems were found on this site, hurray.\n'
+          '   </p>\n' )
+        return
+    # print description
+    fp.write(
+      '   <p class="description">\n'
+      '    This is an overview of all the problems on the site, grouped by\n'
+      '    author.\n'
+      '   </p>\n' )
     # get a list of authors
     authors=problem_db.keys()
     authors.sort()

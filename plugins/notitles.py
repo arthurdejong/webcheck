@@ -31,22 +31,26 @@ import plugins
 
 def generate(fp,site):
     """Output the list of pages without a title to the given file descriptor."""
+    # get all internal pages without a title
+    links = filter(lambda a: a.ispage and a.isinternal and a.title is None, site.linkMap.values())
+    links.sort(lambda a, b: cmp(a.url, b.url))
+    # present results
+    if not links:
+        fp.write(
+          '   <p class="description">\n'
+          '    All pages had a title specified.\n'
+          '   </p>\n' )
+        return
     fp.write(
       '   <p class="description">\n'
       '    This is the list of all (internal) pages without a proper title\n'
       '    specified.\n'
       '   </p>\n'
       '   <ol>\n')
-    links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
-        if not link.isinternal:
-            continue
-        # also check that we're testing html content
-        if link.ispage and (link.title is None):
-            fp.write(
-              '    <li>%(link)s</li>\n'
-              % { 'link': plugins.make_link(link,link.url) })
-            link.add_pageproblem("missing title")
+        fp.write(
+          '    <li>%(link)s</li>\n'
+          % { 'link': plugins.make_link(link,link.url) })
+        link.add_pageproblem("missing title")
     fp.write(
       '   </ol>\n' )

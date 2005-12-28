@@ -46,28 +46,27 @@ def _getsize(link,done=[]):
 
 def generate(fp,site):
     """Output the list of large pages to the given file descriptor."""
-    # first go over all the links and calculate size if needed
-    links = site.linkMap.values()
-    reslinks = []
-    for link in links:
-        if not link.ispage:
-            continue
-        if not link.isinternal:
-            continue
-        # calculate size
-        size = _getsize(link)
-        # TODO: print size nicely
-        sizeK = size / 1024
-        if sizeK < config.REPORT_SLOW_URL_SIZE:
-            continue
-        reslinks.append(link)
+    # get all internal pages
+    links = filter(lambda a: a.ispage and a.isinternal, site.linkMap.values())
+    # calculate size of links
+    links = filter(lambda a: _getsize(a) >= config.REPORT_SLOW_URL_SIZE*1024, links)
+    # sort links by size
+    links.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
     # present results
-    reslinks.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
+    if not links:
+        fp.write(
+          '   <p class="description">\n'
+          '    No pages over %(size)sK were found.\n'
+          '   </p>\n'
+          % { 'size': config.REPORT_SLOW_URL_SIZE })
+        return
     fp.write(
       '   <p class="description">\n'
-      '    These pages are probably too big which will be slow to download.\n'
+      '    These pages are probably too big (over %(size)sK) which could be\n'
+      '    slow to download.\n'
       '   </p>\n'
-      '   <ul>\n' )
+      '   <ul>\n'
+      % { 'size': config.REPORT_SLOW_URL_SIZE })
     for link in reslinks:
         fp.write(
           '    <li>\n'
@@ -77,7 +76,7 @@ def generate(fp,site):
           '     </ul>\n'
           '    </li>\n'
           % { 'link': plugins.make_link(link),
-              'size': sizeK })
-        link.add_pageproblem('this page %sK' % str(sizeK)) 
+              'size': str(link.totalSize/1024) })
+        link.add_pageproblem('this page %sK' % str(link.totalSize/1024)) 
     fp.write(
       '   </ul>\n' )

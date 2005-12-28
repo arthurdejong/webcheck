@@ -35,29 +35,37 @@ SECS_PER_DAY=60*60*24
 
 def generate(fp,site):
     """Output the list of recently modified pages to the specified file descriptor."""
+    # get all internal pages
+    links = filter(lambda a: a.ispage and a.isinternal and a.mtime is not None, site.linkMap.values())
+    # the time for which links are considered new
+    newtime = time.time()-SECS_PER_DAY*config.REPORT_WHATSNEW_URL_AGE
+    # get new links
+    links = filter(lambda a: a.mtime > newtime, links)
+    # sort links
+    links.sort(lambda a, b: cmp(b.mtime, a.mtime))
+    # present results
+    if not links:
+        fp.write(
+          '   <p class="description">\n'
+          '    No pages were found that were modified within the last %(new)d days.\n'
+          '   </p>\n'
+          % { 'new': config.REPORT_WHATSNEW_URL_AGE })
+        return
     fp.write(
       '   <p class="description">\n'
-      '    These pages have been recently modified.\n'
+      '    These pages have been recently modified (within %(new)d days).\n'
       '   </p>\n'
-      '   <ul>\n')
-    links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(b.mtime, a.mtime))
+      '   <ul>\n'
+      % { 'new': config.REPORT_WHATSNEW_URL_AGE })
     for link in links:
-        if not link.ispage:
-            continue
-        if link.mtime is None:
-            continue
-        if not link.isinternal:
-            continue
         age = (time.time()-link.mtime)/SECS_PER_DAY
-        if (age is not None) and (age <= config.REPORT_WHATSNEW_URL_AGE):
-            fp.write(
-              '    <li>\n'
-              '     %(link)s\n'
-              '     <ul class="problems">\n'
-              '      <li>age: %(age)d days</li>\n'
-              '     </ul>\n'
-              '    </li>\n'
-              % { 'link':  plugins.make_link(link),
-                  'age':   age })
+        fp.write(
+          '    <li>\n'
+          '     %(link)s\n'
+          '     <ul class="problems">\n'
+          '      <li>age: %(age)d days</li>\n'
+          '     </ul>\n'
+          '    </li>\n'
+          % { 'link':  plugins.make_link(link),
+              'age':   age })
     fp.write('   </ul>\n')

@@ -35,32 +35,41 @@ SECS_PER_DAY=60*60*24
 
 def generate(fp,site):
     """Output the list of outdated pages to the specified file descriptor."""
+    # get all internal pages
+    links = filter(lambda a: a.ispage and a.isinternal and a.mtime is not None, site.linkMap.values())
+    # the time for which links are considered old
+    oldtime = time.time()-SECS_PER_DAY*config.REPORT_WHATSOLD_URL_AGE
+    # get old links
+    links = filter(lambda a: a.mtime < oldtime, links)
+    # sort links
+    links.sort(lambda a, b: cmp(a.mtime, b.mtime))
+    # present results
+    if not links:
+        fp.write(
+          '   <p class="description">\n'
+          '    No pages were found that were older than %(old)d days old.\n'
+          '   </p>\n'
+          % { 'old': config.REPORT_WHATSOLD_URL_AGE })
+        return
     fp.write(
       '   <p class="description">\n'
-      '    These pages have been modified a long time ago and may be outdated.\n'
+      '    These pages have been modified a long time ago (older than %(old)d\n'
+      '    days) and may be outdated.\n'
       '   </p>\n'
-      '   <ul>\n' )
-    links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.mtime, b.mtime))
+      '   <ul>\n'
+      % {'old': config.REPORT_WHATSOLD_URL_AGE })
     for link in links:
-        if not link.ispage:
-            continue
-        if link.mtime is None:
-            continue
-        if not link.isinternal:
-            continue
         age = (time.time()-link.mtime)/SECS_PER_DAY
-        if age and (age >= config.REPORT_WHATSOLD_URL_AGE):
-            fp.write(
-              '    <li>\n'
-              '     %(link)s\n'
-              '     <ul class="problems">\n'
-              '      <li>age: %(age)d days</li>\n'
-              '     </ul>\n'
-              '    </li>\n'
-              % { 'link':  plugins.make_link(link),
-                  'age':   age })
-            # add link to problem database
-            link.add_pageproblem('this page is %d days old' % age)
+        fp.write(
+          '    <li>\n'
+          '     %(link)s\n'
+          '     <ul class="problems">\n'
+          '      <li>age: %(age)d days</li>\n'
+          '     </ul>\n'
+          '    </li>\n'
+          % { 'link':  plugins.make_link(link),
+              'age':   age })
+        # add link to problem database
+        link.add_pageproblem('this page is %d days old' % age)
     fp.write(
       '   </ul>\n' )

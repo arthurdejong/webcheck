@@ -31,17 +31,23 @@ import plugins
 
 def generate(fp,site):
     """Output the list of not checked pages to the given file descriptor."""
+    # get all yanked urls
+    links = filter(lambda a: a.isyanked, site.linkMap.values())
+    links.sort(lambda a, b: cmp(a.url, b.url))
+    # present results
+    if not links:
+        fp.write(
+          '   <p class="description">\n'
+          '    All links have been checked.\n'
+          '   </p>\n' )
+        return
     fp.write(
       '   <p class="description">\n'
       '    This is the list of all urls that were encountered but not checked\n'
       '    at all during the examination of the website.\n'
       '   </p>\n'
       '   <ol>\n')
-    links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
-        if not link.isyanked:
-            continue
         fp.write(
           '    <li>\n'
           '     %(link)s\n'

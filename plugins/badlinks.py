@@ -32,16 +32,24 @@ import plugins
 
 def generate(fp,site):
     """Present the list of bad links to the given file descriptor."""
+    # find all links with link problems
+    links = filter(lambda a: len(a.linkproblems)>0, site.linkMap.values())
+    # sort list
+    links.sort(lambda a, b: cmp(a.url, b.url))
+    # present results
+    if not links:
+        fp.write(
+          '   <p class="description">\n'
+          '    There were no problems retrieving links from the website.\n'
+          '   </p>\n'
+          '   <ol>\n' )
+        return
     fp.write(
       '   <p class="description">\n'
       '    These links could not be retrieved during the crawling of the website.\n'
       '   </p>\n'
       '   <ol>\n' )
-    links=site.linkMap.values()
-    links.sort(lambda a, b: cmp(a.url, b.url))
     for link in links:
-        if len(link.linkproblems) == 0:
-            continue
         # list the link
         fp.write(
           '    <li>\n'

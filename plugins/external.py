@@ -31,20 +31,24 @@ import plugins
 
 def generate(fp,site):
     """Generate the list of external links to the given file descriptor."""
+    # get all external links
+    links = filter(lambda a: not a.isinternal, site.linkMap.values())
+    # sort list
+    links.sort(lambda a, b: cmp(a.url, b.url))
+    # present results
+    if not links:
+        fp.write(
+          '   <p class="description">'
+          '    No external links were found on the website.'
+          '   </p>\n' )
+        return
     fp.write(
       '   <p class="description">'
       '    This is the list of all external urls encountered during the'
       '    examination of the website.'
       '   </p>\n'
       '   <ol>\n' )
-    urls=site.linkMap.keys()
-    urls.sort()
-    last = None
-    for url in urls:
-        link = site.linkMap[url]
-        if link.isinternal:
-            continue
-        last = link
+    for link in links:
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
