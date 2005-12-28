@@ -61,7 +61,7 @@ def generate(fp,site):
       '    by Albert Hopkins (marduk).\n'
       '    Versions up till 1.0 were maintained by Mike W. Meyer who changed the name\n'
       '    to <tt>webcheck</tt>.\n'
-      '    After that Arthur de Jong took up the work and did a complete rewrite.\n'
+      '    After that Arthur de Jong did a complete rewrite.\n'
       '    <tt>webcheck</tt> is <i>free software</i>; you can redistribute it and/or\n'
       '    modify it under the terms of the\n'
       '    <a href="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</a>.\n'
