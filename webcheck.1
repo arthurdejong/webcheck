@@ -26,8 +26,8 @@ webcheck \- website link checker
 .I URL
 
 .SH "DESCRIPTION"
-\fBwebcheck\fP will check the document at the specified URL for links to other documents,
-follow these links recursively and generate an HTML report.
+\fBwebcheck\fP will check the document at the specified URL for links to other
+documents, follow these links recursively and generate an HTML report.
 
 .TP 
 .BI "\-x,  \-\-external=" "PATTERN"
@@ -35,7 +35,7 @@ Mark URLs matching the
 .I PATTERN
 (perl\-type regular expression) as an external link.
 Can be used multiple times.
-Note that the PATTERN is matched against the full url.
+Note that the PATTERN is matched against the full URL.
 
 .TP 
 .BI "\-y, \-\-yank=" "PATTERN"
@@ -46,7 +46,7 @@ Like the \-x flag, though this option will cause webcheck to not
 check the link matched by regex whereas \-x will check the link but
 not its children.
 Can be used multiple times.
-Note that the PATTERN is matched against the full url.
+Note that the PATTERN is matched against the full URL.
 
 .TP 
 .B \-b, \-\-base\-only
@@ -113,20 +113,23 @@ Show short summary of options.
 
 .SH "URL CLASSES"
 
-URLs are devided into three classes:
+URLs are divided into two classes:
 
 .B Internal
-URLs are retreived and the retreived item is checked for syntax.
-Also, the retreived item is searched for links to other items (of any class)
+URLs are retrieved and the retrieved item is checked for syntax.
+Also, the retrieved item is searched for links to other items (of any class)
 and these links are followed.
 
 .B External
-URLSs are only retreived to test whether they are valid and to gather some
+URLs are only retrieved to test whether they are valid and to gather some
 basic information from them (title, size, content-type, etc).
-The retreived items are not inspected for links to other items.
+The retrieved items are not inspected for links to other items.
 
+Apart from their class URLs can also be considered
 .B Yanked
-URLs will not be retreived or checked at all.
+(as specified with the \-\-yank or \-\-avoid\-external options).
+The URLs can be either internal or external and will not be retrieved or
+checked at all.
 
 .SH "EXAMPLES"
 
@@ -137,9 +140,9 @@ Check the site www.example.com but exclude any path with "/webcheck" in it.
 
 .SH "NOTES"
 
-When checking internal urls webcheck honors the robots.txt file, identifying
+When checking internal URLs webcheck honours the robots.txt file, identifying
 itself as user-agent webcheck. Disallowed links will not be checked at all as
-if the -y option was specified for that url. To allow webcheck to crawl parts
+if the -y option was specified for that URL. To allow webcheck to crawl parts
 of a site that other robots are disallowed, use something like:
 .ft B
     User-agent: *
@@ -161,11 +164,6 @@ Bug reports shoult be sent to the current maintainer <arthur@ch.tudelft.nl>.
 More information on reporting bugs can be found on the webcheck homepage:
 .br
 http://ch.tudelft.nl/~arthur/webcheck/
-
-There is an old known issue with IIS that under some conditions seems te
-return illegal return codes. Since much of the HTTP core of webcheck
-has been rewritten it is likely that this is no longer uccurs. This problem
-can sometimes be worked around by adding "\-y /_" to the webcheck command.
 
 .SH "COPYRIGHT"
 Copyright \(co 1998, 1999 Albert Hopkins (marduk)
