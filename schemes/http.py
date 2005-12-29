@@ -126,7 +126,7 @@ def fetch(link, acceptedtypes):
                 # TODO: support gzipped content
                 # TODO: add checking for size
                 return response.read()
-        except httplib.BadStatusLine, e:
+        except httplib.HTTPException, e:
             link.add_linkproblem("error reading HTTP response: "+str(e))
             return None
         except socket.error, (errnr,errmsg):

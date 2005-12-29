@@ -51,6 +51,9 @@ def _urlclean(url):
         # make hostname lower case
         (userpass, hostport) = urllib.splituser(netloc)
         netloc=hostport.lower()
+        # trim trailing :
+        if netloc[-1:] == ":":
+            netloc = netloc[:-1]
         if userpass is not None:
             netloc = userpass+"@"+netloc
     # put the url back together again
@@ -146,6 +149,7 @@ class Site:
         location = urlparse.urlunsplit((link.scheme, link.netloc, "", "", ""))
         # try to create a new robotparser if we don't already have one
         if not self._robotparsers.has_key(location):
+            import httplib
             debugio.info("  getting robots.txt for %s" % location)
             self._robotparsers[location] = None
             try:
@@ -153,7 +157,7 @@ class Site:
                 rp.set_url(urlparse.urlunsplit((link.scheme, link.netloc, "/robots.txt", "", "")))
                 rp.read()
                 self._robotparsers[location] = rp
-            except (TypeError, IOError):
+            except (TypeError, IOError, httplib.HTTPException):
                 pass
         return self._robotparsers[location]
 
