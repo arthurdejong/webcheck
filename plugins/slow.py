@@ -67,7 +67,7 @@ def generate(fp,site):
       '   </p>\n'
       '   <ul>\n'
       % { 'size': config.REPORT_SLOW_URL_SIZE })
-    for link in reslinks:
+    for link in links:
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
