@@ -1,32 +1,27 @@
 before next release
 -------------------
 * go over all FIXMEs in code
-* make sure all characters in urls are properly url encoded (and make it an error in the checked page) (see rfc 2396)
-* close streams properly when not downloading files
 
 probably before 2.0 release
 ---------------------------
-* maybe choose a different license for webcheck.css
 * make it possible to copy or reference webcheck.css
 * make it possible to copy http:.../webcheck.css into place (maybe use scheme system, probably just urllib)
 * make more things configurable
-* make a Debian package
 * maybe generate a list of page parents (this is useful to list proper parent links for problem pages)
 * figure out if we need parents and pageparents
 * make configurable time-out when retrieving a document
 * support for mult-threading (use -t, --threads as option)
 * clean up printing of messages, especially needed for multi-threading
-* go over command line options and see if we need long equivalents
 * implement a fix for redirecting stdout and stderr to work properly
-* put a maximum transfer size for downloading files and things over http
-* make sure all html output is properly escaped
+* implement a maximum transfer size for downloading files and things over http
 * support ftp proxies
+* support proxying https traffic
+* check that scheme names are clean so that we do not import strange python modules
 
 wishlist
 --------
 * make code for stripping last part of a url (e.g. foo/index.html -> foo/)
 * maybe set referer (configurable)
-* support for authenticating proxies
 * new config file format (if we want a configfile at all)
 * cookies support (maybe)
 * integration with weblint
@@ -39,23 +34,23 @@ wishlist
 * add support for fetching gzipped content to improve performance
 * maybe do http pipelining
 * add a favicon to reports
-* maybe follow redirects of external links
-* make error handling of html parser more robust (maybe send a patch for html parser upstream)
+* follow redirects of external links
+* make error handling of HTMLParser more robust (maybe send a patch for html parser upstream)
 * maybe use this as a html parser: http://www.crummy.com/software/BeautifulSoup/examples.html
 * maybe have a way to output google sitemap files: http://www.google.com/webmasters/sitemaps/docs/en/protocol.html
 * maybe trim titles that are too long
 * maybe check that documents referenced in <img> tags are really images
 * maybe split out plugins in check() and generate() functions
 * make FAQ
-* create onmouseover information for links containing useful information for the link
 * maybe report unknown/unsupported content in the report
 * use gettext to present output to enable translations of messages and html
-* maybe se cache control header (see http://bugs.debian.org/159648)
-* add "nothing to report" if we have empty report
 * maybe mark embedded content that is external
 * present an overview of problem pages: "100 problems in 10 pages" (per author)
 * check of email addresses that they are formatted properly and check that host part has an MX record (make it a problem for no record or only an A record)
-* have a limit for the amount of data to download
 * output a csv file with some useful information
 * maybe implement news, nntp, gopher and telnet schemes (if there is anyone that wants them)
 * maybe add custom bullets in problem lists, depending on problem type
+* maybe make -b the default
+* maybe add copyright notice in generated files (that we don't claim copyright)
+* make a test site or test framework (this is a lot of work)
+* prompt for authentication (detecting realms)

@@ -9,7 +9,7 @@ webcheck (1.9.5) unstable; urgency=low
     configuration file is no longer supported (webcheck is a user level tool
     that should not be configured site wide)
 
- -- Arthur de Jong <adejong@debian.org>  Wed, 28 Dec 2005 02:00:00 +0100
+ -- Arthur de Jong <adejong@debian.org>  Fre, 30 Dec 2005 23:00:00 +0100
 
 webcheck (1.0-10) unstable; urgency=low
 

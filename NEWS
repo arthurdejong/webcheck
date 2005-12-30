@@ -1,4 +1,20 @@
-changes from 1.9.3 tp 1.9.4
+changes from 1.9.4 to 1.9.5
+---------------------------
+
+* about page now has some more useful information
+* proxy authentication is implemented
+* fix for using relative paths as output directory
+* add support for parsing html documents in different encodings
+* ensure that all generated html output is properly escaped
+* implemented --internal option to flag internal URLs with regular expressions
+* documentation improvements
+* several bugfixes to get webcheck more robust
+* included fancytooltips by Victor Kulinski to have nicer tooltips
+* generated reports now have friendlier messages for when there is nothing to report
+* there is a Debian package
+
+
+changes from 1.9.3 to 1.9.4
 ---------------------------
 
 * split problems into link problems (errors retrieving the document) and page
