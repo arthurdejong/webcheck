@@ -36,6 +36,8 @@ Mark URLs matching the
 (perl\-type regular expression) as an internal link.
 Can be used multiple times.
 Note that the PATTERN is matched against the full URL.
+URLs matching this PATTERN will be considered internal, even if they match one
+of the \-\-external PATTERNs.
 
 .TP 
 .BI "\-x,  \-\-external=" "PATTERN"
@@ -134,10 +136,11 @@ basic information from them (title, size, content-type, etc).
 The retrieved items are not inspected for links to other items.
 
 Apart from their class URLs can also be considered
-.B Yanked
+.B yanked
 (as specified with the \-\-yank or \-\-avoid\-external options).
 The URLs can be either internal or external and will not be retrieved or
 checked at all.
+URLs of unsupported schemes are also considered yanked.
 
 .SH "EXAMPLES"
 
