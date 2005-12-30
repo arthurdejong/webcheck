@@ -1,0 +1,283 @@
+webcheck (1.9.5) unstable; urgency=low
+
+  * initial (re)release of webcheck Debian package (closes: #326429)
+  * this release should fix all open bugs on the time of the former webcheck
+    page removal, except wishlist bugs #71419 (i18n) and #271085 (html
+    validation), anyone interested can refile those bugs (preferably with
+    patches or some pointers on how to implemement the changes)
+  * /etc/webcheck is completely removed on upgrades since a site wide
+    configuration file is no longer supported (webcheck is a user level tool
+    that should not be configured site wide)
+
+ -- Arthur de Jong <adejong@debian.org>  Wed, 28 Dec 2005 02:00:00 +0100
+
+webcheck (1.0-10) unstable; urgency=low
+
+  * orphan this package; set maintainer to
+    Debian QA Group <packages@qa.debian.org>
+    For the orphaning message see according bug entry in
+    http://bugs.debian.org/wnpp
+  * suggest real www-browser lynx as first alternative in debian/control
+  * suggest real httpd apache as first alternative in debian/control
+
+ -- Bastian Kleineidam <calvin@debian.org>  Mon, 31 May 2004 20:45:56 +0200
+
+webcheck (1.0-9) unstable; urgency=low
+
+  * catch all errors on ftp.quit(), this fixes the "Malformed Url"
+    message on invalid ftp links
+
+ -- Bastian Kleineidam <calvin@debian.org>  Sat, 21 Feb 2004 19:21:30 +0100
+
+webcheck (1.0-8) unstable; urgency=low
+
+  * add <link href> links which adds CSS stylesheet checking to
+    webcleaner. This partially addresses bug #201154, but background
+    image urls in stylesheets will not be checked.
+  * do not display images as default, just the links to them
+    (Closes: #172609)
+
+ -- Bastian Kleineidam <calvin@debian.org>  Mon, 12 Jan 2004 13:20:25 +0100
+
+webcheck (1.0-7) unstable; urgency=low
+
+  * Python 2.3 transition upload
+  * Standards version 3.6.0
+
+ -- Bastian Kleineidam <calvin@debian.org>  Sat,  9 Aug 2003 10:53:56 +0200
+
+webcheck (1.0-6) unstable; urgency=low
+
+  * Don't overwrite files without asking, added patch with
+    thanks to Jarno Elonen <elonen@iki.fi> (Closes: #188839)
+
+ -- Bastian Kleineidam <calvin@debian.org>  Mon, 14 Apr 2003 01:09:39 +0200
+
+webcheck (1.0-5) unstable; urgency=low
+
+  * Use debian/compat instead of DH_COMPAT
+  * Standards version 3.5.9
+  * Add custom HEADER configuration (Closes: #159648)
+
+ -- Bastian Kleineidam <calvin@debian.org>  Sat, 12 Apr 2003 13:55:38 +0200
+
+webcheck (1.0-4) unstable; urgency=low
+
+  * change docs.html to index.html in doc-base (Closes: #175281)
+  * use DH_COMPAT=4, adjust depends for this
+
+ -- Bastian Kleineidam <calvin@debian.org>  Sat,  4 Jan 2003 14:07:52 +0100
+
+webcheck (1.0-3) unstable; urgency=low
+
+  * Added support for content-encoding gzip and deflate. Only the
+    http get_document routine was changed to use reportbugs urlutils.py
+    functions. (Closes: #158365).
+  * Execute permissions are unset by dh_fixperms, so run perl manually.
+    Thanks Takeshi HAMASAKI for the report (Closes: #172895)
+  * fix webcheck.1: contributers -> contributors
+
+ -- Bastian Kleineidam <calvin@debian.org>  Fri, 13 Dec 2002 01:23:30 +0100
+
+webcheck (1.0-2) unstable; urgency=low
+
+  * Fix description formatting (Closes: #172449)
+  * Updated index.html documentation and manpage (Closes: #168918)
+  * Removed last references to linbot
+
+ -- Bastian Kleineidam <calvin@debian.org>  Thu, 12 Dec 2002 17:09:02 +0100
+
+webcheck (1.0-1) unstable; urgency=low
+
+  * New maintainer (Closes: #170939)
+  * New upstream release and name, replaces the linbot package.
+    (Closes: #154763)
+  * Standards version 3.5.8.0
+  * Added own webcheck.png (it was missing) and blackbar.png (it was
+    corrupt in the original source)
+  * Added previous Debian fixes for linbot, slightly modified for the
+    new version
+  * Depend on the default python package in sid, this should be enough
+    for everyone. (Closes: #144597)
+
+ -- Bastian Kleineidam <calvin@debian.org>  Thu,  5 Dec 2002 15:39:03 +0100
+
+linbot (1.0.0-8) unstable; urgency=low
+
+  * Shift to python2.2.
+  * Python 2.2 has nested scopes on by default and warns about using 'from
+    foo import *' other than at module level, so fix that.
+
+ -- Colin Watson <cjwatson@debian.org>  Mon,  2 Sep 2002 00:48:40 +0100
+
+linbot (1.0.0-7) unstable; urgency=low
+
+  * Remove duplicates from the list of MIME types sent in Accept: lines, and
+    merge multiple Accept: lines up to a reasonable limit (closes: #147347).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 18 May 2002 16:29:18 +0100
+
+linbot (1.0.0-6) unstable; urgency=low
+
+  * myUrlLib.py: Handle SGMLParseError specially and report an unparseable
+    document rather than the confusing "Malformed URL?" (closes: #134620).
+  * robotparser.py, schemes.filelink.py: Use the re module instead of the
+    obsolete regsub and regex modules.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 21 Feb 2002 02:54:55 +0000
+
+linbot (1.0.0-5) unstable; urgency=low
+
+  * README: Fix URL of upstream home page (thanks, Karl E. Jorgensen;
+    closes: #128771).
+  * debian/copyright: Update.
+  * debian/changelog: Remove Emacs local variables.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 11 Jan 2002 17:30:33 +0000
+
+linbot (1.0.0-4) unstable; urgency=low
+
+  * myUrlLib.py: Import socket so linbot doesn't crash on non-existent URLs
+    (closes: #122900).
+
+ -- Colin Watson <cjwatson@debian.org>  Sat,  8 Dec 2001 11:37:05 +0000
+
+linbot (1.0.0-3) unstable; urgency=low
+
+  * New maintainer (closes: #106562). Thanks to Matej Vela in particular for
+    doing excellent QA work on linbot.
+  * myUrlLib.py: Rename a local variable from 'string' to 'dstring' to avoid
+    clashing with the string module (closes: #121763).
+  * debian/control: Use Build-Depends-Indep rather than Build-Depends.
+  * debian/rules: Minor cleanups.
+
+ -- Colin Watson <cjwatson@debian.org>  Sat,  1 Dec 2001 00:10:13 +0000
+
+linbot (1.0.0-2.1) unstable; urgency=low
+
+  * NMU
+  * Use python2.1.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 29 Oct 2001 00:19:24 +0100
+
+linbot (1.0.0-2) unstable; urgency=low
+
+  * Release early, release often. ;)
+  * schemes/ftplink.py: Mostly fixed up.  It now correctly parses URLs
+    (see RFC 1738), honors the specified port, handles exceptions from
+    FTP.size, closes the connection cleanly, and is actually able to
+    retrieve files.  My request for further information bounced, but I
+    believe this closes: #45763.
+  * linbot.py: Generate relative references to images, using symlinks
+    if necessary.  Closes: #75727.
+
+ -- Matej Vela <vela@debian.org>  Fri, 10 Aug 2001 17:09:11 +0200
+
+linbot (1.0.0-1) unstable; urgency=high
+
+  * New upstream version.  As suggested by Gregor Hoffleit, using
+    1.0.0 instead of 1.0 to avoid adding an epoch.  Closes: #41080.
+  * Package is orphaned; maintainer set to Debian QA Group.  Bugs
+    fixed by NMUs can be closed.  Closes: #41345, #45225, #46526.
+  * linbot.gif is already included in the package.  Closes: #54861.
+  * The upstream site is down indefinitely:
+    * config.py: Set WARN_OLD_VERSION to false.
+    * debian/copyright: Refer to metalab.  Closes: #54862, #77290.
+    * debian/index.html: Left out until it's thoroughly updated.
+  * linbot.py: Don't overwrite config.HOSTS.  Closes: #68719.
+  * config.py: Applied Kevin Dalley's patch to fix typos in the
+    YANKED_URLS example.  Closes: #69899.
+  * schemes/httplink.py: Applied Francesco Potorti's patch to reset
+    redirect_depth when done with redirections.  Closes: #104408.
+  * Converted to debhelper.  The old build system is just too hairy.
+  * Restoring upstream layout, moved linbot.py and symlinked config.py
+    to .../site-packages/linbot.  Also, since Python prepends the
+    script directory to sys.path *after* resolving symlinks, replaced
+    the wrapper with a `/usr/bin/linbot -> .../linbot.py' symlink.
+  * Conforms to Standards version 3.5.6:
+    * Added build dependencies.
+    * Conforms to the FHS.  It's worth noting that /usr/lib/linbot has
+      been moved to /usr/share/linbot.  Closes: #54860.
+    * debian/copyright: Updated reference to GPL.
+
+ -- Matej Vela <vela@debian.org>  Wed,  8 Aug 2001 15:05:04 +0200
+
+linbot (1.0b9-1.1) unstable; urgency=high
+
+  * Non-maintainer release.
+  * Removed dependencies on python-net,-misc and changed versioned dependency
+    on python-base (Closes: Bug#41345)
+  * Upgraded to Debian Standards-Version 3.0.1
+
+ -- Stevie Strickland <sstrickl@cc.gatech.edu>  Sat, 30 Oct 1999 14:08:28 -0400
+
+linbot (1.0b9-1) unstable; urgency=high
+
+  * Upgraded to new upstream revision.  Fixes Bug#27565, Bug#26692 and
+    Bug#33057.  Thanks to <joey@kitenet.net>, Anthony Fok
+    <foka@gpu.srv.ualberta.ca> and Francesco Potorti
+    <f.potorti@cnuce.cnr.it>.
+  * Upgraded to Debian Standards-Version 2.5.0.0.
+  * Corrected build programs that prevent inclusion of pristine upstream
+    source.
+  * Corrected numerous little bugs in packaging.
+  * Corrected various documentation typos in configuration file.  Fixes
+    Bug#33056.  Thanks to Francesco Potorti <f.potorti@cnuce.cnr.it>.
+  * Removed image files no longer maintained by upstream author.  Fixes
+    Bug#29310.  Thanks to John Lines <john.lines@aeat.co.uk>.
+
+ -- Jean Pierre LeJacq <jplejacq@quoininc.com>  Sun,  7 Mar 1999 20:31:30 -0500
+
+linbot (0.9-1) unstable; urgency=low
+
+  * Upgraded to new upstream revision.
+
+ -- Jean Pierre LeJacq <jplejacq@quoininc.com>  Sun, 20 Dec 1998 21:36:38 -0500
+
+linbot (0.8-2) stable unstable; urgency=low
+
+  * Corrected typo in HTML documentation.
+  * Corrected minor bugs in package building scripts.
+  * Removed CVS keywords from final build.
+
+ -- Jean Pierre LeJacq <jplejacq@quoininc.com>  Sun, 13 Sep 1998 20:43:45 -0400
+
+linbot (0.8-1) stable unstable; urgency=low
+
+  * Upgraded to new upstream version.
+  * Upgraded to debian policy version 2.4.1.4.
+  * Changed package building scripts to work around change in debhelper.
+  * Changed location of linbot supplied python packages to conform to
+    python standard location.  Thanks to Gregor Hoffleit
+    <flight@mathi.uni-heidelberg.DE>.  (bug #22235).
+  * Changed location of upstream source.
+  * Removed old revision of urllib.py (1.9) since linbot now works
+    with urllib.py (1.10) that ships with python-1.5.1.
+
+ -- Jean Pierre LeJacq <jplejacq@quoininc.com>  Sat, 12 Sep 1998 17:24:22 -0400
+
+linbot (0.5.4-1) unstable; urgency=low
+
+  * Updated to new upstream revision.
+  * Upgraded debian package building to prevent including original
+    upstream source when only the debian revision is incremented.  Thanks
+    to Gregor Hoffleit <flight@mathi.uni-heidelberg.DE>.
+  * Moved all python files to /usr/lib/linbot/python/ since lintian warned
+    about placing files in /usr/lib/python1.5/.
+  * Provided old revision of urllib.py (1.9) since linbot currently
+    doesn't work with urllib.py (1.10) that ships with python-1.5.1.
+
+ -- Jean Pierre LeJacq <jplejacq@quoininc.com>  Sat,  6 Jun 1998 11:20:19 -0400
+
+linbot (0.5.3-1) unstable; urgency=low
+
+  * Updated to new upstream revision.
+  * Upgraded HTML documentation to pass weblint and nsgmls validations.
+
+ -- Jean Pierre LeJacq <jplejacq@quoininc.com>  Sat,  9 May 1998 15:39:00 -0400
+
+linbot (0.5.2-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Jean Pierre LeJacq <jplejacq@quoininc.com>  Tue, 14 Apr 1998 14:31:57 -0400

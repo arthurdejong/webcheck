@@ -1,0 +1,26 @@
+Source: webcheck
+Section: web
+Priority: extra
+Maintainer: Arthur de Jong <adejong@debian.org>
+Standards-Version: 3.6.2
+Build-Depends-Indep: debhelper (>= 4), python
+
+Package: webcheck
+Architecture: all
+Depends: ${python:Depends}
+Suggests: lynx | www-browser
+Provides: linbot
+Conflicts: linbot
+Replaces: linbot
+Description: website link and structure checker
+ webcheck is a website checking tool for webmasters. It crawls a given
+ website and generates a number of reports in the form of html pages.
+ It is easy to use and generates simple, clear and readable reports.
+ .
+ Features of webcheck include:
+  * support for http, https, ftp and file schemes
+  * view the structure of a site
+  * track down broken links
+  * find potentially outdated and new pages
+  * list links pointing to external sites
+  * can run without user intervention

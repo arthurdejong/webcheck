@@ -1,0 +1,60 @@
+This is webcheck, a command line utility for crawling websites.
+
+webcheck was originally named linbot which was developed by Albert
+Hopkins (marduk) <marduk@python.net>.
+
+Versions up till 1.0 were maintained by Mike W. Meyer <mwm@mired.org> who
+changed the name to webcheck, http://www.mired.org/webcheck/.
+
+After that Arthur de Jong <arthur@ch.tudelft.nl> took up the work and did
+a complete rewrite, http://ch.tudelft.nl/~arthur/webcheck/.
+
+Arthur de Jong is both the upstream and Debian package maintainer, so
+there are no differences between the Debian package and the upstream
+version.
+
+The Debian package of webcheck was previously maintained by Bastian Kleineidam
+<calvin@debian.org>. The Debian package of linbot was maintained by Colin
+Watson <cjwatson@debian.org>, Matej Vela <vela@debian.org> and Jean Pierre
+LeJacq <jplejacq@quoininc.com>.
+
+Copyright (C) 1998, 1999 Albert Hopkins (marduk)
+Copyright (C) 2002 Mike W. Meyer
+Copyright (C) 2005 Arthur de Jong
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+On Debian GNU/Linux systems, the complete text of
+the GNU General Public License can be found in
+/usr/share/common-licenses/GPL.
+
+The files produced as output from the software do not automatically fall
+under the copyright of the software, unless explicitly stated otherwise.
+
+Webcheck contains the FancyTooltips javascript library to display readable
+tooltips. FancyTooltips is distributed under the MIT license and has the
+following copyright notices:
+
+Copyright (C) 2003 Stuart Langridge, Paul McLanahan, Peter Janes,
+              Brad Choate
+Copyright (C) 2003 Dunstan Orchard, Ethan Marcotte, Mark Wubben
+Copyright (C) 2005 Victor Kulinski
+
+As originally released by Stuart Langridge, this script is licensed under MIT
+- http://www.opensource.org/licenses/mit-license.php
+
+"THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE."

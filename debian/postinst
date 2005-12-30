@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# bail on errors
+set -e
+
+# try to remove /etc/webcheck contents
+if [ -d /etc/webcheck ]
+then
+  echo -n "Removing /etc/webcheck from old install... "
+  rm -f /etc/webcheck/config.py /etc/webcheck/config.py.dpkg-old /etc/webcheck/config.py.dpkg-new || true
+  if rmdir /etc/webcheck
+  then
+    echo "done."
+  else
+    echo "failed!."
+  fi
+fi
+
+#DEBHELPER#
+
+exit 0

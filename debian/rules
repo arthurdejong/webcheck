@@ -1,0 +1,45 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+PYBASE := usr/lib/python2.3/site-packages/webcheck
+
+build:
+
+clean:
+	dh_testdir
+	dh_testroot
+	find -name '*.py[co]' | xargs rm -f
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs $(PYBASE) $(PYBASE)/fancytooltips
+	find -name \*.py \
+	  | xargs cp --parents --target-directory debian/webcheck/$(PYBASE)
+	cp webcheck.css debian/webcheck/$(PYBASE)/webcheck.css
+	cp fancytooltips/fancytooltips.js debian/webcheck/$(PYBASE)/fancytooltips/fancytooltips.js
+	chmod 755 debian/webcheck/$(PYBASE)/webcheck.py
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_python
+	dh_installdocs README TODO AUTHORS NEWS
+	dh_installman webcheck.1
+	dh_installchangelogs
+	dh_link $(PYBASE)/webcheck.py usr/bin/webcheck
+	dh_compress
+	dh_fixperms --exclude webcheck.py
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch: build install
+
+binary: binary-indep binary-arch
+
+.PHONY: build clean binary-indep binary-arch binary install
