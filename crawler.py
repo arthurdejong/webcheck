@@ -124,9 +124,6 @@ class Site:
             # the netloc must match a netloc of an _internal_url
             for i in self._internal_urls:
                 res |= (urlparse.urlsplit(i)[1]==link.netloc)
-            # if the url matches it is external and we can stop
-            if x.search(link.url) is not None:
-                return False
         # if it is not internal now, it never will be
         if not res:
             return False
