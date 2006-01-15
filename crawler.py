@@ -230,12 +230,18 @@ class Site:
         # do not have a parent (they form the base for the site)
         bases = [ ]
         for u in self._internal_urls:
-            l = self.linkMap[u].follow_link(True)
+            l = self.linkMap[u].follow_link()
             if l == None:
+                debugio.warn('base link %s redirects to nowhere' % u)
                 continue
             # if the link has no parent add it to the result list unless it is the first one
             if len(l.parents) == 0 or len(bases) == 0:
+                debugio.debug('crawler.crawl(): adding %s to bases' % l)
                 bases.append(l)
+        # if we got no bases, just use the first internal one
+        if len(bases) == 0:
+            debugio.debug('crawler.crawl(): fallback to adding %s to bases' % self._internal_urls[0])
+            bases.append(self.linkMap[self._internal_urls[0]])
         # do a breadth first traversal of the website to determin depth and
         # figure out page children
         tocheck = []
@@ -440,10 +446,9 @@ class Link:
         # parse the content
         parsermodule.parse(content, self)
 
-    def follow_link(self, delifunref=False, visited=[]):
+    def follow_link(self, visited=[]):
         """If this link represents a redirect return the redirect target,
-        otherwise return self. If delifunref is set this link is discarded
-        if it has no parents. If this redirect does not find a referenced
+        otherwise return self. If this redirect does not find a referenced
         link None is returned."""
         if self.redirectdepth == 0:
             return self
@@ -452,14 +457,9 @@ class Link:
         # check for loops
         visited.append(self)
         if self.children[0] in visited:
+            # TODO: report problem if loop is found
             return None
-        # remove link if this is the only place that it's used
-        if (len(self.parents) == 0) and delifunref:
-           # remove me from the linkMap
-           del self.site.linkMap[self.url]
-           # remove me from parents of child
-           self.children[0].parents.remove(self)
-        return self.children[0].follow_link(delifunref, visited)
+        return self.children[0].follow_link(visited)
 
     def _pagechildren(self):
         """Determin the page children of this link, combining the children of
