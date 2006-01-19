@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ class Site:
                 continue
             # if the link has no parent add it to the result list unless it is the first one
             if len(l.parents) == 0 or len(bases) == 0:
-                debugio.debug('crawler.crawl(): adding %s to bases' % l)
+                debugio.debug('crawler.crawl(): adding %s to bases' % l.url)
                 bases.append(l)
         # if we got no bases, just use the first internal one
         if len(bases) == 0:
