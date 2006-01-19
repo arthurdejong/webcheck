@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ def make_link(link,title=None):
     if config.REPORT_LINKS_IN_NEW_WINDOW:
         target='target="_blank" '
     # gather some information about the link to report
-    return '<a href="'+link.url+'" '+target+'class="'+cssclass+'" title="'+escape(get_info(link),True)+'">'+escape(title)+'</a>'
+    return '<a href="'+escape(link.url, True)+'" '+target+'class="'+cssclass+'" title="'+escape(get_info(link),True)+'">'+escape(title)+'</a>'
 
 def print_parents(fp,link,indent='     '):
     # present a list of parents
