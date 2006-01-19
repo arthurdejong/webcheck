@@ -36,7 +36,7 @@ def escape(txt, inattr=False):
     # the output string
     out = ''
     # convert to unicode object
-    if isinstance(txt, str):
+    if type(txt) is str:
         txt = unicode(txt, 'utf-8')
     # loop over the characters of the string
     for c in txt:
@@ -85,9 +85,9 @@ def get_size(i):
 
 def get_info(link):
     """Return a string with a summary of the information in the link."""
-    info = u'url: %s\n' % link.url
+    info = u'url: %s\n' % unicode(link.url, errors='replace')
     if link.status:
-        info += '%s\n' % link.status
+        info += '%s\n' % unicode(link.status, errors='replace')
     if link.title:
         info += 'title: %s\n' % link.title.strip()
     if link.author:
@@ -102,7 +102,7 @@ def get_info(link):
         info += '\n'
     if link.redirectdepth > 0:
         if len(link.children) > 0:
-            info += 'redirect: %s\n' % link.children[0].url
+            info += 'redirect: %s\n' % unicode(link.children[0].url, errors='replace')
         else:
             info += 'redirect (not followed)\n'
     if len(link.parents) == 1:
@@ -114,11 +114,11 @@ def get_info(link):
     if link.size:
         info += 'size: %s\n' % get_size(link.size)
     if link.mimetype:
-        info += 'mime-type: %s\n' % link.mimetype
+        info += 'mime-type: %s\n' % unicode(link.mimetype, errors='replace')
     if link.encoding:
-        info += 'encoding: %s\n' % link.encoding
+        info += 'encoding: %s\n' % unicode(link.encoding, errors='replace')
     for problem in link.linkproblems:
-        info += 'problem: %s\n' % problem
+        info += 'problem: %s\n' % unicode(problem, errors='replace')
     # trim trailing newline
     return info.strip()
 
