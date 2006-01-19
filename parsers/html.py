@@ -1,7 +1,7 @@
 
 # html.py - parser functions for html content
 #
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import config
 import debugio
 import HTMLParser
 import urlparse
+import urllib
 import re
 
 # the list of mimetypes this module should be able to handle
@@ -85,6 +86,8 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # replace &#nnn; entity refs with proper characters
         for charEntity in _charentitypattern.findall(url):
             url = url.replace(charEntity,chr(int(charEntity[2:-1])))
+        # url encode strange characters (reserved chars are unharmed)
+        url = urllib.quote(url, ';/?:@&=+$,%')
         return url
 
     def error(self, message):
@@ -201,8 +204,10 @@ def _maketxt(txt, encoding):
     import htmlentitydefs
     # convert string to unicode
     if encoding:
+        # convert using given encoding
         txt = unicode(txt, encoding, 'replace')
     else:
+        # fall back to locale's encoding
         txt = unicode(txt, errors='replace')
     # replace &#nnn; entity refs with proper characters
     for charEntity in _charentitypattern.findall(txt):
@@ -221,14 +226,15 @@ def parse(content, link):
     try:
         parser.feed(content)
         parser.close()
-    except:
-        # ignore all errors
-        pass
+    except Exception, e:
+        # ignore (but log) all errors
+        debugio.debug("parsers.html.parse(): caugt exception: "+str(e))
     # check for parser errors
     if parser.errmsg is not None:
         debugio.debug("parsers.html.parse(): problem parsing html: "+parser.errmsg)
         link.add_pageproblem('problem parsing html: %s' % parser.errmsg)
-        pass
+    # dump encoding
+    debugio.debug("parsers.html.parse(): html encoding: %s" % str(link.encoding))
     # flag that the link contains a valid page
     link.ispage = True
     # save the title
@@ -244,7 +250,7 @@ def parse(content, link):
     # list embedded and children
     for embed in parser.embedded:
         if embed:
-            link.add_embed(urlparse.urljoin(base,embed))
+            link.add_embed(urlparse.urljoin(base, embed))
     for child in parser.children:
         if child:
-            link.add_child(urlparse.urljoin(base,child))
+            link.add_child(urlparse.urljoin(base, child))
