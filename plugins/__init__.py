@@ -37,7 +37,7 @@ def escape(txt, inattr=False):
     out = ''
     # convert to unicode object
     if type(txt) is str:
-        txt = unicode(txt, 'utf-8')
+        txt = unicode(txt, errors='replace')
     # loop over the characters of the string
     for c in txt:
         if c == '"':
