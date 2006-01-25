@@ -108,7 +108,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         try:
             return HTMLParser.HTMLParser.check_for_whole_start_tag(self, i)
         except AssertionError, e:
-            debugio.debug("parsers.html._MyHTMLParser.check_for_whole_start_tag(): caugt assertion error")
+            debugio.debug("parsers.html._MyHTMLParser.check_for_whole_start_tag(): caught assertion error")
 
     def handle_starttag(self, tag, attrs):
         """Handle start tags in html."""
@@ -228,7 +228,7 @@ def parse(content, link):
         parser.close()
     except Exception, e:
         # ignore (but log) all errors
-        debugio.debug("parsers.html.parse(): caugt exception: "+str(e))
+        debugio.debug("parsers.html.parse(): caught exception: "+str(e))
     # check for parser errors
     if parser.errmsg is not None:
         debugio.debug("parsers.html.parse(): problem parsing html: "+parser.errmsg)
