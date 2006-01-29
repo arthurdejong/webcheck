@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ def fetch(link, acceptedtypes):
     try:
         try:
             # create the connection
+            debugio.debug('schemes.http.fetch: connecting to %s' % netloc)
             if scheme == "http":
                 conn=httplib.HTTPConnection(netloc)
             elif scheme == "https":
@@ -86,6 +87,13 @@ def fetch(link, acceptedtypes):
             response = conn.getresponse()
             link.status = '%s %s' % (response.status, response.reason)
             debugio.debug("schemes.http.fetch(): HTTP response: %s" % link.status)
+            # dump proxy hit/miss info
+            if config.PROXIES and config.PROXIES.has_key(link.scheme):
+                try:
+                    debugio.debug("schemes.http.fetch(): X-Cache: %s" % str(response.getheader('X-Cache')))
+                    #debugio.debug("schemes.http.fetch(): X-Cache-Lookup: %s" % str(response.getheader('X-Cache-Lookup')))
+                except AttributeError:
+                    pass
             # retrieve some information from the headers
             try:
                 link.mimetype = response.msg.gettype()
@@ -127,9 +135,11 @@ def fetch(link, acceptedtypes):
                 # TODO: add checking for size
                 return response.read()
         except httplib.HTTPException, e:
+            debugio.debug("error reading HTTP response: "+str(e))
             link.add_linkproblem("error reading HTTP response: "+str(e))
             return None
         except socket.error, (errnr,errmsg):
+            debugio.debug("error reading HTTP response: "+errmsg)
             link.add_linkproblem("error reading HTTP response: "+errmsg)
             return None
     finally:
