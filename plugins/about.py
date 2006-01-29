@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import time
 
 def generate(fp,site):
     """Output a list of modules, it's authors and it's version to the file descriptor."""
-    # TODO: xxx links weere fetched, xxx pages were examined and a total of xxx notes and problems were found
+    # TODO: xxx links were fetched, xxx pages were examined and a total of xxx notes and problems were found
     # TODO: include some runtime information (e.g. supported schemes, user configuration, etc)
     # output some general information about the report
     fp.write(
@@ -64,12 +64,13 @@ def generate(fp,site):
       '    After that Arthur de Jong did a complete rewrite.\n'
       '    <tt>webcheck</tt> is <i>free software</i>; you can redistribute it and/or\n'
       '    modify it under the terms of the\n'
-      '    <a href="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</a>.\n'
+      '    <a href="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</a>\n'
+      '    (version 2 or later).\n'
       '    There is no warranty; not even for merchantability or fitness for a\n'
       '    particular purpose. See the source for further details.\n'
       '   </p>\n'
       '   <p>\n'
-      '    Copyright &copy; 1998, 1999, 2002, 2005 Albert Hopkins (marduk),\n'
+      '    Copyright &copy; 1998, 1999, 2002, 2005, 2006 Albert Hopkins (marduk),\n'
       '    Mike W. Meyer and Arthur de Jong\n'
       '   </p>\n'
       '   <p>\n'
