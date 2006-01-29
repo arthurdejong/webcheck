@@ -109,8 +109,6 @@ function FancyTooltips(sTemplate, nDelay, nStringMaxLength, nMarginX, nMarginY, 
 	}
 
 	function setContainerContent(sOutput){
-		sOutput = sOutput.replace(/&/g, "&amp;");
-		sOutput = sOutput.replace(/\n/g, "<br />");
 		if(document.createElementNS && window.DOMParser){
 			var oXMLDoc = (new DOMParser()).parseFromString("<root xmlns=\""+sNameSpaceURI+"\">"+sOutput+"</root>", "text/xml");
 			var oOutputNode = document.importNode(oXMLDoc.documentElement, true);
@@ -176,10 +174,12 @@ function FancyTooltips(sTemplate, nDelay, nStringMaxLength, nMarginX, nMarginY, 
 		var oFound = {};
 		var sResult = sTemplate;
 		
+		// handle content() template
 		if(sResult.match(/content\(\)/)){
 			sResult = sResult.replace(/content\(\)/g, getContentOfNode(oNode));
 		}
 		
+		// find attr() templates and fetch values
 		var collSearch = sResult.split(/attr\(/);
 		for(var i = 1; i < collSearch.length; i++){
 			sAttribute = collSearch[i].split(")")[0];
@@ -189,6 +189,7 @@ function FancyTooltips(sTemplate, nDelay, nStringMaxLength, nMarginX, nMarginY, 
 			}
 		}
 		
+		// remove optional attr() templates if values are not found
 		var collOptional = sResult.split("?")
 		for(var i = 1; i < collOptional.length; i += 2){
 			collOptionalAttributes = collOptional[i].split("attr(");
@@ -200,8 +201,17 @@ function FancyTooltips(sTemplate, nDelay, nStringMaxLength, nMarginX, nMarginY, 
 		}
 		sResult = sResult.replace(/\?/g, "");
 		
+		// replace attr() templates
 		for(sAttribute in oFound){
-			sResult = sResult.replace("attr\("+sAttribute+"\)", oFound[sAttribute]);
+			// html escape output
+			var sOutput = oFound[sAttribute];
+			if (sOutput) {
+				sOutput = sOutput.replace(/&/g, "&amp;");
+				sOutput = sOutput.replace(/</g, "&lt;");
+				sOutput = sOutput.replace(/>/g, "&gt;");
+				sOutput = sOutput.replace(/\n/g, "<br />");
+			}
+			sResult = sResult.replace("attr\("+sAttribute+"\)", sOutput);
 		}
 		
 		return sResult;
