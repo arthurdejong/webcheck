@@ -51,7 +51,7 @@ def _urlclean(url):
     """Clean the url of uneccesary parts."""
     # url decode any printable normal characters except reserved characters with special meanings in urls
     for c in _urlencpattern.findall(url):
-        r = chr(int(c[1:3]))
+        r = chr(int(c[1:3],16))
         if r in _okurlchars:
             url = url.replace(c, r)
     # url encode any nonprintable or problematic characters (but not reserved chars)
