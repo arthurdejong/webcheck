@@ -40,8 +40,22 @@ import time
 # pattern for matching spaces
 _spacepattern = re.compile(" ")
 
+# pattern for matching url encoded characters
+_urlencpattern = re.compile('(%[0-9]{2})' ,re.IGNORECASE)
+
+# characters that should not be escaped in urls
+_reservedurlchars = ';/?:@&=+$,%#'
+_okurlchars = '-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~'
+
 def _urlclean(url):
     """Clean the url of uneccesary parts."""
+    # url decode any printable normal characters except reserved characters with special meanings in urls
+    for c in _urlencpattern.findall(url):
+        r = chr(int(c[1:3]))
+        if r in _okurlchars:
+            url = url.replace(c, r)
+    # url encode any nonprintable or problematic characters (but not reserved chars)
+    url = ''.join(map(lambda x: (x not in _reservedurlchars and x not in _okurlchars) and ('%%%02X' % ord(x)) or x, url))
     # split the url in useful parts (discarding fragment)
     (scheme, netloc, path, query) = urlparse.urlsplit(url)[0:4]
     if ( scheme == "http" or scheme == "https" or scheme == "ftp" ):

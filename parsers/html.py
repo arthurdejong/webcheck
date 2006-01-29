@@ -78,16 +78,12 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
 
     def _cleanurl(self, url):
         """Do some translations of url."""
-        # check for spaces in urls
+        # check for spaces in urls (characters are escaped in crawler._urlclean())
         if _spacepattern.search(url):
             self.link.add_pageproblem('link contains unescaped spaces: ' + url + ', ' + self._location())
-            # replace spaces by %20
-            url=_spacepattern.sub('%20',url)
         # replace &#nnn; entity refs with proper characters
         for charEntity in _charentitypattern.findall(url):
             url = url.replace(charEntity,chr(int(charEntity[2:-1])))
-        # url encode strange characters (reserved chars are unharmed)
-        url = urllib.quote(url, ';/?:@&=+$,%')
         return url
 
     def error(self, message):
