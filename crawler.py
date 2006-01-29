@@ -41,7 +41,7 @@ import time
 _spacepattern = re.compile(" ")
 
 # pattern for matching url encoded characters
-_urlencpattern = re.compile('(%[0-9]{2})' ,re.IGNORECASE)
+_urlencpattern = re.compile('(%[0-9a-fA-F]{2})' ,re.IGNORECASE)
 
 # characters that should not be escaped in urls
 _reservedurlchars = ';/?:@&=+$,%#'
