@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ items should be changeble from the command line."""
 import urllib
 
 # Current version of webcheck.
-VERSION = "1.9.5"
+VERSION = "1.9.6"
 
 # The homepage of webcheck.
 HOMEPAGE = "http://ch.tudelft.nl/~arthur/webcheck/"

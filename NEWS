@@ -1,3 +1,17 @@
+changes from 1.9.5 to 1.9.6
+---------------------------
+
+* SECURITY FIX: a cross-site scripting vulnerability with content in the
+                tooltips of generated report was fixed by properly escaping
+                all output
+* urls are now url encoded into a consistent form, solving some problems with
+  urls with non-ascii characters
+* no longer remove unreferenced redirects
+* more debugging info in debug mode
+* more fixes for escaping in generated reports and more support for sites in
+  different character sets
+
+
 changes from 1.9.4 to 1.9.5
 ---------------------------
 
@@ -10,7 +24,8 @@ changes from 1.9.4 to 1.9.5
 * documentation improvements
 * several bugfixes to get webcheck more robust
 * included fancytooltips by Victor Kulinski to have nicer tooltips
-* generated reports now have friendlier messages for when there is nothing to report
+* generated reports now have friendlier messages for when there is nothing to
+  report
 * there is a Debian package
 
 
@@ -48,7 +63,7 @@ changes from 1.9.2 to 1.9.3
 changes from 1.9.1 to 1.9.2
 ---------------------------
 
-* complete reimiplementation of the html and http modules
+* complete reimplementation of the html and http modules
 * added https support
 * some spelling and typo fixes contributed by several people
 * site map now does a proper breadth first traversal of the site structure
@@ -92,25 +107,25 @@ b Fixed bug when server redirects to a document in robots.txt (does not show
   up as broken (hopefully))
 + Filename mangling in filelink.py to help OS/2 (and Win32) (Patch submitted
   by Steffen Siebert)
-+ Added WARN_OLD_VERSION config.py option.  If this option is set to true
-  (the default) Linbot will check it's version number and the version
-  numbers of it's plugins against a global registry on the Net.  If it
-  finds that a version is not the latest, it will print a warning on the
-  reports along with a link you can follow to download the latest version.
-  I think it's neat.  You might find it annoying.
++ Added WARN_OLD_VERSION config.py option. If this option is set to true (the
+  default) Linbot will check it's version number and the version numbers of
+  it's plugins against a global registry on the Net. If it finds that a
+  version is not the latest, it will print a warning on the reports along with
+  a link you can follow to download the latest version. I think it's neat. You
+  might find it annoying.
 + Added preliminary support for authenticating proxies, though it does not
   work correctly yet.
 + Added -r (redirect depth) and REDIRECT_DEPTH option in config.py to indicate
-  the amount of redirects Linbot should follow when following a link.  Thanks
+  the amount of redirects Linbot should follow when following a link. Thanks
   to Andrea Glorioso for the patch.
 + Added debugio module that handles debugging and I/O
-+ Added -q (quiet option).  Use it to suppress output
++ Added -q (quiet option). Use it to suppress output
 + Added -d (debug) option and DEBUG_LEVEL variable in config.py for debugging
 + added version module and removed __version__ and __author__ from all the
   modules (except plugins).
-b Fixed bug in Linbot using putrequest() instead of putheader() when requesting
-  header information.  Thanks to Andrea Glorioso for
-  fixing this glitch (and Seth Chaiklin for noticing).
+b Fixed bug in Linbot using putrequest() instead of putheader() when
+  requesting header information. Thanks to Andrea Glorioso for fixing this
+  glitch (and Seth Chaiklin for noticing).
 
 
 changes from 1.0b8 to 1.0b9
@@ -118,27 +133,27 @@ changes from 1.0b8 to 1.0b9
 
 + If you use the -o command-line option or the OUTPUT_DIR config file option
   and the directory does not exist, linbot will create it for you (provided
-  that it has the correct permissions, etc.)  Thanks to Andrea Glorioso
-  for this feature.
-+ Added a CREDITS file and probably left a lot of people out.  If you think
-  you should be in it let me know.
+  that it has the correct permissions, etc.). Thanks to Andrea Glorioso for
+  this feature.
++ Added a CREDITS file and probably left a lot of people out. If you think you
+  should be in it let me know.
 b Linbot will now report to the server that it can accept any MIME type (found
-  in mimetypes.py.  This should fix the "406: No acceptable objects found"
+  in mimetypes.py. This should fix the "406: No acceptable objects found"
   error that some servers report.
-b Linbot correctly identifies itself as "Linbot <version>" on HEAD requests
-  as well as GET requests.
+b Linbot correctly identifies itself as "Linbot <version>" on HEAD requests as
+  well as GET requests.
 
 
 changes from 1.0b6 to 1.0b8
 ---------------------------
 
-b Fixed bug when no images are reported for documents having 0 links
-  If you don't know what this means it probably wasn't a problem for you.
+b Fixed bug when no images are reported for documents having 0 links If you
+  don't know what this means it probably wasn't a problem for you.
 b Fixed code that was messing with arguments passed via -x and -y and caused
   unexpected results and/or errors.
 b -b flag should work this time (for real)
 b Cosmetic changes (reports didn't look the way I thought they should in IE4.
-  (and may not still as I havent' had a chance to check it yet)
+  (and may not still as I haven't had a chance to check it yet)
 b Linbot won't follow infinite redirects (currently hardcoded to max of 5
   redirects per document)
 
@@ -147,13 +162,13 @@ changes from 1.0b5 to 1.0b6
 ---------------------------
 
 + Minor change in ftplink.py should allow better ftp link checking
-+ You can now press CTRL-C (or whatever your operating system supports) to break
-  out of a linbot run.  However, the work linbot does is not saved (yet).
-b Fixed problem when server redirects a URL to itself.  This fix seems to work
-  for most servers I've tried but there are a few more out there that I need to
-  take a look at.
++ You can now press CTRL-C (or whatever your operating system supports) to
+  break out of a linbot run. However, the work linbot does is not saved (yet).
+b Fixed problem when server redirects a URL to itself. This fix seems to work
+  for most servers I've tried but there are a few more out there that I need
+  to take a look at.
 b Fixed bug that caused linbot to not check for yanked URLs
-+ Added -l command-line option.  Usage: -l <url> where <url> is a url pointing
++ Added -l command-line option. Usage: -l <url> where <url> is a url pointing
   to an image to be used as the report's logo.
 b "patched" strings.py so that it can better parse html files created in 
    Windows/DOS (I think).
@@ -161,27 +176,27 @@ b "patched" strings.py so that it can better parse html files created in
 + httplink does not HEAD a redirected URL if it is already in the link list
   (performance improvement)
 - Removed LOGO_ALT from config.py
-+ Changed my email address to marduk@python.net.  The official home page of
-  Linbot will probaby also change with the next release so stay tuned.
++ Changed my email address to marduk@python.net. The official home page of
+  Linbot will probably also change with the next release so stay tuned.
 
 
 changes from 1.0b4 to 1.0b5
 ---------------------------
 
-+ Added a contrib directory.  Right now it just contains the about plugin.  Other
-  plugins will be included if people contribute them.  Also, the man page will
-  return once I have updated it.  Those ugly buttons are obsolete.
-+ Linbot now "inlines" stylesheets.  This has the benefits of 1) better support
++ Added a contrib directory. Right now it just contains the about plugin.
+  Other plugins will be included if people contribute them. Also, the man page
+  will return once I have updated it. Those ugly buttons are obsolete.
++ Linbot now "inlines" stylesheets. This has the benefits of 1) better support
   of Netscape browsers (so I hear) and 2) I don't have to document to put
   linbot.css in the output directory since it grabs it from starship 8*)
-b Handling of error for when robots.txt cannot be retreived.
+b Handling of error for when robots.txt cannot be retrieved.
 + Malformed urls are trapped (sorry, I had that commented out)
-b FTP link handling is totally rewritten.  Fortunately it shouldn't crash anymore
-  Unfortunately it doesn't really work reliably and probably never will.  See
-  README.ftp for details.
+b FTP link handling is totally rewritten. Fortunately it shouldn't crash
+  anymore Unfortunately it doesn't really work reliably and probably never
+  will. See README.ftp for details.
 b Two bugs in HTTP proxy handling made it almost completely unusable, though
   conveniently seemed to cancel each other out when I was testing.
-b Too many files error on large sites should be fixed.  Thanks to Andrew Kuchling
-  et al for suggestions.
-b Bug when some servers erroneously report (or don't report) Content-Length header
-  fixed.
+b Too many files error on large sites should be fixed. Thanks to Andrew
+  Kuchling et al for suggestions.
+b Bug when some servers erroneously report (or don't report) Content-Length
+  header fixed.

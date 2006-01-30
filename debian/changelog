@@ -1,15 +1,29 @@
+webcheck (1.9.6) unstable; urgency=low
+
+  * SECURITY FIX: a cross-site scripting vulnerability with content in the
+                  tooltips of generated report was fixed by properly escaping
+                  all output
+  * urls are now url encoded into a consistent form, solving some problems
+    with urls with non-ascii characters
+  * no longer remove unreferenced redirects
+  * more debugging info in debug mode
+  * more fixes for escaping in generated reports and more support for sites
+    in different character sets
+
+ -- Arthur de Jong <adejong@debian.org>  Mon, 30 Jan 2006 17:00:00 +0100
+
 webcheck (1.9.5) unstable; urgency=low
 
   * initial (re)release of webcheck Debian package (closes: #326429)
   * this release should fix all open bugs on the time of the former webcheck
     page removal, except wishlist bugs #71419 (i18n) and #271085 (html
     validation), anyone interested can refile those bugs (preferably with
-    patches or some pointers on how to implemement the changes)
+    patches or some pointers on how to implement the changes)
   * /etc/webcheck is completely removed on upgrades since a site wide
     configuration file is no longer supported (webcheck is a user level tool
     that should not be configured site wide)
 
- -- Arthur de Jong <adejong@debian.org>  Fre, 30 Dec 2005 23:00:00 +0100
+ -- Arthur de Jong <adejong@debian.org>  Fri, 30 Dec 2005 23:00:00 +0100
 
 webcheck (1.0-10) unstable; urgency=low
 

@@ -1,3 +1,74 @@
+2006-01-29 22:39  arthur
+
+	* [r224] crawler.py: bugfix in matching url encoding
+
+2006-01-29 21:24  arthur
+
+	* [r223] crawler.py: actually decode urlencoded character as hex
+	  not decimal
+
+2006-01-29 20:50  arthur
+
+	* [r222] fancytooltips/fancytooltips.js: html escape all content
+	  that is retreived from attributes
+
+2006-01-29 20:48  arthur
+
+	* [r221] crawler.py, parsers/html.py: make sure all urls are
+	  consistently url encoded where it counts
+
+2006-01-29 20:15  arthur
+
+	* [r220] schemes/http.py: add some more debugging information
+	  (cache hit or miss)
+
+2006-01-29 20:14  arthur
+
+	* [r219] plugins/about.py: update copyright notice and indicate
+	  that we're using gpl2+
+
+2006-01-25 23:16  arthur
+
+	* [r218] parsers/html.py: fix typo (thanks Andrew Kim
+	  <Andrew.Kim@revolution.com>)
+
+2006-01-19 21:38  arthur
+
+	* [r217] plugins/__init__.py: ignore errors when converting to
+	  unicode string and uses system encoding instead of utf-8 as
+	  default
+
+2006-01-19 21:35  arthur
+
+	* [r216] plugins/__init__.py: also escape the url when generating
+	  links
+
+2006-01-19 20:46  arthur
+
+	* [r215] plugins/__init__.py: explictly convert strings to unicode
+	  to avoid potential problems with non-ascii charaters in strings
+
+2006-01-19 20:45  arthur
+
+	* [r214] parsers/html.py: quote links so that they do not contain
+	  any non-ascii characters to avoid problems later on (and add
+	  some more debugging)
+
+2006-01-19 20:32  arthur
+
+	* [r213] crawler.py: fix debug message to print url instead of
+	  object reference
+
+2006-01-15 08:44  arthur
+
+	* [r212] crawler.py: give some more debugging info while following
+	  base urls and no longer delete unreferenced followed links
+
+2005-12-30 22:33  arthur
+
+	* [r210] ChangeLog, NEWS, TODO, config.py, debian/changelog,
+	  webcheck.1: get files ready for 1.9.5 release
+
 2005-12-30 22:09  arthur
 
 	* [r209] crawler.py: fix copy-pasto from r204

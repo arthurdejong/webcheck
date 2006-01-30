@@ -1,6 +1,9 @@
 before next release
 -------------------
-* go over all FIXMEs in code
+* go over all FIXMEs in code (ftp)
+* check that sleep acutally sleeps for the advertised time
+* follow redirects (to a limit) of external sites
+* check that scheme names are clean so that we do not import strange python modules
 
 probably before 2.0 release
 ---------------------------
@@ -11,12 +14,10 @@ probably before 2.0 release
 * figure out if we need parents and pageparents
 * make configurable time-out when retrieving a document
 * support for mult-threading (use -t, --threads as option)
-* clean up printing of messages, especially needed for multi-threading
 * implement a fix for redirecting stdout and stderr to work properly
 * implement a maximum transfer size for downloading files and things over http
 * support ftp proxies
 * support proxying https traffic
-* check that scheme names are clean so that we do not import strange python modules
 
 wishlist
 --------
@@ -25,16 +26,13 @@ wishlist
 * new config file format (if we want a configfile at all)
 * cookies support (maybe)
 * integration with weblint
-* maybe combine with a logfile checker to also show number of hits per link
 * do form checking of crawled pages
 * do spelling checking of crawled pages
 * test w3c conformance of pages (already done a little)
-* maybe make broken links not clickable in report (configurable?)
 * maybe store crawled site's data in some format for later processing or continuing after interruption
 * add support for fetching gzipped content to improve performance
 * maybe do http pipelining
-* add a favicon to reports
-* follow redirects of external links
+* add a favicon to report
 * make error handling of HTMLParser more robust (maybe send a patch for html parser upstream)
 * maybe use this as a html parser: http://www.crummy.com/software/BeautifulSoup/examples.html
 * maybe have a way to output google sitemap files: http://www.google.com/webmasters/sitemaps/docs/en/protocol.html
@@ -51,6 +49,9 @@ wishlist
 * maybe implement news, nntp, gopher and telnet schemes (if there is anyone that wants them)
 * maybe add custom bullets in problem lists, depending on problem type
 * maybe make -b the default
-* maybe add copyright notice in generated files (that we don't claim copyright)
-* make a test site or test framework (this is a lot of work)
 * prompt for authentication (detecting realms)
+* present age for times long ago in a friendlier format (.. days ago, .. months ago, .. years ago)
+* maybe unescaped spaces aren't always a real problem (e.g. in mailto: urls)
+* give a warning when no encoding is specified, an error if non-ascii characters are used
+* maybe give a warning for urls that have non-ascii characters
+* maybe fetch and store desription and other meta information about page (keywords) (just like author)
