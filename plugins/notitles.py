@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,15 +26,17 @@
 
 __title__ = 'missing titles'
 __author__ = 'Arthur de Jong'
+__outputfile__ = 'notitles.html'
 
 import plugins
 
-def generate(fp,site):
+def generate(site):
     """Output the list of pages without a title to the given file descriptor."""
     # get all internal pages without a title
     links = filter(lambda a: a.ispage and a.isinternal and a.title is None, site.linkMap.values())
     links.sort(lambda a, b: cmp(a.url, b.url))
     # present results
+    fp = plugins.open_html(plugins.notitles, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
@@ -54,3 +56,4 @@ def generate(fp,site):
         link.add_pageproblem("missing title")
     fp.write(
       '   </ol>\n' )
+    plugins.close_html(fp)

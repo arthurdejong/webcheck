@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,11 +26,12 @@
 
 __title__ = 'problems by author'
 __author__ = 'Arthur de Jong'
+__outputfile__ = 'problems.html'
 
 import plugins
 import urllib
 
-def generate(fp,site):
+def generate(site):
     """Output the overview of problems to the given file descriptor."""
     # make a list of problems per author
     problem_db = {}
@@ -48,6 +49,7 @@ def generate(fp,site):
             problem_db[author].append(link)
         else:
             problem_db[author] = [link]
+    fp = plugins.open_html(plugins.problems, site)
     if not problem_db:
         fp.write(
           '   <p class="description">\n'
@@ -107,3 +109,4 @@ def generate(fp,site):
           '     </li>\n' )
     fp.write(
       '   </ul>\n' )
+    plugins.close_html(fp)

@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 __title__ = 'site map'
 __author__ = 'Arthur de Jong'
+__outputfile__ = 'index.html'
 
 import config
 import plugins
@@ -61,8 +62,9 @@ def _explore(fp, link, explored=None, depth=0, indent='    '):
             fp.write(indent+' </ul>\n')
     fp.write(indent+'</li>\n')
 
-def generate(fp,site):
+def generate(site):
     """Output the sitemap to the specified file descriptor."""
+    fp = plugins.open_html(plugins.sitemap, site)
     # output the site structure using breadth first traversal
     fp.write(
       '   <p class="description">\n'
@@ -72,3 +74,4 @@ def generate(fp,site):
     _explore(fp,site.linkMap[site.base])
     fp.write(
       '   </ul>\n' )
+    plugins.close_html(fp)

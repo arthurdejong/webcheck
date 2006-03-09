@@ -1,7 +1,7 @@
 
 # urllist.py - plugin to generate a list of visited urls
 #
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,11 +24,13 @@
 
 __title__ = 'url list'
 __author__ = 'Arthur de Jong'
+__outputfile__ = 'urllist.html'
 
 import plugins
 
-def generate(fp,site):
+def generate(site):
     """Output a sorted list of urls to the specified file descriptor."""
+    fp = plugins.open_html(plugins.urllist, site)
     fp.write(
       '   <p class="description">\n'
       '    This is the list of all urls encountered during the examination of\n'
@@ -42,3 +44,4 @@ def generate(fp,site):
         fp.write('    <li>'+plugins.make_link(site.linkMap[url],url)+'</li>\n')
     fp.write(
       '   </ol>\n' )
+    plugins.close_html(fp)

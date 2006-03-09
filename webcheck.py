@@ -197,7 +197,7 @@ def main():
     # start with the frame-description page
     debugio.info('generating reports...')
     # for every plugin, generate a page
-    plugins.generate(site, config.PLUGINS)
+    plugins.generate(site)
     # put extra files in the output directory
     install_file('webcheck.css',True)
     install_file('fancytooltips/fancytooltips.js',True)

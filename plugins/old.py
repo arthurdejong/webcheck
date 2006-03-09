@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 __title__ = "what's old"
 __author__ = 'Arthur de Jong'
+__outputfile__ = 'old.html'
 
 import config
 import plugins
@@ -33,7 +34,7 @@ import time
 
 SECS_PER_DAY=60*60*24
 
-def generate(fp,site):
+def generate(site):
     """Output the list of outdated pages to the specified file descriptor."""
     # get all internal pages
     links = filter(lambda a: a.ispage and a.isinternal and a.mtime is not None, site.linkMap.values())
@@ -44,6 +45,7 @@ def generate(fp,site):
     # sort links
     links.sort(lambda a, b: cmp(a.mtime, b.mtime))
     # present results
+    fp = plugins.open_html(plugins.old, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
@@ -73,3 +75,4 @@ def generate(fp,site):
         link.add_pageproblem('this page is %d days old' % age)
     fp.write(
       '   </ul>\n' )
+    plugins.close_html(fp)

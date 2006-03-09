@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,11 +26,12 @@
 
 __title__ = 'images'
 __author__ = 'Arthur de Jong'
+__outputfile__ = 'images.html'
 
 import plugins
 import re
 
-def generate(fp,site):
+def generate(site):
     """Output a list of images to the given file descriptor."""
     # get all non-page links that have a mimetype
     links = filter(lambda a: not a.ispage and a.mimetype is not None, site.linkMap.values())
@@ -41,6 +42,7 @@ def generate(fp,site):
     # sort list
     links.sort(lambda a, b: cmp(a.url, b.url))
     # present results
+    fp = plugins.open_html(plugins.images, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
@@ -57,3 +59,4 @@ def generate(fp,site):
         fp.write('    <li>%s</li>\n' % plugins.make_link(link,link.url))
     fp.write(
       '   </ol>\n' )
+    plugins.close_html(fp)

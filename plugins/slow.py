@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 __title__ = "what's slow"
 __author__ = 'Arthur de Jong'
+__outputfile__ = 'slow.html'
 
 import config
 import plugins
@@ -44,7 +45,7 @@ def _getsize(link,done=[]):
         link.totalSize = size
     return link.totalSize
 
-def generate(fp,site):
+def generate(site):
     """Output the list of large pages to the given file descriptor."""
     # get all internal pages
     links = filter(lambda a: a.ispage and a.isinternal, site.linkMap.values())
@@ -53,6 +54,7 @@ def generate(fp,site):
     # sort links by size
     links.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
     # present results
+    fp = plugins.open_html(plugins.slow, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
@@ -80,3 +82,4 @@ def generate(fp,site):
         link.add_pageproblem('this page %sK' % str(link.totalSize/1024)) 
     fp.write(
       '   </ul>\n' )
+    plugins.close_html(fp)

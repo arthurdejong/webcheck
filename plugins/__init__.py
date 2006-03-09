@@ -195,72 +195,75 @@ def open_file(filename, istext=True):
                         'strerror': strerror })
         sys.exit(1)
 
-def print_navbar(fp, plugins, current):
-    """Return a html fragement representing the navigation bar for a page."""
+def _print_navbar(fp, plugin):
+    """Return an html fragement representing the navigation bar for a page."""
     fp.write('  <ul class="navbar">\n')
-    for p in plugins:
-        # if this is the first plugin, use index.html as filename
-        filename = p + '.html'
-        if p == plugins[0]:
-            filename = 'index.html'
+    for p in config.PLUGINS:
         # import the plugin
         report = __import__('plugins.' + p, globals(), locals(), [p])
         # generate a link to the plugin page
         selected = ''
-        if p == current:
+        if report == plugin:
             selected = ' class="selected"'
         fp.write(
           '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n'
-          % { 'pluginfile' : filename,
+          % { 'pluginfile' : report.__outputfile__,
               'selected'   : selected,
               'title'      : escape(report.__title__),
               'description': escape(report.__doc__) })
     fp.write('  </ul>\n')
 
-def generate(site, plugins):
+def open_html(plugin, site):
+    """Print an html fragment for the start of an html page."""
+    # open the file
+    fp = open_file(plugin.__outputfile__)
+    # write basic html head
+    # TODO: make it possible to use multiple stylesheets (possibly reference external stylesheets)
+    fp.write(
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+      '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n'
+      '<html xmlns="http://www.w3.org/1999/xhtml">\n'
+      ' <head>\n'
+      '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n'
+      '  <title>Webcheck report for %(sitetitle)s (%(plugintitle)s)</title>\n'
+      '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n'
+      '  <script language="javascript" type="text/javascript" src="fancytooltips.js"></script>\n'
+      '  <meta name="Generator" content="webcheck %(version)s" />\n'
+      ' </head>\n'
+      ' <body>\n'
+      '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n'
+      % { 'sitetitle':  escape(get_title(site.linkMap[site.base])),
+          'plugintitle': escape(plugin.__title__),
+          'siteurl':    site.base,
+          'version':    config.VERSION })
+    # write navigation bar
+    _print_navbar(fp, plugin)
+    # write plugin heading
+    fp.write('  <h2>%s</h2>\n' % escape(plugin.__title__))
+    # write plugin contents
+    fp.write('  <div class="content">\n')
+    return fp
+
+def close_html(fp):
+    """Print an html fragment as footer of an html page."""
+    fp.write('  </div>\n')
+    # write bottom of page
+    fp.write(
+      '  <p class="footer">\n'
+      '   Generated %(time)s by <a href="%(homepage)s">webcheck %(version)s</a>\n'
+      '  </p>\n'
+      ' </body>\n'
+      '</html>\n'
+      % { 'time':     escape(time.ctime(time.time())),
+          'homepage': config.HOMEPAGE,
+          'version':  escape(config.VERSION) })
+    fp.close()
+    
+def generate(site):
     """Generate pages for plugins."""
-    for p in plugins:
+    for p in config.PLUGINS:
         debugio.info('  ' + p)
-        # if this is the first plugin, use index.html as filename
-        filename = p + '.html'
-        if p == plugins[0]:
-            filename = 'index.html'
-        report = __import__('plugins.' + p, globals(), locals(), [p])
-        fp = open_file(filename)
-        # write basic html head
-        # TODO: make it possible to use multiple stylesheets (possibly reference external stylesheets)
-        fp.write(
-          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
-          '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n'
-          '<html xmlns="http://www.w3.org/1999/xhtml">\n'
-          ' <head>\n'
-          '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n'
-          '  <title>Webcheck report for %(sitetitle)s</title>\n'
-          '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n'
-          '  <script language="javascript" type="text/javascript" src="fancytooltips.js"></script>\n'
-          '  <meta name="Generator" content="webcheck %(version)s" />\n'
-          ' </head>\n'
-          ' <body>\n'
-          '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n'
-          % { 'sitetitle':  escape(get_title(site.linkMap[site.base])),
-              'siteurl':    site.base,
-              'version':    config.VERSION })
-        # write navigation bar
-        print_navbar(fp, plugins, p)
-        # write plugin heading
-        fp.write('  <h2>%s</h2>\n' % escape(report.__title__))
-        # write plugin contents
-        fp.write('  <div class="content">\n')
-        report.generate(fp,site)
-        fp.write('  </div>\n')
-        # write bottom of page
-        fp.write(
-          '  <p class="footer">\n'
-          '   Generated %(time)s by <a href="%(homepage)s">webcheck %(version)s</a>\n'
-          '  </p>\n'
-          ' </body>\n'
-          '</html>\n'
-          % { 'time':     escape(time.ctime(time.time())),
-              'homepage': config.HOMEPAGE,
-              'version':  escape(config.VERSION) })
-        fp.close()
+        # import the plugin
+        plugin = __import__('plugins.' + p, globals(), locals(), [p])
+        # run the plugin
+        plugin.generate(site)

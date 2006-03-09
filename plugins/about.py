@@ -26,13 +26,15 @@
 
 __title__ = 'about webcheck'
 __author__ = 'Arthur de Jong'
+__outputfile__ = 'about.html'
 
 import config
 import plugins
 import time
 
-def generate(fp,site):
+def generate(site):
     """Output a list of modules, it's authors and it's version to the file descriptor."""
+    fp = plugins.open_html(plugins.about, site)
     # TODO: xxx links were fetched, xxx pages were examined and a total of xxx notes and problems were found
     # TODO: include some runtime information (e.g. supported schemes, user configuration, etc)
     # output some general information about the report
@@ -104,3 +106,4 @@ def generate(fp,site):
         fp.write('    </li>\n')
     fp.write(
       '   </ul>\n' )
+    plugins.close_html(fp)
