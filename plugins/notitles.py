@@ -33,7 +33,7 @@ import plugins
 def generate(site):
     """Output the list of pages without a title to the given file descriptor."""
     # get all internal pages without a title
-    links = filter(lambda a: a.ispage and a.isinternal and a.title is None, site.linkMap.values())
+    links = filter(lambda a: a.ispage and a.isinternal and a.title is None or a.title == '', site.linkMap.values())
     links.sort(lambda a, b: cmp(a.url, b.url))
     # present results
     fp = plugins.open_html(plugins.notitles, site)

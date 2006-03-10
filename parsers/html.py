@@ -235,10 +235,10 @@ def parse(content, link):
     link.ispage = True
     # save the title
     if parser.title is not None:
-        link.title = _maketxt(parser.title, link.encoding)
+        link.title = _maketxt(parser.title, link.encoding).strip()
     # save the author
     if parser.author is not None:
-        link.author = _maketxt(parser.author, link.encoding)
+        link.author = _maketxt(parser.author, link.encoding).strip()
     # figure out the base of the document (for building the other urls)
     base = link.url
     if parser.base is not None:
