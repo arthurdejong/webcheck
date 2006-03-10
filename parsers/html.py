@@ -61,6 +61,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         self.author = None
         self.embedded = []
         self.children = []
+        self.anchors = []
         self.errmsg = None
         self.errcount = 0
         HTMLParser.HTMLParser.__init__(self)
@@ -76,11 +77,11 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             msg += ', column %d' % (offset + 1)
         return msg
 
-    def _cleanurl(self, url):
+    def _cleanurl(self, url, what="link"):
         """Do some translations of url."""
         # check for spaces in urls (characters are escaped in crawler._urlclean())
         if _spacepattern.search(url):
-            self.link.add_pageproblem('link contains unescaped spaces: ' + url + ', ' + self._location())
+            self.link.add_pageproblem(what + ' contains unescaped spaces: ' + url + ', ' + self._location())
         # replace &#nnn; entity refs with proper characters
         for charEntity in _charentitypattern.findall(url):
             url = url.replace(charEntity,chr(int(charEntity[2:-1])))
@@ -120,7 +121,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         elif tag == "link" and attrs.has_key("rel") and attrs.has_key("href"):
             if attrs["rel"].lower() in ("stylesheet", "alternate stylesheet", "icon", "shortcut icon"):
                 self.embedded.append(self._cleanurl(attrs["href"]))
-        # <meta name="author" content="...">
+        # <meta name="author" content="Arthur de Jong">
         elif tag == "meta" and attrs.has_key("name") and attrs.has_key("content") and attrs["name"].lower() == "author":
             if self.author is None:
                 self.author = attrs["content"]
@@ -140,6 +141,17 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # <a href="url">
         elif tag == "a" and attrs.has_key("href"):
             self.children.append(self._cleanurl(attrs["href"]))
+        # <a name="#anchor">
+        elif tag == "a" and attrs.has_key("name"):
+            anchor = self._cleanurl(attrs['name'],'anchor')
+            debugio.debug("anchor="+anchor)
+            if anchor in self.anchors:
+                self.link.add_pageproblem(
+                  'anchor "%(anchor)s" defined again %(location)s'
+                  % { 'anchor':   anchor,
+                      'location': self._location() })
+            else:
+                self.anchors.append(anchor)
         # <frameset><frame src="url"...>...</frameset>
         elif tag == "frame" and attrs.has_key("src"):
             self.embedded.append(self._cleanurl(attrs["src"]))
@@ -222,7 +234,7 @@ def parse(content, link):
     try:
         parser.feed(content)
         parser.close()
-    except Exception, e:
+    except IOError, e:
         # ignore (but log) all errors
         debugio.debug("parsers.html.parse(): caught exception: "+str(e))
     # check for parser errors
@@ -250,3 +262,7 @@ def parse(content, link):
     for child in parser.children:
         if child:
             link.add_child(urlparse.urljoin(base, child))
+    # list anchors
+    for anchor in parser.anchors:
+        if anchor:
+            link.add_anchor(anchor)

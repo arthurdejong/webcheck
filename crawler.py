@@ -43,6 +43,9 @@ _spacepattern = re.compile(" ")
 # pattern for matching url encoded characters
 _urlencpattern = re.compile('(%[0-9a-fA-F]{2})' ,re.IGNORECASE)
 
+# pattern to match anchor part of a url
+_anchorpattern = re.compile('#([^#]+)$')
+
 # characters that should not be escaped in urls
 _reservedurlchars = ';/?:@&=+$,%#'
 _okurlchars = '-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~'
@@ -57,7 +60,7 @@ def _urlclean(url):
     # url encode any nonprintable or problematic characters (but not reserved chars)
     url = ''.join(map(lambda x: (x not in _reservedurlchars and x not in _okurlchars) and ('%%%02X' % ord(x)) or x, url))
     # split the url in useful parts (discarding fragment)
-    (scheme, netloc, path, query) = urlparse.urlsplit(url)[0:4]
+    (scheme, netloc, path, query, anchor) = urlparse.urlsplit(url)
     if ( scheme == "http" or scheme == "https" or scheme == "ftp" ):
         # http(s) urls should have a non-empty path
         if path == "":
@@ -98,7 +101,7 @@ class Site:
         # a map of urls to Link objects
         self.linkMap = {}
 
-    def add_internal(self,url):
+    def add_internal(self, url):
         """Add the given url and consider all urls below it to be internal.
         These links are all marked for checking with the crawl() function."""
         url=_urlclean(url)
@@ -198,7 +201,7 @@ class Site:
         # fall back to allowing the url
         return False
 
-    def _get_link(self,url):
+    def _get_link(self, url):
         """Return a link object for the given url.
         This function checks the map of cached link objects for an
         instance."""
@@ -294,6 +297,8 @@ class Link:
       pagechildren - list of child pages, including children of embedded
                      elements
       embedded   - list of links to embeded content
+      anchors    - list of anchors defined on the page
+      reqanchors - list of anchors requesten for this page anchor->link*
       depth      - the number of clicks from the base urls this page to
                    find
       isinternal - whether the link is considered to be internal
@@ -338,6 +343,8 @@ class Link:
         self.children = []
         self.pagechildren = None
         self.embedded = []
+        self.anchors = []
+        self.reqanchors = {}
         self.depth = None
         self.isfetched = False
         self.ispage = False
@@ -359,6 +366,16 @@ class Link:
             self.add_pageproblem('link contains unescaped spaces: %s' % url)
             # replace spaces by %20
             url=_spacepattern.sub("%20",url)
+        # find anchor part
+        try:
+            # get the anchor
+            anchor = _anchorpattern.search(url).group(1)
+            # get link for url we link to
+            child = self.site._get_link(url)
+            # store anchor
+            child.add_reqanchor(self, anchor)
+        except AttributeError:
+            pass
         return url
 
     def add_child(self, child):
@@ -391,6 +408,24 @@ class Link:
         # add self to parents of embed
         if self not in link.parents:
             link.parents.append(self)
+
+    def add_anchor(self, anchor):
+        """Indicate that this page contains the specified anchor."""
+        if anchor in self.anchors:
+            self.add_pageproblem(
+              'anchor "%(anchor)s" defined multiple times'
+              % { 'anchor':   anchor })
+        else:
+            self.anchors.append(anchor)
+
+    def add_reqanchor(self, parent, anchor):
+        """Indicate that the specified link contains a reference to the
+        specified anchor. This can be cheched later."""
+        if anchor in self.reqanchors:
+            if parent not in self.reqanchors[anchor]:
+                self.reqanchors[anchor].append(parent)
+        else:
+            self.reqanchors[anchor] = [parent]
 
     def redirect(self, url):
         """Indicate that this link redirects to the specified url. Maximum

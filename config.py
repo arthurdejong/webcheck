@@ -58,7 +58,8 @@ WAIT_BETWEEN_REQUESTS = 0
 REDIRECT_DEPTH = 5
 
 # The list of plugins that will be used to generate the report.
-PLUGINS = ["sitemap",
+PLUGINS = ["anchors",
+           "sitemap",
            "urllist",
            "images",
            "external",
