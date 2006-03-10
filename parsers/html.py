@@ -234,7 +234,7 @@ def parse(content, link):
     try:
         parser.feed(content)
         parser.close()
-    except IOError, e:
+    except Exception, e:
         # ignore (but log) all errors
         debugio.debug("parsers.html.parse(): caught exception: "+str(e))
     # check for parser errors
