@@ -201,6 +201,9 @@ def _print_navbar(fp, plugin):
     for p in config.PLUGINS:
         # import the plugin
         report = __import__('plugins.' + p, globals(), locals(), [p])
+        # skip if no outputfile
+        if not hasattr(report, '__outputfile__'):
+            continue
         # generate a link to the plugin page
         selected = ''
         if report == plugin:
