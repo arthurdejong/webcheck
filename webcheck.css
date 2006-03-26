@@ -118,15 +118,17 @@ ul.navbar a:hover {
 
 .internal {
   background: #fff2f2;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
+  border: thin solid #f8eaea;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
 }
 
 .external {
   font-style: italic;
   background: #f2f5ff;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
+  border: thin solid #eaedf8;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
 }
 
 .problems {
