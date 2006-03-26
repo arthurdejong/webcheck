@@ -43,6 +43,7 @@ def generate(site):
           '   <p class="description">'
           '    No external links were found on the website.'
           '   </p>\n' )
+        plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">'

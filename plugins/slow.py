@@ -61,6 +61,7 @@ def generate(site):
           '    No pages over %(size)sK were found.\n'
           '   </p>\n'
           % { 'size': config.REPORT_SLOW_URL_SIZE })
+        plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'

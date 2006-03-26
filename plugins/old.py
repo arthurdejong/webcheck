@@ -52,6 +52,7 @@ def generate(site):
           '    No pages were found that were older than %(old)d days old.\n'
           '   </p>\n'
           % { 'old': config.REPORT_WHATSOLD_URL_AGE })
+        plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'

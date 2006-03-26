@@ -55,6 +55,7 @@ def generate(site):
           '   <p class="description">\n'
           '    No problems were found on this site, hurray.\n'
           '   </p>\n' )
+        plugins.close_html(fp)
         return
     # print description
     fp.write(

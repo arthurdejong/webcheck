@@ -45,6 +45,7 @@ def generate(site):
           '    There were no problems retrieving links from the website.\n'
           '   </p>\n'
           '   <ol>\n' )
+        plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'

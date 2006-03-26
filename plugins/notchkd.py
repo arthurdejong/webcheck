@@ -42,6 +42,7 @@ def generate(site):
           '   <p class="description">\n'
           '    All links have been checked.\n'
           '   </p>\n' )
+        plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'

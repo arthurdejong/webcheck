@@ -42,6 +42,7 @@ def generate(site):
           '   <p class="description">\n'
           '    All pages had a title specified.\n'
           '   </p>\n' )
+        plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'

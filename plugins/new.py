@@ -52,6 +52,7 @@ def generate(site):
           '    No pages were found that were modified within the last %(new)d days.\n'
           '   </p>\n'
           % { 'new': config.REPORT_WHATSNEW_URL_AGE })
+        plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'

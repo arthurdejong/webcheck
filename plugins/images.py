@@ -49,6 +49,7 @@ def generate(site):
           '    No images were linked on the website.\n'
           '   </p>\n'
           '   <ol>\n' )
+        plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
