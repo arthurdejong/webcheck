@@ -28,6 +28,7 @@ import HTMLParser
 import urlparse
 import urllib
 import re
+import crawler
 
 # the list of mimetypes this module should be able to handle
 mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
@@ -85,7 +86,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # replace &#nnn; entity refs with proper characters
         for charEntity in _charentitypattern.findall(url):
             url = url.replace(charEntity,chr(int(charEntity[2:-1])))
-        return url
+        return crawler.urlescape(url)
 
     def error(self, message):
         """Override superclass' error() method to ignore errors."""
@@ -144,7 +145,6 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # <a name="#anchor">
         elif tag == "a" and attrs.has_key("name"):
             anchor = self._cleanurl(attrs['name'],'anchor')
-            debugio.debug("anchor="+anchor)
             if anchor in self.anchors:
                 self.link.add_pageproblem(
                   'anchor "%(anchor)s" defined again %(location)s'

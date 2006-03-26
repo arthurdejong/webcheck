@@ -50,8 +50,8 @@ _anchorpattern = re.compile('#([^#]+)$')
 _reservedurlchars = ';/?:@&=+$,%#'
 _okurlchars = '-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~'
 
-def _urlclean(url):
-    """Clean the url of uneccesary parts."""
+def urlescape(url):
+    """Ensure that escaping in the url is consistent."""
     # url decode any printable normal characters except reserved characters with special meanings in urls
     for c in _urlencpattern.findall(url):
         r = chr(int(c[1:3],16))
@@ -59,7 +59,13 @@ def _urlclean(url):
             url = url.replace(c, r)
     # url encode any nonprintable or problematic characters (but not reserved chars)
     url = ''.join(map(lambda x: (x not in _reservedurlchars and x not in _okurlchars) and ('%%%02X' % ord(x)) or x, url))
-    # split the url in useful parts (discarding fragment)
+    return url
+
+def _urlclean(url):
+    """Clean the url of uneccesary parts."""
+    # make escaping consistent
+    url = urlescape(url)
+    # split the url in useful parts
     (scheme, netloc, path, query, anchor) = urlparse.urlsplit(url)
     if ( scheme == "http" or scheme == "https" or scheme == "ftp" ):
         # http(s) urls should have a non-empty path
@@ -73,7 +79,7 @@ def _urlclean(url):
             netloc = netloc[:-1]
         if userpass is not None:
             netloc = userpass+"@"+netloc
-    # put the url back together again
+    # put the url back together again (discarding fragment)
     return urlparse.urlunsplit((scheme, netloc, path, query, ""))
 
 class Site:
@@ -411,6 +417,7 @@ class Link:
 
     def add_anchor(self, anchor):
         """Indicate that this page contains the specified anchor."""
+        debugio.debug('crawler.link.add_anchor() found anchor '+anchor+' for '+self.url) 
         if anchor in self.anchors:
             self.add_pageproblem(
               'anchor "%(anchor)s" defined multiple times'
@@ -421,6 +428,7 @@ class Link:
     def add_reqanchor(self, parent, anchor):
         """Indicate that the specified link contains a reference to the
         specified anchor. This can be cheched later."""
+        debugio.debug('crawler.link.add_reqanchor() requested anchor '+anchor+' for '+self.url) 
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:
                 self.reqanchors[anchor].append(parent)
