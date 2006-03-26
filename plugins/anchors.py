@@ -20,7 +20,7 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
-"""Present a listing of links that point to non-existent pages."""
+"""Find references to undefined anchors."""
 
 __title__ = 'missing anchors'
 __author__ = 'Arthur de Jong'
@@ -28,19 +28,19 @@ __author__ = 'Arthur de Jong'
 import config
 import plugins
 
-def _checkforanchors(link):
-    """Check if all the requested anchors of the specified link
-    are..."""
-
 def generate(site):
     """Present the list of bad links to the given file descriptor."""
     # find all links with requested anchors
-    links = filter(lambda a: len(a.reqanchors)>0, site.linkMap.values())
+    links = filter(lambda a: len(a.reqanchors)>0 and a.isfetched,
+                   site.linkMap.values())
     # go over list and find missing anchors
     for link in links:
+        # check all requested anchors
         for anchor in link.reqanchors:
+            # if the anchor is there there is no prolem
             if anchor in link.anchors:
                 continue
+            # report problem
             for parent in link.reqanchors[anchor]:
                 parent.add_pageproblem(
                   'reference to underfined anchor "%(anchor)s"'
