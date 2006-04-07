@@ -211,10 +211,13 @@ def _maketxt(txt, encoding):
     conversions and replacing html entities with normal characters."""
     import htmlentitydefs
     # convert string to unicode
-    if encoding:
-        # convert using given encoding
+    # TODO: check for encoding errors (first try unicode() function with strict)
+    try:
         txt = unicode(txt, encoding, 'replace')
-    else:
+    except (LookupError, TypeError), e:
+        if encoding:
+            debugio.warn('page has %s' % str(e))
+            # TODO: log unknown encoding problem as page problem
         # fall back to locale's encoding
         txt = unicode(txt, errors='replace')
     # replace &#nnn; entity refs with proper characters
