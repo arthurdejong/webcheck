@@ -46,6 +46,10 @@ AVOID_EXTERNAL_LINKS = False
 # The proxy configuration.
 PROXIES = urllib.getproxies_environment()
 
+# IO timeout as passed to socket.setdefaulttimeout()
+# value is a float in seconds None disables the timeout
+IOTIMEOUT = 10.0
+
 # Output directory. This is the state of the -o command line option.
 OUTPUT_DIR = "."
 

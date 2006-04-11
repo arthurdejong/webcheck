@@ -39,6 +39,9 @@ import re
 # pattern for extracting character set information from content-type header
 _charsetpattern = re.compile('charset=([^ ]*)', re.I)
 
+# set socket timeout to configured value
+socket.setdefaulttimeout(config.IOTIMEOUT)
+
 def fetch(link, acceptedtypes):
     """Open connection to url and report information given by GET command."""
     # TODO: HTTP connection pooling?
