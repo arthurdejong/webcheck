@@ -67,7 +67,7 @@ PLUGINS = ["anchors",
            "badlinks",
            "old",
            "new",
-           "slow",
+           "size",
            "notitles",
            "problems",
            "about"]

@@ -1,5 +1,5 @@
 
-# slow.py - plugin that lists pages that could be slow to load
+# size.py - plugin that lists pages that could be slow to load
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
@@ -24,18 +24,18 @@
 
 """Present a list of pages that are large and probably slow to download."""
 
-__title__ = "what's slow"
+__title__ = "what's big"
 __author__ = 'Arthur de Jong'
-__outputfile__ = 'slow.html'
+__outputfile__ = 'size.html'
 
 import config
 import plugins
 
-def _getsize(link,done=[]):
+def _getsize(link, done=[]):
     """Return the size of the link and all its embedded links, counting each
     link only once."""
     done.append(link)
-    if not hasattr(link,"totalSize"):
+    if not hasattr(link, "totalSize"):
         size = 0
         if link.size is not None:
             size = link.size
@@ -54,7 +54,7 @@ def generate(site):
     # sort links by size
     links.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
     # present results
-    fp = plugins.open_html(plugins.slow, site)
+    fp = plugins.open_html(plugins.size, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
@@ -71,16 +71,19 @@ def generate(site):
       '   <ul>\n'
       % { 'size': config.REPORT_SLOW_URL_SIZE })
     for link in links:
+        size = plugins.get_size(link.totalSize)
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
           '     <ul class="problem">\n'
-          '      <li>size: %(size)sK</li>\n'
+          '      <li>size: %(size)s</li>\n'
           '     </ul>\n'
           '    </li>\n'
           % { 'link': plugins.make_link(link),
-              'size': str(link.totalSize/1024) })
-        link.add_pageproblem('this page %sK' % str(link.totalSize/1024)) 
+              'size': size })
+        link.add_pageproblem(
+          'this page and its components is %(size)s' 
+          % { 'size': size })
     fp.write(
       '   </ul>\n' )
     plugins.close_html(fp)
