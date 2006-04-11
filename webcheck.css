@@ -118,7 +118,6 @@ ul.navbar a:hover {
 
 .internal {
   background: #fff2f2;
-  border: thin solid #f8eaea;
   border-radius: 3px;
   -moz-border-radius: 3px;
 }
@@ -126,7 +125,6 @@ ul.navbar a:hover {
 .external {
   font-style: italic;
   background: #f2f5ff;
-  border: thin solid #eaedf8;
   border-radius: 3px;
   -moz-border-radius: 3px;
 }
