@@ -64,7 +64,7 @@ def generate(site):
         for problem in link.linkproblems:
             fp.write(
               '      <li>%(problem)s</li>\n'
-              % { 'problem':  plugins.escape(problem) })
+              % { 'problem':  plugins.htmlescape(problem) })
         fp.write(
           '     </ul>\n')
         # present a list of parents

@@ -49,7 +49,7 @@ import debugio
 import config
 import time
 
-def escape(txt, inattr=False):
+def htmlescape(txt, inattr=False):
     """HTML escape the given string and return an ASCII clean string with
     known entities and character entities for the other values."""
     import htmlentitydefs
@@ -157,7 +157,7 @@ def make_link(link, title=None):
     if config.REPORT_LINKS_IN_NEW_WINDOW:
         target = 'target="_blank" '
     # gather some information about the link to report
-    return '<a href="'+escape(link.url, True)+'" '+target+'class="'+cssclass+'" title="'+escape(get_info(link), True)+'">'+escape(title)+'</a>'
+    return '<a href="'+htmlescape(link.url, True)+'" '+target+'class="'+cssclass+'" title="'+htmlescape(get_info(link), True)+'">'+htmlescape(title)+'</a>'
 
 def print_parents(fp, link, indent='     '):
     """Write a list of parents to the output file descriptor.

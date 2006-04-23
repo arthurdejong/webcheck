@@ -73,7 +73,7 @@ def generate(site):
             fp.write(
               '    <li><a href="#%(authorref)s">Author: %(author)s</a></li>\n'
               % { 'authorref': urllib.quote(author,''),
-                  'author':    plugins.escape(author) })
+                  'author':    plugins.htmlescape(author) })
         fp.write('   </ul>\n')
     # generate problem report
     fp.write('   <ul>\n')
@@ -83,7 +83,7 @@ def generate(site):
           '      <a name="%(authorref)s">Author: %(author)s</a>\n'
           '      <ul>\n'
           % { 'authorref': urllib.quote(author,''),
-              'author':    plugins.escape(author) })
+              'author':    plugins.htmlescape(author) })
         # sort pages by url
         problem_db[author].sort(lambda a, b: cmp(a.url, b.url))
         # list problems for this author
@@ -100,7 +100,7 @@ def generate(site):
             for problem in link.pageproblems:
                 fp.write(
                   '      <li>%(problem)s</li>\n'
-                  % { 'problem':  plugins.escape(problem) })
+                  % { 'problem':  plugins.htmlescape(problem) })
             # end the list item
             fp.write(
               '     </ul>\n'

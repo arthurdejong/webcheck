@@ -53,8 +53,8 @@ def generate(site):
       '    This report was generated on %(time)s, a total of %(numurls)d\n'
       '    links were found.\n'
       '   </p>\n\n'
-      % { 'version':  plugins.escape(config.VERSION),
-          'time':     plugins.escape(time.ctime(time.time())),
+      % { 'version':  plugins.htmlescape(config.VERSION),
+          'time':     plugins.htmlescape(time.ctime(time.time())),
           'numurls':  len(site.linkMap),
           'homepage': config.HOMEPAGE } )
     # output copyright information
@@ -102,9 +102,9 @@ def generate(site):
         fp.write(
           '    <li>\n'
           '     <strong>%s</strong><br />\n'
-          % plugins.escape(report.__title__) )
+          % plugins.htmlescape(report.__title__) )
         if hasattr(report, '__doc__'):
-            fp.write('     %s<br />\n' % plugins.escape(report.__doc__))
+            fp.write('     %s<br />\n' % plugins.htmlescape(report.__doc__))
         fp.write('    </li>\n')
     fp.write(
       '   </ul>\n' )
