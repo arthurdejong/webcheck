@@ -55,3 +55,4 @@ wishlist
 * give a warning when no encoding is specified, an error if non-ascii characters are used
 * maybe give a warning for urls that have non-ascii characters
 * maybe fetch and store desription and other meta information about page (keywords) (just like author)
+* make it possible to use multiple stylesheets (possibly reference external stylesheets)

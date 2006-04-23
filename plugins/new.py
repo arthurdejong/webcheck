@@ -32,16 +32,19 @@ import config
 import plugins
 import time
 
-SECS_PER_DAY=60*60*24
+SECS_PER_DAY = 60*60*24
 
 def generate(site):
     """Output the list of recently modified pages to the specified file descriptor."""
-    # get all internal pages
-    links = filter(lambda a: a.ispage and a.isinternal and a.mtime is not None, site.linkMap.values())
     # the time for which links are considered new
     newtime = time.time()-SECS_PER_DAY*config.REPORT_WHATSNEW_URL_AGE
-    # get new links
-    links = filter(lambda a: a.mtime > newtime, links)
+    # get all internal pages that are new
+    links = [ x
+              for x in site.linkMap.values()
+              if x.ispage and
+                 x.isinternal and
+                 x.mtime is not None and
+                 x.mtime > newtime ]
     # sort links
     links.sort(lambda a, b: cmp(b.mtime, a.mtime))
     # present results

@@ -38,10 +38,10 @@ def generate(site):
       '    non-examined urls.\n'
       '   </p>\n'
       '   <ol>\n' )
-    urls=site.linkMap.keys()
+    urls = site.linkMap.keys()
     urls.sort()
     for url in urls:
-        fp.write('    <li>'+plugins.make_link(site.linkMap[url],url)+'</li>\n')
+        fp.write('    <li>'+plugins.make_link(site.linkMap[url], url)+'</li>\n')
     fp.write(
       '   </ol>\n' )
     plugins.close_html(fp)

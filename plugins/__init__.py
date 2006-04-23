@@ -22,9 +22,29 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
+"""This package groups all the plugins.
+
+When generating the report each plugin is called in turn with
+the generate() function. Each plugin should export the following
+fields:
+
+    generate(site)
+        Based on the site generate all the output files as needed.
+    __title__
+        A short description of the plugin that is used when linking
+        to the output from the plugin.
+    __author__
+        The author(s) of the plugin.
+    __outputfile__
+        The file the plugin generates (for linking to).
+    docstring
+        The docstring is used as description of the plugin in the
+        report.
+
+Pluings can use the functions exported by this module."""
+
 import sys
 import urllib
-import string
 import debugio
 import config
 import time
@@ -64,10 +84,11 @@ def get_title(link):
 def _floatformat(f):
     """Return a float as a string while trying to keep it within three
     characters."""
-    r = '%.1f' % f
-    if len(r) > 3:
-        r = r[:r.find('.')]
-    return r
+    txt = '%.1f' % f
+    # remove period from too long strings
+    if len(txt) > 3:
+        txt = txt[:txt.find('.')]
+    return txt
 
 def get_size(i):
     """Return the size in bytes as a readble string."""
@@ -122,24 +143,25 @@ def get_info(link):
     # trim trailing newline
     return info.strip()
 
-def make_link(link,title=None):
+def make_link(link, title=None):
     """Return an <a>nchor to a url with title. If url is in the Linklist and
     is external, insert "class=external" in the <a> tag."""
     # try to fetch the link object for this url
     if link.isinternal:
-        cssclass='internal'
+        cssclass = 'internal'
     else:
-        cssclass='external'
+        cssclass = 'external'
     if title is None:
-        title=get_title(link)
-    target=''
+        title = get_title(link)
+    target = ''
     if config.REPORT_LINKS_IN_NEW_WINDOW:
-        target='target="_blank" '
+        target = 'target="_blank" '
     # gather some information about the link to report
-    return '<a href="'+escape(link.url, True)+'" '+target+'class="'+cssclass+'" title="'+escape(get_info(link),True)+'">'+escape(title)+'</a>'
+    return '<a href="'+escape(link.url, True)+'" '+target+'class="'+cssclass+'" title="'+escape(get_info(link), True)+'">'+escape(title)+'</a>'
 
-def print_parents(fp,link,indent='     '):
-    # present a list of parents
+def print_parents(fp, link, indent='     '):
+    """Write a list of parents to the output file descriptor.
+    The output is indeted with the specified indent."""
     parents = link.parents
     # if there are no parents print nothing
     if len(parents) == 0:
@@ -173,14 +195,14 @@ def open_file(filename, istext=True):
                             'strerror': strerror })
             sys.exit(1)
     # build the output file name
-    fname = os.path.join(config.OUTPUT_DIR,filename)
+    fname = os.path.join(config.OUTPUT_DIR, filename)
     # check if file exists and ask to overwrite
     if os.path.exists(fname) and not config.OVERWRITE_FILES:
-        ow = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
-        ow = ow.lower() + " "
-        if ow[0] == 'a':
+        res = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
+        res = res.lower() + ' '
+        if res[0] == 'a':
             config.OVERWRITE_FILES = True
-        elif ow[0] != 'y':
+        elif res[0] != 'y':
             print 'Aborted.'
             sys.exit(1)
     # open the file for writing
@@ -221,7 +243,6 @@ def open_html(plugin, site):
     # open the file
     fp = open_file(plugin.__outputfile__)
     # write basic html head
-    # TODO: make it possible to use multiple stylesheets (possibly reference external stylesheets)
     fp.write(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
       '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n'
@@ -261,7 +282,7 @@ def close_html(fp):
           'homepage': config.HOMEPAGE,
           'version':  escape(config.VERSION) })
     fp.close()
-    
+
 def generate(site):
     """Generate pages for plugins."""
     for p in config.PLUGINS:

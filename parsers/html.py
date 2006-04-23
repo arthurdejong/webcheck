@@ -22,11 +22,9 @@
 
 """Parser functions for processing HTML content."""
 
-import config
 import debugio
 import HTMLParser
 import urlparse
-import urllib
 import re
 import crawler
 
@@ -34,13 +32,13 @@ import crawler
 mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 
 # pattern for matching numeric html entities
-_charentitypattern = re.compile('&#[0-9]{1,3};')
+_charentitypattern = re.compile('&#([0-9]{1,3});')
 
 # pattern for matching all html entities
 _entitypattern = re.compile('&[^ ;]+;')
 
 # pattern for matching spaces
-_spacepattern = re.compile(" ")
+_spacepattern = re.compile(' ')
 
 # pattern for matching charset declaration for http-equiv tag
 _charsetpattern = re.compile('charset=([^ ]*)', re.I)
@@ -78,14 +76,15 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             msg += ', column %d' % (offset + 1)
         return msg
 
-    def _cleanurl(self, url, what="link"):
+    def _cleanurl(self, url, what='link'):
         """Do some translations of url."""
-        # check for spaces in urls (characters are escaped in crawler._urlclean())
+        # check for spaces in urls
+        # (characters are escaped in crawler.urlescape())
         if _spacepattern.search(url):
-            self.link.add_pageproblem(what + ' contains unescaped spaces: ' + url + ', ' + self._location())
+            self.link.add_pageproblem(
+              what+' contains unescaped spaces: '+url+', '+self._location() )
         # replace &#nnn; entity refs with proper characters
-        for charEntity in _charentitypattern.findall(url):
-            url = url.replace(charEntity,chr(int(charEntity[2:-1])))
+        url = _charentitypattern.sub(lambda x:chr(int(x.group(1))), url)
         return crawler.urlescape(url)
 
     def error(self, message):
@@ -93,7 +92,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # construct error message
         message += ', ' + self._location()
         # store error message
-        debugio.debug("parsers.html._MyHTMLParser.error(): problem parsing html: "+message)
+        debugio.debug('parsers.html._MyHTMLParser.error(): problem parsing html: '+message)
         if self.errmsg is None:
             self.errmsg = message
         # increment error count
@@ -105,45 +104,46 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         """Override to catch assertion exception."""
         try:
             return HTMLParser.HTMLParser.check_for_whole_start_tag(self, i)
-        except AssertionError, e:
-            debugio.debug("parsers.html._MyHTMLParser.check_for_whole_start_tag(): caught assertion error")
+        except AssertionError:
+            debugio.debug('parsers.html._MyHTMLParser.check_for_whole_start_tag(): caught assertion error')
 
     def handle_starttag(self, tag, attrs):
         """Handle start tags in html."""
         # turn attrs into hash
-        attrs=dict(attrs)
-        # <title>content</title>
-        if tag == "title":
-            self.collect = ""
-        # <base href="url">
-        elif tag == "base" and attrs.has_key("href"):
-            self.base = self._cleanurl(attrs["href"])
-        # <link rel="type" href="url">
-        elif tag == "link" and attrs.has_key("rel") and attrs.has_key("href"):
-            if attrs["rel"].lower() in ("stylesheet", "alternate stylesheet", "icon", "shortcut icon"):
-                self.embedded.append(self._cleanurl(attrs["href"]))
-        # <meta name="author" content="Arthur de Jong">
-        elif tag == "meta" and attrs.has_key("name") and attrs.has_key("content") and attrs["name"].lower() == "author":
+        attrs = dict(attrs)
+        # <title>TITLE</title>
+        if tag == 'title':
+            self.collect = ''
+        # <base href="URL">
+        elif tag == 'base' and attrs.has_key('href'):
+            self.base = self._cleanurl(attrs['href'])
+        # <link rel="type" href="URL">
+        elif tag == 'link' and attrs.has_key('rel') and attrs.has_key('href'):
+            if attrs['rel'].lower() in ('stylesheet', 'alternate stylesheet', 'icon', 'shortcut icon'):
+                self.embedded.append(self._cleanurl(attrs['href']))
+        # <meta name="author" content="AUTHOR">
+        elif tag == 'meta' and attrs.has_key('name') and attrs.has_key('content') and attrs['name'].lower() == 'author':
             if self.author is None:
-                self.author = attrs["content"]
-        # <meta http-equiv="refresh" content="0;url=http://ch.tudelft.nl/~arthur/">
-        elif tag == "meta" and attrs.has_key("http-equiv") and attrs.has_key("content") and attrs["http-equiv"].lower() == "refresh":
+                self.author = attrs['content']
+        # <meta http-equiv="refresh" content="0;url=URL">
+        elif tag == 'meta' and attrs.has_key('http-equiv') and attrs.has_key('content') and attrs['http-equiv'].lower() == 'refresh':
             pass # TODO: implement
         # <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        elif tag == "meta" and attrs.has_key("http-equiv") and attrs.has_key("content") and attrs["http-equiv"].lower() == "content-type":
+        elif tag == 'meta' and attrs.has_key('http-equiv') and attrs.has_key('content') and attrs['http-equiv'].lower() == 'content-type':
             if self.link.encoding is None:
                 try:
-                    self.link.encoding = _charsetpattern.search(attrs["content"]).group(1)
+                    self.link.encoding = _charsetpattern.search(attrs['content']).group(1)
                 except AttributeError:
+                    # ignore cases where encoding is not set in header
                     pass
         # <img src="url">
-        elif tag == "img" and attrs.has_key("src"):
-            self.embedded.append(self._cleanurl(attrs["src"]))
+        elif tag == 'img' and attrs.has_key('src'):
+            self.embedded.append(self._cleanurl(attrs['src']))
         # <a href="url">
-        elif tag == "a" and attrs.has_key("href"):
-            self.children.append(self._cleanurl(attrs["href"]))
+        elif tag == 'a' and attrs.has_key('href'):
+            self.children.append(self._cleanurl(attrs['href']))
         # <a name="#anchor">
-        elif tag == "a" and attrs.has_key("name"):
+        elif tag == 'a' and attrs.has_key('name'):
             anchor = self._cleanurl(attrs['name'],'anchor')
             if anchor in self.anchors:
                 self.link.add_pageproblem(
@@ -153,24 +153,24 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             else:
                 self.anchors.append(anchor)
         # <frameset><frame src="url"...>...</frameset>
-        elif tag == "frame" and attrs.has_key("src"):
-            self.embedded.append(self._cleanurl(attrs["src"]))
+        elif tag == 'frame' and attrs.has_key('src'):
+            self.embedded.append(self._cleanurl(attrs['src']))
         # <map><area href="url"...>...</map>
-        elif tag == "area" and attrs.has_key("href"):
-            self.children.append(self._cleanurl(attrs["href"]))
+        elif tag == 'area' and attrs.has_key('href'):
+            self.children.append(self._cleanurl(attrs['href']))
         # <applet code="url"...>
-        elif tag == "applet" and attrs.has_key("code"):
-            self.embedded.append(self._cleanurl(attrs["code"]))
+        elif tag == 'applet' and attrs.has_key('code'):
+            self.embedded.append(self._cleanurl(attrs['code']))
         # <embed src="url"...>
-        elif tag == "embed" and attrs.has_key("src"):
-            self.embedded.append(self._cleanurl(attrs["src"]))
+        elif tag == 'embed' and attrs.has_key('src'):
+            self.embedded.append(self._cleanurl(attrs['src']))
         # <embed><param name="movie" value="url"></embed>
-        elif tag == "param" and attrs.has_key("name") and attrs.has_key("value"):
-            if attrs["name"].lower() == "movie":
-                self.embedded.append(self._cleanurl(attrs["value"]))
+        elif tag == 'param' and attrs.has_key('name') and attrs.has_key('value'):
+            if attrs['name'].lower() == 'movie':
+                self.embedded.append(self._cleanurl(attrs['value']))
         # <style>content</style>
-        elif tag == "style":
-            self.collect = ""
+        elif tag == 'style':
+            self.collect = ''
 
     def handle_endtag(self, tag):
         """Handle end tags in html."""
@@ -221,12 +221,13 @@ def _maketxt(txt, encoding):
         # fall back to locale's encoding
         txt = unicode(txt, errors='replace')
     # replace &#nnn; entity refs with proper characters
-    for charEntity in _charentitypattern.findall(txt):
-        txt = txt.replace(charEntity, unichr(int(charEntity[2:-1])))
+    txt = _charentitypattern.sub(lambda x:chr(int(x.group(1))), txt)
     # replace html entity refs with proper characters
     for entity in _entitypattern.findall(txt):
         if (htmlentitydefs.name2codepoint.has_key(entity[1:-1])):
-            txt = txt.replace(entity, unichr(htmlentitydefs.name2codepoint[entity[1:-1]]))
+            txt = txt.replace(
+                    entity,
+                    unichr(htmlentitydefs.name2codepoint[entity[1:-1]]) )
     return txt
 
 def parse(content, link):
@@ -239,13 +240,13 @@ def parse(content, link):
         parser.close()
     except Exception, e:
         # ignore (but log) all errors
-        debugio.debug("parsers.html.parse(): caught exception: "+str(e))
+        debugio.debug('parsers.html.parse(): caught exception: '+str(e))
     # check for parser errors
     if parser.errmsg is not None:
-        debugio.debug("parsers.html.parse(): problem parsing html: "+parser.errmsg)
+        debugio.debug('parsers.html.parse(): problem parsing html: '+parser.errmsg)
         link.add_pageproblem('problem parsing html: %s' % parser.errmsg)
     # dump encoding
-    debugio.debug("parsers.html.parse(): html encoding: %s" % str(link.encoding))
+    debugio.debug('parsers.html.parse(): html encoding: %s' % str(link.encoding))
     # flag that the link contains a valid page
     link.ispage = True
     # save the title

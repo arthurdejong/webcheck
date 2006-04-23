@@ -30,16 +30,15 @@ import urllib
 import mimetypes
 import ftplib
 import urlparse
-import string
 import debugio
 
 # FIXME: honor ftp proxy settings
 
 # TODO: figure out a nicer way to close the connections with something like:
 #try:
-#    debugio.debug("FTP: "+ftp.quit())
+#    debugio.debug('FTP: '+ftp.quit())
 #except:
-#    debugio.debug("FTP: "+ftp.close())
+#    debugio.debug('FTP: '+ftp.close())
 # TODO: handle some exceptions earlier or use different commands
 
 # a map of netlocs to ftp connections
@@ -56,7 +55,7 @@ def _getconnection(netloc):
         (user, passwd) = urllib.splitpasswd(userpass)
     else:
         (user, passwd) = ('anonymous', '')
-    (host, port) = urllib.splitnport(host,ftplib.FTP_PORT)
+    (host, port) = urllib.splitnport(host, ftplib.FTP_PORT)
     # initialize a new connection
     ftp = ftplib.FTP()
     debugio.debug('schemes.ftp._getconnection(): CONNECT: '+ftp.connect(host, port))
@@ -79,14 +78,14 @@ def _cwd(ftp, path):
         return None
     except ftplib.error_perm, e:
         debugio.debug('schemes.ftp._cwd(): CWD '+d+': '+str(e))
-        return string.join(dirs,'/')
+        return '/'.join(dirs)
 
 def _fetch_directory(link, ftp, acceptedtypes):
     """Handle the ftp directory."""
     # check that the url ends with a slash
     if link.path[-1:] != '/':
         debugio.debug('schemes.ftp._fetch_directory(): directory referenced without trailing slash')
-        link.redirect(urlparse.urljoin(link.url,link.path+'/'))
+        link.redirect(urlparse.urljoin(link.url, link.path+'/'))
         return
     # retreive the contents of the directory
     # FIXME: this raises an exception for empty directories, probably replace with own command
@@ -103,7 +102,7 @@ def _fetch_directory(link, ftp, acceptedtypes):
     debugio.debug('schemes.ftp._fetch_directory(): TYPE A: '+ftp.voidcmd('TYPE A'))
     # FIXME: this raises an exception for empty directories
     for f in contents:
-        link.add_child(urlparse.urljoin(link.url,urllib.quote(f)))
+        link.add_child(urlparse.urljoin(link.url, urllib.quote(f)))
 
 def _fetch_file(link, ftp, path, acceptedtypes):
     """Try to download the file in path that should be in the current
@@ -120,9 +119,9 @@ def _fetch_file(link, ftp, path, acceptedtypes):
         debugio.debug('schemes.ftp.fetch(): TYPE I: '+ftp.voidcmd('TYPE I'))
         (conn, size) = ftp.ntransfercmd('RETR ' + path)
         if size:
-           content = conn.makefile().read(size)
+            content = conn.makefile().read(size)
         else:
-           content = conn.makefile().read()
+            content = conn.makefile().read()
         debugio.debug('schemes.ftp.fetch(): fetched, size=%d' % len(content))
         return content
 
@@ -133,8 +132,8 @@ def fetch(link, acceptedtypes):
         ftp = _getconnection(link.netloc)
         debugio.debug('schemes.ftp.fetch(): CWD /: '+ftp.cwd('/'))
         # descend down the directory tree as far as we can go
-        path=urllib.unquote(link.path)
-        path=_cwd(ftp, path)
+        path = urllib.unquote(link.path)
+        path = _cwd(ftp, path)
         # check if we are dealing with an (exising) directory
         if path is None:
             return _fetch_directory(link, ftp, acceptedtypes)

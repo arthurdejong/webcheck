@@ -33,7 +33,9 @@ import plugins
 def generate(site):
     """Output the list of not checked pages to the given file descriptor."""
     # get all yanked urls
-    links = filter(lambda a: a.isyanked, site.linkMap.values())
+    links = [ x
+              for x in site.linkMap.values()
+              if x.isyanked ]
     links.sort(lambda a, b: cmp(a.url, b.url))
     # present results
     fp = plugins.open_html(plugins.notchkd, site)
@@ -54,9 +56,9 @@ def generate(site):
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
-          % { 'link': plugins.make_link(link,link.url) })
+          % { 'link': plugins.make_link(link, link.url) })
         # present a list of parents
-        plugins.print_parents(fp,link,'     ')
+        plugins.print_parents(fp, link, '     ')
         fp.write(
           '    </li>\n')
     fp.write(

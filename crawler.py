@@ -38,27 +38,34 @@ import re
 import time
 
 # pattern for matching spaces
-_spacepattern = re.compile(" ")
+_spacepattern = re.compile(' ')
 
 # pattern for matching url encoded characters
-_urlencpattern = re.compile('(%[0-9a-fA-F]{2})' ,re.IGNORECASE)
+_urlencpattern = re.compile('(%[0-9a-fA-F]{2})', re.IGNORECASE)
 
 # pattern to match anchor part of a url
 _anchorpattern = re.compile('#([^#]+)$')
 
 # characters that should not be escaped in urls
 _reservedurlchars = ';/?:@&=+$,%#'
-_okurlchars = '-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~'
+_okurlchars = '-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' \
+              '_abcdefghijklmnopqrstuvwxyz~'
 
 def urlescape(url):
     """Ensure that escaping in the url is consistent."""
-    # url decode any printable normal characters except reserved characters with special meanings in urls
+    # url decode any printable normal characters
+    # except reserved characters with special meanings in urls
     for c in _urlencpattern.findall(url):
-        r = chr(int(c[1:3],16))
+        r = chr(int(c[1:3], 16))
         if r in _okurlchars:
             url = url.replace(c, r)
-    # url encode any nonprintable or problematic characters (but not reserved chars)
-    url = ''.join(map(lambda x: (x not in _reservedurlchars and x not in _okurlchars) and ('%%%02X' % ord(x)) or x, url))
+    # url encode any nonprintable or problematic characters
+    # (but not reserved chars)
+    url = ''.join(
+      [ (x not in _reservedurlchars and
+         x not in _okurlchars) and ('%%%02X' % ord(x))
+        or x
+        for x in url ] )
     return url
 
 def _urlclean(url):
@@ -66,21 +73,21 @@ def _urlclean(url):
     # make escaping consistent
     url = urlescape(url)
     # split the url in useful parts
-    (scheme, netloc, path, query, anchor) = urlparse.urlsplit(url)
-    if ( scheme == "http" or scheme == "https" or scheme == "ftp" ):
+    (scheme, netloc, path, query) = urlparse.urlsplit(url)[:4]
+    if ( scheme == 'http' or scheme == 'https' or scheme == 'ftp' ):
         # http(s) urls should have a non-empty path
-        if path == "":
-            path="/"
+        if path == '':
+            path = '/'
         # make hostname lower case
         (userpass, hostport) = urllib.splituser(netloc)
-        netloc=hostport.lower()
+        netloc = hostport.lower()
         # trim trailing :
-        if netloc[-1:] == ":":
+        if netloc[-1:] == ':':
             netloc = netloc[:-1]
         if userpass is not None:
-            netloc = userpass+"@"+netloc
+            netloc = userpass+'@'+netloc
     # put the url back together again (discarding fragment)
-    return urlparse.urlunsplit((scheme, netloc, path, query, ""))
+    return urlparse.urlunsplit((scheme, netloc, path, query, ''))
 
 class Site:
     """Class to represent gathered data of a site.
@@ -106,36 +113,38 @@ class Site:
         self._robotparsers = {}
         # a map of urls to Link objects
         self.linkMap = {}
+        # base url that can be used as start of site
+        self.base = None
 
     def add_internal(self, url):
         """Add the given url and consider all urls below it to be internal.
         These links are all marked for checking with the crawl() function."""
-        url=_urlclean(url)
+        url = _urlclean(url)
         if url not in self._internal_urls:
             self._internal_urls.append(url)
 
-    def add_internal_re(self,exp):
+    def add_internal_re(self, exp):
         """Adds the gived regular expression as a pattern to match internal
         urls."""
-        self._internal_res.append(re.compile(exp,re.IGNORECASE))
+        self._internal_res.append(re.compile(exp, re.IGNORECASE))
 
-    def add_external_re(self,exp):
+    def add_external_re(self, exp):
         """Adds the gived regular expression as a pattern to match external
         urls."""
-        self._external_res.append(re.compile(exp,re.IGNORECASE))
+        self._external_res.append(re.compile(exp, re.IGNORECASE))
 
-    def add_yanked_re(self,exp):
+    def add_yanked_re(self, exp):
         """Adds the gived regular expression as a pattern to match urls that
         will not be checked at all."""
-        self._yanked_res.append(re.compile(exp,re.IGNORECASE))
+        self._yanked_res.append(re.compile(exp, re.IGNORECASE))
 
-    def _is_internal(self,link):
+    def _is_internal(self, link):
         """Check whether the specified url is external or internal.
         This uses the urls marked with add_internal() and the regular
         expressions passed with add_external_re()."""
         # check if it is internal through the regexps
-        for x in self._internal_res:
-            if x.search(link.url) is not None:
+        for regexp in self._internal_res:
+            if regexp.search(link.url) is not None:
                 return True
         res = False
         # check that the url starts with an internal url
@@ -157,44 +166,46 @@ class Site:
                 return False
         return True
 
-    def _get_robotparser(self,link):
+    def _get_robotparser(self, link):
         """Return the proper robots parser for the given url or None if one
         cannot be constructed. Robot parsers are cached per scheme and
         netloc."""
         # only some schemes have a meaningful robots.txt file
-        if link.scheme != "http" and link.scheme != "https":
-            debugio.debug("crawler._get_robotparser() called with unsupported scheme (%s)" % link.scheme)
+        if link.scheme != 'http' and link.scheme != 'https':
+            debugio.debug('crawler._get_robotparser() called with unsupported scheme (%s)' % link.scheme)
             return None
         # split out the key part of the url
-        location = urlparse.urlunsplit((link.scheme, link.netloc, "", "", ""))
+        location = urlparse.urlunsplit((link.scheme, link.netloc, '', '', ''))
         # try to create a new robotparser if we don't already have one
         if not self._robotparsers.has_key(location):
             import httplib
-            debugio.info("  getting robots.txt for %s" % location)
+            debugio.info('  getting robots.txt for %s' % location)
             self._robotparsers[location] = None
             try:
-                rp=robotparser.RobotFileParser()
-                rp.set_url(urlparse.urlunsplit((link.scheme, link.netloc, "/robots.txt", "", "")))
+                rp = robotparser.RobotFileParser()
+                rp.set_url(urlparse.urlunsplit(
+                  (link.scheme, link.netloc, '/robots.txt', '', '') ))
                 rp.read()
                 self._robotparsers[location] = rp
             except (TypeError, IOError, httplib.HTTPException):
+                # ignore any problems setting up robot parser
                 pass
         return self._robotparsers[location]
 
-    def _is_yanked(self,link):
+    def _is_yanked(self, link):
         """Check whether the specified url should not be checked at all.
         This uses the regualr expressions passed with add_yanked_re() and the
         robots information present."""
         # check if it is yanked through the regexps
-        for x in self._yanked_res:
+        for regexp in self._yanked_res:
             # if the url matches it is yanked and we can stop
-            if x.search(link.url) is not None:
-                return "yanked"
+            if regexp.search(link.url) is not None:
+                return 'yanked'
         # check if we should avoid external links
         if not link.isinternal and config.AVOID_EXTERNAL_LINKS:
-            return "external avoided"
+            return 'external avoided'
         # skip schemes not haveing robot.txt files
-        if link.scheme != "http" and link.scheme != "https":
+        if link.scheme != 'http' and link.scheme != 'https':
             return False
         # skip robot checks for external urls
         # TODO: make this configurable
@@ -202,8 +213,8 @@ class Site:
             return False
         # check robots for remaining links
         rp = self._get_robotparser(link)
-        if rp is not None and not rp.can_fetch('webcheck',link.url):
-            return "robot restriced"
+        if rp is not None and not rp.can_fetch('webcheck', link.url):
+            return 'robot restriced'
         # fall back to allowing the url
         return False
 
@@ -217,7 +228,7 @@ class Site:
         if self.linkMap.has_key(url):
             return self.linkMap[url]
         # create a new instance
-        return Link(self,url)
+        return Link(self, url)
 
     def crawl(self):
         """Crawl the website based on the urls specified with
@@ -225,13 +236,13 @@ class Site:
         # TODO: have some different scheme to crawl a site (e.g. separate
         #       internal and external queues, threading, etc)
         tocheck = []
-        for u in self._internal_urls:
-            tocheck.append(self._get_link(u))
+        for url in self._internal_urls:
+            tocheck.append(self._get_link(url))
         # repeat until we have nothing more to check
         while len(tocheck) > 0:
-            debugio.debug("crawler.crawl(): items left to check: %d" % len(tocheck))
+            debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
             # choose a link from the tocheck list
-            link=tocheck.pop(0)
+            link = tocheck.pop(0)
             # skip link it there is nothing to check
             if link.isyanked or link.isfetched:
                 continue
@@ -247,20 +258,21 @@ class Site:
                     tocheck.append(embed)
             # sleep between requests if configured
             if config.WAIT_BETWEEN_REQUESTS > 0:
-                debugio.debug('sleeping %s seconds' %  config.WAIT_BETWEEN_REQUESTS)
+                debugio.debug('sleeping %s seconds' % config.WAIT_BETWEEN_REQUESTS)
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
         bases = [ ]
-        for u in self._internal_urls:
-            l = self.linkMap[u].follow_link()
-            if l == None:
-                debugio.warn('base link %s redirects to nowhere' % u)
+        for url in self._internal_urls:
+            link = self.linkMap[url].follow_link()
+            if link == None:
+                debugio.warn('base link %s redirects to nowhere' % url)
                 continue
-            # if the link has no parent add it to the result list unless it is the first one
-            if len(l.parents) == 0 or len(bases) == 0:
-                debugio.debug('crawler.crawl(): adding %s to bases' % l.url)
-                bases.append(l)
+            # if the link has no parent add it to the result list,
+            # unless it is the first one
+            if len(link.parents) == 0 or len(bases) == 0:
+                debugio.debug('crawler.crawl(): adding %s to bases' % link.url)
+                bases.append(link)
         # if we got no bases, just use the first internal one
         if len(bases) == 0:
             debugio.debug('crawler.crawl(): fallback to adding %s to bases' % self._internal_urls[0])
@@ -273,7 +285,7 @@ class Site:
             tocheck.append(link)
         # repeat until we have nothing more to check
         while len(tocheck) > 0:
-            debugio.debug("crawler.crawl(): items left to examine: %d" % len(tocheck))
+            debugio.debug('crawler.crawl(): items left to examine: %d' % len(tocheck))
             # choose a link from the tocheck list
             link = tocheck.pop(0)
             # figure out page children
@@ -332,10 +344,12 @@ class Link:
         # store a reference to the site
         self.site = site
         # split the url in useful parts and store the parts
-        (self.scheme, self.netloc, self.path, self.query) = urlparse.urlsplit(url)[0:4]
+        (self.scheme, self.netloc, self.path, self.query) = \
+          urlparse.urlsplit(url)[0:4]
         # store the url (without the fragment)
-        url=urlparse.urlunsplit((self.scheme, self.netloc, self.path, self.query, ""))
-        self.url=url
+        url = urlparse.urlunsplit(
+          (self.scheme, self.netloc, self.path, self.query, '') )
+        self.url = url
         # ensure that we are not creating something that already exists
         assert not self.site.linkMap.has_key(url)
         # store the Link object in the linkMap
@@ -371,7 +385,7 @@ class Link:
         if _spacepattern.search(url):
             self.add_pageproblem('link contains unescaped spaces: %s' % url)
             # replace spaces by %20
-            url=_spacepattern.sub("%20",url)
+            url = _spacepattern.sub('%20', url)
         # find anchor part
         try:
             # get the anchor
@@ -381,6 +395,7 @@ class Link:
             # store anchor
             child.add_reqanchor(self, anchor)
         except AttributeError:
+            # ignore problems lookup up anchor
             pass
         return url
 
@@ -417,7 +432,7 @@ class Link:
 
     def add_anchor(self, anchor):
         """Indicate that this page contains the specified anchor."""
-        debugio.debug('crawler.link.add_anchor() found anchor '+anchor+' for '+self.url) 
+        debugio.debug('crawler.link.add_anchor() found anchor '+anchor+' for '+self.url)
         if anchor in self.anchors:
             self.add_pageproblem(
               'anchor "%(anchor)s" defined multiple times'
@@ -428,7 +443,7 @@ class Link:
     def add_reqanchor(self, parent, anchor):
         """Indicate that the specified link contains a reference to the
         specified anchor. This can be cheched later."""
-        debugio.debug('crawler.link.add_reqanchor() requested anchor '+anchor+' for '+self.url) 
+        debugio.debug('crawler.link.add_reqanchor() requested anchor '+anchor+' for '+self.url)
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:
                 self.reqanchors[anchor].append(parent)
@@ -438,28 +453,28 @@ class Link:
     def redirect(self, url):
         """Indicate that this link redirects to the specified url. Maximum
         redirect counting is done as well as loop detection."""
-        # figure out determin depth
+        # figure out depth
         redirectdepth = 0
         redirectlist = []
-        for p in self.parents:
-            if p.redirectdepth > redirectdepth:
-                redirectdepth = p.redirectdepth
-                redirectlist = p.redirectlist
+        for parent in self.parents:
+            if parent.redirectdepth > redirectdepth:
+                redirectdepth = parent.redirectdepth
+                redirectlist = parent.redirectlist
         self.redirectdepth = redirectdepth + 1
         self.redirectlist = redirectlist
         self.redirectlist.append(self.url)
         # check depth
         if self.redirectdepth >= config.REDIRECT_DEPTH:
-            self.add_linkproblem("too many redirects (%d)" % self.redirectdepth)
+            self.add_linkproblem('too many redirects (%d)' % self.redirectdepth)
             return None
         # check for redirect to self
         url = self._checkurl(url)
         if url == self.url:
-            self.add_linkproblem("redirect same as source: %s" % url)
+            self.add_linkproblem('redirect same as source: %s' % url)
             return None
         # check for redirect loop
         if url in self.redirectlist:
-            self.add_linkproblem("redirect loop %s" % url)
+            self.add_linkproblem('redirect loop %s' % url)
         # add child
         self.add_child(url)
 
@@ -479,18 +494,18 @@ class Link:
         attributes (based on isinternal)."""
         # fully ignore links that should not be feteched
         if self.isyanked:
-            debugio.info("  %s" % self.url)
-            debugio.info("    "+self.isyanked)
+            debugio.info('  %s' % self.url)
+            debugio.info('    ' + self.isyanked)
             return
         # see if we can import the proper module for this scheme
         schememodule = schemes.get_schememodule(self.scheme)
         if schememodule is None:
-            self.isyanked="unsupported scheme ("+self.scheme+")"
-            debugio.info("  %s" % self.url)
-            debugio.info("    "+self.isyanked)
+            self.isyanked = 'unsupported scheme (' + self.scheme + ')'
+            debugio.info('  %s' % self.url)
+            debugio.info('    ' + self.isyanked)
             return
-        debugio.info("  %s" % self.url)
-        content=schememodule.fetch(self, parsers.get_mimetypes())
+        debugio.info('  %s' % self.url)
+        content = schememodule.fetch(self, parsers.get_mimetypes())
         self.isfetched = True
         # skip parsing of content if we were returned nothing
         if content is None:
@@ -498,12 +513,12 @@ class Link:
         # find a parser for the content-type
         parsermodule = parsers.get_parsermodule(self.mimetype)
         if parsermodule is None:
-            debugio.debug("crawler.Link.fetch(): unsupported content-type: %s" % self.mimetype)
+            debugio.debug('crawler.Link.fetch(): unsupported content-type: %s' % self.mimetype)
             return
         # parse the content
         parsermodule.parse(content, self)
 
-    def follow_link(self, visited=[]):
+    def follow_link(self, visited=None):
         """If this link represents a redirect return the redirect target,
         otherwise return self. If this redirect does not find a referenced
         link None is returned."""
@@ -511,10 +526,12 @@ class Link:
             return self
         if len(self.children) == 0:
             return None
+        # set up visited
+        if visited is None:
+            visited = []
         # check for loops
         visited.append(self)
         if self.children[0] in visited:
-            # TODO: report problem if loop is found
             return None
         return self.children[0].follow_link(visited)
 
@@ -528,7 +545,7 @@ class Link:
         # add my own children, following redirects
         for child in self.children:
             # follow redirects
-            child=child.follow_link()
+            child = child.follow_link()
             # skip children we already have
             if child is None or child in self.pagechildren:
                 continue

@@ -1,8 +1,8 @@
 
 # __init__.py - general scheme interface
 #
-# Copyright (C) 2005 Arthur de Jong
-# 
+# Copyright (C) 2005, 2006 Arthur de Jong
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -33,13 +33,14 @@ Each module should export the following function:
         list."""
 
 # a map of schemes to modules
-_schememodules={}
+_schememodules = {}
 
 def get_schememodule(scheme):
     """Look up the correct module for the specified scheme."""
     if not _schememodules.has_key(scheme):
         try:
-            _schememodules[scheme]=__import__('schemes.'+scheme,globals(),locals(),[scheme])
+            _schememodules[scheme] = \
+              __import__('schemes.'+scheme, globals(), locals(), [scheme])
         except ImportError:
-            _schememodules[scheme]=None
+            _schememodules[scheme] = None
     return _schememodules[scheme]

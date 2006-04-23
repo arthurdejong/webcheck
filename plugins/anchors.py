@@ -20,19 +20,19 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
-"""Find references to undefined anchors."""
+"""Find references to undefined anchors.
+
+This plugin does not output any files, it just finds problems."""
 
 __title__ = 'missing anchors'
 __author__ = 'Arthur de Jong'
 
-import config
-import plugins
-
 def generate(site):
     """Present the list of bad links to the given file descriptor."""
     # find all links with requested anchors
-    links = filter(lambda a: len(a.reqanchors)>0 and a.isfetched,
-                   site.linkMap.values())
+    links = [ x
+              for x in site.linkMap.values()
+              if len(x.reqanchors)>0 and x.isfetched ]
     # go over list and find missing anchors
     for link in links:
         # check all requested anchors

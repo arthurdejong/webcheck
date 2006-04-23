@@ -28,13 +28,14 @@ __title__ = 'bad links'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'badlinks.html'
 
-import config
 import plugins
 
 def generate(site):
     """Present the list of bad links to the given file descriptor."""
     # find all links with link problems
-    links = filter(lambda a: len(a.linkproblems)>0, site.linkMap.values())
+    links = [ x
+              for x in site.linkMap.values()
+              if len(x.linkproblems)>0 ]
     # sort list
     links.sort(lambda a, b: cmp(a.url, b.url))
     # present results
@@ -68,11 +69,11 @@ def generate(site):
           '     </ul>\n')
         # present a list of parents
         link.parents.sort()
-        plugins.print_parents(fp,link,'     ')
+        plugins.print_parents(fp, link, '     ')
         # add a reference to the problem map
         for problem in link.linkproblems:
             for parent in link.parents:
-                parent.add_pageproblem("bad link: " + link.url + ": " + problem)
+                parent.add_pageproblem('bad link: ' + link.url + ': ' + problem)
         fp.write(
           '    </li>\n')
     fp.write(

@@ -33,12 +33,14 @@ import re
 
 def generate(site):
     """Output a list of images to the given file descriptor."""
-    # get all non-page links that have a mimetype
-    links = filter(lambda a: not a.ispage and a.mimetype is not None, site.linkMap.values())
     # this finds all links with a reasonable image-like content-type
-    matcher=re.compile("^image/.*$")
-    # get images
-    links = filter(lambda a: matcher.search(a.mimetype), links)
+    matcher = re.compile('^image/.*$')
+    # get non-page images that have an image/* mimetype
+    links = [ x
+              for x in site.linkMap.values()
+              if not x.ispage and
+                     x.mimetype is not None and
+                     matcher.search(x.mimetype) ]
     # sort list
     links.sort(lambda a, b: cmp(a.url, b.url))
     # present results
@@ -57,7 +59,7 @@ def generate(site):
       '   </p>\n'
       '   <ol>\n' )
     for link in links:
-        fp.write('    <li>%s</li>\n' % plugins.make_link(link,link.url))
+        fp.write('    <li>%s</li>\n' % plugins.make_link(link, link.url))
     fp.write(
       '   </ol>\n' )
     plugins.close_html(fp)

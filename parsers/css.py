@@ -1,7 +1,7 @@
 
 # css.py - parser functions for css content
 #
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,6 +20,10 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
+"""This modules attempts to parse CSS files.
+It currently looks for url() links in stylesheet contents and also
+looks for @import processing directives."""
+
 mimetypes = ('text/css',)
 
 import urlparse
@@ -29,7 +33,8 @@ import re
 _commentpattern = re.compile('/\*.*?\*/', re.IGNORECASE|re.DOTALL)
 
 # pattern for matching @import "url" statments in css
-_importpattern = re.compile('@import\s+["\']([^"\']*)["\']',re.IGNORECASE|re.DOTALL)
+_importpattern = re.compile('@import\s+["\']([^"\']*)["\']',
+                            re.IGNORECASE|re.DOTALL)
 
 # pattern for matching url(...) in css
 _urlpattern = re.compile('url\(["\']?(.*?)["\']?\)')

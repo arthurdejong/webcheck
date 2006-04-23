@@ -64,7 +64,7 @@ def generate(site):
       '    author.\n'
       '   </p>\n' )
     # get a list of authors
-    authors=problem_db.keys()
+    authors = problem_db.keys()
     authors.sort()
     # generate short list of authors
     if len(authors) > 1:

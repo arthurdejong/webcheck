@@ -23,74 +23,76 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
+"""This is the main webcheck module."""
+
 import config
 import crawler
 import plugins
 import debugio
 import sys
-import time
 import os
 
-debugio.loglevel=debugio.INFO
+debugio.loglevel = debugio.INFO
 
 def print_version():
-    """print version information"""
-    print \
-        "webcheck "+config.VERSION+"\n" \
-        "Written by Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n" \
-        "\n" \
-        "Copyright (C) 1998, 1999, 2002, 2005, 2006 Albert Hopkins (marduk),\n" \
-        "Mike W. Meyer and Arthur de Jong.\n" \
-        "This is free software; see the source for copying conditions.  There is NO\n" \
-        "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+    """Print version information."""
+    sys.stdout.write(
+      'webcheck %(version)s\n'
+      'Written by Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n'
+      '\n'
+      'Copyright (C) 1998, 1999, 2002, 2005, 2006 Albert Hopkins (marduk),\n'
+      'Mike W. Meyer and Arthur de Jong.\n'
+      'This is free software; see the source for copying conditions.  There is NO\n'
+      'warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n'
+      % { 'version': config.VERSION })
 
 def print_usage():
-    """print short usage information"""
-    print >>sys.stderr, \
-        "Usage: webcheck [OPTION]... URL..."
+    """Print short usage information."""
+    sys.stderr.write(
+      'Usage: webcheck [OPTION]... URL...\n')
 
 def print_tryhelp():
-    """print friendly pointer to more information"""
-    print >>sys.stderr, \
-        "Try `webcheck --help' for more information."
+    """Print friendly pointer to more information."""
+    sys.stderr.write(
+      'Try `webcheck --help\' for more information.\n')
 
 def print_help():
     """Print the option list."""
-    print \
-        'Usage: webcheck [OPTION]... URL...\n' \
-        'Generate a report for the given URLs\n' \
-        '\n' \
-        '  -i, --internal=PATTERN mark URLs matching PATTERN as internal\n' \
-        '  -x, --external=PATTERN mark URLs matching PATTERN as external\n' \
-        '  -y, --yank=PATTERN     do not check URLs matching PATTERN\n' \
-        '  -b, --base-only        base URLs only: consider any URL not starting with\n' \
-        '                         any of the base URLs to be external\n' \
-        '  -a, --avoid-external   do not check external URLs\n' \
-        '  -q, --quiet, --silent  suppress progress messages\n' \
-        '  -d, --debug            do programmer-level debugging\n' \
-        '  -o, --output=DIRECTORY store the generated reports in the specified\n' \
-        '                         directory\n' \
-        '  -f, --force            overwrite files without asking\n' \
-        '  -r, --redirects=N      the number of redirects webcheck should follow,\n' \
-        '                         0 implies to follow all redirects\n' \
-        '  -w, --wait=SECONDS     wait SECONDS between retrievals\n' \
-        '  -V, --version          output version information and exit\n' \
-        '  -h, --help             display this help and exit' \
+    sys.stdout.write(
+      'Usage: webcheck [OPTION]... URL...\n'
+      'Generate a report for the given URLs\n'
+      '\n'
+      '  -i, --internal=PATTERN mark URLs matching PATTERN as internal\n'
+      '  -x, --external=PATTERN mark URLs matching PATTERN as external\n'
+      '  -y, --yank=PATTERN     do not check URLs matching PATTERN\n'
+      '  -b, --base-only        base URLs only: consider any URL not starting\n'
+      '                         with any of the base URLs to be external\n'
+      '  -a, --avoid-external   do not check external URLs\n'
+      '  -q, --quiet, --silent  suppress progress messages\n'
+      '  -d, --debug            do programmer-level debugging\n'
+      '  -o, --output=DIRECTORY store the generated reports in the specified\n'
+      '                         directory\n'
+      '  -f, --force            overwrite files without asking\n'
+      '  -r, --redirects=N      the number of redirects webcheck should follow,\n'
+      '                         0 implies to follow all redirects\n'
+      '  -w, --wait=SECONDS     wait SECONDS between retrievals\n'
+      '  -V, --version          output version information and exit\n'
+      '  -h, --help             display this help and exit\n')
 
 def parse_args(site):
     """Parse command-line arguments."""
     import getopt
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
-            'i:x:y:l:baqdo:fr:w:Vh',
-            ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
-             'quiet', 'silent', 'debug', 'output=',
-             'force', 'redirects=', 'wait=', 'version', 'help'))
+          'i:x:y:l:baqdo:fr:w:Vh',
+          ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
+           'quiet', 'silent', 'debug', 'output=',
+           'force', 'redirects=', 'wait=', 'version', 'help'))
     except getopt.error, reason:
-        print >>sys.stderr,"webcheck: %s" % reason;
+        sys.stderr.write('webcheck: %s\n' % reason)
         print_tryhelp()
         sys.exit(1)
-    for flag,arg in optlist:
+    for flag, arg in optlist:
         if flag in ('-i', '--internal'):
             site.add_internal_re(arg)
         elif flag in ('-x', '--external'):
@@ -138,21 +140,22 @@ def install_file(source, text=False):
     import shutil
     import urlparse
     # figure out mode to open the file with
-    mode='r'
+    mode = 'r'
     if text:
-        mode+='U'
+        mode += 'U'
     # check with what kind of argument we are called
     scheme = urlparse.urlsplit(source)[0]
     if scheme == 'file':
         # this is a file:/// url, translate to normal path and open
+        import urllib
         source = urllib.url2pathname(urlparse.urlsplit(source)[2])
     elif scheme == '' and os.path.isabs(source):
         # this is an absolute path, just open it as is
         pass
     elif scheme == '':
         # this is a relavite path, try to fetch it from the python path
-        for d in sys.path:
-            tst = os.path.join(d,source)
+        for directory in sys.path:
+            tst = os.path.join(directory, source)
             if os.path.isfile(tst):
                 source = tst
                 break
@@ -174,14 +177,15 @@ def install_file(source, text=False):
                         'strerror': strerror })
         sys.exit(1)
     # create file in output directory (with overwrite question)
-    tfp=plugins.open_file(os.path.basename(source));
+    tfp = plugins.open_file(os.path.basename(source));
     # copy contents
-    shutil.copyfileobj(sfp,tfp)
+    shutil.copyfileobj(sfp, tfp)
     # close files
     tfp.close()
     sfp.close()
 
 def main():
+    """Main program."""
     site = crawler.Site()
     # parse command-line arguments
     parse_args(site)
@@ -190,7 +194,7 @@ def main():
     try:
         site.crawl() # this will take a while
     except KeyboardInterrupt:
-        sys.stderr.write("Interrupted\n")
+        sys.stderr.write('Interrupted\n')
         sys.exit(1)
     debugio.info('done.')
     # now we can write out the files
@@ -199,8 +203,8 @@ def main():
     # for every plugin, generate a page
     plugins.generate(site)
     # put extra files in the output directory
-    install_file('webcheck.css',True)
-    install_file('fancytooltips/fancytooltips.js',True)
+    install_file('webcheck.css', True)
+    install_file('fancytooltips/fancytooltips.js', True)
     debugio.info('done.')
 
 if __name__ == '__main__':

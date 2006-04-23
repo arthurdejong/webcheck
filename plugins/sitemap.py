@@ -58,7 +58,7 @@ def _explore(fp, link, explored=None, depth=0, indent='    '):
             fp.write(indent+' <ul>\n')
             children.sort(lambda a, b: cmp(a.url, b.url))
             for child in children:
-                _explore(fp,child,explored,depth+1,indent+'  ')
+                _explore(fp, child, explored, depth+1, indent+'  ')
             fp.write(indent+' </ul>\n')
     fp.write(indent+'</li>\n')
 
@@ -71,7 +71,7 @@ def generate(site):
       '    This an overview of the crawled site.\n'
       '   </p>\n'
       '   <ul>\n' )
-    _explore(fp,site.linkMap[site.base])
+    _explore(fp, site.linkMap[site.base])
     fp.write(
       '   </ul>\n' )
     plugins.close_html(fp)

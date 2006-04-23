@@ -30,10 +30,10 @@ items should be changeble from the command line."""
 import urllib
 
 # Current version of webcheck.
-VERSION = "1.9.6"
+VERSION = '1.9.6'
 
 # The homepage of webcheck.
-HOMEPAGE = "http://ch.tudelft.nl/~arthur/webcheck/"
+HOMEPAGE = 'http://ch.tudelft.nl/~arthur/webcheck/'
 
 # Whether to consider any URL not starting with the base URL to be external.
 # This is the state of the -b command line option.
@@ -51,7 +51,7 @@ PROXIES = urllib.getproxies_environment()
 IOTIMEOUT = 10.0
 
 # Output directory. This is the state of the -o command line option.
-OUTPUT_DIR = "."
+OUTPUT_DIR = '.'
 
 # This is the time in seconds to wait between requests. This is the state of
 # the -w command line option.
@@ -62,19 +62,19 @@ WAIT_BETWEEN_REQUESTS = 0
 REDIRECT_DEPTH = 5
 
 # The list of plugins that will be used to generate the report.
-PLUGINS = ["anchors",
-           "sitemap",
-           "urllist",
-           "images",
-           "external",
-           "notchkd",
-           "badlinks",
-           "old",
-           "new",
-           "size",
-           "notitles",
-           "problems",
-           "about"]
+PLUGINS = [ 'anchors',
+            'sitemap',
+            'urllist',
+            'images',
+            'external',
+            'notchkd',
+            'badlinks',
+            'old',
+            'new',
+            'size',
+            'notitles',
+            'problems',
+            'about' ]
 
 # Whether to overwrite files without asking. This is the state of the -f
 # command line option.

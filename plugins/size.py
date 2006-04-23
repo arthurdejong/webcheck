@@ -31,27 +31,36 @@ __outputfile__ = 'size.html'
 import config
 import plugins
 
-def _getsize(link, done=[]):
+def _getsize(link, done=None):
     """Return the size of the link and all its embedded links, counting each
     link only once."""
+    # make a new list
+    if done is None:
+        done = []
+    # add this link to the list
     done.append(link)
-    if not hasattr(link, "totalSize"):
+    # if we don't known about our total size yet, calculate
+    if not hasattr(link, 'totalSize'):
         size = 0
+        # add our size
         if link.size is not None:
             size = link.size
-        for l in link.embedded:
-            if l not in done:
-                size += _getsize(l,done)
+        # add sizes of embedded objects
+        for embed in link.embedded:
+            if embed not in done:
+                size += _getsize(embed, done)
         link.totalSize = size
     return link.totalSize
 
 def generate(site):
     """Output the list of large pages to the given file descriptor."""
-    # get all internal pages
-    links = filter(lambda a: a.ispage and a.isinternal, site.linkMap.values())
-    # calculate size of links
-    links = filter(lambda a: _getsize(a) >= config.REPORT_SLOW_URL_SIZE*1024, links)
-    # sort links by size
+    # get all internal pages and get big links
+    links = [ x
+              for x in site.linkMap.values()
+              if x.ispage and
+                 x.isinternal and
+                 _getsize(x) >= config.REPORT_SLOW_URL_SIZE*1024 ]
+    # sort links by size (biggest first)
     links.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
     # present results
     fp = plugins.open_html(plugins.size, site)
@@ -82,7 +91,7 @@ def generate(site):
           % { 'link': plugins.make_link(link),
               'size': size })
         link.add_pageproblem(
-          'this page and its components is %(size)s' 
+          'this page and its components is %(size)s'
           % { 'size': size })
     fp.write(
       '   </ul>\n' )

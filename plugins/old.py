@@ -32,16 +32,19 @@ import config
 import plugins
 import time
 
-SECS_PER_DAY=60*60*24
+SECS_PER_DAY = 60*60*24
 
 def generate(site):
     """Output the list of outdated pages to the specified file descriptor."""
-    # get all internal pages
-    links = filter(lambda a: a.ispage and a.isinternal and a.mtime is not None, site.linkMap.values())
     # the time for which links are considered old
     oldtime = time.time()-SECS_PER_DAY*config.REPORT_WHATSOLD_URL_AGE
-    # get old links
-    links = filter(lambda a: a.mtime < oldtime, links)
+    # get all internal pages that are old
+    links = [ x
+              for x in site.linkMap.values()
+              if x.ispage and
+                 x.isinternal and
+                 x.mtime is not None and
+                 x.mtime < oldtime ]
     # sort links
     links.sort(lambda a, b: cmp(a.mtime, b.mtime))
     # present results

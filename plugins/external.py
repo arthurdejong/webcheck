@@ -33,7 +33,9 @@ import plugins
 def generate(site):
     """Generate the list of external links to the given file descriptor."""
     # get all external links
-    links = filter(lambda a: not a.isinternal, site.linkMap.values())
+    links = [ x
+              for x in site.linkMap.values()
+              if not x.isinternal ]
     # sort list
     links.sort(lambda a, b: cmp(a.url, b.url))
     # present results
@@ -57,7 +59,7 @@ def generate(site):
           '     %(link)s\n'
           % { 'link':  plugins.make_link(link) })
         # present a list of parents
-        plugins.print_parents(fp,link,'     ')
+        plugins.print_parents(fp, link, '     ')
         fp.write(
           '    </li>\n')
     fp.write(
