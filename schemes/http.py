@@ -141,9 +141,13 @@ def fetch(link, acceptedtypes):
             debugio.debug("error reading HTTP response: "+str(e))
             link.add_linkproblem("error reading HTTP response: "+str(e))
             return None
-        except socket.error, (errnr,errmsg):
-            debugio.debug("error reading HTTP response: "+errmsg)
-            link.add_linkproblem("error reading HTTP response: "+errmsg)
+        except socket.error, e:
+            if hasattr(e,'args') and len(e.args) == 2:
+                debugio.debug("error reading HTTP response: "+str(e.args[1]))
+                link.add_linkproblem("error reading HTTP response: "+str(e.args[1]))
+            else:
+                debugio.debug("error reading HTTP response: "+str(e))
+                link.add_linkproblem("error reading HTTP response: "+str(e))
             return None
     finally:
         # close the connection before returning
