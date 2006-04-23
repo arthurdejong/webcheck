@@ -144,7 +144,7 @@ def print_parents(fp,link,indent='     '):
     # if there are no parents print nothing
     if len(parents) == 0:
         return
-    parents.sort(lambda a, b: cmp(a.title, b.title))
+    parents.sort(lambda a, b: cmp(a.title, b.title) or cmp(a.url, b.url))
     fp.write(
       indent+'<div class="parents">\n'+
       indent+' referenced from:\n'+
