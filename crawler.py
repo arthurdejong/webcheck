@@ -218,7 +218,7 @@ class Site:
         # fall back to allowing the url
         return False
 
-    def _get_link(self, url):
+    def get_link(self, url):
         """Return a link object for the given url.
         This function checks the map of cached link objects for an
         instance."""
@@ -237,7 +237,7 @@ class Site:
         #       internal and external queues, threading, etc)
         tocheck = []
         for url in self._internal_urls:
-            tocheck.append(self._get_link(url))
+            tocheck.append(self.get_link(url))
         # repeat until we have nothing more to check
         while len(tocheck) > 0:
             debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
@@ -391,7 +391,7 @@ class Link:
             # get the anchor
             anchor = _anchorpattern.search(url).group(1)
             # get link for url we link to
-            child = self.site._get_link(url)
+            child = self.site.get_link(url)
             # store anchor
             child.add_reqanchor(self, anchor)
         except AttributeError:
@@ -407,7 +407,7 @@ class Link:
             return
         # convert the url to a link object if we were called with a url
         if type(child) is str:
-            child = self.site._get_link(self._checkurl(child))
+            child = self.site.get_link(self._checkurl(child))
         # add to children
         if child not in self.children:
             self.children.append(child)
@@ -422,7 +422,7 @@ class Link:
             return
         # convert the url to a link object if we were called with a url
         if type(link) is str:
-            link = self.site._get_link(self._checkurl(link))
+            link = self.site.get_link(self._checkurl(link))
         # add to embedded
         if link not in self.embedded:
             self.embedded.append(link)
