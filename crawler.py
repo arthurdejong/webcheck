@@ -432,7 +432,11 @@ class Link:
 
     def add_anchor(self, anchor):
         """Indicate that this page contains the specified anchor."""
-        debugio.debug('crawler.link.add_anchor() found anchor '+anchor+' for '+self.url)
+        debugio.debug('crawler.link.add_anchor() found anchor "'+anchor+'" for '+self.url)
+        # convert the url to a link object if we were called with a url
+        if type(parent) is str:
+            parent = self.site.get_link(self._checkurl(parent))
+        # add anchor
         if anchor in self.anchors:
             self.add_pageproblem(
               'anchor "%(anchor)s" defined multiple times'
@@ -442,8 +446,8 @@ class Link:
 
     def add_reqanchor(self, parent, anchor):
         """Indicate that the specified link contains a reference to the
-        specified anchor. This can be cheched later."""
-        debugio.debug('crawler.link.add_reqanchor() requested anchor '+anchor+' for '+self.url)
+        specified anchor. This can be checkhed later."""
+        debugio.debug('crawler.link.add_reqanchor() requested anchor "'+anchor+'" for '+self.url)
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:
                 self.reqanchors[anchor].append(parent)
