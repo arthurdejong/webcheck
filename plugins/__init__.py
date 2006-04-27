@@ -234,8 +234,8 @@ def _print_navbar(fp, plugin):
           '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n'
           % { 'pluginfile' : report.__outputfile__,
               'selected'   : selected,
-              'title'      : escape(report.__title__),
-              'description': escape(report.__doc__) })
+              'title'      : htmlescape(report.__title__),
+              'description': htmlescape(report.__doc__) })
     fp.write('  </ul>\n')
 
 def open_html(plugin, site):
@@ -256,14 +256,14 @@ def open_html(plugin, site):
       ' </head>\n'
       ' <body>\n'
       '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n'
-      % { 'sitetitle':  escape(get_title(site.linkMap[site.base])),
-          'plugintitle': escape(plugin.__title__),
+      % { 'sitetitle':  htmlescape(get_title(site.linkMap[site.base])),
+          'plugintitle': htmlescape(plugin.__title__),
           'siteurl':    site.base,
           'version':    config.VERSION })
     # write navigation bar
     _print_navbar(fp, plugin)
     # write plugin heading
-    fp.write('  <h2>%s</h2>\n' % escape(plugin.__title__))
+    fp.write('  <h2>%s</h2>\n' % htmlescape(plugin.__title__))
     # write plugin contents
     fp.write('  <div class="content">\n')
     return fp
@@ -278,9 +278,9 @@ def close_html(fp):
       '  </p>\n'
       ' </body>\n'
       '</html>\n'
-      % { 'time':     escape(time.ctime(time.time())),
+      % { 'time':     htmlescape(time.ctime(time.time())),
           'homepage': config.HOMEPAGE,
-          'version':  escape(config.VERSION) })
+          'version':  htmlescape(config.VERSION) })
     fp.close()
 
 def generate(site):
