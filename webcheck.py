@@ -31,6 +31,7 @@ import plugins
 import debugio
 import sys
 import os
+import re
 
 debugio.loglevel = debugio.INFO
 
@@ -88,50 +89,53 @@ def parse_args(site):
           ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
            'quiet', 'silent', 'debug', 'output=',
            'force', 'redirects=', 'wait=', 'version', 'help'))
+        for flag, arg in optlist:
+            if flag in ('-i', '--internal'):
+                site.add_internal_re(arg)
+            elif flag in ('-x', '--external'):
+                site.add_external_re(arg)
+            elif flag in ('-y', '--yank'):
+                site.add_yanked_re(arg)
+            elif flag in ('-b', '--base-only'):
+                config.BASE_URLS_ONLY = True
+            elif flag in ('-a', '--avoid-external'):
+                config.AVOID_EXTERNAL_LINKS = True
+            elif flag in ('-q', '--quiet', '--silent'):
+                debugio.loglevel = debugio.ERROR
+            elif flag in ('-d', '--debug'):
+                debugio.loglevel = debugio.DEBUG
+            elif flag in ('-o', '--output'):
+                config.OUTPUT_DIR = arg
+            elif flag in ('-f', '--force'):
+                config.OVERWRITE_FILES = True
+            elif flag in ('-r', '--redirects'):
+                config.REDIRECT_DEPTH = int(arg)
+            elif flag in ('-w', '--wait'):
+                config.WAIT_BETWEEN_REQUESTS = int(arg)
+            elif flag in ('-V', '--version'):
+                print_version()
+                sys.exit(0)
+            elif flag in ('-h', '--help'):
+                print_help()
+                sys.exit(0)
+        if len(args)==0:
+            print_usage()
+            print_tryhelp()
+            sys.exit(1)
+        for arg in args:
+            # if it does not look like a url it is probably a local file
+            import urlparse
+            import urllib
+            if urlparse.urlsplit(arg)[0] == '':
+                arg = 'file://' + urllib.pathname2url(os.path.abspath(arg))
+            site.add_internal(arg)
     except getopt.error, reason:
         sys.stderr.write('webcheck: %s\n' % reason)
         print_tryhelp()
         sys.exit(1)
-    for flag, arg in optlist:
-        if flag in ('-i', '--internal'):
-            site.add_internal_re(arg)
-        elif flag in ('-x', '--external'):
-            site.add_external_re(arg)
-        elif flag in ('-y', '--yank'):
-            site.add_yanked_re(arg)
-        elif flag in ('-b', '--base-only'):
-            config.BASE_URLS_ONLY = True
-        elif flag in ('-a', '--avoid-external'):
-            config.AVOID_EXTERNAL_LINKS = True
-        elif flag in ('-q', '--quiet', '--silent'):
-            debugio.loglevel = debugio.ERROR
-        elif flag in ('-d', '--debug'):
-            debugio.loglevel = debugio.DEBUG
-        elif flag in ('-o', '--output'):
-            config.OUTPUT_DIR = arg
-        elif flag in ('-f', '--force'):
-            config.OVERWRITE_FILES = True
-        elif flag in ('-r', '--redirects'):
-            config.REDIRECT_DEPTH = int(arg)
-        elif flag in ('-w', '--wait'):
-            config.WAIT_BETWEEN_REQUESTS = int(arg)
-        elif flag in ('-V', '--version'):
-            print_version()
-            sys.exit(0)
-        elif flag in ('-h', '--help'):
-            print_help()
-            sys.exit(0)
-    if len(args)==0:
-        print_usage()
-        print_tryhelp()
+    except re.error, e:
+        sys.stderr.write('webcheck: %s\n' % str(e))
         sys.exit(1)
-    for arg in args:
-        # if it does not look like a url it is probably a local file
-        import urlparse
-        import urllib
-        if urlparse.urlsplit(arg)[0] == '':
-            arg = 'file://' + urllib.pathname2url(os.path.abspath(arg))
-        site.add_internal(arg)
 
 def install_file(source, text=False):
     """Install the given file in the output directory.
