@@ -236,6 +236,11 @@ class Site:
         # TODO: have some different scheme to crawl a site (e.g. separate
         #       internal and external queues, threading, etc)
         tocheck = []
+        # add all unfetched site urls
+        for link in self.linkMap.values():
+            if not link.isyanked and not link.isfetched:
+                tocheck.append(link)
+        # add all internal urls
         for url in self._internal_urls:
             tocheck.append(self.get_link(url))
         # repeat until we have nothing more to check
