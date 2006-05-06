@@ -1,7 +1,7 @@
 
 # https.py - handle urls with a https scheme
 #
-# Copyright (C) 2005 Arthur de Jong
+# Copyright (C) 2005, 2006 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
