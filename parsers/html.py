@@ -139,19 +139,46 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # <img src="url">
         elif tag == 'img' and attrs.has_key('src'):
             self.embedded.append(self._cleanurl(attrs['src']))
-        # <a href="url">
-        elif tag == 'a' and attrs.has_key('href'):
-            self.children.append(self._cleanurl(attrs['href']))
-        # <a name="#anchor">
-        elif tag == 'a' and attrs.has_key('name'):
-            anchor = self._cleanurl(attrs['name'],'anchor')
-            if anchor in self.anchors:
+        # <a href="url" name="anchor" id="anchor">
+        elif tag == 'a':
+            # <a href="url">
+            if attrs.has_key('href'):
+                self.children.append(self._cleanurl(attrs['href']))
+            # <a name="anchor">
+            a_name = None
+            if attrs.has_key('name'):
+                a_name = self._cleanurl(attrs['name'], 'anchor')
+            # <a id="anchor">
+            a_id = None
+            if attrs.has_key('id'):
+                a_id = self._cleanurl(attrs['id'], 'anchor')
+            # if both id and name are used they should be the same
+            if a_id and a_name and a_id != a_name:
+                # add problem
                 self.link.add_pageproblem(
-                  'anchor "%(anchor)s" defined again %(location)s'
-                  % { 'anchor':   anchor,
-                      'location': self._location() })
-            else:
-                self.anchors.append(anchor)
+                  'anchors defined in name and id attributes do not match %(location)s'
+                  % { 'location': self._location() })
+            elif a_id == a_name:
+                # ignore id if it's the same as name
+                a_id = None
+            # <a name="anchor">
+            if a_name:
+                if a_name in self.anchors:
+                    self.link.add_pageproblem(
+                      'anchor "%(anchor)s" defined again %(location)s'
+                      % { 'anchor':   a_name,
+                          'location': self._location() })
+                else:
+                    self.anchors.append(a_name)
+            # <a id="anchor">
+            if a_id:
+                if a_id in self.anchors:
+                    self.link.add_pageproblem(
+                      'anchor "%(anchor)s" defined again %(location)s'
+                      % { 'anchor':   a_id,
+                          'location': self._location() })
+                else:
+                    self.anchors.append(a_id)
         # <frameset><frame src="url"...>...</frameset>
         elif tag == 'frame' and attrs.has_key('src'):
             self.embedded.append(self._cleanurl(attrs['src']))
