@@ -228,6 +228,8 @@ def open_html(plugin, site):
       '  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />\n'
       '  <title>Webcheck report for %(sitetitle)s (%(plugintitle)s)</title>\n'
       '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n'
+      '  <link rel="icon" href="favicon.ico" type="image/ico" />\n'
+      '  <link rel="shortcut icon" href="favicon.ico" />\n'
       '  <script language="javascript" type="text/javascript" src="fancytooltips.js"></script>\n'
       '  <meta name="Generator" content="webcheck %(version)s" />\n'
       ' </head>\n'

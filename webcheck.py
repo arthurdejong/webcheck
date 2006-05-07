@@ -209,6 +209,7 @@ def main():
     # put extra files in the output directory
     install_file('webcheck.css', True)
     install_file('fancytooltips/fancytooltips.js', True)
+    install_file('favicon.ico', False)
     debugio.info('done.')
 
 if __name__ == '__main__':
