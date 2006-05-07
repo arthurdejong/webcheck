@@ -44,7 +44,6 @@ fields:
 Pluings can use the functions exported by this module."""
 
 import sys
-import urllib
 import debugio
 import config
 import time

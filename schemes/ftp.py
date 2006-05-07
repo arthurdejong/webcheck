@@ -86,7 +86,7 @@ def _fetch_directory(link, ftp, acceptedtypes):
     if link.path[-1:] != '/':
         debugio.debug('schemes.ftp._fetch_directory(): directory referenced without trailing slash')
         link.redirect(urlparse.urljoin(link.url, link.path+'/'))
-        return
+        return None
     # retreive the contents of the directory
     # FIXME: this raises an exception for empty directories, probably replace with own command
     contents = ftp.nlst()
@@ -103,6 +103,7 @@ def _fetch_directory(link, ftp, acceptedtypes):
     # FIXME: this raises an exception for empty directories
     for f in contents:
         link.add_child(urlparse.urljoin(link.url, urllib.quote(f)))
+    return None
 
 def _fetch_file(link, ftp, path, acceptedtypes):
     """Try to download the file in path that should be in the current
@@ -124,6 +125,7 @@ def _fetch_file(link, ftp, path, acceptedtypes):
             content = conn.makefile().read()
         debugio.debug('schemes.ftp.fetch(): fetched, size=%d' % len(content))
         return content
+    return None
 
 def fetch(link, acceptedtypes):
     """Fetch the specified link."""
@@ -142,3 +144,4 @@ def fetch(link, acceptedtypes):
     except ftplib.all_errors, e:
         debugio.debug('schemes.ftp.fetch(): CAUGHT '+str(e))
         link.add_linkproblem(str(e))
+        return None

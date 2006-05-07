@@ -57,6 +57,7 @@ def _fetch_directory(link, path, acceptedtypes):
             link.add_child(urlparse.urljoin(link.url, urllib.pathname2url(f)))
     except os.error, e:
         link.add_linkproblem(str(e))
+    return None
 
 def _fetch_file(link, path, acceptedtypes):
     """Retrieve some basic information of the specified file and return
@@ -68,7 +69,7 @@ def _fetch_file(link, path, acceptedtypes):
         link.mtime = stats.st_mtime
     except os.error, e:
         link.add_linkproblem(str(e))
-        return
+        return None
     # guess mimetype
     if link.mimetype is None:
         link.mimetype = mimetypes.guess_type(path)[0]
@@ -83,6 +84,7 @@ def _fetch_file(link, path, acceptedtypes):
         except IOError, e:
             debugio.debug('PROBLEM: '+str(e))
             link.add_linkproblem(str(e))
+    return None
 
 def fetch(link, acceptedtypes):
     """Retreive some basic information about the file.

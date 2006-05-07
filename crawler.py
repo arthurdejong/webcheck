@@ -383,6 +383,7 @@ class Link:
         self.linkproblems = []
         self.pageproblems = []
         self.redirectdepth = 0
+        self.redirectlist = None
 
     def _checkurl(self, url):
         """Check to see if the url is formatted properly, correct formatting
@@ -462,7 +463,8 @@ class Link:
     def redirect(self, url):
         """Indicate that this link redirects to the specified url. Maximum
         redirect counting is done as well as loop detection."""
-        # figure out depth
+        # figure out depth and urls that have been visited in this
+        # redirect list
         redirectdepth = 0
         redirectlist = []
         for parent in self.parents:
