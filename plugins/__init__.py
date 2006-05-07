@@ -47,32 +47,10 @@ import sys
 import debugio
 import config
 import time
+import parsers.html
 
-def htmlescape(txt, inattr=False):
-    """HTML escape the given string and return an ASCII clean string with
-    known entities and character entities for the other values."""
-    import htmlentitydefs
-    # the output string
-    out = ''
-    # convert to unicode object
-    if type(txt) is str:
-        txt = unicode(txt, errors='replace')
-    # loop over the characters of the string
-    for c in txt:
-        if c == '"':
-            if inattr:
-                out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
-            else:
-                out += '"'
-        elif htmlentitydefs.codepoint2name.has_key(ord(c)):
-            out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
-        elif ord(c) > 126:
-            out += '&#%d;'% ord(c)
-        elif inattr and c == u'\n':
-            out += '&#10;'
-        else:
-            out += c.encode('utf-8')
-    return out
+# reference function from html module
+htmlescape = parsers.html.htmlescape
 
 def get_title(link):
     """Returns the title of a link if it is set otherwise returns url."""

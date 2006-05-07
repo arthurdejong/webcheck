@@ -27,6 +27,7 @@ import HTMLParser
 import urlparse
 import re
 import crawler
+import htmlentitydefs
 
 # the list of mimetypes this module should be able to handle
 mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
@@ -35,7 +36,7 @@ mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 _charentitypattern = re.compile('&#([0-9]{1,3});')
 
 # pattern for matching all html entities
-_entitypattern = re.compile('&[^ ;]+;')
+_entitypattern = re.compile('&(#[0-9]{1,6}|[a-zA-Z]{2,10});')
 
 # pattern for matching spaces
 _spacepattern = re.compile(' ')
@@ -45,6 +46,54 @@ _charsetpattern = re.compile('charset=([^ ]*)', re.I)
 
 # pattern for matching the encoding part of an xml declaration
 _encodingpattern = re.compile('^xml .*encoding="([^"]*)"', re.I)
+
+def htmlescape(txt, inattr=False):
+    """HTML escape the given string and return an ASCII clean string with
+    known entities and character entities for the other values.
+    If the inattr parameter is set quotes and newlines will also be escaped."""
+    # convert to unicode object
+    if type(txt) is str:
+        txt = unicode(txt, errors='replace')
+    # the output string
+    out = ''
+    # loop over the characters of the string
+    for c in txt:
+        if c == '"':
+            if inattr:
+                out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
+            else:
+                out += '"'
+        elif htmlentitydefs.codepoint2name.has_key(ord(c)):
+            out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
+        elif ord(c) > 126:
+            out += '&#%d;'% ord(c)
+        elif inattr and c == u'\n':
+            out += '&#10;'
+        else:
+            out += c.encode('utf-8')
+    return out
+
+def _unescape_entity(match):
+    """Helper function for _htmlunescape().
+    This funcion unescapes a html entity, it is passed to the sub()
+    function."""
+    if htmlentitydefs.name2codepoint.has_key(match.group(1)):
+        return unichr(htmlentitydefs.name2codepoint[match.group(1)])
+    elif match.group(1)[0] == '#':
+        return unichr(int(match.group(1)[1:]))
+    else:
+        raise IOError('parse error')
+
+def htmlunescape(txt):
+    """This function unescapes a html encoded string.
+    This function returns a unicode string."""
+    # convert to unicode
+    if type(txt) is str:
+        txt = unicode(txt, errors='replace')
+    # replace &name; and &#nn; refs with proper characters
+    txt = _entitypattern.sub(_unescape_entity, txt)
+    # we're done
+    return txt
 
 class _MyHTMLParser(HTMLParser.HTMLParser):
     """A simple subclass of HTMLParser.HTMLParser continuing after errors
@@ -237,7 +286,6 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
 def _maketxt(txt, encoding):
     """Return an unicode text of the specified string do correct character
     conversions and replacing html entities with normal characters."""
-    import htmlentitydefs
     # convert string to unicode
     # TODO: check for encoding errors (first try unicode() function with strict)
     try:
@@ -248,15 +296,8 @@ def _maketxt(txt, encoding):
             # TODO: log unknown encoding problem as page problem
         # fall back to locale's encoding
         txt = unicode(txt, errors='replace')
-    # replace &#nnn; entity refs with proper characters
-    txt = _charentitypattern.sub(lambda x:unichr(int(x.group(1))), txt)
-    # replace html entity refs with proper characters
-    for entity in _entitypattern.findall(txt):
-        if (htmlentitydefs.name2codepoint.has_key(entity[1:-1])):
-            txt = txt.replace(
-                    entity,
-                    unichr(htmlentitydefs.name2codepoint[entity[1:-1]]) )
-    return txt
+    # replace entity refs with proper characters
+    return htmlunescape(txt)
 
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
