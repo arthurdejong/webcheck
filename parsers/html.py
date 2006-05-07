@@ -249,7 +249,7 @@ def _maketxt(txt, encoding):
         # fall back to locale's encoding
         txt = unicode(txt, errors='replace')
     # replace &#nnn; entity refs with proper characters
-    txt = _charentitypattern.sub(lambda x:chr(int(x.group(1))), txt)
+    txt = _charentitypattern.sub(lambda x:unichr(int(x.group(1))), txt)
     # replace html entity refs with proper characters
     for entity in _entitypattern.findall(txt):
         if (htmlentitydefs.name2codepoint.has_key(entity[1:-1])):
