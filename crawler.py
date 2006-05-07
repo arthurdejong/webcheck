@@ -449,11 +449,12 @@ class Link:
 
     def add_reqanchor(self, parent, anchor):
         """Indicate that the specified link contains a reference to the
-        specified anchor. This can be checkhed later."""
+        specified anchor. This can be checked later."""
         # convert the url to a link object if we were called with a url
         if type(parent) is str:
             parent = self.site.get_link(self._checkurl(parent))
         debugio.debug('crawler.link.add_reqanchor() requested anchor '+self.url+'#'+anchor+' by '+parent.url)
+        # add anchor
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:
                 self.reqanchors[anchor].append(parent)
