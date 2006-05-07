@@ -32,11 +32,20 @@ Each module should export the following function:
         returned if the content type is mentioned in the acceptedtypes
         list."""
 
+import re
+
+# pattern to match valid scheme names
+_schemepattern = re.compile('^[A-Za-z][A-Za-z0-9]*$')
+
 # a map of schemes to modules
 _schememodules = {}
 
 def get_schememodule(scheme):
     """Look up the correct module for the specified scheme."""
+    # check validity of scheme name
+    if not _schemepattern.search(scheme):
+        return None
+    # find module for scheme name
     if not _schememodules.has_key(scheme):
         try:
             _schememodules[scheme] = \
