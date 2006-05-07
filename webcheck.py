@@ -111,7 +111,7 @@ def parse_args(site):
             elif flag in ('-r', '--redirects'):
                 config.REDIRECT_DEPTH = int(arg)
             elif flag in ('-w', '--wait'):
-                config.WAIT_BETWEEN_REQUESTS = int(arg)
+                config.WAIT_BETWEEN_REQUESTS = float(arg)
             elif flag in ('-V', '--version'):
                 print_version()
                 sys.exit(0)
