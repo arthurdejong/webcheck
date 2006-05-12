@@ -292,10 +292,11 @@ def _maketxt(txt, encoding):
     # convert string to unicode
     # TODO: check for encoding errors (first try unicode() function with strict)
     try:
+        # try to decode with the given encoding
         txt = unicode(txt, encoding, 'replace')
     except (LookupError, TypeError), e:
         if encoding:
-            debugio.warn('page has %s' % str(e))
+            debugio.warn('page has unknown encoding: %s' % str(encoding))
             # TODO: log unknown encoding problem as page problem
         # fall back to locale's encoding
         txt = unicode(txt, errors='replace')
