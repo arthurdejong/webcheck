@@ -74,15 +74,18 @@ def htmlescape(txt, inattr=False):
     return out
 
 def _unescape_entity(match):
-    """Helper function for _htmlunescape().
+    """Helper function for htmlunescape().
     This funcion unescapes a html entity, it is passed to the sub()
     function."""
     if htmlentitydefs.name2codepoint.has_key(match.group(1)):
+        # we have a named entity, return proper character
         return unichr(htmlentitydefs.name2codepoint[match.group(1)])
     elif match.group(1)[0] == '#':
+        # we have a numeric entity, replace with proper character
         return unichr(int(match.group(1)[1:]))
     else:
-        raise IOError('parse error')
+        # we have something else, just keep the original
+        return match.group(0)
 
 def htmlunescape(txt):
     """This function unescapes a html encoded string.
