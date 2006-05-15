@@ -230,9 +230,11 @@ class Site:
         # create a new instance
         return Link(self, url)
 
-    def crawl(self):
+    def crawl(self, serfp=None):
         """Crawl the website based on the urls specified with
-        add_internal()."""
+        add_internal(). If the serialization file pointer
+        is specified the crawler writes out updated links to
+        the file while crawling the site."""
         # TODO: have some different scheme to crawl a site (e.g. separate
         #       internal and external queues, threading, etc)
         tocheck = []
@@ -244,6 +246,7 @@ class Site:
         for url in self._internal_urls:
             tocheck.append(self.get_link(url))
         # repeat until we have nothing more to check
+        fetchedlinks = 0
         while len(tocheck) > 0:
             debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
             # choose a link from the tocheck list
@@ -261,6 +264,17 @@ class Site:
             for embed in link.embedded:
                 if not embed.isyanked and not embed.isfetched and not embed in tocheck:
                     tocheck.append(embed)
+            # serialize all as of yet unserialized links
+            fetchedlinks += 1
+            # TODO: make this configurable
+            if serfp and fetchedlinks >= 5:
+                fetchedlinks = 0
+                import serialize
+                for link in self.linkMap.values():
+                    if not link._isserialized:
+                        serialize.serialize_link(serfp, link)
+                        link._isserialized = True
+                serfp.flush()
             # sleep between requests if configured
             if config.WAIT_BETWEEN_REQUESTS > 0:
                 debugio.debug('sleeping %s seconds' % config.WAIT_BETWEEN_REQUESTS)
