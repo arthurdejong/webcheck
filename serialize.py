@@ -56,7 +56,6 @@ a list.
 """
 
 import re
-import crawler
 import time
 import debugio
 import parsers.html
@@ -288,6 +287,7 @@ def deserialize(fp):
     A new site instance is returned.
     After the site has been deserialized the crawl() function
     should be called to regenerate the other link attributes."""
+    import crawler
     site = crawler.Site()
     link = None
     while True:
