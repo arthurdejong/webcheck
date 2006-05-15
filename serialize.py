@@ -194,6 +194,26 @@ def serialize_links(fp, site):
 def serialize_link(fp, link):
     """Store the information on the url in the specified file."""
     fp.write('[%s]\n' % link.url)
+    if link.isfetched:
+        _writebool(fp, 'isfetched', link.isfetched)
+    if link.isfetched:
+        _writebool(fp, 'ispage', link.ispage)
+    if link.mtime:
+        _writedate(fp, 'mtime', link.mtime)
+    if link.size:
+        _writeint(fp, 'size', link.size)
+    if link.mimetype:
+        _writestring(fp, 'mimetype', link.mimetype)
+    if link.encoding:
+        _writestring(fp, 'encoding', link.encoding)
+    if link.title:
+        _writestring(fp, 'title', link.title)
+    if link.author:
+        _writestring(fp, 'author', link.author)
+    if link.status:
+        _writestring(fp, 'status', link.status)
+    if link.redirectdepth > 0:
+        _writeint(fp, 'redirectdepth', link.redirectdepth)
     for child in link.children:
         _writestring(fp, 'child', child.url)
     for embed in link.embedded:
@@ -203,20 +223,10 @@ def serialize_link(fp, link):
     for reqanchor in link.reqanchors:
         for parent in link.reqanchors[reqanchor]:
             _writelist(fp, 'reqanchor', (parent.url, reqanchor))
-    _writebool(fp, 'isfetched', link.isfetched)
-    _writebool(fp, 'ispage', link.ispage)
-    _writedate(fp, 'mtime', link.mtime)
-    _writeint(fp, 'size', link.size)
-    _writestring(fp, 'mimetype', link.mimetype)
-    _writestring(fp, 'encoding', link.encoding)
-    _writestring(fp, 'title', link.title)
-    _writestring(fp, 'author', link.author)
-    _writestring(fp, 'status', link.status)
     for problem in link.linkproblems:
         _writestring(fp, 'linkproblem', problem)
     for problem in link.pageproblems:
         _writestring(fp, 'pageproblem', problem)
-    _writeint(fp, 'redirectdepth', link.redirectdepth)
     fp.write('\n')
 
 def _deserialize_site(site, key, value):
