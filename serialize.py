@@ -241,7 +241,7 @@ def _deserialize_site(site, key, value):
     elif key == 'yanked_re':
         site.add_yanked_re(_readstring(value))
     else:
-        # FIXME: through a propper exception
+        # FIXME: throw a propper exception
         raise IOError('parse error')
 
 def _deserialize_link(link, key, value):
@@ -280,7 +280,7 @@ def _deserialize_link(link, key, value):
     elif key == 'redirectdepth':
         link.redirectdepth = _readint(value)
     else:
-        # FIXME: through a propper exception
+        # FIXME: throw a propper exception
         raise IOError('parse error')
 
 def deserialize(fp):
@@ -322,6 +322,6 @@ def deserialize(fp):
                 _deserialize_link(link, key, value)
             continue
         # fallthrough
-        # FIXME: through a propper exception
+        # FIXME: throw a propper exception
         raise IOError('parse error')
     return site
