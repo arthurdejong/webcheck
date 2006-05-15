@@ -384,6 +384,7 @@ class Link:
         self.pageproblems = []
         self.redirectdepth = 0
         self.redirectlist = None
+        self._ischanged = False
 
     def _checkurl(self, url):
         """Check to see if the url is formatted properly, correct formatting
@@ -417,6 +418,7 @@ class Link:
         # add to children
         if child not in self.children:
             self.children.append(child)
+            self._ischanged = True
         # add self to parents of child
         if self not in child.parents:
             child.parents.append(self)
@@ -432,6 +434,7 @@ class Link:
         # add to embedded
         if link not in self.embedded:
             self.embedded.append(link)
+            self._ischanged = True
         # add self to parents of embed
         if self not in link.parents:
             link.parents.append(self)
@@ -446,6 +449,7 @@ class Link:
               % { 'anchor':   anchor })
         else:
             self.anchors.append(anchor)
+            self._ischanged = True
 
     def add_reqanchor(self, parent, anchor):
         """Indicate that the specified link contains a reference to the
@@ -458,8 +462,10 @@ class Link:
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:
                 self.reqanchors[anchor].append(parent)
+                self._ischanged = Trye
         else:
             self.reqanchors[anchor] = [parent]
+            self._ischanged = True
 
     def redirect(self, url):
         """Indicate that this link redirects to the specified url. Maximum
@@ -493,6 +499,7 @@ class Link:
     def add_linkproblem(self, problem):
         """Indicate that something went wrong while retreiving this link."""
         self.linkproblems.append(problem)
+        self._ischanged = True
 
     def add_pageproblem(self, problem):
         """Indicate that something went wrong with parsing the document."""
@@ -500,6 +507,7 @@ class Link:
         if not self.isinternal:
             return
         self.pageproblems.append(problem)
+        self._ischanged = True
 
     def fetch(self):
         """Attempt to fetch the url (if isyanked is not True) and fill in link
@@ -513,12 +521,14 @@ class Link:
         schememodule = schemes.get_schememodule(self.scheme)
         if schememodule is None:
             self.isyanked = 'unsupported scheme (' + self.scheme + ')'
+            self._ischanged = True
             debugio.info('  %s' % self.url)
             debugio.info('    ' + self.isyanked)
             return
         debugio.info('  %s' % self.url)
         content = schememodule.fetch(self, parsers.get_mimetypes())
         self.isfetched = True
+        self._ischanged = True
         # skip parsing of content if we were returned nothing
         if content is None:
             return
