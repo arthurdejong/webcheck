@@ -271,9 +271,9 @@ class Site:
                 fetchedlinks = 0
                 import serialize
                 for link in self.linkMap.values():
-                    if not link._isserialized:
+                    if link._ischanged:
                         serialize.serialize_link(serfp, link)
-                        link._isserialized = True
+                        link._ischanged = False
                 serfp.flush()
             # sleep between requests if configured
             if config.WAIT_BETWEEN_REQUESTS > 0:
@@ -476,7 +476,7 @@ class Link:
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:
                 self.reqanchors[anchor].append(parent)
-                self._ischanged = Trye
+                self._ischanged = True
         else:
             self.reqanchors[anchor] = [parent]
             self._ischanged = True
