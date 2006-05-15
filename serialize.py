@@ -275,7 +275,9 @@ def _deserialize_link(link, key, value):
 
 def deserialize(fp):
     """Read data from the file and construct objects from it.
-    A new site instance is returned."""
+    A new site instance is returned.
+    After the site has been deserialized the crawl() function
+    should be called to regenerate the other link attributes."""
     site = crawler.Site()
     link = None
     while True:
@@ -308,6 +310,4 @@ def deserialize(fp):
         # fallthrough
         # FIXME: through a propper exception
         raise IOError('parse error')
-    # do post-processing (update totalsize, internal, external, yanked, etc)
-    site.crawl()
     return site
