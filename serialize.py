@@ -296,6 +296,10 @@ def deserialize(fp):
         if match:
             link = site.get_link(match.group(1))
             debugio.info('  %s' % link.url)
+            # clear some data that is annoying if we have duplicates
+            link.anchors = []
+            link.linkproblems = []
+            link.pageproblems = []
             continue
         # check for key-value pair
         match = _keyvaluepattern.search(line)
