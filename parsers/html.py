@@ -289,19 +289,14 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
 def _maketxt(txt, encoding):
     """Return an unicode text of the specified string do correct character
     conversions and replacing html entities with normal characters."""
-    # convert string to unicode
-    # TODO: check for encoding errors (first try unicode() function with strict)
-    try:
-        # try to decode with the given encoding
-        txt = unicode(txt, encoding, 'replace')
-    except (LookupError, TypeError), e:
-        if encoding:
+    # try to decode with the given encoding
+    if encoding:
+        try:
+            return htmlunescape(unicode(txt, encoding, 'replace'))
+        except (LookupError, TypeError), e:
             debugio.warn('page has unknown encoding: %s' % str(encoding))
-            # TODO: log unknown encoding problem as page problem
-        # fall back to locale's encoding
-        txt = unicode(txt, errors='replace')
-    # replace entity refs with proper characters
-    return htmlunescape(txt)
+    # fall back to locale's encoding
+    return htmlunescape(unicode(txt, errors='replace'))
 
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
