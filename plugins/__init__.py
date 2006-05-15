@@ -156,7 +156,7 @@ def print_parents(fp, link, indent='     '):
       indent+' </ul>\n'+
       indent+'</div>\n' )
 
-def open_file(filename, istext=True):
+def open_file(filename, istext=True, makebackup=False):
     """This returns an open file object which can be used for writing. This
     file is created in the output directory. The output directory (stored in
     config.OUTPUT_DIR is created if it does not yet exist. If the second
@@ -173,15 +173,20 @@ def open_file(filename, istext=True):
             sys.exit(1)
     # build the output file name
     fname = os.path.join(config.OUTPUT_DIR, filename)
-    # check if file exists and ask to overwrite
-    if os.path.exists(fname) and not config.OVERWRITE_FILES:
-        res = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
-        res = res.lower() + ' '
-        if res[0] == 'a':
-            config.OVERWRITE_FILES = True
-        elif res[0] != 'y':
-            print 'Aborted.'
-            sys.exit(1)
+    # check if file exists
+    if os.path.exists(fname):
+        if makebackup:
+            # create backup of original (overwriting previous backup)
+            os.rename(fname, fname+'~')
+        elif not config.OVERWRITE_FILES:
+            # ask to overwrite
+            res = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
+            res = res.lower() + ' '
+            if res[0] == 'a':
+                config.OVERWRITE_FILES = True
+            elif res[0] != 'y':
+                print 'Aborted.'
+                sys.exit(1)
     # open the file for writing
     try:
         if istext:
