@@ -245,6 +245,7 @@ def _deserialize_site(site, key, value):
 
 def _deserialize_link(link, key, value):
     """The data in the kay value pair is fed into the link."""
+    link._ischanged = True
     if key == 'child':
         link.add_child(_readstring(value, False))
     elif key == 'embed':
