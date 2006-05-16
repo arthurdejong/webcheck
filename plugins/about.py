@@ -83,7 +83,7 @@ def generate(site):
       '   </p>\n'
       '   <p>\n'
       '    <tt>webcheck</tt> includes the\n'
-      '    <a href="http://www.victr.lm85.com/projects/fancytooltips/">FancyTooltips</a>\n'
+      '    <a href="http://victr.lm85.com/projects/fancytooltips/">FancyTooltips</a>\n'
       '    javascript library to display readable tooltips. FancyTooltips is\n'
       '    distributed under the MIT license and has the following copyright\n'
       '    notices (see <tt>fancytooltips.js</tt> for details):\n'
