@@ -279,6 +279,14 @@ class Site:
             if config.WAIT_BETWEEN_REQUESTS > 0:
                 debugio.debug('sleeping %s seconds' % config.WAIT_BETWEEN_REQUESTS)
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
+        # serialize remaining changed links
+        if serfp:
+            import serialize
+            for link in self.linkMap.values():
+                if link._ischanged:
+                    serialize.serialize_link(serfp, link)
+                    link._ischanged = False
+            serfp.flush()
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
         bases = [ ]
