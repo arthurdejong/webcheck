@@ -286,8 +286,8 @@ def _deserialize_link(link, key, value):
 def deserialize(fp):
     """Read data from the file and construct objects from it.
     A new site instance is returned.
-    After the site has been deserialized the crawl() function
-    should be called to regenerate the other link attributes."""
+    After the site has been deserialized the crawl() and postprocess()
+    functions should be called to regenerate the other link attributes."""
     import crawler
     site = crawler.Site()
     link = None

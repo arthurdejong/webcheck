@@ -201,6 +201,9 @@ def main():
         sys.stderr.write('Interrupted\n')
         sys.exit(1)
     debugio.info('done.')
+    debugio.info('postprocessing....')
+    site.postprocess()
+    debugio.info('done.')
     # now we can write out the files
     # start with the frame-description page
     debugio.info('generating reports...')

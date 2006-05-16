@@ -277,7 +277,7 @@ class Site:
                 serfp.flush()
             # sleep between requests if configured
             if config.WAIT_BETWEEN_REQUESTS > 0:
-                debugio.debug('sleeping %s seconds' % config.WAIT_BETWEEN_REQUESTS)
+                debugio.debug('crawler.crawl(): sleeping %s seconds' % config.WAIT_BETWEEN_REQUESTS)
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
         # serialize remaining changed links
         if serfp:
@@ -287,9 +287,11 @@ class Site:
                     serialize.serialize_link(serfp, link)
                     link._ischanged = False
             serfp.flush()
+
+    def postprocess(self):
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
-        bases = [ ]
+        bases = []
         for url in self._internal_urls:
             link = self.linkMap[url].follow_link()
             if link == None:
@@ -298,11 +300,11 @@ class Site:
             # if the link has no parent add it to the result list,
             # unless it is the first one
             if len(link.parents) == 0 or len(bases) == 0:
-                debugio.debug('crawler.crawl(): adding %s to bases' % link.url)
+                debugio.debug('crawler.postprocess(): adding %s to bases' % link.url)
                 bases.append(link)
         # if we got no bases, just use the first internal one
         if len(bases) == 0:
-            debugio.debug('crawler.crawl(): fallback to adding %s to bases' % self._internal_urls[0])
+            debugio.debug('crawler.postprocess(): fallback to adding %s to bases' % self._internal_urls[0])
             bases.append(self.linkMap[self._internal_urls[0]])
         # do a breadth first traversal of the website to determin depth and
         # figure out page children
@@ -312,7 +314,7 @@ class Site:
             tocheck.append(link)
         # repeat until we have nothing more to check
         while len(tocheck) > 0:
-            debugio.debug('crawler.crawl(): items left to examine: %d' % len(tocheck))
+            debugio.debug('crawler.postprocess(): items left to examine: %d' % len(tocheck))
             # choose a link from the tocheck list
             link = tocheck.pop(0)
             # figure out page children
