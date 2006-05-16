@@ -61,7 +61,7 @@ def generate(site):
                  x.isinternal and
                  _getsize(x) >= config.REPORT_SLOW_URL_SIZE*1024 ]
     # sort links by size (biggest first)
-    links.sort(lambda a, b: cmp(a.totalSize, b.totalSize))
+    links.sort(lambda a, b: cmp(b.totalSize, a.totalSize))
     # present results
     fp = plugins.open_html(plugins.size, site)
     if not links:
