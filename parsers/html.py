@@ -271,11 +271,13 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         """Handle character references (e.g. &#65;) by passing the data to
         handle_data()."""
         self.handle_data('&#'+name+';')
+        # TODO: do not pass ; if plain text does not contain it?
 
     def handle_entityref(self, name):
         """Handle entity references (e.g. &eacute;) by passing the data to
         handle_data()."""
         self.handle_data('&'+name+';')
+        # TODO: do not pass ; if plain text does not contain it?
 
     def handle_pi(self, data):
         """Hanlde xml declaration."""
