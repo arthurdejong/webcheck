@@ -48,11 +48,12 @@ and generates a number of reports. The whole system is pluggable allowing
 easily adding extra reports and checks.
 
 Features of webcheck include:
+ * support for http, https, ftp and file schemes
  * view the structure of a site
  * track down broken links
- * find potentially outdated web pages
+ * find potentially outdated and new pages
  * list links pointing to external sites
- * do all this periodically and without user intervention
+ * can run without user intervention
 
 webcheck is written in python and is developed on a Debian system with python
 2.3. Previous versions of python are not tested but python 2.4 is tested
