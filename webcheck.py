@@ -32,6 +32,7 @@ import debugio
 import sys
 import os
 import re
+import serialize
 
 debugio.loglevel = debugio.INFO
 
@@ -193,14 +194,24 @@ def main():
     site = crawler.Site()
     # parse command-line arguments
     parse_args(site)
+    # create seriazlized file
+    fp = plugins.open_file('webcheck.dat', makebackup=True)
+    serialize.serialize_site(fp, site)
     # crawl through the website
     debugio.info('checking site....')
     try:
-        site.crawl() # this will take a while
+        site.crawl(fp) # this will take a while
     except KeyboardInterrupt:
         sys.stderr.write('Interrupted\n')
         sys.exit(1)
     debugio.info('done.')
+    fp.close()
+    # serialize the final state again
+    fp = plugins.open_file('webcheck.dat', makebackup=True)
+    serialize.serialize_site(fp, site)
+    serialize.serialize_links(fp, site)
+    fp.close()
+    # do postprocessing (building site structure, etc)
     debugio.info('postprocessing....')
     site.postprocess()
     debugio.info('done.')
