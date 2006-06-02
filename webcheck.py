@@ -199,11 +199,7 @@ def main():
     serialize.serialize_site(fp, site)
     # crawl through the website
     debugio.info('checking site....')
-    try:
-        site.crawl(fp) # this will take a while
-    except KeyboardInterrupt:
-        sys.stderr.write('Interrupted\n')
-        sys.exit(1)
+    site.crawl(fp) # this will take a while
     debugio.info('done.')
     fp.close()
     # serialize the final state again
@@ -227,4 +223,8 @@ def main():
     debugio.info('done.')
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.stderr.write('Interrupted\n')
+        sys.exit(1)
