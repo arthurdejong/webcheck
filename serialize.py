@@ -73,6 +73,12 @@ _keyvaluepattern = re.compile('^([a-z0-9_-]+) *= *(.*)$')
 # pattern for matching comments
 _commentpattern = re.compile('^[;#]')
 
+# exception class
+def DeSerializeException(Exception):
+    """An exception class signalling a problem in parsing some
+    value."""
+    pass
+
 # functions for writing data to the serialized file
 
 def _escape(txt):
@@ -124,7 +130,7 @@ def _unescape(txt):
     with their proper values."""
     # strip quotes
     if txt[0] != '"' or txt[-1] != '"':
-        raise IOError('parse error')
+        raise DeSerializeException('parse error')
     txt = txt[1:-1]
     # unescape
     return parsers.html.htmlunescape(txt)
@@ -139,8 +145,7 @@ def _readbool(txt):
     elif txt == 'none':
         return None
     else:
-        # FIXME: raise a proper error
-        raise IOError('parse error')
+        raise DeSerializeException('parse error')
 
 def _readint(txt):
     """Interpret the string as an integer value."""
@@ -240,8 +245,7 @@ def _deserialize_site(site, key, value):
     elif key == 'yanked_re':
         site.add_yanked_re(_readstring(value))
     else:
-        # FIXME: throw a propper exception
-        raise IOError('parse error')
+        raise DeSerializeException('parse error')
 
 def _deserialize_link(link, key, value):
     """The data in the kay value pair is fed into the link."""
@@ -280,8 +284,7 @@ def _deserialize_link(link, key, value):
     elif key == 'redirectdepth':
         link.redirectdepth = _readint(value)
     else:
-        # FIXME: throw a propper exception
-        raise IOError('parse error')
+        raise DeSerializeException('parse error')
 
 def deserialize(fp):
     """Read data from the file and construct objects from it.
@@ -323,6 +326,5 @@ def deserialize(fp):
                 _deserialize_link(link, key, value)
             continue
         # fallthrough
-        # FIXME: throw a propper exception
-        raise IOError('parse error')
+        raise DeSerializeException('parse error')
     return site
