@@ -53,6 +53,9 @@ IOTIMEOUT = 10.0
 # Output directory. This is the state of the -o command line option.
 OUTPUT_DIR = '.'
 
+# Whether to try to read a state file to continue from.
+CONTINUE = False
+
 # This is the time in seconds to wait between requests. This is the state of
 # the -w command line option.
 WAIT_BETWEEN_REQUESTS = 0

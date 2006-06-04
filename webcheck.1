@@ -96,6 +96,22 @@ specified by config.py. If this directory does not exist it will
 be created for you (if possible).
 
 .TP 
+.BI "\-c, \-\-continue"
+Try to continue from a previous run. When using this option webcheck
+will look for a webcheck.dat in the output directory.
+This file is read to restore the state from the previous run.
+This allows webcheck to continue a previously interrupted run.
+When this option is used, the \-\-internal, \-\-external and \-\-yank
+options will be ignored as well as any URL arguments.
+The \-\-base\-only and \-\-avoid\-external options should be the same
+as the previous run.
+.br
+Note that this option is experimental and it's semantics may change
+with coming releases (especially in relation to other options).
+Also note that the stored files are not quaranteed to be compatible
+between releases.
+
+.TP 
 .B \-f, \-\-force
 Overwrite files without asking.
 

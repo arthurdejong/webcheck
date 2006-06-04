@@ -74,6 +74,7 @@ def print_help():
       '  -d, --debug            do programmer-level debugging\n'
       '  -o, --output=DIRECTORY store the generated reports in the specified\n'
       '                         directory\n'
+      '  -c, --continue         try to continue from a previous run\n'
       '  -f, --force            overwrite files without asking\n'
       '  -r, --redirects=N      the number of redirects webcheck should follow,\n'
       '                         0 implies to follow all redirects\n'
@@ -86,9 +87,9 @@ def parse_args(site):
     import getopt
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
-          'i:x:y:l:baqdo:fr:w:Vh',
+          'i:x:y:l:baqdo:cfr:w:Vh',
           ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
-           'quiet', 'silent', 'debug', 'output=',
+           'quiet', 'silent', 'debug', 'output=', 'continue',
            'force', 'redirects=', 'wait=', 'version', 'help'))
         for flag, arg in optlist:
             if flag in ('-i', '--internal'):
@@ -107,6 +108,8 @@ def parse_args(site):
                 debugio.loglevel = debugio.DEBUG
             elif flag in ('-o', '--output'):
                 config.OUTPUT_DIR = arg
+            elif flag in ('-c', '--continue'):
+                config.CONTINUE = True
             elif flag in ('-f', '--force'):
                 config.OVERWRITE_FILES = True
             elif flag in ('-r', '--redirects'):
@@ -119,7 +122,7 @@ def parse_args(site):
             elif flag in ('-h', '--help'):
                 print_help()
                 sys.exit(0)
-        if len(args)==0:
+        if len(args)==0 and not config.CONTINUE:
             print_usage()
             print_tryhelp()
             sys.exit(1)
@@ -177,7 +180,7 @@ def install_file(source, text=False):
     try:
         sfp = open(source, mode)
     except IOError, (errno, strerror):
-        debugio.error('error opening %(fname)s: %(strerror)s' %
+        debugio.error('%(fname)s: %(strerror)s' %
                       { 'fname': source,
                         'strerror': strerror })
         sys.exit(1)
@@ -194,6 +197,20 @@ def main():
     site = crawler.Site()
     # parse command-line arguments
     parse_args(site)
+    # read serialized file
+    if config.CONTINUE:
+        fname = os.path.join(config.OUTPUT_DIR, 'webcheck.dat')
+        debugio.info('reading stored crawler data....')
+        try:
+            fp = open(fname, 'r')
+            site = serialize.deserialize(fp)
+            fp.close()
+        except IOError, (errno, strerror):
+            debugio.error('%(fname)s: %(strerror)s' %
+                          { 'fname': fname,
+                            'strerror': strerror })
+            sys.exit(1)
+        debugio.info('done.')
     # create seriazlized file
     fp = plugins.open_file('webcheck.dat', makebackup=True)
     serialize.serialize_site(fp, site)
