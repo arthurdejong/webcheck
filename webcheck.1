@@ -108,7 +108,7 @@ as the previous run.
 .br
 Note that this option is experimental and it's semantics may change
 with coming releases (especially in relation to other options).
-Also note that the stored files are not quaranteed to be compatible
+Also note that the stored files are not guaranteed to be compatible
 between releases.
 
 .TP 
@@ -160,14 +160,15 @@ URLs of unsupported schemes are also considered yanked.
 
 .SH "EXAMPLES"
 
-Check the site www.example.com but exclude any path with "/webcheck" in it.
+Check the site www.example.com but consider any path with "/webcheck" in it
+to be external.
 .ft B
     webcheck http://www.example.com/ \-x /webcheck
 .ft R
 
 .SH "NOTES"
 
-When checking internal URLs webcheck honours the robots.txt file, identifying
+When checking internal URLs webcheck honors the robots.txt file, identifying
 itself as user-agent webcheck. Disallowed links will not be checked at all as
 if the \-y option was specified for that URL. To allow webcheck to crawl parts
 of a site that other robots are disallowed, use something like:
