@@ -74,7 +74,7 @@ _keyvaluepattern = re.compile('^([a-z0-9_-]+) *= *(.*)$')
 _commentpattern = re.compile('^[;#]')
 
 # exception class
-def DeSerializeException(Exception):
+class DeSerializeException(Exception):
     """An exception class signalling a problem in parsing some
     value."""
     pass
@@ -173,6 +173,7 @@ def _readdate(txt):
 
 def _readlist(txt):
     """nterpret the string as a list of strings."""
+    # FIXME: do not split on comma's in quoted strings
     return [ _readstring(x.strip())
              for x in txt.split(',') ]
 
