@@ -73,6 +73,9 @@ _keyvaluepattern = re.compile('^([a-z0-9_-]+) *= *(.*)$')
 # pattern for matching comments
 _commentpattern = re.compile('^[;#]')
 
+# pattern for splitting comma separated list
+_commapattern = re.compile(',? *("[^"]*")')
+
 # exception class
 class DeSerializeException(Exception):
     """An exception class signalling a problem in parsing some
@@ -173,9 +176,8 @@ def _readdate(txt):
 
 def _readlist(txt):
     """nterpret the string as a list of strings."""
-    # FIXME: do not split on comma's in quoted strings
     return [ _readstring(x.strip())
-             for x in txt.split(',') ]
+             for x in _commapattern.findall(txt) ]
 
 # general serialize and deraserialize functions
 
