@@ -9,7 +9,7 @@ build:
 clean:
 	dh_testdir
 	dh_testroot
-	find -name '*.py[co]' | xargs rm -f
+	find . -name '*.py[co]' | xargs rm -f
 	dh_clean
 
 install: build
@@ -21,6 +21,7 @@ install: build
 	  | xargs cp --parents --target-directory debian/webcheck/$(PYBASE)
 	cp webcheck.css debian/webcheck/$(PYBASE)/webcheck.css
 	cp fancytooltips/fancytooltips.js debian/webcheck/$(PYBASE)/fancytooltips/fancytooltips.js
+	cp favicon.ico debian/webcheck/$(PYBASE)/favicon.ico
 	chmod 755 debian/webcheck/$(PYBASE)/webcheck.py
 
 binary-indep: build install
