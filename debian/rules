@@ -2,7 +2,7 @@
 
 export DH_VERBOSE=1
 
-PYBASE := usr/lib/python2.3/site-packages/webcheck
+PYBASE := usr/share/webcheck
 
 build:
 
@@ -27,6 +27,7 @@ install: build
 binary-indep: build install
 	dh_testdir
 	dh_testroot
+	dh_pysupport
 	dh_python
 	dh_installdocs README TODO AUTHORS NEWS
 	dh_installman webcheck.1
