@@ -185,11 +185,11 @@ def serialize_site(fp, site):
     """Store the information of the site in the specified file."""
     for url in site._internal_urls:
         _writestring(fp, 'internal_url', url)
-    for res in site._internal_res:
+    for res in site._internal_res.keys():
         _writestring(fp, 'internal_re', res)
-    for res in site._external_res:
+    for res in site._external_res.keys():
         _writestring(fp, 'external_re', res)
-    for res in site._yanked_res:
+    for res in site._yanked_res.keys():
         _writestring(fp, 'yanked_re', res)
     fp.write('\n')
 

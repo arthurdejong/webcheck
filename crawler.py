@@ -104,11 +104,11 @@ class Site:
         # list of internal urls
         self._internal_urls = []
         # list of regexps considered internal
-        self._internal_res = []
+        self._internal_res = {}
         # list of regexps considered external
-        self._external_res = []
+        self._external_res = {}
         # list of regexps matching links that should not be checked
-        self._yanked_res = []
+        self._yanked_res = {}
         # map of scheme+netloc to robot handleds
         self._robotparsers = {}
         # a map of urls to Link objects
@@ -126,24 +126,24 @@ class Site:
     def add_internal_re(self, exp):
         """Adds the gived regular expression as a pattern to match internal
         urls."""
-        self._internal_res.append(re.compile(exp, re.IGNORECASE))
+        self._internal_res[exp] = re.compile(exp, re.IGNORECASE)
 
     def add_external_re(self, exp):
         """Adds the gived regular expression as a pattern to match external
         urls."""
-        self._external_res.append(re.compile(exp, re.IGNORECASE))
+        self._external_res[exp] = re.compile(exp, re.IGNORECASE)
 
     def add_yanked_re(self, exp):
         """Adds the gived regular expression as a pattern to match urls that
         will not be checked at all."""
-        self._yanked_res.append(re.compile(exp, re.IGNORECASE))
+        self._yanked_res[exp] = re.compile(exp, re.IGNORECASE)
 
     def _is_internal(self, link):
         """Check whether the specified url is external or internal.
         This uses the urls marked with add_internal() and the regular
         expressions passed with add_external_re()."""
         # check if it is internal through the regexps
-        for regexp in self._internal_res:
+        for regexp in self._internal_res.values():
             if regexp.search(link.url) is not None:
                 return True
         res = False
@@ -160,7 +160,7 @@ class Site:
         if not res:
             return False
         # check if it is external through the regexps
-        for x in self._external_res:
+        for x in self._external_res.values():
             # if the url matches it is external and we can stop
             if x.search(link.url) is not None:
                 return False
@@ -197,7 +197,7 @@ class Site:
         This uses the regualr expressions passed with add_yanked_re() and the
         robots information present."""
         # check if it is yanked through the regexps
-        for regexp in self._yanked_res:
+        for regexp in self._yanked_res.values():
             # if the url matches it is yanked and we can stop
             if regexp.search(link.url) is not None:
                 return 'yanked'
