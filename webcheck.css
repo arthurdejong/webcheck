@@ -84,6 +84,8 @@ ul.navbar {
   margin-top: 3px;
   border-radius: 4px;
   -moz-border-radius: 4px;
+  position: relative;
+  z-index: 2;
 }
 
 ul.navbar li {
