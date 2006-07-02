@@ -1,58 +1,65 @@
 before next release
 -------------------
 * go over all FIXMEs in code (ftp)
-* check that sleep acutally sleeps for the advertised time
 * follow redirects (to a limit) of external sites
-* check that scheme names are clean so that we do not import strange python modules
 
 probably before 2.0 release
 ---------------------------
-* make it possible to copy or reference webcheck.css
-* make it possible to copy http:.../webcheck.css into place (maybe use scheme system, probably just urllib)
-* make more things configurable
-* maybe generate a list of page parents (this is useful to list proper parent links for problem pages)
-* figure out if we need parents and pageparents
-* make configurable time-out when retrieving a document
 * support for mult-threading (use -t, --threads as option)
-* implement a fix for redirecting stdout and stderr to work properly
-* implement a maximum transfer size for downloading files and things over http
+* find a fix for redirecting stdout and stderr to work properly
+* implement a maximum transfer size for downloading
 * support ftp proxies
 * support proxying https traffic
+* give problems different levels (info, warning, error)
+* option to only force overwrite generated files and leave static files (css, js) alone
+* implement a --html-only option to not copy css and other files
+* do not overwrite (maybe) webcheck.css if it is already there
+* check for missing encoding (report problem)
+* implement parsing of meta http-equiv="refresh" content="0;url=CHILD">
+* in --help output: show default number of redirects to follow
 
 wishlist
 --------
 * make code for stripping last part of a url (e.g. foo/index.html -> foo/)
 * maybe set referer (configurable)
-* new config file format (if we want a configfile at all)
 * cookies support (maybe)
 * integration with weblint
 * do form checking of crawled pages
 * do spelling checking of crawled pages
 * test w3c conformance of pages (already done a little)
-* maybe store crawled site's data in some format for later processing or continuing after interruption
 * add support for fetching gzipped content to improve performance
 * maybe do http pipelining
-* add a favicon to report
 * make error handling of HTMLParser more robust (maybe send a patch for html parser upstream)
 * maybe use this as a html parser: http://www.crummy.com/software/BeautifulSoup/examples.html
-* maybe have a way to output google sitemap files: http://www.google.com/webmasters/sitemaps/docs/en/protocol.html
+* maybe output a google sitemap file: http://www.google.com/webmasters/sitemaps/docs/en/protocol.html
 * maybe trim titles that are too long
 * maybe check that documents referenced in <img> tags are really images
 * maybe split out plugins in check() and generate() functions
 * make FAQ
-* maybe report unknown/unsupported content in the report
 * use gettext to present output to enable translations of messages and html
-* maybe mark embedded content that is external
+* maybe report on embedded content that is external
 * present an overview of problem pages: "100 problems in 10 pages" (per author)
 * check of email addresses that they are formatted properly and check that host part has an MX record (make it a problem for no record or only an A record)
-* output a csv file with some useful information
 * maybe implement news, nntp, gopher and telnet schemes (if there is anyone that wants them)
 * maybe add custom bullets in problem lists, depending on problem type
-* maybe make -b the default
-* prompt for authentication (detecting realms)
 * present age for times long ago in a friendlier format (.. days ago, .. months ago, .. years ago)
 * maybe unescaped spaces aren't always a real problem (e.g. in mailto: urls)
 * give a warning when no encoding is specified, an error if non-ascii characters are used
 * maybe give a warning for urls that have non-ascii characters
-* maybe fetch and store desription and other meta information about page (keywords) (just like author)
-* make it possible to use multiple stylesheets (possibly reference external stylesheets)
+* maybe fetch and store description and other meta information about page (keywords) (just like author)
+* connect to w3c-markup-validator and tidy (and possibly other tools)
+* find out why title does not show up correctly for file?:// urls if they contain non-ascii chars
+* output scan took so long
+* support unicode strings for all string values in link objects (url, status, mimetype, encoding, etc)
+* maybe also serialize robotparsers
+* maybe also add robots.txt to urllist if fetched successfully
+* support CSS encoding: http://www.w3.org/International/questions/qa-css-charset
+* webcheck does not give an error when accessing http://site:443/ ??
+* improve data structures (e.g. see if pop() is faster than pop(0))
+* do not use string for serializing child, embed, anchor and reqanchor as they are already url-encoded
+* automatically strip beginning and trailing spaces from links (but warn though)
+* try python-beautifulsoup
+* there seem to be some issues with generating site maps for ftp directories
+* document serialized file format in manual page (if it is stabilized)
+* look into python-spf to see how DNS queries are done
+* try to use python-chardet in case of missing encoding

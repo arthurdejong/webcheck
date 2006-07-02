@@ -1,10 +1,28 @@
+webcheck (1.9.7) unstable; urgency=low
+
+  * switch to using python-support and follow new policy (closes: #373902)
+  * upgrade to standards-version 3.7.2 (no changes needed)
+  * site data is now stored to a file while crawling the site, this can be
+    used to resume a crawl with the --continue option and for debugging
+    purposes
+  * implemented checking of link anchors
+  * small improvements to generated reports (favicon included, css fix)
+  * documentation improvements
+  * properly handle float values for --wait
+  * unreachable sites will time out faster
+  * added support for plugins that don't output html
+  * half a dozen other small bugfixes (stability fixes, code cleanups and
+    improvements)
+
+ -- Arthur de Jong <adejong@debian.org>  Sun,  2 Jul 2006 23:30:00 +0200
+
 webcheck (1.9.6) unstable; urgency=low
 
   * SECURITY FIX: a cross-site scripting vulnerability with content in the
                   tooltips of generated report was fixed by properly escaping
-                  all output
+                  all output (CVE-2006-1321)
   * urls are now url encoded into a consistent form, solving some problems
-    with urls with non-ascii characters
+    with urls with non-ascii characters (closes: #348377)
   * no longer remove unreferenced redirects
   * more debugging info in debug mode
   * more fixes for escaping in generated reports and more support for sites
