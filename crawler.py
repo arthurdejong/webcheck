@@ -613,3 +613,14 @@ class Link:
                 self.pagechildren.append(child)
         # return the results
         return self.pagechildren
+
+    def set_encoding(self, encoding):
+        """Set the encoding of the link doing some basic checks
+        to see if the encoding is supported."""
+        if self.encoding is None:
+            try:
+                unicode('just some random text', encoding, 'replace')
+                self.encoding = encoding
+            except Exception:
+                # ignore any problems, just not set encoding
+                pass

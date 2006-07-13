@@ -183,12 +183,11 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             pass # TODO: implement
         # <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         elif tag == 'meta' and attrs.has_key('http-equiv') and attrs.has_key('content') and attrs['http-equiv'].lower() == 'content-type':
-            if self.link.encoding is None:
-                try:
-                    self.link.encoding = _charsetpattern.search(attrs['content']).group(1)
-                except AttributeError:
-                    # ignore cases where encoding is not set in header
-                    pass
+            try:
+                self.link.set_encoding(_charsetpattern.search(attrs['content']).group(1))
+            except AttributeError:
+                # ignore cases where encoding is not set in header
+                pass
         # <img src="url">
         elif tag == 'img' and attrs.has_key('src'):
             self.embedded.append(self._cleanurl(attrs['src']))
@@ -280,13 +279,12 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # TODO: do not pass ; if plain text does not contain it?
 
     def handle_pi(self, data):
-        """Hanlde xml declaration."""
+        """Handle xml declaration."""
         # find character encoding from declaration
-        if self.link.encoding is None:
-            try:
-                self.link.encoding = _encodingpattern.search(data).group(1)
-            except AttributeError:
-                pass
+        try:
+            self.link.set_encoding(_encodingpattern.search(data).group(1))
+        except AttributeError:
+            pass
 
 def _maketxt(txt, encoding):
     """Return an unicode text of the specified string do correct character
@@ -295,7 +293,7 @@ def _maketxt(txt, encoding):
     if encoding:
         try:
             return htmlunescape(unicode(txt, encoding, 'replace'))
-        except (LookupError, TypeError), e:
+        except (LookupError, TypeError, ValueError), e:
             debugio.warn('page has unknown encoding: %s' % str(encoding))
     # fall back to locale's encoding
     return htmlunescape(unicode(txt, errors='replace'))

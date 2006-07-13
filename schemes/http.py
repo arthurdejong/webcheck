@@ -105,7 +105,7 @@ def fetch(link, acceptedtypes):
             except AttributeError:
                 pass
             try:
-                link.encoding = _charsetpattern.search(response.getheader('Content-type')).group(1)
+                link.set_encoding(_charsetpattern.search(response.getheader('Content-type')).group(1))
             except (AttributeError, TypeError):
                 pass
             try:
