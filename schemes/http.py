@@ -76,12 +76,12 @@ def fetch(link, acceptedtypes):
                 (user, passwd) = urllib.splitpasswd(userpass)
                 conn.putheader(
                   'Authorization',
-                  'Basic '+base64.encodestring(user+':'+passwd).strip() )
+                  'Basic '+base64.encodestring(str(user)+':'+str(passwd)).strip() )
             if proxyuserpass is not None:
                 (user, passwd) = urllib.splitpasswd(proxyuserpass)
                 conn.putheader(
                   'Proxy-Authorization',
-                  'Basic '+base64.encodestring(user+':'+passwd).strip() )
+                  'Basic '+base64.encodestring(str(user)+':'+str(passwd)).strip() )
             # bypass proxy cache
             if config.BYPASSHTTPCACHE:
                 conn.putheader('Cache-control', 'no-cache')
