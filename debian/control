@@ -27,3 +27,5 @@ Description: website link and structure checker
   * find potentially outdated and new pages
   * list links pointing to external sites
   * can run without user intervention
+ .
+  Homepage: http://ch.tudelft.nl/~arthur/webcheck
