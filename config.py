@@ -110,3 +110,7 @@ FILE_INDEXES = [ 'index.html', 'index.htm' ]
 # A list of names that will be checked when encountering an ftp://
 # directory. This file will be picked up instead of the directory list.
 FTP_INDEXES = [ 'index.html', 'index.htm' ]
+
+# Whether to fetch robots.txt files and do checking based on the informatio
+# present in those files (normally matching links are yanked).
+USE_ROBOTS = False
