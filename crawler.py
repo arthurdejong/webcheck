@@ -95,6 +95,7 @@ class Site:
     The available properties of this class are:
 
       linkMap    - a map of urls to link objects
+      bases      - a list of base link object
       base       - a url that points to the base of the site
    """
 
@@ -113,6 +114,8 @@ class Site:
         self._robotparsers = {}
         # a map of urls to Link objects
         self.linkMap = {}
+        # list of base urls (these are the internal urls to start from)
+        self.bases = []
         # base url that can be used as start of site
         self.base = None
 
@@ -204,6 +207,9 @@ class Site:
         # check if we should avoid external links
         if not link.isinternal and config.AVOID_EXTERNAL_LINKS:
             return 'external avoided'
+        # check if we should use robot parsers
+        if not config.USE_ROBOTS:
+            return False
         # skip schemes not haveing robot.txt files
         if link.scheme != 'http' and link.scheme != 'https':
             return False
@@ -291,25 +297,22 @@ class Site:
     def postprocess(self):
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
-        bases = []
         for url in self._internal_urls:
             link = self.linkMap[url].follow_link()
             if link == None:
                 debugio.warn('base link %s redirects to nowhere' % url)
                 continue
-            # if the link has no parent add it to the result list,
-            # unless it is the first one
-            if len(link.parents) == 0 or len(bases) == 0:
-                debugio.debug('crawler.postprocess(): adding %s to bases' % link.url)
-                bases.append(link)
+            # add the link to bases
+            debugio.debug('crawler.postprocess(): adding %s to bases' % link.url)
+            self.bases.append(link)
         # if we got no bases, just use the first internal one
-        if len(bases) == 0:
+        if len(self.bases) == 0:
             debugio.debug('crawler.postprocess(): fallback to adding %s to bases' % self._internal_urls[0])
-            bases.append(self.linkMap[self._internal_urls[0]])
+            self.bases.append(self.linkMap[self._internal_urls[0]])
         # do a breadth first traversal of the website to determin depth and
         # figure out page children
         tocheck = []
-        for link in bases:
+        for link in self.bases:
             link.depth = 0
             tocheck.append(link)
         # repeat until we have nothing more to check
@@ -325,7 +328,7 @@ class Site:
                 tocheck.append(child)
         # set some compatibility properties
         # TODO: figure out a better way to get to this to the plugins
-        self.base = bases[0].url
+        self.base = self.bases[0].url
 
 class Link:
     """This is a basic class representing a url.
