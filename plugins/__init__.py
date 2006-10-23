@@ -95,7 +95,12 @@ def get_info(link):
     else:
         info += 'external link'
     if link.isyanked:
-        info += ', not checked\n'
+        if isinstance(link.isyanked, unicode):
+            info += ', not checked (%s)\n' % link.isyanked
+        if isinstance(link.isyanked, str):
+            info += ', not checked (%s)\n' % unicode(link.isyanked, errors='replace')
+        else:
+            info += ', not checked\n'
     else:
         info += '\n'
     if link.redirectdepth > 0:
