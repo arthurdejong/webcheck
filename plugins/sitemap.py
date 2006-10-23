@@ -71,7 +71,11 @@ def generate(site):
       '    This an overview of the crawled site.\n'
       '   </p>\n'
       '   <ul>\n' )
-    _explore(fp, site.linkMap[site.base])
+    explored = []
+    for l in site.bases:
+        explored.append(l)
+    for l in site.bases:
+        _explore(fp, l, explored)
     fp.write(
       '   </ul>\n' )
     plugins.close_html(fp)
