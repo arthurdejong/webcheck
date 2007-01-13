@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Arthur de Jong <adejong@debian.org>
 Standards-Version: 3.7.2
 Build-Depends: debhelper (>= 5.0.37.2)
-Build-Depends-Indep: python, python-support (>= 0.3)
+Build-Depends-Indep: python, python-support (>= 0.4)
 XS-Python-Version: current
 
 Package: webcheck
