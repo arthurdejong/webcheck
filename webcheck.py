@@ -4,7 +4,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ def print_version():
       'webcheck %(version)s\n'
       'Written by Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n'
       '\n'
-      'Copyright (C) 1998, 1999, 2002, 2005, 2006 Albert Hopkins (marduk),\n'
+      'Copyright (C) 1998, 1999, 2002, 2005, 2006, 2007 Albert Hopkins (marduk),\n'
       'Mike W. Meyer and Arthur de Jong.\n'
       'This is free software; see the source for copying conditions.  There is NO\n'
       'warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n'

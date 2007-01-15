@@ -30,7 +30,7 @@ items should be changeble from the command line."""
 import urllib
 
 # Current version of webcheck.
-VERSION = '1.9.7'
+VERSION = '1.9.8'
 
 # The homepage of webcheck.
 HOMEPAGE = 'http://ch.tudelft.nl/~arthur/webcheck/'
@@ -111,6 +111,6 @@ FILE_INDEXES = [ 'index.html', 'index.htm' ]
 # directory. This file will be picked up instead of the directory list.
 FTP_INDEXES = [ 'index.html', 'index.htm' ]
 
-# Whether to fetch robots.txt files and do checking based on the informatio
+# Whether to fetch robots.txt files and do checking based on the information
 # present in those files (normally matching links are yanked).
 USE_ROBOTS = False

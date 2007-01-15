@@ -63,3 +63,4 @@ wishlist
 * document serialized file format in manual page (if it is stabilized)
 * look into python-spf to see how DNS queries are done
 * try to use python-chardet in case of missing encoding
+* implement an option to ignore problems on pages (but do consider internal, etc) (e.g. for generated or legacy html)

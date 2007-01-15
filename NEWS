@@ -1,3 +1,15 @@
+changes from 1.9.7 to 1.9.8
+---------------------------
+
+* some checks for properly handling unknown and wrong encodings have been
+  added
+* added proper error handling for SSL related socket problems (exceptions are
+  not a subclass of regular socket exceptions)
+* a bugfix for urls that contain a user name without a password or the other
+  way around
+* miscellaneous small report improvements
+
+
 changes from 1.9.6 to 1.9.7
 ---------------------------
 
