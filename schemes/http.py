@@ -150,6 +150,13 @@ def fetch(link, acceptedtypes):
                 debugio.debug("error reading HTTP response: "+str(e))
                 link.add_linkproblem("error reading HTTP response: "+str(e))
             return None
+        except Exception, e:
+            # handle all other exceptions
+            debugio.debug('unknown exception caught: '+str(e))
+            link.add_linkproblem('error reading HTTP response: '+str(e))
+            import traceback
+            traceback.print_exc()
+            return None
     finally:
         # close the connection before returning
         if conn is not None:
