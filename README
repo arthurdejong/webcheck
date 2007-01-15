@@ -11,7 +11,7 @@
 
    Copyright (C) 1998, 1999 Albert Hopkins (marduk)
    Copyright (C) 2002 Mike W. Meyer
-   Copyright (C) 2005, 2006 Arthur de Jong
+   Copyright (C) 2005, 2006, 2007 Arthur de Jong
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ webcheck is written in python and is developed on a Debian system with python
 occasionally. Patches to support a wider range of python releases are welcome
 (provided they are not too intrusive).
 
+
 INSTALLING WEBCHECK
 ===================
 
@@ -75,6 +76,7 @@ Unix-like systems. Other operating systems may differ.
 
   3. Put the manual page in the MANPATH.
      % ln -s /opt/webcheck-1.9.?/webcheck.1 /usr/local/man/man1/webcheck.1
+
 
 RUNNING WEBCHECK
 ================
@@ -97,16 +99,24 @@ webcheck manual page. If the manual page is not in the MANPATH you can
 probably open the manual with something like:
   % man -l /opt/webcheck-1.9.?/webcheck.1
 
+
 FEEDBACK AND BUG REPORTS
 ========================
 
-If you have any questions about webcheck or would like to report a
-bug, it helps a lot to include a url where the problem can be found,
-an HTML file where the error occurs or a (small) tar of the site where
-the error occurs. Suggestions for improvements are also welcomed.
-Patches and code contributions are even better.
+If you have any questions about webcheck or would like to report a bug, please
+include the following:
+
+ * the exact webcheck command that was run
+ * output of webcheck (prefferably with the --debug option)
+ * gzipped webcheck.dat file from the output directory
+
+(a simple HTML file demonstrating the bug would even be better)
+
+Suggestions for improvements are also welcome. Patches and code contributions
+are even better.
 
 Please send all your reports to Arthur de Jong <arthur@ch.tudelft.nl>.
+
 
 WEBCHECK DESIGN OVERVIEW
 ========================
