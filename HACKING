@@ -1,0 +1,27 @@
+WEBCHECK DESIGN OVERVIEW
+========================
+
+Webcheck has grown and has been refactored over time so there is not really a
+single design. The functions are grouped in modules according to their
+function. This graphs should present a simple overview of the modules and
+order of calling the functions.
+
+webcheck.py                 - main program, command line parsing, etc
+ \- config.py               - configuration settings (imported from most other
+ |                            modules)
+ \- debugio.py              - functions for printing output (imported from
+ |                            most other modules)
+ \- crawler.py              - module with loop and logic for traversing a
+ |   |                        website and storing all the information about
+ |   |                        the website that is used later
+ |   \- schemes/__init__.py - front-end module to make available scheme
+ |   |   |                    modules for fetching content
+ |   |   \- schemes/*.py    - per scheme (ftp/file/http) a module
+ |   \- parsers/__init.py   - front-end module to handle parsing of content
+ |       \- parsers/*.py    - parser modules for content (html and dummy css
+ |                            currently)
+ \- plugins/__init__.py     - front-end module for plugin modules, this calls
+     |                        all configured plugins and has some helper
+     |                        functions for plugins
+     \- plugins/*.py        - per report one plugin that does some specific
+                              checking and outputs some html code

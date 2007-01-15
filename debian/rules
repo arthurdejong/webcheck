@@ -28,7 +28,7 @@ binary-indep: build install
 	dh_testdir
 	dh_testroot
 	dh_pysupport
-	dh_installdocs README TODO AUTHORS NEWS
+	dh_installdocs README TODO AUTHORS NEWS HACKING
 	dh_installman webcheck.1
 	dh_installchangelogs
 	dh_link $(PYBASE)/webcheck.py usr/bin/webcheck
