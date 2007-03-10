@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,12 +31,9 @@ __outputfile__ = 'index.html'
 import config
 import plugins
 
-def _explore(fp, link, explored=None, depth=0, indent='    '):
+def _explore(fp, link, explored, depth=0, indent='    '):
     """Recursively do a breadth first traversal of the graph of links on the
     site. Prints the html results to the file descriptor."""
-    # set up explored
-    if explored is None:
-        explored = [ link ]
     # output this link
     fp.write(indent+'<li>\n')
     fp.write(indent+' '+plugins.make_link(link)+'\n')
@@ -71,9 +68,7 @@ def generate(site):
       '    This an overview of the crawled site.\n'
       '   </p>\n'
       '   <ul>\n' )
-    explored = []
-    for l in site.bases:
-        explored.append(l)
+    explored = list(site.bases)
     for l in site.bases:
         _explore(fp, l, explored)
     fp.write(
