@@ -96,7 +96,6 @@ class Site:
 
       linkMap    - a map of urls to link objects
       bases      - a list of base link object
-      base       - a url that points to the base of the site
    """
 
     def __init__(self):
@@ -116,8 +115,6 @@ class Site:
         self.linkMap = {}
         # list of base urls (these are the internal urls to start from)
         self.bases = []
-        # base url that can be used as start of site
-        self.base = None
 
     def add_internal(self, url):
         """Add the given url and consider all urls below it to be internal.
