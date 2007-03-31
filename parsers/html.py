@@ -1,7 +1,7 @@
 
 # html.py - parser functions for html content
 #
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -237,7 +237,10 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # <map><area href="url"...>...</map>
         elif tag == 'area' and attrs.has_key('href'):
             self.children.append(self._cleanurl(attrs['href']))
-        # <applet code="url"...>
+        # <applet archive="URL"...>
+        elif tag == 'applet' and attrs.has_key('archive'):
+            self.embedded.append(self._cleanurl(attrs['archive']))
+        # <applet code="URL"...>
         elif tag == 'applet' and attrs.has_key('code'):
             self.embedded.append(self._cleanurl(attrs['code']))
         # <embed src="url"...>
