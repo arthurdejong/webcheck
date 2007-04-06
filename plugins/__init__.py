@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -81,11 +81,17 @@ def get_size(i):
     else:
         return '%d' % i
 
+def _mk_unicode(txt):
+    """Returns a unicode instance of the string."""
+    if not isinstance(txt, unicode):
+        txt = unicode(txt, errors='replace')
+    return txt
+
 def get_info(link):
     """Return a string with a summary of the information in the link."""
-    info = u'url: %s\n' % unicode(link.url, errors='replace')
+    info = u'url: %s\n' % _mk_unicode(link.url)
     if link.status:
-        info += '%s\n' % unicode(link.status, errors='replace')
+        info += '%s\n' % _mk_unicode(link.status)
     if link.title:
         info += 'title: %s\n' % link.title.strip()
     if link.author:
@@ -98,14 +104,14 @@ def get_info(link):
         if isinstance(link.isyanked, unicode):
             info += ', not checked (%s)\n' % link.isyanked
         if isinstance(link.isyanked, str):
-            info += ', not checked (%s)\n' % unicode(link.isyanked, errors='replace')
+            info += ', not checked (%s)\n' % _mk_unicode(link.isyanked)
         else:
             info += ', not checked\n'
     else:
         info += '\n'
     if link.redirectdepth > 0:
         if len(link.children) > 0:
-            info += 'redirect: %s\n' % unicode(link.children[0].url, errors='replace')
+            info += 'redirect: %s\n' % _mk_unicode(link.children[0].url)
         else:
             info += 'redirect (not followed)\n'
     if len(link.parents) == 1:
@@ -117,11 +123,11 @@ def get_info(link):
     if link.size:
         info += 'size: %s\n' % get_size(link.size)
     if link.mimetype:
-        info += 'mime-type: %s\n' % unicode(link.mimetype, errors='replace')
+        info += 'mime-type: %s\n' % _mk_unicode(link.mimetype)
     if link.encoding:
-        info += 'encoding: %s\n' % unicode(link.encoding, errors='replace')
+        info += 'encoding: %s\n' % _mk_unicode(link.encoding)
     for problem in link.linkproblems:
-        info += 'problem: %s\n' % unicode(problem, errors='replace')
+        info += 'problem: %s\n' % _mk_unicode(problem)
     # trim trailing newline
     return info.strip()
 
