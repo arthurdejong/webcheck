@@ -410,9 +410,10 @@ class Link:
         self.redirectlist = None
         self._ischanged = False
 
-    def _checkurl(self, url):
+    def __checkurl(self, url):
         """Check to see if the url is formatted properly, correct formatting
         if possible and log an error in the formatting to the current page."""
+        # search for spaces in the url
         if _spacepattern.search(url):
             self.add_pageproblem('link contains unescaped spaces: %s' % url)
             # replace spaces by %20
@@ -430,15 +431,32 @@ class Link:
             pass
         return url
 
+    def __tolink(self, link):
+        """Convert the link to a link object, either it is already a link,
+        a link object is returned from the database or a new link is
+        created. This returns None for empty strings."""
+        # ignore if child is empty string
+        if link == '' or link == u'':
+            return None
+        if type(link) is unicode and self.encoding:
+            # convert url to binary if passed as unicode
+            link = link.encode(self.encoding)
+        # convert the url to a link object if we were called with a url
+        if type(link) is unicode or type(link) is str:
+            link = self.site.get_link(self.__checkurl(link))
+        # re're done
+        return link
+
     def add_child(self, child):
         """Add a link object to the child relation of this link.
         The reverse relation is also made."""
         # ignore children for external links
         if not self.isinternal:
             return
-        # convert the url to a link object if we were called with a url
-        if type(child) is str:
-            child = self.site.get_link(self._checkurl(child))
+        # convert to link object
+        child = self.__tolink(child)
+        if child is None:
+            return
         # add to children
         if child not in self.children:
             self.children.append(child)
@@ -452,9 +470,10 @@ class Link:
         # ignore embeds for external links
         if not self.isinternal:
             return
-        # convert the url to a link object if we were called with a url
-        if type(link) is str:
-            link = self.site.get_link(self._checkurl(link))
+        # convert to link object
+        link = self.__tolink(link)
+        if link is None:
+            return
         # add to embedded
         if link not in self.embedded:
             self.embedded.append(link)
@@ -479,7 +498,7 @@ class Link:
         specified anchor. This can be checked later."""
         # convert the url to a link object if we were called with a url
         if type(parent) is str:
-            parent = self.site.get_link(self._checkurl(parent))
+            parent = self.site.get_link(self.__checkurl(parent))
         # add anchor
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:
@@ -508,7 +527,7 @@ class Link:
             self.add_linkproblem('too many redirects (%d)' % self.redirectdepth)
             return None
         # check for redirect to self
-        url = self._checkurl(url)
+        url = self.__checkurl(url)
         if url == self.url:
             self.add_linkproblem('redirect same as source: %s' % url)
             return None
