@@ -185,7 +185,12 @@ def open_file(filename, istext=True, makebackup=False):
             os.rename(fname, fname+'~')
         elif not config.OVERWRITE_FILES:
             # ask to overwrite
-            res = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
+            try:
+                res = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
+            except EOFError:
+                # bail out in case raw_input() failed
+                debugio.error('error reading response')
+                res = 'q'
             res = res.lower() + ' '
             if res[0] == 'a':
                 config.OVERWRITE_FILES = True
