@@ -49,6 +49,11 @@ def fetch(link, acceptedtypes):
     (userpass, netloc) = urllib.splituser(link.netloc)
     proxyuserpass = None
     scheme = link.scheme
+    # check validity of netloc (to work around bug in idna module)
+    if netloc[0] == '.':
+        debugio.debug('schemes.http.fetch(): fail on hostname starting with dot')
+        link.add_linkproblem('hostname starts with a dot')
+        return None
     # check which host to connect to (if using proxies)
     if config.PROXIES and config.PROXIES.has_key(link.scheme):
         # pass the complete url in the request, connecting to the proxy
