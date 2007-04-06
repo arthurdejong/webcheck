@@ -585,10 +585,13 @@ class Link:
         """If this link represents a redirect return the redirect target,
         otherwise return self. If this redirect does not find a referenced
         link None is returned."""
+        # if this is not a redirect just return
         if self.redirectdepth == 0:
             return self
+        # if we don't know where this redirects, return None
         if len(self.children) == 0:
             return None
+        # len(self.children) should be 1!
         # set up visited
         if visited is None:
             visited = []
@@ -596,6 +599,7 @@ class Link:
         visited.append(self)
         if self.children[0] in visited:
             return None
+        # check where we redirect to
         return self.children[0].follow_link(visited)
 
     def _pagechildren(self):
