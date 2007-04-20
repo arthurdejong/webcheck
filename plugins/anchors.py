@@ -43,5 +43,5 @@ def generate(site):
             # report problem
             for parent in link.reqanchors[anchor]:
                 parent.add_pageproblem(
-                  'reference to underfined anchor "%(anchor)s"'
+                  'reference to undefined anchor "%(anchor)s"'
                   % { 'anchor': anchor })
