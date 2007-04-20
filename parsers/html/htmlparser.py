@@ -20,23 +20,20 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
-"""Parser functions for processing HTML content."""
+"""Parser functions for processing HTML content. This module uses
+the legacy HTMLParser module. It will only be used if BeatifulSoup
+is not available and can be considered depricated. This parser
+will only handle properly formatted HTML."""
 
 import debugio
 import HTMLParser
 import urlparse
 import re
 import crawler
-import htmlentitydefs
-
-# the list of mimetypes this module should be able to handle
-mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
+from parsers.html import htmlunescape
 
 # pattern for matching numeric html entities
 _charentitypattern = re.compile('&#([0-9]{1,3});')
-
-# pattern for matching all html entities
-_entitypattern = re.compile('&(#[0-9]{1,6}|[a-zA-Z]{2,10});')
 
 # pattern for matching spaces
 _spacepattern = re.compile(' ')
@@ -46,57 +43,6 @@ _charsetpattern = re.compile('charset=([^ ]*)', re.I)
 
 # pattern for matching the encoding part of an xml declaration
 _encodingpattern = re.compile('^xml .*encoding="([^"]*)"', re.I)
-
-def htmlescape(txt, inattr=False):
-    """HTML escape the given string and return an ASCII clean string with
-    known entities and character entities for the other values.
-    If the inattr parameter is set quotes and newlines will also be escaped."""
-    # convert to unicode object
-    if type(txt) is str:
-        txt = unicode(txt, errors='replace')
-    # the output string
-    out = ''
-    # loop over the characters of the string
-    for c in txt:
-        if c == '"':
-            if inattr:
-                out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
-            else:
-                out += '"'
-        elif htmlentitydefs.codepoint2name.has_key(ord(c)):
-            out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
-        elif ord(c) > 126:
-            out += '&#%d;'% ord(c)
-        elif inattr and c == u'\n':
-            out += '&#10;'
-        else:
-            out += c.encode('utf-8')
-    return out
-
-def _unescape_entity(match):
-    """Helper function for htmlunescape().
-    This funcion unescapes a html entity, it is passed to the sub()
-    function."""
-    if htmlentitydefs.name2codepoint.has_key(match.group(1)):
-        # we have a named entity, return proper character
-        return unichr(htmlentitydefs.name2codepoint[match.group(1)])
-    elif match.group(1)[0] == '#':
-        # we have a numeric entity, replace with proper character
-        return unichr(int(match.group(1)[1:]))
-    else:
-        # we have something else, just keep the original
-        return match.group(0)
-
-def htmlunescape(txt):
-    """This function unescapes a html encoded string.
-    This function returns a unicode string."""
-    # convert to unicode
-    if type(txt) is str:
-        txt = unicode(txt, errors='replace')
-    # replace &name; and &#nn; refs with proper characters
-    txt = _entitypattern.sub(_unescape_entity, txt)
-    # we're done
-    return txt
 
 class _MyHTMLParser(HTMLParser.HTMLParser):
     """A simple subclass of HTMLParser.HTMLParser continuing after errors
@@ -144,7 +90,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # construct error message
         message += ', ' + self._location()
         # store error message
-        debugio.debug('parsers.html._MyHTMLParser.error(): problem parsing html: '+message)
+        debugio.debug('parsers.html.htmlparser._MyHTMLParser.error(): problem parsing html: '+message)
         if self.errmsg is None:
             self.errmsg = message
         # increment error count
@@ -157,7 +103,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         try:
             return HTMLParser.HTMLParser.check_for_whole_start_tag(self, i)
         except AssertionError:
-            debugio.debug('parsers.html._MyHTMLParser.check_for_whole_start_tag(): caught assertion error')
+            debugio.debug('parsers.html.htmlparser._MyHTMLParser.check_for_whole_start_tag(): caught assertion error')
             return None
 
     def handle_starttag(self, tag, attrs):
@@ -311,13 +257,13 @@ def parse(content, link):
         parser.close()
     except Exception, e:
         # ignore (but log) all errors
-        debugio.debug('parsers.html.parse(): caught exception: '+str(e))
+        debugio.debug('parsers.html.htmlparser.parse(): caught exception: '+str(e))
     # check for parser errors
     if parser.errmsg is not None:
-        debugio.debug('parsers.html.parse(): problem parsing html: '+parser.errmsg)
+        debugio.debug('parsers.html.htmlparser.parse(): problem parsing html: '+parser.errmsg)
         link.add_pageproblem('problem parsing html: %s' % parser.errmsg)
     # dump encoding
-    debugio.debug('parsers.html.parse(): html encoding: %s' % str(link.encoding))
+    debugio.debug('parsers.html.htmlparser.parse(): html encoding: %s' % str(link.encoding))
     # flag that the link contains a valid page
     link.ispage = True
     # save the title

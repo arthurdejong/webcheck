@@ -11,6 +11,7 @@ Package: webcheck
 Architecture: all
 Depends: ${python:Depends}
 XB-Python-Version: ${python:Versions}
+Recommends: python-beautifulsoup
 Suggests: lynx | www-browser
 Provides: linbot
 Conflicts: linbot
