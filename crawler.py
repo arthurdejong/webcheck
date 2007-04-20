@@ -642,8 +642,8 @@ class Link:
         to see if the encoding is supported."""
         if self.encoding is None:
             try:
+                debugio.debug('crawler.Link.set_encoding("'+str(encoding)+'")')
                 unicode('just some random text', encoding, 'replace')
                 self.encoding = encoding
             except Exception:
-                # ignore any problems, just not set encoding
-                pass
+                self.add_pageproblem('unknown encoding: ' + encoding)
