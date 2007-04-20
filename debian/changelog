@@ -2,13 +2,12 @@ webcheck (1.9.8) unstable; urgency=low
 
   * some checks for properly handling unknown and wrong encodings have been
     added
-  * added proper error handling for SSL related socket problems (exceptions are
-    not a subclass of regular socket exceptions)
+  * added proper error handling for SSL related socket problems (exceptions
+    are not a subclass of regular socket exceptions)
   * a bugfix for urls that contain a user name without a password or the other
     way around
   * miscellaneous small report improvements
   * switch packaging files to using latest syntax of python-support
-
 
  -- Arthur de Jong <adejong@debian.org>  Mon, 15 Jan 2007 21:30:00 +0100
 
