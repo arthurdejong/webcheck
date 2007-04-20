@@ -62,8 +62,8 @@ def parse(content, link):
                 link.add_embed(urlparse.urljoin(base, embed))
     # <meta name="author" content="AUTHOR">
     author = soup.find('meta', attrs={'name': re.compile("^author$", re.I), 'content': True})
-    if author and author.string:
-        link.author = crawler.urlescape(htmlunescape(author.string).strip())
+    if author and author['content']:
+        link.author = htmlunescape(author['content']).strip()
     # <meta http-equiv="refresh" content="0;url=URL">
     refresh = soup.find('meta', attrs={'http-equiv': re.compile("^refresh$", re.I), 'content': True})
     if refresh:
