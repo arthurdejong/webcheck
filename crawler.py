@@ -484,10 +484,12 @@ class Link:
 
     def add_anchor(self, anchor):
         """Indicate that this page contains the specified anchor."""
+        # lowercase anchor
+        anchor = anchor.lower()
         # add anchor
         if anchor in self.anchors:
             self.add_pageproblem(
-              'anchor "%(anchor)s" defined multiple times'
+              'anchor/id "%(anchor)s" defined multiple times'
               % { 'anchor':   anchor })
         else:
             self.anchors.append(anchor)
