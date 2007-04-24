@@ -31,6 +31,19 @@ __outputfile__ = 'problems.html'
 import plugins
 import urllib
 
+def _mk_id(name):
+    """Convert the name to a string that may be used inside an
+    ID attribute."""
+    # convert to lowercase first
+    name = name.lower()
+    import re
+    # strip any leading non alpha characters
+    name = re.sub('^[^a-z]*','',name)
+    # remove any non-allowed characters
+    name = re.sub('[^a-z0-9_:.]+','-',name)
+    # we're done
+    return name
+
 def generate(site):
     """Output the overview of problems to the given file descriptor."""
     # make a list of problems per author
@@ -71,18 +84,18 @@ def generate(site):
         fp.write('   <ul class="authorlist">\n')
         for author in authors:
             fp.write(
-              '    <li><a href="#%(authorref)s">Author: %(author)s</a></li>\n'
-              % { 'authorref': urllib.quote(author,''),
+              '    <li><a href="#author_%(authorref)s">Author: %(author)s</a></li>\n'
+              % { 'authorref': _mk_id(author),
                   'author':    plugins.htmlescape(author) })
         fp.write('   </ul>\n')
     # generate problem report
     fp.write('   <ul>\n')
     for author in authors:
         fp.write(
-          '     <li>\n'
-          '      <a name="%(authorref)s">Author: %(author)s</a>\n'
+          '     <li id="author_%(authorref)s">\n'
+          '      Author: %(author)s\n'
           '      <ul>\n'
-          % { 'authorref': urllib.quote(author,''),
+          % { 'authorref': _mk_id(author),
               'author':    plugins.htmlescape(author) })
         # sort pages by url
         problem_db[author].sort(lambda a, b: cmp(a.url, b.url))

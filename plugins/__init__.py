@@ -251,7 +251,7 @@ def open_html(plugin, site):
       '  <link rel="stylesheet" type="text/css" href="webcheck.css" />\n'
       '  <link rel="icon" href="favicon.ico" type="image/ico" />\n'
       '  <link rel="shortcut icon" href="favicon.ico" />\n'
-      '  <script language="javascript" type="text/javascript" src="fancytooltips.js"></script>\n'
+      '  <script type="text/javascript" src="fancytooltips.js"></script>\n'
       '  <meta name="Generator" content="webcheck %(version)s" />\n'
       ' </head>\n'
       ' <body>\n'

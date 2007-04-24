@@ -44,8 +44,7 @@ def generate(site):
         fp.write(
           '   <p class="description">\n'
           '    There were no problems retrieving links from the website.\n'
-          '   </p>\n'
-          '   <ol>\n' )
+          '   </p>\n' )
         plugins.close_html(fp)
         return
     fp.write(
