@@ -91,13 +91,13 @@ def parse(content, link):
             link.add_anchor(crawler.urlescape(htmlunescape(a['id']).strip()))
         # add the anchor
         link.add_anchor(a_name)
-    # <a id="ID">
-    for a in soup.findAll('a', id=True):
-        # skip entries that have a name
-        if a.has_key('name'):
+    # <ANY id="ID">
+    for elem in soup.findAll(id=True):
+        # skip anchor that have a name
+        if elem.name == 'a' and elem.has_key('name'):
             continue
         # add the anchor
-        link.add_anchor(crawler.urlescape(htmlunescape(a['id']).strip()))
+        link.add_anchor(crawler.urlescape(htmlunescape(elem['id']).strip()))
     # <frameset><frame src="URL"...>...</frameset>
     for frame in soup.findAll('frame', src=True):
         embed = crawler.urlescape(htmlunescape(frame['src']).strip())
