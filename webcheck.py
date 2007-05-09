@@ -77,10 +77,11 @@ def print_help():
       '  -c, --continue         try to continue from a previous run\n'
       '  -f, --force            overwrite files without asking\n'
       '  -r, --redirects=N      the number of redirects webcheck should follow,\n'
-      '                         0 implies to follow all redirects\n'
+      '                         0 implies to follow all redirects (default=%(redirects)d)\n'
       '  -w, --wait=SECONDS     wait SECONDS between retrievals\n'
       '  -V, --version          output version information and exit\n'
-      '  -h, --help             display this help and exit\n')
+      '  -h, --help             display this help and exit\n'
+      % { 'redirects': config.REDIRECT_DEPTH } )
 
 def parse_args(site):
     """Parse command-line arguments."""
