@@ -1,7 +1,7 @@
 
 # anchors.py - plugin check for missing anchors
 #
-# Copyright (C) 2006 Arthur de Jong
+# Copyright (C) 2006, 2007 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
