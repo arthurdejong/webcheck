@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -113,4 +113,4 @@ FTP_INDEXES = [ 'index.html', 'index.htm' ]
 
 # Whether to fetch robots.txt files and do checking based on the information
 # present in those files (normally matching links are yanked).
-USE_ROBOTS = False
+USE_ROBOTS = True

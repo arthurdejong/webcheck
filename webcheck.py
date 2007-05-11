@@ -70,6 +70,7 @@ def print_help():
       '  -b, --base-only        base URLs only: consider any URL not starting\n'
       '                         with any of the base URLs to be external\n'
       '  -a, --avoid-external   do not check external URLs\n'
+      '      --ignore-robots    do not retrieve and parse robots.txt files\n'
       '  -q, --quiet, --silent  suppress progress messages\n'
       '  -d, --debug            do programmer-level debugging\n'
       '  -o, --output=DIRECTORY store the generated reports in the specified\n'
@@ -90,6 +91,7 @@ def parse_args(site):
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
           'i:x:y:l:baqdo:cfr:w:Vh',
           ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
+           'ignore-robots',
            'quiet', 'silent', 'debug', 'output=', 'continue',
            'force', 'redirects=', 'wait=', 'version', 'help'))
         for flag, arg in optlist:
@@ -103,6 +105,8 @@ def parse_args(site):
                 config.BASE_URLS_ONLY = True
             elif flag in ('-a', '--avoid-external'):
                 config.AVOID_EXTERNAL_LINKS = True
+            elif flag in ('--ignore-robots'):
+                 config.USE_ROBOTS = False
             elif flag in ('-q', '--quiet', '--silent'):
                 debugio.loglevel = debugio.ERROR
             elif flag in ('-d', '--debug'):
