@@ -30,7 +30,7 @@ items should be changeble from the command line."""
 import urllib
 
 # Current version of webcheck.
-VERSION = '1.9.8'
+VERSION = '1.10.0'
 
 # The homepage of webcheck.
 HOMEPAGE = 'http://ch.tudelft.nl/~arthur/webcheck/'

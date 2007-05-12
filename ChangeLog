@@ -1,3 +1,114 @@
+2007-05-12 07:49  arthur
+
+	* [r332] crawler.py: also lowercase reqanchor
+
+2007-05-11 22:03  arthur
+
+	* [r331] crawler.py, plugins/anchors.py, plugins/badlinks.py,
+	  plugins/problems.py, schemes/http.py: fix some copyright dates
+
+2007-05-11 22:01  arthur
+
+	* [r330] config.py, webcheck.1, webcheck.py: switch robots.txt
+	  handling to default on again (broken in 1.9.8) and add new
+	  --ignore-robots option to be able to ignore robots retrieval
+
+2007-05-09 19:58  arthur
+
+	* [r329] webcheck.py: present the default number of redirects
+
+2007-05-08 21:33  arthur
+
+	* [r328] plugins/about.py: update copyright information
+
+2007-04-24 20:09  arthur
+
+	* [r327] plugins/__init__.py, plugins/badlinks.py,
+	  plugins/problems.py: fixes to make output XHTML 1.1 compliant
+
+2007-04-24 18:53  arthur
+
+	* [r326] parsers/html/beautifulsoup.py: handle ID attribute as
+	  anchor on any tag
+
+2007-04-24 18:52  arthur
+
+	* [r325] crawler.py, plugins/anchors.py: lowercase anchor and
+	  errors to include id as option
+
+2007-04-20 10:11  arthur
+
+	* [r324] parsers/html/beautifulsoup.py: correctly parse author
+	  information
+
+2007-04-20 09:42  arthur
+
+	* [r323] debian/control, parsers/html, parsers/html.py,
+	  parsers/html/__init__.py, parsers/html/beautifulsoup.py,
+	  parsers/html/htmlparser.py: introduce HTML parsing using
+	  BeautifulSoup with a fallback mechanism to the old HTMLParser
+	  based solution
+
+2007-04-20 09:40  arthur
+
+	* [r322] crawler.py: mark encoding problems and output more
+	  debugging
+
+2007-04-20 08:34  arthur
+
+	* [r321] debian/changelog: fix formatting of previous changelog
+	  entry
+
+2007-04-20 08:20  arthur
+
+	* [r320] plugins/anchors.py: fix typo
+
+2007-04-06 12:38  arthur
+
+	* [r319] schemes/http.py: add workaround for bug in idna module
+
+2007-04-06 12:31  arthur
+
+	* [r318] crawler.py: add some comments to the follow_link() method
+
+2007-04-06 12:29  arthur
+
+	* [r317] crawler.py: make parsing of urls and conversion to Link
+	  objects a little more consistent
+
+2007-04-06 12:02  arthur
+
+	* [r316] plugins/__init__.py: use consistent unicode conversion
+
+2007-04-06 11:46  arthur
+
+	* [r315] webcheck.1: document the fact that --force should be used
+	  for non-interactive use
+
+2007-04-06 11:35  arthur
+
+	* [r314] plugins/__init__.py: bail out if reading user input failed
+
+2007-03-31 11:39  arthur
+
+	* [r313] parsers/html.py: evaluate archive attribute of <applet>
+	  tag instead of code attribute if that is present
+
+2007-03-14 21:47  arthur
+
+	* [r312] crawler.py: get rid of old base (singular) as bases is now
+	  used everywhere
+
+2007-03-10 12:49  arthur
+
+	* [r311] plugins/sitemap.py: clean up a little and simplify
+
+2007-01-15 20:27  arthur
+
+	* [r309] ChangeLog, NEWS, README, TODO, config.py,
+	  debian/changelog, webcheck.1, webcheck.py: get files ready for
+	  1.9.8 release
+
 2007-01-15 20:26  arthur
 
 	* [r308] schemes/http.py: catch any exception in HTTP module and

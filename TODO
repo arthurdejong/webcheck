@@ -13,24 +13,21 @@ probably before 2.0 release
 * give problems different levels (info, warning, error)
 * option to only force overwrite generated files and leave static files (css, js) alone
 * implement a --html-only option to not copy css and other files
-* do not overwrite (maybe) webcheck.css if it is already there
 * check for missing encoding (report problem)
 * implement parsing of meta http-equiv="refresh" content="0;url=CHILD">
-* in --help output: show default number of redirects to follow
+* for FTP: don't fail if SIZE is not allowed
 
 wishlist
 --------
 * make code for stripping last part of a url (e.g. foo/index.html -> foo/)
 * maybe set referer (configurable)
-* cookies support (maybe)
+* cookies support (maybe) (not difficult with urllib2)
 * integration with weblint
 * do form checking of crawled pages
 * do spelling checking of crawled pages
-* test w3c conformance of pages (already done a little)
+* test w3c conformance of pages
 * add support for fetching gzipped content to improve performance
 * maybe do http pipelining
-* make error handling of HTMLParser more robust (maybe send a patch for html parser upstream)
-* maybe use this as a html parser: http://www.crummy.com/software/BeautifulSoup/examples.html
 * maybe output a google sitemap file: http://www.google.com/webmasters/sitemaps/docs/en/protocol.html
 * maybe trim titles that are too long
 * maybe check that documents referenced in <img> tags are really images
@@ -44,7 +41,6 @@ wishlist
 * maybe add custom bullets in problem lists, depending on problem type
 * present age for times long ago in a friendlier format (.. days ago, .. months ago, .. years ago)
 * maybe unescaped spaces aren't always a real problem (e.g. in mailto: urls)
-* give a warning when no encoding is specified, an error if non-ascii characters are used
 * maybe give a warning for urls that have non-ascii characters
 * maybe fetch and store description and other meta information about page (keywords) (just like author)
 * connect to w3c-markup-validator and tidy (and possibly other tools)
@@ -57,10 +53,10 @@ wishlist
 * webcheck does not give an error when accessing http://site:443/ ??
 * improve data structures (e.g. see if pop() is faster than pop(0))
 * do not use string for serializing child, embed, anchor and reqanchor as they are already url-encoded
-* automatically strip beginning and trailing spaces from links (but warn though)
-* try python-beautifulsoup
 * there seem to be some issues with generating site maps for ftp directories
 * document serialized file format in manual page (if it is stabilized)
 * look into python-spf to see how DNS queries are done
-* try to use python-chardet in case of missing encoding
 * implement an option to ignore problems on pages (but do consider internal, etc) (e.g. for generated or legacy html)
+* maybe use urllib2 instead of our own custom code (redirects may be a problem here though)
+* add support for robots meta tag: http://www.robotstxt.org/wc/meta-user.html
+* only report multiple definitions of a single anchor once

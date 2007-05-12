@@ -1,3 +1,17 @@
+changes from 1.9.8 to 1.10.0
+----------------------------
+
+* switched HTML parsing to using BeautifulSoup with a fall-back mechanism to
+  the old HTMLParser based solution
+* the new parser is much more error-tolerant but is reportedly somewhat slower
+  and does not include line numbers in errors
+* new features will likely only be added to the new parser
+* some small improvements to the output to make it XHTML 1.1 compliant
+* internal improvements for handling Unicode strings
+* better support for parsing <applet> tags and anchors using id attributes
+* re-enable robots.txt parsing that was disabled in 1.9.8 and add an
+  --ignore-robots option
+
 changes from 1.9.7 to 1.9.8
 ---------------------------
 
