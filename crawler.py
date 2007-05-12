@@ -498,6 +498,8 @@ class Link:
     def add_reqanchor(self, parent, anchor):
         """Indicate that the specified link contains a reference to the
         specified anchor. This can be checked later."""
+        # lowercase anchor
+        anchor = anchor.lower()
         # convert the url to a link object if we were called with a url
         if type(parent) is str:
             parent = self.site.get_link(self.__checkurl(parent))
