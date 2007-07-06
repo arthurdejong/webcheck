@@ -67,14 +67,14 @@ def generate(site):
     if not links:
         fp.write(
           '   <p class="description">\n'
-          '    No pages over %(size)sK were found.\n'
+          '    No pages over %(size)dK were found.\n'
           '   </p>\n'
           % { 'size': config.REPORT_SLOW_URL_SIZE })
         plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
-      '    These pages are probably too big (over %(size)sK) which could be\n'
+      '    These pages are probably too big (over %(size)dK) which could be\n'
       '    slow to download.\n'
       '   </p>\n'
       '   <ul>\n'

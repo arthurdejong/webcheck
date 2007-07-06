@@ -85,7 +85,7 @@ def generate(site):
         for author in authors:
             fp.write(
               '    <li><a href="#author_%(authorref)s">Author: %(author)s</a></li>\n'
-              % { 'authorref': _mk_id(author),
+              % { 'authorref': plugins.htmlescape(_mk_id(author)),
                   'author':    plugins.htmlescape(author) })
         fp.write('   </ul>\n')
     # generate problem report
@@ -95,7 +95,7 @@ def generate(site):
           '     <li id="author_%(authorref)s">\n'
           '      Author: %(author)s\n'
           '      <ul>\n'
-          % { 'authorref': _mk_id(author),
+          % { 'authorref': plugins.htmlescape(_mk_id(author)),
               'author':    plugins.htmlescape(author) })
         # sort pages by url
         problem_db[author].sort(lambda a, b: cmp(a.url, b.url))
