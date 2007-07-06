@@ -501,8 +501,7 @@ class Link:
         # lowercase anchor
         anchor = anchor.lower()
         # convert the url to a link object if we were called with a url
-        if type(parent) is str:
-            parent = self.site.get_link(self.__checkurl(parent))
+        parent = self.__tolink(parent)
         # add anchor
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:

@@ -156,15 +156,12 @@ def _readint(txt):
         return None
     return int(txt)
 
-def _readstring(txt, useunicode=True):
+def _readstring(txt):
     """Transform the string read from a key/value pair
     to a string that can be used."""
     if txt == 'None':
         return None
-    if useunicode:
-        return _unescape(txt)
-    else:
-        return str(_unescape(txt))
+    return _unescape(txt)
 
 def _readdate(txt):
     """Interpret the string as a date value."""
@@ -175,7 +172,7 @@ def _readdate(txt):
     return None
 
 def _readlist(txt):
-    """nterpret the string as a list of strings."""
+    """Interpret the string as a list of strings."""
     return [ _readstring(x.strip())
              for x in _commapattern.findall(txt) ]
 
@@ -240,7 +237,7 @@ def _deserialize_site(site, key, value):
     """The data in the key value pair is fed into the site."""
     debugio.debug("%s=%s" % (key, value))
     if key == 'internal_url':
-        site.add_internal(_readstring(value, False))
+        site.add_internal(_readstring(value))
     elif key == 'internal_re':
         site.add_internal_re(_readstring(value))
     elif key == 'external_re':
@@ -254,14 +251,14 @@ def _deserialize_link(link, key, value):
     """The data in the kay value pair is fed into the link."""
     link._ischanged = True
     if key == 'child':
-        link.add_child(_readstring(value, False))
+        link.add_child(_readstring(value))
     elif key == 'embed':
-        link.add_embed(_readstring(value, False))
+        link.add_embed(_readstring(value))
     elif key == 'anchor':
-        link.add_anchor(_readstring(value, False))
+        link.add_anchor(_readstring(value))
     elif key == 'reqanchor':
         (url, anchor) = _readlist(value)
-        link.add_reqanchor(str(url), str(anchor))
+        link.add_reqanchor(url, anchor)
     elif key == 'isfetched':
         link.isfetched = _readbool(value)
     elif key == 'ispage':
@@ -271,19 +268,19 @@ def _deserialize_link(link, key, value):
     elif key == 'size':
         link.size = _readint(value)
     elif key == 'mimetype':
-        link.mimetype = _readstring(value, False)
+        link.mimetype = str(_readstring(value))
     elif key == 'encoding':
-        link.encoding = _readstring(value, False)
+        link.encoding = str(_readstring(value))
     elif key == 'title':
         link.title = _readstring(value)
     elif key == 'author':
         link.author = _readstring(value)
     elif key == 'status':
-        link.status = _readstring(value, False)
+        link.status = _readstring(value)
     elif key =='linkproblem':
-        link.add_linkproblem(_readstring(value, False))
+        link.add_linkproblem(_readstring(value))
     elif key =='pageproblem':
-        link.add_pageproblem(_readstring(value, False))
+        link.add_pageproblem(_readstring(value))
     elif key == 'redirectdepth':
         link.redirectdepth = _readint(value)
     else:
