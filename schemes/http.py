@@ -155,9 +155,12 @@ def fetch(link, acceptedtypes):
                 debugio.debug("error reading HTTP response: "+str(e))
                 link.add_linkproblem("error reading HTTP response: "+str(e))
             return None
+        except KeyboardInterrupt:
+            # handle this in a higher-level exception handler
+            raise
         except Exception, e:
             # handle all other exceptions
-            debugio.debug('unknown exception caught: '+str(e))
+            debugio.warn('unknown exception caught: '+str(e))
             link.add_linkproblem('error reading HTTP response: '+str(e))
             import traceback
             traceback.print_exc()
