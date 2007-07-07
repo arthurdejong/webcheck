@@ -29,6 +29,7 @@ import crawler
 import re
 import htmlentitydefs
 import BeautifulSoup
+import myurllib
 from parsers.html import htmlunescape
 
 def parse(content, link):
@@ -44,20 +45,20 @@ def parse(content, link):
     if title and title.string:
         link.title = htmlunescape(title.string).strip()
 
-    # FIXME: using crawler.urlescape is wrong below, we should probably use
+    # FIXME: using myurllib.normalizeurl is wrong below, we should probably use
     #        something like link.urlunescape() to do the escaping and check
     #        and log at the same time
 
     # <base href="URL">
     base = soup.find('base', href=True)
     if base:
-        base = crawler.urlescape(htmlunescape(base['href']).strip())
+        base = myurllib.normalizeurl(htmlunescape(base['href']).strip())
     else:
         base = link.url
     # <link rel="TYPE" href="URL">
     for l in soup.findAll('link', rel=True, href=True):
         if l['rel'].lower() in ('stylesheet', 'alternate stylesheet', 'icon', 'shortcut icon'):
-            embed = crawler.urlescape(htmlunescape(l['href']).strip())
+            embed = myurllib.normalizeurl(htmlunescape(l['href']).strip())
             if embed:
                 link.add_embed(urlparse.urljoin(base, embed))
     # <meta name="author" content="AUTHOR">
@@ -70,25 +71,25 @@ def parse(content, link):
         pass # TODO: implement
     # <img src="URL">
     for img in soup.findAll('img', src=True):
-        embed = crawler.urlescape(htmlunescape(img['src']).strip())
+        embed = myurllib.normalizeurl(htmlunescape(img['src']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <a href="URL">
     for a in soup.findAll('a', href=True):
-        child = crawler.urlescape(htmlunescape(a['href']).strip())
+        child = myurllib.normalizeurl(htmlunescape(a['href']).strip())
         if child:
             link.add_child(urlparse.urljoin(base, child))
     # <a name="NAME">
     # TODO: consistent url escaping?
     for a in soup.findAll('a', attrs={'name': True}):
         # get anchor name
-        a_name = crawler.urlescape(htmlunescape(a['name']).strip())
+        a_name = myurllib.normalizeurl(htmlunescape(a['name']).strip())
         # if both id and name are used they should be the same
-        if a.has_key('id') and a_name != crawler.urlescape(htmlunescape(a['id']).strip()):
+        if a.has_key('id') and a_name != myurllib.normalizeurl(htmlunescape(a['id']).strip()):
             link.add_pageproblem(
               'anchors defined in name and id attributes do not match')
             # add the id anchor anyway
-            link.add_anchor(crawler.urlescape(htmlunescape(a['id']).strip()))
+            link.add_anchor(myurllib.normalizeurl(htmlunescape(a['id']).strip()))
         # add the anchor
         link.add_anchor(a_name)
     # <ANY id="ID">
@@ -97,34 +98,34 @@ def parse(content, link):
         if elem.name == 'a' and elem.has_key('name'):
             continue
         # add the anchor
-        link.add_anchor(crawler.urlescape(htmlunescape(elem['id']).strip()))
+        link.add_anchor(myurllib.normalizeurl(htmlunescape(elem['id']).strip()))
     # <frameset><frame src="URL"...>...</frameset>
     for frame in soup.findAll('frame', src=True):
-        embed = crawler.urlescape(htmlunescape(frame['src']).strip())
+        embed = myurllib.normalizeurl(htmlunescape(frame['src']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <map><area href="URL"...>...</map>
     for area in soup.findAll('area', href=True):
-        child = crawler.urlescape(htmlunescape(area['href']).strip())
+        child = myurllib.normalizeurl(htmlunescape(area['href']).strip())
         if child:
             link.add_child(urlparse.urljoin(base, child))
     # <applet code="URL" [archive="URL"]...>
     for applet in soup.findAll('applet', code=True):
         # if applet has archive tag check that
         if applet.has_key('archive'):
-            embed = crawler.urlescape(htmlunescape(applet['archive']).strip())
+            embed = myurllib.normalizeurl(htmlunescape(applet['archive']).strip())
         else:
-            embed = crawler.urlescape(htmlunescape(applet['code']).strip())
+            embed = myurllib.normalizeurl(htmlunescape(applet['code']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <embed src="URL"...>
     for embedd in soup.findAll('frame', src=True):
-        embed = crawler.urlescape(htmlunescape(embedd['src']).strip())
+        embed = myurllib.normalizeurl(htmlunescape(embedd['src']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <embed><param name="movie" value="url"></embed>
     for param in soup.findAll('param', attrs={'name': re.compile("^movie$", re.I), 'value': True}):
-        embed = crawler.urlescape(htmlunescape(param['value']).strip())
+        embed = myurllib.normalizeurl(htmlunescape(param['value']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <style>content</style>

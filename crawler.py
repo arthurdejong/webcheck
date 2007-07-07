@@ -36,58 +36,13 @@ import schemes
 import parsers
 import re
 import time
+import myurllib
 
 # pattern for matching spaces
 _spacepattern = re.compile(' ')
 
-# pattern for matching url encoded characters
-_urlencpattern = re.compile('(%[0-9a-fA-F]{2})', re.IGNORECASE)
-
 # pattern to match anchor part of a url
 _anchorpattern = re.compile('#([^#]+)$')
-
-# characters that should not be escaped in urls
-_reservedurlchars = ';/?:@&=+$,%#'
-_okurlchars = '-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' \
-              '_abcdefghijklmnopqrstuvwxyz~'
-
-def urlescape(url):
-    """Ensure that escaping in the url is consistent."""
-    # url decode any printable normal characters
-    # except reserved characters with special meanings in urls
-    for c in _urlencpattern.findall(url):
-        r = chr(int(c[1:3], 16))
-        if r in _okurlchars:
-            url = url.replace(c, r)
-    # url encode any nonprintable or problematic characters
-    # (but not reserved chars)
-    url = ''.join(
-      [ (x not in _reservedurlchars and
-         x not in _okurlchars) and ('%%%02X' % ord(x))
-        or x
-        for x in url ] )
-    return url
-
-def _urlclean(url):
-    """Clean the url of uneccesary parts."""
-    # make escaping consistent
-    url = urlescape(url)
-    # split the url in useful parts
-    (scheme, netloc, path, query) = urlparse.urlsplit(url)[:4]
-    if ( scheme == 'http' or scheme == 'https' or scheme == 'ftp' ):
-        # http(s) urls should have a non-empty path
-        if path == '':
-            path = '/'
-        # make hostname lower case
-        (userpass, hostport) = urllib.splituser(netloc)
-        netloc = hostport.lower()
-        # trim trailing :
-        if netloc[-1:] == ':':
-            netloc = netloc[:-1]
-        if userpass is not None:
-            netloc = userpass+'@'+netloc
-    # put the url back together again (discarding fragment)
-    return urlparse.urlunsplit((scheme, netloc, path, query, ''))
 
 class Site:
     """Class to represent gathered data of a site.
@@ -119,7 +74,7 @@ class Site:
     def add_internal(self, url):
         """Add the given url and consider all urls below it to be internal.
         These links are all marked for checking with the crawl() function."""
-        url = _urlclean(url)
+        url = myurllib.normalizeurl(url)
         if url not in self._internal_urls:
             self._internal_urls.append(url)
 
@@ -226,7 +181,7 @@ class Site:
         This function checks the map of cached link objects for an
         instance."""
         # clean the url
-        url = _urlclean(url)
+        url = myurllib.normalizeurl(url)
         # check if we have an object ready
         if self.linkMap.has_key(url):
             return self.linkMap[url]

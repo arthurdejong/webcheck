@@ -30,6 +30,7 @@ import HTMLParser
 import urlparse
 import re
 import crawler
+import myurllib
 from parsers.html import htmlunescape
 
 # pattern for matching numeric html entities
@@ -77,13 +78,13 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
     def _cleanurl(self, url, what='link'):
         """Do some translations of url."""
         # check for spaces in urls
-        # (characters are escaped in crawler.urlescape())
+        # (characters are escaped in myurllib.normalizeurl())
         if _spacepattern.search(url):
             self.link.add_pageproblem(
               what+' contains unescaped spaces: '+url+', '+self._location() )
         # replace &#nnn; entity refs with proper characters
         url = _charentitypattern.sub(lambda x:chr(int(x.group(1))), url)
-        return crawler.urlescape(url)
+        return myurllib.normalizeurl(url)
 
     def error(self, message):
         """Override superclass' error() method to ignore errors."""
