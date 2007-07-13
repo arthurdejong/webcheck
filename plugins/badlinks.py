@@ -67,7 +67,6 @@ def generate(site):
         fp.write(
           '     </ul>\n')
         # present a list of parents
-        link.parents.sort()
         plugins.print_parents(fp, link, '     ')
         # add a reference to the problem map
         for problem in link.linkproblems:
