@@ -308,7 +308,8 @@ def deserialize(fp):
         # find section header
         match = _sectionpattern.search(line)
         if match:
-            link = site.get_link(match.group(1))
+            url = match.group(1)
+            link = site.get_link(url)
             debugio.info('  %s' % link.url)
             # clear some data that is annoying if we have duplicates
             link.anchors = []
