@@ -111,7 +111,7 @@ def get_info(link):
         info += '\n'
     if link.redirectdepth > 0:
         if len(link.children) > 0:
-            info += 'redirect: %s\n' % _mk_unicode(link.children[0].url)
+            info += 'redirect: %s\n' % _mk_unicode(link.children.copy().pop().url)
         else:
             info += 'redirect (not followed)\n'
     if len(link.parents) == 1:
@@ -150,7 +150,7 @@ def make_link(link, title=None):
 def print_parents(fp, link, indent='     '):
     """Write a list of parents to the output file descriptor.
     The output is indeted with the specified indent."""
-    parents = link.parents
+    parents = list(link.parents)
     # if there are no parents print nothing
     if len(parents) == 0:
         return
@@ -240,6 +240,8 @@ def open_html(plugin, site):
     """Print an html fragment for the start of an html page."""
     # open the file
     fp = open_file(plugin.__outputfile__)
+    # get the first base url
+    base = site.bases[0]
     # write basic html head
     fp.write(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
@@ -256,9 +258,9 @@ def open_html(plugin, site):
       ' </head>\n'
       ' <body>\n'
       '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n'
-      % { 'sitetitle':  htmlescape(get_title(site.linkMap[site.base])),
+      % { 'sitetitle':  htmlescape(get_title(base)),
           'plugintitle': htmlescape(plugin.__title__),
-          'siteurl':    site.base,
+          'siteurl':    base.url,
           'version':    config.VERSION })
     # write navigation bar
     _print_navbar(fp, plugin)

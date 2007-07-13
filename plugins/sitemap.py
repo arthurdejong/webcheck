@@ -48,7 +48,7 @@ def _explore(fp, link, explored, depth=0, indent='    '):
             if child.depth != depth+1 or not child.isinternal or child in explored:
                 continue
             # set child as explored and add to to explore list
-            explored.append(child)
+            explored.add(child)
             children.append(child)
         # go over the children and present them as a list
         if len(children) > 0:
@@ -68,7 +68,7 @@ def generate(site):
       '    This an overview of the crawled site.\n'
       '   </p>\n'
       '   <ul>\n' )
-    explored = list(site.bases)
+    explored = set(site.bases)
     for l in site.bases:
         _explore(fp, l, explored)
     fp.write(

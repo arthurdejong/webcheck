@@ -312,7 +312,7 @@ def deserialize(fp):
             link = site.get_link(url)
             debugio.info('  %s' % link.url)
             # clear some data that is annoying if we have duplicates
-            link.anchors = []
+            link.anchors = set()
             link.linkproblems = []
             link.pageproblems = []
             continue

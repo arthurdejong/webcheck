@@ -57,7 +57,7 @@ class Site:
         """Creates an instance of the Site class and initializes the
         state of the site."""
         # list of internal urls
-        self._internal_urls = []
+        self._internal_urls = set()
         # list of regexps considered internal
         self._internal_res = {}
         # list of regexps considered external
@@ -76,7 +76,7 @@ class Site:
         These links are all marked for checking with the crawl() function."""
         url = myurllib.normalizeurl(url)
         if url not in self._internal_urls:
-            self._internal_urls.append(url)
+            self._internal_urls.add(url)
 
     def add_internal_re(self, exp):
         """Adds the gived regular expression as a pattern to match internal
@@ -195,20 +195,20 @@ class Site:
         the file while crawling the site."""
         # TODO: have some different scheme to crawl a site (e.g. separate
         #       internal and external queues, threading, etc)
-        tocheck = []
+        tocheck = set()
         # add all unfetched site urls
         for link in self.linkMap.values():
             if not link.isyanked and not link.isfetched:
-                tocheck.append(link)
+                tocheck.add(link)
         # add all internal urls
         for url in self._internal_urls:
-            tocheck.append(self.get_link(url))
+            tocheck.add(self.get_link(url))
         # repeat until we have nothing more to check
         fetchedlinks = 0
         while len(tocheck) > 0:
             debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
             # choose a link from the tocheck list
-            link = tocheck.pop(0)
+            link = tocheck.pop()
             # skip link it there is nothing to check
             if link.isyanked or link.isfetched:
                 continue
@@ -216,12 +216,12 @@ class Site:
             link.fetch()
             # add children to tocheck
             for child in link.children:
-                if not child.isyanked and not child.isfetched and not child in tocheck:
-                    tocheck.append(child)
+                if not child.isyanked and not child.isfetched:
+                    tocheck.add(child)
             # add embedded content
             for embed in link.embedded:
-                if not embed.isyanked and not embed.isfetched and not embed in tocheck:
-                    tocheck.append(embed)
+                if not embed.isyanked and not embed.isfetched:
+                    tocheck.add(embed)
             # serialize all as of yet unserialized links
             fetchedlinks += 1
             # TODO: make this configurable
@@ -263,24 +263,21 @@ class Site:
             self.bases.append(self.linkMap[self._internal_urls[0]])
         # do a breadth first traversal of the website to determin depth and
         # figure out page children
-        tocheck = []
+        tocheck = set()
         for link in self.bases:
             link.depth = 0
-            tocheck.append(link)
+            tocheck.add(link)
         # repeat until we have nothing more to check
         while len(tocheck) > 0:
             debugio.debug('crawler.postprocess(): items left to examine: %d' % len(tocheck))
             # choose a link from the tocheck list
-            link = tocheck.pop(0)
+            link = tocheck.pop()
             # figure out page children
             for child in link._pagechildren():
-                # skip children already in our list or the wrong depth
-                if child in tocheck or child.depth != link.depth+1:
+                # skip children with the wrong depth
+                if child.depth != link.depth+1:
                     continue
-                tocheck.append(child)
-        # set some compatibility properties
-        # TODO: figure out a better way to get to this to the plugins
-        self.base = self.bases[0].url
+                tocheck.add(child)
 
 class Link:
     """This is a basic class representing a url.
@@ -343,11 +340,11 @@ class Link:
         # check if the url is yanked
         self.isyanked = self.site._is_yanked(self)
         # initialize some properties
-        self.parents = []
-        self.children = []
+        self.parents = set()
+        self.children = set()
         self.pagechildren = None
-        self.embedded = []
-        self.anchors = []
+        self.embedded = set()
+        self.anchors = set()
         self.reqanchors = {}
         self.depth = None
         self.isfetched = False
@@ -414,11 +411,11 @@ class Link:
             return
         # add to children
         if child not in self.children:
-            self.children.append(child)
+            self.children.add(child)
             self._ischanged = True
         # add self to parents of child
         if self not in child.parents:
-            child.parents.append(self)
+            child.parents.add(self)
 
     def add_embed(self, link):
         """Mark the given link object as used as an image on this page."""
@@ -431,11 +428,11 @@ class Link:
             return
         # add to embedded
         if link not in self.embedded:
-            self.embedded.append(link)
+            self.embedded.add(link)
             self._ischanged = True
         # add self to parents of embed
         if self not in link.parents:
-            link.parents.append(self)
+            link.parents.add(self)
 
     def add_anchor(self, anchor):
         """Indicate that this page contains the specified anchor."""
@@ -447,7 +444,7 @@ class Link:
               'anchor/id "%(anchor)s" defined multiple times'
               % { 'anchor':   anchor })
         else:
-            self.anchors.append(anchor)
+            self.anchors.add(anchor)
             self._ischanged = True
 
     def add_reqanchor(self, parent, anchor):
@@ -460,10 +457,10 @@ class Link:
         # add anchor
         if anchor in self.reqanchors:
             if parent not in self.reqanchors[anchor]:
-                self.reqanchors[anchor].append(parent)
+                self.reqanchors[anchor].add(parent)
                 self._ischanged = True
         else:
-            self.reqanchors[anchor] = [parent]
+            self.reqanchors[anchor] = set([parent])
             self._ischanged = True
 
     def redirect(self, url):
@@ -472,14 +469,14 @@ class Link:
         # figure out depth and urls that have been visited in this
         # redirect list
         redirectdepth = 0
-        redirectlist = []
+        redirectlist = set()
         for parent in self.parents:
             if parent.redirectdepth > redirectdepth:
                 redirectdepth = parent.redirectdepth
                 redirectlist = parent.redirectlist
         self.redirectdepth = redirectdepth + 1
         self.redirectlist = redirectlist
-        self.redirectlist.append(self.url)
+        self.redirectlist.add(self.url)
         # check depth
         if self.redirectdepth >= config.REDIRECT_DEPTH:
             self.add_linkproblem('too many redirects (%d)' % self.redirectdepth)
@@ -539,7 +536,7 @@ class Link:
         # parse the content
         parsermodule.parse(content, self)
 
-    def follow_link(self, visited=None):
+    def follow_link(self, visited=set()):
         """If this link represents a redirect return the redirect target,
         otherwise return self. If this redirect does not find a referenced
         link None is returned."""
@@ -549,16 +546,14 @@ class Link:
         # if we don't know where this redirects, return None
         if len(self.children) == 0:
             return None
-        # len(self.children) should be 1!
-        # set up visited
-        if visited is None:
-            visited = []
+        # the first (and only) child is the redirect target
+        visited.add(self)
         # check for loops
-        visited.append(self)
-        if self.children[0] in visited:
+        child = self.children.copy().pop()
+        if child in visited:
             return None
         # check where we redirect to
-        return self.children[0].follow_link(visited)
+        return child.follow_link(visited)
 
     def _pagechildren(self):
         """Determin the page children of this link, combining the children of
@@ -566,32 +561,27 @@ class Link:
         # if we already have pagechildren defined we're done
         if self.pagechildren is not None:
             return self.pagechildren
-        self.pagechildren = []
+        self.pagechildren = set()
         # add my own children, following redirects
         for child in self.children:
             # follow redirects
             child = child.follow_link()
             # skip children we already have
-            if child is None or child in self.pagechildren:
+            if child is None:
                 continue
             # set depth of child if it is not already set
             if child.depth is None:
                 child.depth = self.depth+1
             # add child pages to out pagechildren
             if child.ispage:
-                self.pagechildren.append(child)
+                self.pagechildren.add(child)
         # add my embedded element's children
         for embed in self.embedded:
             # set depth of embed if it is not already set
             if embed.depth is None:
                 embed.depth = self.depth
             # merge in children of embeds
-            for child in embed._pagechildren():
-                # skip children we already have
-                if child in self.pagechildren:
-                    continue
-                # add it to our list
-                self.pagechildren.append(child)
+            self.pagechildren.update(embed._pagechildren())
         # return the results
         return self.pagechildren
 
