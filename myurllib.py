@@ -48,6 +48,8 @@ def _normalize_escapes(url):
         if r in _okurlchars:
             url = url.replace(c, r)
     # TODO: uppercase any escaped codes left
+    # TODO: make this a better performing implementation as this
+    #       function costs about 15% of all time during deserialisation 
     # url encode any nonprintable or problematic characters
     # (but not reserved chars)
     url = ''.join(
