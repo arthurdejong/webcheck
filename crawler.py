@@ -594,4 +594,4 @@ class Link:
                 unicode('just some random text', encoding, 'replace')
                 self.encoding = encoding
             except Exception:
-                self.add_pageproblem('unknown encoding: ' + encoding)
+                self.add_pageproblem('unknown encoding: ' + str(encoding))
