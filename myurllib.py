@@ -34,6 +34,9 @@ import urllib
 # pattern for matching url encoded characters
 _urlencpattern = re.compile('(%[0-9a-fA-F]{2})')
 
+# pattern for double slashes
+_doubleslashpattern = re.compile('//+')
+
 # characters that should not be escaped in urls
 _reservedurlchars = ';/?:@&=+$,%#'
 _okurlchars = '-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' \
@@ -77,6 +80,9 @@ def _urlclean(url):
             netloc = netloc[:-1]
         if userpass is not None:
             netloc = userpass+'@'+netloc
+    # get rid of double slashes in some paths
+    if ( scheme == 'file' ):
+        path = _doubleslashpattern.sub('/', path)
     # put the url back together again (discarding fragment)
     return urlparse.urlunsplit((scheme, netloc, path, query, ''))
 
