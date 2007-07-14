@@ -31,35 +31,43 @@ import urllib
 # In section 6.2.2.3 only the removal of "." and ".." in paths is
 # mentioned although 6.2.3 does leave some room for other normalisation.
 
-# pattern for matching url encoded characters
+# pattern for matching URL-encoded characters
 _urlencpattern = re.compile('(%[0-9a-fA-F]{2})')
+
+# characters that should be unescaped in URLs
+_okurlchars = set('-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' \
+                  '_abcdefghijklmnopqrstuvwxyz~')
+
+# pattern for matching characters that should be escaped
+_urlprobpattern = re.compile('([^-;/?:@&=+$,%#.0123456789' \
+                             'ABCDEFGHIJKLMNOPQRSTUVWXYZ_' \
+                             'abcdefghijklmnopqrstuvwxyz~])')
 
 # pattern for double slashes
 _doubleslashpattern = re.compile('//+')
 
-# characters that should not be escaped in urls
-_reservedurlchars = ';/?:@&=+$,%#'
-_okurlchars = '-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' \
-              '_abcdefghijklmnopqrstuvwxyz~'
+def _unescape_printable(match):
+    """Helper function for _normalize_escapes() to perform the expansion of
+    html entity refs that are normal printable (but not reserver)
+    characters."""
+    # unescape the character
+    r = chr(int(match.group(1)[1:3], 16))
+    if r in _okurlchars:
+        return r
+    # transform remaining escapes to uppercase
+    return match.group(1).upper()
 
 def _normalize_escapes(url):
-    """Ensure that escaping in the url is consistent."""
-    # url decode any printable normal characters
-    # except reserved characters with special meanings in urls
-    for c in _urlencpattern.findall(url):
-        r = chr(int(c[1:3], 16))
-        if r in _okurlchars:
-            url = url.replace(c, r)
-    # TODO: uppercase any escaped codes left
-    # TODO: make this a better performing implementation as this
-    #       function costs about 15% of all time during deserialisation 
-    # url encode any nonprintable or problematic characters
-    # (but not reserved chars)
-    url = ''.join(
-      [ (x not in _reservedurlchars and
-         x not in _okurlchars) and ('%%%02X' % ord(x))
-        or x
-        for x in url ] )
+    """Ensure that escaping in the url is consistent. Any reserved characters
+    are left alone. Any characters that are printable but are escaped are
+    unescaped. Any non-printable characters are escaped."""
+    # url decode any printable normal characters (this leaves us with a string
+    # with as much stuff unquoted as # possible)
+    url = _urlencpattern.sub(_unescape_printable, url)
+    # url encode any nonprintable or problematic characters (but not reserved
+    # characters) so we're left with a string with everything that needs to be
+    # quoted as such
+    url = _urlprobpattern.sub(lambda x:'%%%02X' % ord(x.group(1)), url)
     return url
 
 def _urlclean(url):
