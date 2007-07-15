@@ -588,7 +588,7 @@ class Link:
     def set_encoding(self, encoding):
         """Set the encoding of the link doing some basic checks
         to see if the encoding is supported."""
-        if self.encoding is None:
+        if self.encoding is None and encoding is not None:
             try:
                 debugio.debug('crawler.Link.set_encoding("'+str(encoding)+'")')
                 unicode('just some random text', encoding, 'replace')
