@@ -1,6 +1,6 @@
 2007-05-12 07:49  arthur
 
-	* [r332] crawler.py: also lowercase reqanchor
+	* [r332] crawler.py: also lower-case reqanchor
 
 2007-05-11 22:03  arthur
 
@@ -33,7 +33,7 @@
 
 2007-04-24 18:52  arthur
 
-	* [r325] crawler.py, plugins/anchors.py: lowercase anchor and
+	* [r325] crawler.py, plugins/anchors.py: lower-case anchor and
 	  errors to include id as option
 
 2007-04-20 10:11  arthur
@@ -46,7 +46,7 @@
 	* [r323] debian/control, parsers/html, parsers/html.py,
 	  parsers/html/__init__.py, parsers/html/beautifulsoup.py,
 	  parsers/html/htmlparser.py: introduce HTML parsing using
-	  BeautifulSoup with a fallback mechanism to the old HTMLParser
+	  BeautifulSoup with a fall-back mechanism to the old HTMLParser
 	  based solution
 
 2007-04-20 09:40  arthur
@@ -73,12 +73,12 @@
 
 2007-04-06 12:29  arthur
 
-	* [r317] crawler.py: make parsing of urls and conversion to Link
+	* [r317] crawler.py: make parsing of URLs and conversion to Link
 	  objects a little more consistent
 
 2007-04-06 12:02  arthur
 
-	* [r316] plugins/__init__.py: use consistent unicode conversion
+	* [r316] plugins/__init__.py: use consistent Unicode conversion
 
 2007-04-06 11:46  arthur
 
@@ -158,14 +158,14 @@
 
 2006-07-13 20:47  arthur
 
-	* [r298] schemes/http.py: also handle ssl related socket errors
-	  (e.g. ssl timeout)
+	* [r298] schemes/http.py: also handle SSL related socket errors
+	  (e.g. SSL time-out)
 
 2006-07-13 20:44  arthur
 
 	* [r297] crawler.py, parsers/html.py, schemes/http.py: add
-	  set_encoding methond to Link object to do some basic encoding
-	  santity checks
+	  set_encoding method to Link object to do some basic encoding
+	  sanity checks
 
 2006-07-02 21:42  arthur
 
@@ -209,7 +209,7 @@
 2006-06-04 20:41  arthur
 
 	* [r287] serialize.py: make DeSerializeException a class instead of
-	  a function and add fixme
+	  a function and add FIXME
 
 2006-06-04 20:40  arthur
 
@@ -292,7 +292,7 @@
 
 2006-05-15 20:36  arthur
 
-	* [r269] serialize.py: fix typo in fixme
+	* [r269] serialize.py: fix typo in FIXME
 
 2006-05-15 20:35  arthur
 
@@ -301,8 +301,8 @@
 
 2006-05-15 19:17  arthur
 
-	* [r267] serialize.py: only write serialized data if it is diferent
-	  from the constructor's default value
+	* [r267] serialize.py: only write serialized data if it is
+	  different from the constructor's default value
 
 2006-05-15 19:15  arthur
 
@@ -318,7 +318,7 @@
 
 2006-05-15 17:26  arthur
 
-	* [r264] parsers/html.py: make decoding try/fallback code a lot
+	* [r264] parsers/html.py: make decoding try/fall-back code a lot
 	  simpler and handle case where encoding is specified as empty
 	  string
 
@@ -348,11 +348,11 @@
 
 2006-05-07 10:25  arthur
 
-	* [r258] webcheck.1: fix useage of dash
+	* [r258] webcheck.1: fix usage of dash
 
 2006-05-07 10:19  arthur
 
-	* [r257] serialize.py: add serialize module that alows serializing
+	* [r257] serialize.py: add serialize module that allows serializing
 	  and deserializing all crawler state (site and links) to and from
 	  a file, this module is not called anywhere yet
 
@@ -367,7 +367,7 @@
 
 2006-05-07 09:25  arthur
 
-	* [r254] parsers/html.py: use unichr() to generate unicode
+	* [r254] parsers/html.py: use unichr() to generate Unicode
 	  characters, not chr()
 
 2006-05-07 09:20  arthur
@@ -393,7 +393,7 @@
 2006-04-27 21:53  arthur
 
 	* [r249] crawler.py: also add all unfetched links from a site to
-	  make this mehtod recallable
+	  make this method recallable
 
 2006-04-27 21:47  arthur
 
@@ -402,7 +402,7 @@
 
 2006-04-27 21:43  arthur
 
-	* [r247] crawler.py: move url checking bit to right function and
+	* [r247] crawler.py: move URL checking bit to right function and
 	  improve anchor debugging messages even further
 
 2006-04-27 21:39  arthur
@@ -412,7 +412,7 @@
 
 2006-04-27 21:32  arthur
 
-	* [r245] crawler.py: support passing a url to add_reqanchor() plus
+	* [r245] crawler.py: support passing a URL to add_reqanchor() plus
 	  some minor comments changes
 
 2006-04-27 21:25  arthur
@@ -441,17 +441,17 @@
 
 2006-04-23 11:26  arthur
 
-	* [r241] plugins/__init__.py: also sort parent list by url if
+	* [r241] plugins/__init__.py: also sort parent list by URL if
 	  titles are the same
 
 2006-04-23 11:25  arthur
 
-	* [r240] schemes/http.py: also properly handle timout problems
+	* [r240] schemes/http.py: also properly handle time-out problems
 	  which only pass one parameter with the exception
 
 2006-04-11 21:40  arthur
 
-	* [r239] config.py, schemes/http.py: implement a timeout setting
+	* [r239] config.py, schemes/http.py: implement a time-out setting
 	  with a default of 10 seconds
 
 2006-04-11 21:35  arthur
@@ -467,23 +467,23 @@
 2006-04-07 17:58  arthur
 
 	* [r236] parsers/html.py: do not fail on unknown encodings (fall
-	  back to system encoding) and add some TODO's to do extra encoding
+	  back to system encoding) and add some TODOs to do extra encoding
 	  checking
 
 2006-03-26 19:05  arthur
 
 	* [r235] crawler.py, parsers/html.py: split urlescape() from
-	  _urlclean() and ensure that all anchors are consitently
-	  url-encoded
+	  _urlclean() and ensure that all anchors are consistently
+	  URL-encoded
 
 2006-03-26 19:01  arthur
 
 	* [r234] plugins/anchors.py: only report missing anchors for pages
-	  that were fetched and some cleanups
+	  that were fetched and some clean-ups
 
 2006-03-26 18:58  arthur
 
-	* [r233] webcheck.css: put a boder around links
+	* [r233] webcheck.css: put a border around links
 
 2006-03-26 16:47  arthur
 
@@ -532,11 +532,11 @@
 
 2006-01-29 22:39  arthur
 
-	* [r224] crawler.py: bugfix in matching url encoding
+	* [r224] crawler.py: bug fix in matching URL-encoding
 
 2006-01-29 21:24  arthur
 
-	* [r223] crawler.py: actually decode urlencoded character as hex
+	* [r223] crawler.py: actually decode URL-encoded character as hex
 	  not decimal
 
 2006-01-29 20:50  arthur
@@ -546,8 +546,8 @@
 
 2006-01-29 20:48  arthur
 
-	* [r221] crawler.py, parsers/html.py: make sure all urls are
-	  consistently url encoded where it counts
+	* [r221] crawler.py, parsers/html.py: make sure all URLs are
+	  consistently URL-encoded where it counts
 
 2006-01-29 20:15  arthur
 
@@ -557,7 +557,7 @@
 2006-01-29 20:14  arthur
 
 	* [r219] plugins/about.py: update copyright notice and indicate
-	  that we're using gpl2+
+	  that we're using GPL2+
 
 2006-01-25 23:16  arthur
 
@@ -567,23 +567,23 @@
 2006-01-19 21:38  arthur
 
 	* [r217] plugins/__init__.py: ignore errors when converting to
-	  unicode string and uses system encoding instead of utf-8 as
+	  Unicode string and uses system encoding instead of UTF-8 as
 	  default
 
 2006-01-19 21:35  arthur
 
-	* [r216] plugins/__init__.py: also escape the url when generating
+	* [r216] plugins/__init__.py: also escape the URL when generating
 	  links
 
 2006-01-19 20:46  arthur
 
-	* [r215] plugins/__init__.py: explictly convert strings to unicode
-	  to avoid potential problems with non-ascii charaters in strings
+	* [r215] plugins/__init__.py: explicitly convert strings to Unicode
+	  to avoid potential problems with non-ASCII characters in strings
 
 2006-01-19 20:45  arthur
 
 	* [r214] parsers/html.py: quote links so that they do not contain
-	  any non-ascii characters to avoid problems later on (and add some
+	  any non-ASCII characters to avoid problems later on (and add some
 	  more debugging)
 
 2006-01-19 20:32  arthur
@@ -594,7 +594,7 @@
 2006-01-15 08:44  arthur
 
 	* [r212] crawler.py: give some more debugging info while following
-	  base urls and no longer delete unreferenced followed links
+	  base URLs and no longer delete unreferenced followed links
 
 2005-12-30 22:33  arthur
 
@@ -614,14 +614,14 @@
 
 	* [r207] debian, debian/changelog, debian/compat, debian/control,
 	  debian/copyright, debian/postinst, debian/rules: import updated
-	  debian package configuration data, partially from old webcheck
+	  Debian package configuration data, partially from old webcheck
 	  package
 
 2005-12-29 00:53  arthur
 
 	* [r206] crawler.py, schemes/http.py: trim empty ports
-	  (http://host:/) from urls and do not crash on improperly
-	  formatted urls
+	  (http://host:/) from URLs and do not crash on improperly
+	  formatted URLs
 
 2005-12-29 00:51  arthur
 
@@ -634,8 +634,8 @@
 
 2005-12-28 21:37  arthur
 
-	* [r203] webcheck.1: clarify section on url classes that yanked
-	  urls can be internal or external and some typo fixes
+	* [r203] webcheck.1: clarify section on URL classes that yanked
+	  URLs can be internal or external and some typo fixes
 
 2005-12-28 21:26  arthur
 
@@ -679,8 +679,8 @@
 	* [r196] plugins/__init__.py, plugins/about.py,
 	  plugins/badlinks.py, plugins/external.py, plugins/new.py,
 	  plugins/notchkd.py, plugins/notitles.py, plugins/old.py,
-	  plugins/problems.py, plugins/slow.py: replace backslases from end
-	  of lines where they are not required
+	  plugins/problems.py, plugins/slow.py: replace backslashes from
+	  end of lines where they are not required
 
 2005-12-27 20:52  arthur
 
@@ -703,13 +703,13 @@
 
 2005-12-26 08:46  arthur
 
-	* [r191] parsers/html.py: bugfix to handle numeric character
-	  references better (unicode characters)
+	* [r191] parsers/html.py: bug fix to handle numeric character
+	  references better (Unicode characters)
 
 2005-12-17 22:22  arthur
 
 	* [r190] README, plugins/__init__.py, webcheck.css, webcheck.py:
-	  reference and install fancytooltips from webcheck
+	  reference and install FancyTooltips from webcheck
 
 2005-12-17 22:08  arthur
 
@@ -721,7 +721,7 @@
 
 	* [r188] fancytooltips, fancytooltips/fancytooltips.css,
 	  fancytooltips/fancytooltips.js, fancytooltips/readme.txt: import
-	  fancytooltips 1.2.1 from
+	  FancyTooltips 1.2.1 from
 	  http://victr.lm85.com/Design/css/fancytooltips-a-la-victr.php
 
 2005-12-17 20:34  arthur
@@ -753,7 +753,7 @@
 
 2005-12-17 17:09  arthur
 
-	* [r183] webcheck.1: add section to document url classes
+	* [r183] webcheck.1: add section to document URL classes
 
 2005-09-18 14:55  arthur
 
@@ -776,13 +776,13 @@
 2005-09-17 16:05  arthur
 
 	* [r179] crawler.py, parsers/html.py, plugins/__init__.py,
-	  plugins/problems.py: store author and title in unicode internally
-	  and ensure that they are output as utf-8
+	  plugins/problems.py: store author and title in Unicode internally
+	  and ensure that they are output as UTF-8
 
 2005-09-17 15:58  arthur
 
 	* [r178] parsers/html.py: also try to get character encoding from
-	  xml declaration and http-equiv meta tag
+	  XML declaration and http-equiv meta tag
 
 2005-09-17 15:55  arthur
 
@@ -790,8 +790,8 @@
 
 2005-09-17 15:40  arthur
 
-	* [r176] parsers/html.py: parse characted entries as normal data,
-	  these eneties will be expanded later on (they are also used in
+	* [r176] parsers/html.py: parse character entries as normal data,
+	  these entities will be expanded later on (they are also used in
 	  attribute values
 
 2005-09-17 15:21  arthur
@@ -817,7 +817,7 @@
 2005-09-13 20:49  arthur
 
 	* [r171] schemes/http.py: support basic authentication for http
-	  proxies and some initial fixes to get proxying https traffic
+	  proxies and some initial fixes to get proxying HTTPS traffic
 	  working
 
 2005-09-10 08:10  arthur
@@ -851,7 +851,7 @@
 2005-09-01 21:04  arthur
 
 	* [r162] plugins/__init__.py, webcheck.py: make error handling more
-	  robust and have consisten error messages
+	  robust and have consistent error messages
 
 2005-09-01 20:12  arthur
 
@@ -881,7 +881,7 @@
 
 	* [r156] config.py, plugins/__init__.py: make specifying of target
 	  in links configurable (disabled by default to keep page valid
-	  xhtml 1.1)
+	  XHTML 1.1)
 
 2005-08-25 19:27  arthur
 
@@ -889,12 +889,12 @@
 
 2005-08-23 15:15  arthur
 
-	* [r154] webcheck.py: handle passing file names (instead of urls)
+	* [r154] webcheck.py: handle passing file names (instead of URLs)
 	  on the command line
 
 2005-08-23 15:14  arthur
 
-	* [r153] webcheck.py: add initial support for passing urls to
+	* [r153] webcheck.py: add initial support for passing URLs to
 	  install_file() function
 
 2005-08-23 14:29  arthur
@@ -904,7 +904,7 @@
 
 2005-08-23 14:28  arthur
 
-	* [r151] plugins/problems.py: make problem lists sorted by url and
+	* [r151] plugins/problems.py: make problem lists sorted by URL and
 	  problem description
 
 2005-08-21 18:18  arthur
@@ -919,18 +919,18 @@
 
 2005-08-20 16:32  arthur
 
-	* [r148] parsers/html.py: also feed style tag content to the css
-	  parser to parse inline css
+	* [r148] parsers/html.py: also feed style tag content to the CSS
+	  parser to parse inline CSS
 
 2005-08-20 16:31  arthur
 
-	* [r147] parsers/css.py: remove some debugging functions from css
+	* [r147] parsers/css.py: remove some debugging functions from CSS
 	  parser
 
 2005-08-20 16:30  arthur
 
-	* [r146] parsers/css.py: firt attempt at a very simple css parser
-	  that just summarises links to images and imported css files
+	* [r146] parsers/css.py: first attempt at a very simple CSS parser
+	  that just summarises links to images and imported CSS files
 
 2005-08-20 09:24  arthur
 
@@ -1037,8 +1037,8 @@
 
 2005-08-12 16:57  arthur
 
-	* [r126] crawler.py: add checkurl method to clean up urls and
-	  report problems (currently only checks for spaces in urls)
+	* [r126] crawler.py: add checkurl method to clean up URLs and
+	  report problems (currently only checks for spaces in URLs)
 
 2005-08-12 16:55  arthur
 
@@ -1090,8 +1090,8 @@
 
 2005-07-31 09:02  arthur
 
-	* [r114] crawler.py: while cleaning urls also make host part
-	  lowercase and also clean added internal urls
+	* [r114] crawler.py: while cleaning URLs also make host part
+	  lower-case and also clean added internal URLs
 
 2005-07-30 15:34  arthur
 
@@ -1135,7 +1135,7 @@
 2005-07-30 13:59  arthur
 
 	* [r105] crawler.py: make a _urlclean() function to always store a
-	  proper url without a fragment and with at least a slash for urls
+	  proper URL without a fragment and with at least a slash for URLs
 	  with path elements
 
 2005-07-30 13:55  arthur
@@ -1157,7 +1157,7 @@
 
 	* [r101] AUTHORS, README, config.py, webcheck.1: change email
 	  address from arthur@tiefighter.et.tudelft.nl to
-	  arthur@ch.tudelft.nl (including urls etc)
+	  arthur@ch.tudelft.nl (including URLs etc)
 
 2005-07-29 10:18  arthur
 
@@ -1208,12 +1208,12 @@
 
 2005-07-25 17:13  arthur
 
-	* [r91] parsers/css.py: empty module as placeholder to parse css
+	* [r91] parsers/css.py: empty module as place holder to parse CSS
 	  (referenced from __init__.py already)
 
 2005-07-25 17:11  arthur
 
-	* [r90] parsers/html.py: don't replace an allready set title
+	* [r90] parsers/html.py: don't replace an already set title
 
 2005-07-24 09:32  arthur
 
@@ -1250,7 +1250,7 @@
 	  plugins/notitles.py, plugins/problems.py, plugins/sitemap.py,
 	  plugins/slow.py, plugins/urllist.py, plugins/whatsnew.py,
 	  plugins/whatsold.py: call make_link() with a link object instead
-	  of a url, removing the need for a mySite in plugins
+	  of a URL, removing the need for a mySite in plugins
 
 2005-07-24 08:47  arthur
 
@@ -1342,7 +1342,7 @@
 	  schemes/__init__.py, schemes/file.py, schemes/ftp.py,
 	  schemes/http.py, webcheck.py: almost complete rewrite of crawling
 	  and site state code making children and parents link objects
-	  instead of urls and giving link member variables better names,
+	  instead of URLs and giving link member variables better names,
 	  change plugins accordingly, make scheme handling more pluggable
 	  and only use one function call and have a better pluggable
 	  structure for content parsing (currently only html)
@@ -1354,7 +1354,7 @@
 	  plugins/problems.py, plugins/sitemap.py, plugins/slow.py,
 	  plugins/urllist.py, plugins/whatsnew.py, plugins/whatsold.py,
 	  schemes/file.py, schemes/ftp.py, schemes/http.py, webcheck.py:
-	  use lowercase url attribute in Link instead of uppercase URL
+	  use lower-case URL attribute in Link instead of upper-case URL
 
 2005-07-16 15:35  arthur
 
@@ -1380,7 +1380,7 @@
 	* [r61] myUrlLib.py, schemes/__init__.py, schemes/file.py,
 	  schemes/ftp.py, schemes/http.py: rework scheme code to use more
 	  logical function names, more clearly mark internal functions and
-	  do some major cleanup of the scheme modules code
+	  do some major clean-up of the scheme modules code
 
 2005-07-10 12:26  arthur
 
@@ -1397,7 +1397,7 @@
 
 	* [r58] htmlparse.py, myUrlLib.py, parsers, parsers/__init__.py,
 	  parsers/html.py: move htmlparse to a more generic parsers
-	  package, cleaning up the code and simplefying dependencies
+	  package, cleaning up the code and simplifying dependencies
 
 2005-07-09 13:54  arthur
 
@@ -1405,8 +1405,8 @@
 	  plugins/images.py, plugins/notchkd.py, plugins/notitles.py,
 	  plugins/problems.py, plugins/rptlib.py, plugins/sitemap.py,
 	  plugins/slow.py, plugins/urllist.py, plugins/whatsnew.py,
-	  plugins/whatsold.py, webcheck.css, webcheck.py: clean up html
-	  output generating xhtml 1.1 without frames and using css for
+	  plugins/whatsold.py, webcheck.css, webcheck.py: clean up HTML
+	  output generating XHTML 1.1 without frames and using CSS for
 	  styling also getting rid of the images
 
 2005-07-04 21:25  arthur
@@ -1452,7 +1452,7 @@
 
 2005-06-18 19:59  arthur
 
-	* [r50] plugins/external.py: sort external links by url
+	* [r50] plugins/external.py: sort external links by URL
 
 2005-06-18 13:48  arthur
 
@@ -1462,12 +1462,12 @@
 
 	* [r48] plugins/rptlib.py, webcheck.py: restructure a couple of
 	  things to reduce the number of mutual imports and reduce the
-	  number of sutff gathered in webcheck.py
+	  number of stuff gathered in webcheck.py
 
 2005-06-18 13:31  arthur
 
 	* [r47] config.py, plugins/urllist.py: add simple urllist plugin to
-	  list all visited urls
+	  list all visited URLs
 
 2005-06-18 13:20  arthur
 
@@ -1498,17 +1498,17 @@
 
 	* [r42] myUrlLib.py, plugins/rptlib.py, plugins/sitemap.py,
 	  webcheck.py: make use of base consistent, do not modify it to
-	  make a nicer url (at least not now) and do not overwrite it with
+	  make a nicer URL (at least not now) and do not overwrite it with
 	  something silly from webcheck.py
 
 2005-06-14 19:17  arthur
 
-	* [r41] myUrlLib.py: also set URL attribute on yaked links
+	* [r41] myUrlLib.py: also set URL attribute on yanked links
 
 2005-06-12 06:21  arthur
 
 	* [r40] plugins/badlinks.py, plugins/images.py, plugins/notchkd.py,
-	  plugins/notitles.py: again use the url as link title for some
+	  plugins/notitles.py: again use the URL as link title for some
 	  links
 
 2005-06-11 21:52  arthur
@@ -1517,16 +1517,16 @@
 	  plugins/external.py, plugins/images.py, plugins/notchkd.py,
 	  plugins/notitles.py, plugins/problems.py, plugins/rptlib.py,
 	  plugins/sitemap.py, plugins/slow.py, plugins/whatsnew.py,
-	  plugins/whatsold.py: general cleanup of plugins structure and
+	  plugins/whatsold.py: general clean-up of plugins structure and
 	  code, moving httpcodes to the only place they were used, cleaning
-	  up plugin titles, version numbers and descriptios, adding
+	  up plugin titles, version numbers and descriptions, adding
 	  docstrings and using slightly more logical and consistent names
 	  (plus some other cleanups)
 
 2005-06-11 21:39  arthur
 
 	* [r38] plugins/rptlib.py: make_link(): if no title is specified,
-	  try to look up the title of the page and fallback to the url as
+	  try to look up the title of the page and fall back to the URL as
 	  title
 
 2005-06-11 21:24  arthur
@@ -1546,7 +1546,7 @@
 	  plugins/slow.py, plugins/whatsnew.py, plugins/whatsold.py,
 	  webcheck.py: write html files using file descriptors instead of
 	  through redirection using stdout, split writing of navigation
-	  frame and plugin pages plus some minor cleanups to calling
+	  frame and plugin pages plus some minor clean-ups to calling
 	  plugins
 
 2005-06-08 19:10  arthur
@@ -1574,7 +1574,7 @@
 2005-06-06 19:22  arthur
 
 	* [r30] AUTHORS: added myself as copyright holder and added Bastian
-	  Kleineidam (previous debian package maintainer) as contributor
+	  Kleineidam (previous Debian package maintainer) as contributor
 
 2005-06-06 19:20  arthur
 
@@ -1690,7 +1690,7 @@
 
 2005-03-31 12:47  arthur
 
-	* [r9] COPYING: install updated file without millenium bug
+	* [r9] COPYING: install updated file without millennium bug
 
 2005-03-31 12:45  arthur
 
