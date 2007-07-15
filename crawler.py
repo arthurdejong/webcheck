@@ -534,6 +534,7 @@ class Link:
             debugio.debug('crawler.Link.fetch(): unsupported content-type: %s' % self.mimetype)
             return
         # parse the content
+        debugio.debug('crawler.Link.fetch(): parsing using %s' % parsermodule.__name__)
         parsermodule.parse(content, self)
 
     def follow_link(self, visited=set()):
