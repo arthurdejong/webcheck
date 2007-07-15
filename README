@@ -69,13 +69,13 @@ Unix-like systems. Other operating systems may differ.
 
   1. Unpack the tarball in the location that you want to have it installed.
      Maybe something like /usr/local/lib/python/site-packages or /opt.
-     % tar -xvzf webcheck-1.10.0.tar.gz
+     % tar -xvzf webcheck-1.10.1.tar.gz
 
   2. Add a symbolic link to some place in your PATH.
-     % ln -s /opt/webcheck-1.10.0/webcheck.py /usr/local/bin/webcheck
+     % ln -s /opt/webcheck-1.10.1/webcheck.py /usr/local/bin/webcheck
 
   3. Put the manual page in the MANPATH.
-     % ln -s /opt/webcheck-1.10.0/webcheck.1 /usr/local/man/man1/webcheck.1
+     % ln -s /opt/webcheck-1.10.1/webcheck.1 /usr/local/man/man1/webcheck.1
 
 
 RUNNING WEBCHECK
@@ -97,7 +97,7 @@ browsers.
 For more information on webcheck usage and command line options see the
 webcheck manual page. If the manual page is not in the MANPATH you can
 probably open the manual with something like:
-  % man -l /opt/webcheck-1.10.0/webcheck.1
+  % man -l /opt/webcheck-1.10.1/webcheck.1
 
 
 FEEDBACK AND BUG REPORTS

@@ -1,3 +1,17 @@
+changes from 1.10.0 to 1.10.1
+-----------------------------
+
+* some extra Unicode handling precautions
+* fix problem in reading webcheck.dat for non-ASCII text
+* be more verbose about HTTP retrieval failures
+* split out URL normalization code into own module and do some basic protocol-
+  specific normalizations
+* a number of big performance improvements
+* fix a bug in handling some zero-size pages
+* parse http-equiv meta HTML header to parse refresh option
+* webcheck now requires python 2.4 or more recent
+
+
 changes from 1.9.8 to 1.10.0
 ----------------------------
 
@@ -12,6 +26,7 @@ changes from 1.9.8 to 1.10.0
 * re-enable robots.txt parsing that was disabled in 1.9.8 and add an
   --ignore-robots option
 
+
 changes from 1.9.7 to 1.9.8
 ---------------------------
 
@@ -19,7 +34,7 @@ changes from 1.9.7 to 1.9.8
   added
 * added proper error handling for SSL related socket problems (exceptions are
   not a subclass of regular socket exceptions)
-* a bugfix for urls that contain a user name without a password or the other
+* a bug fix for URLs that contain a user name without a password or the other
   way around
 * miscellaneous small report improvements
 
@@ -30,12 +45,12 @@ changes from 1.9.6 to 1.9.7
 * site data is now stored to a file while crawling the site, this can be used
   to resume a crawl with the --continue option and for debugging purposes
 * implemented checking of link anchors
-* small improvements to generated reports (favicon included, css fix)
+* small improvements to generated reports (favicon included, CSS fix)
 * documentation improvements
 * properly handle float values for --wait
 * unreachable sites will time out faster
 * added support for plugins that don't output html
-* half a dozen other small bugfixes (stability fixes, code cleanups and
+* half a dozen other small bug fixes (stability fixes, code clean-ups and
   improvements)
 
 
@@ -45,8 +60,8 @@ changes from 1.9.5 to 1.9.6
 * SECURITY FIX: a cross-site scripting vulnerability with content in the
                 tooltips of generated report was fixed by properly escaping
                 all output (CVE-2006-1321)
-* urls are now url encoded into a consistent form, solving some problems with
-  urls with non-ascii characters
+* URLs are now URL encoded into a consistent form, solving some problems with
+  URLs with non-ASCII characters
 * no longer remove unreferenced redirects
 * more debugging info in debug mode
 * more fixes for escaping in generated reports and more support for sites in
@@ -63,9 +78,9 @@ changes from 1.9.4 to 1.9.5
 * ensure that all generated html output is properly escaped
 * implemented --internal option to flag internal URLs with regular expressions
 * documentation improvements
-* several bugfixes to get webcheck more robust
-* included fancytooltips by Victor Kulinski to have nicer tooltips
-* generated reports now have friendlier messages for when there is nothing to
+* several bug fixes to get webcheck more robust
+* included FancyTooltips by Victor Kulinski to have nicer tooltips
+* generated reports now have friendlier messages for when there  is nothing to
   report
 * there is a Debian package
 
@@ -78,9 +93,9 @@ changes from 1.9.3 to 1.9.4
 * some fixes and improvements to the layout of the generated pages
 * redirect loops are now detected
 * transfer result status is now stored
-* addition of a limited css parser that handles imports and url() entries
+* addition of a limited CSS parser that handles imports and url() entries
 * support reading file names for checking from the command line (turning them
-  into file:// urls internally)
+  into file:// URLs internally)
 * better error handling of problems writing generated pages and check that we
   are not overwriting input files
 
@@ -90,14 +105,14 @@ changes from 1.9.2 to 1.9.3
 
 * several improvements to the generated reports, including tooltips with some
   useful information for the links (does not seem to work very well in
-  firefox)
+  Firefox)
 * stability improvements to the html parser (thanks to everyone who reported
   problems) not all problems have been solved but it shouldn't stop webcheck
   any more
 * reimplementation of the file and ftp modules to read directory contents or
   read index.html file if present (there are known problems in the ftp module
   regarding empty directories and recovering from errors)
-* improvements to the url parsing code to warn about spaces in urls
+* improvements to the URL parsing code to warn about spaces in URLs
 * only fetch content if we can parse it
 
 
@@ -105,18 +120,18 @@ changes from 1.9.1 to 1.9.2
 ---------------------------
 
 * complete reimplementation of the html and http modules
-* added https support
+* added HTTPS support
 * some spelling and typo fixes contributed by several people
 * site map now does a proper breadth first traversal of the site structure
 * webcheck homepage has been changed to http://ch.tudelft.nl/~arthur/webcheck/
-* several minor bugfixes and tweaks
+* several minor bug fixes and tweaks
 
 
 changes from 1.9.0 to 1.9.1
 ---------------------------
 
 * ship an empty css.py to actually run
-* small bugfixes for pages with multiple titles and slow plugin
+* small bug fixes for pages with multiple titles and slow plugin
 
 
 changes from 1.0 to 1.9.0
@@ -209,11 +224,11 @@ b Fixed problem when server redirects a URL to itself. This fix seems to work
   for most servers I've tried but there are a few more out there that I need
   to take a look at.
 b Fixed bug that caused linbot to not check for yanked URLs
-+ Added -l command-line option. Usage: -l <url> where <url> is a url pointing
++ Added -l command-line option. Usage: -l <url> where <url> is a URL pointing
   to an image to be used as the report's logo.
 b "patched" strings.py so that it can better parse html files created in 
    Windows/DOS (I think).
-+ Made report LOGO a link to the base url
++ Made report LOGO a link to the base URL
 + httplink does not HEAD a redirected URL if it is already in the link list
   (performance improvement)
 - Removed LOGO_ALT from config.py

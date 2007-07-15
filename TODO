@@ -10,11 +10,10 @@ probably before 2.0 release
 * implement a maximum transfer size for downloading
 * support ftp proxies
 * support proxying https traffic
-* give problems different levels (info, warning, error)
+* give problems different levels (info, warning, error) or categories
 * option to only force overwrite generated files and leave static files (css, js) alone
 * implement a --html-only option to not copy css and other files
 * check for missing encoding (report problem)
-* implement parsing of meta http-equiv="refresh" content="0;url=CHILD">
 * for FTP: don't fail if SIZE is not allowed
 
 wishlist
@@ -60,3 +59,6 @@ wishlist
 * maybe use urllib2 instead of our own custom code (redirects may be a problem here though)
 * add support for robots meta tag: http://www.robotstxt.org/wc/meta-user.html
 * only report multiple definitions of a single anchor once
+* warn if URL contains unencoded characters
+* see section 6 of rfc3986.txt for URL comparison (esp. 6.2.2.)
+* implement paging for huge reports

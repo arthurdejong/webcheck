@@ -1,3 +1,18 @@
+webcheck (1.10.1) unstable; urgency=low
+
+  * some extra Unicode handling precautions
+  * fix problem in reading webcheck.dat for non-ASCII text (closes: #431625)
+  * be more verbose about HTTP retrieval failures
+  * split out URL normalization code into own module and do some basic
+    protocol-specific normalizations (closes: #425004)
+  * a number of big performance improvements
+  * fix a bug in handling some zero-size pages
+  * parse http-equiv meta HTML header to parse refresh option
+  * webcheck now requires python 2.4 or more recent
+  * added XS-Vcs-Svn and XS-Vcs-Browser as specified in #391023
+
+ -- Arthur de Jong <adejong@debian.org>  Sun, 15 Jul 2007 15:00:00 +0200
+
 webcheck (1.10.0) unstable; urgency=low
 
   * switched HTML parsing to using BeautifulSoup with a fall-back mechanism to

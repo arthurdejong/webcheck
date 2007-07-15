@@ -1,3 +1,93 @@
+2007-07-15 08:23  arthur
+
+	* [r351] crawler.py: output which parser module is used in debug
+	  mode
+
+2007-07-15 08:13  arthur
+
+	* [r350] ChangeLog: fix spelling in ChangeLog messages
+
+2007-07-15 07:56  arthur
+
+	* [r349] parsers/html/beautifulsoup.py: also handle http-equiv
+	  refresh meta header
+
+2007-07-15 07:27  arthur
+
+	* [r348] crawler.py: just ignore setting encoding to None
+
+2007-07-14 18:20  arthur
+
+	* [r347] crawler.py: fix printing of None encoding
+
+2007-07-14 18:18  arthur
+
+	* [r346] myurllib.py: simplify _normalize_escapes() function to
+	  improve performance
+
+2007-07-14 10:26  arthur
+
+	* [r345] myurllib.py: replace double slashes in file URL paths with
+	  single ones
+
+2007-07-13 18:48  arthur
+
+	* [r344] myurllib.py: add note about improving performance more
+
+2007-07-13 18:47  arthur
+
+	* [r343] crawler.py, plugins/__init__.py, plugins/sitemap.py,
+	  serialize.py: use sets instead of sequences for children,
+	  embedded, etc to improve deserialization performance with a
+	  factor 25 but now require python 2.4 of more recent
+
+2007-07-13 13:56  arthur
+
+	* [r342] serialize.py: give the matched URL a name to make code
+	  more readable
+
+2007-07-13 13:55  arthur
+
+	* [r341] serialize.py: be a little more verbose when raising
+	  parsing exceptions
+
+2007-07-13 13:50  arthur
+
+	* [r340] plugins/badlinks.py: get rid of unneeded sort
+
+2007-07-07 14:02  arthur
+
+	* [r339] crawler.py, myurllib.py, parsers/html/beautifulsoup.py,
+	  parsers/html/htmlparser.py: split out URL cleaning code into own
+	  module
+
+2007-07-07 13:54  arthur
+
+	* [r338] schemes/http.py: do not handle control-C and pass it along
+	  to the main exception handler and log http exceptions with a
+	  higher level
+
+2007-07-07 13:39  arthur
+
+	* [r337] debian/control: added XS-Vcs-Svn and XS-Vcs-Browser as
+	  specified in #391023
+
+2007-07-06 14:18  arthur
+
+	* [r336] crawler.py, serialize.py: improve deserialization and
+	  handling of Unicode strings
+
+2007-07-06 13:51  arthur
+
+	* [r335] plugins/problems.py, plugins/size.py: some extra
+	  precautions for handling Unicode data and correct HTML escaping
+
+2007-05-12 20:57  arthur
+
+	* [r333] ChangeLog, NEWS, README, TODO, config.py,
+	  debian/changelog, debian/copyright, webcheck.1: get files ready
+	  for 1.10.0 release
+
 2007-05-12 07:49  arthur
 
 	* [r332] crawler.py: also lower-case reqanchor
