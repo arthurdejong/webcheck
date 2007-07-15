@@ -32,6 +32,11 @@ import BeautifulSoup
 import myurllib
 from parsers.html import htmlunescape
 
+# pattern for matching http-equiv and content part of
+# <meta http-equiv="refresh" content="0;url=URL">
+_refreshhttpequivpattern = re.compile('^refresh$', re.I)
+_refershcontentpattern = re.compile('^[0-9]+;url=(.*)$', re.I)
+
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
     title and an author. The content is assumed to contain HMTL."""
@@ -66,9 +71,14 @@ def parse(content, link):
     if author and author['content']:
         link.author = htmlunescape(author['content']).strip()
     # <meta http-equiv="refresh" content="0;url=URL">
-    refresh = soup.find('meta', attrs={'http-equiv': re.compile("^refresh$", re.I), 'content': True})
-    if refresh:
-        pass # TODO: implement
+    refresh = soup.find('meta', attrs={'http-equiv': _refreshhttpequivpattern, 'content': True})
+    if refresh and refresh['content']:
+        try:
+            child = _refershcontentpattern.search(refresh['content']).group(1)
+            link.add_child(urlparse.urljoin(base, child))
+        except AttributeError:
+            # ignore cases where refresh header parsing causes problems
+            pass
     # <img src="URL">
     for img in soup.findAll('img', src=True):
         embed = myurllib.normalizeurl(htmlunescape(img['src']).strip())
