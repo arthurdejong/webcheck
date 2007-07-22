@@ -13,7 +13,7 @@ Package: webcheck
 Architecture: all
 Depends: ${python:Depends}
 XB-Python-Version: ${python:Versions}
-Recommends: python-beautifulsoup
+Recommends: python-beautifulsoup (>= 3.0.2)
 Suggests: lynx | www-browser
 Provides: linbot
 Conflicts: linbot
