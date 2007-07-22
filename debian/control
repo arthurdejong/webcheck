@@ -15,9 +15,6 @@ Depends: ${python:Depends}
 XB-Python-Version: ${python:Versions}
 Recommends: python-beautifulsoup (>= 3.0.2)
 Suggests: lynx | www-browser
-Provides: linbot
-Conflicts: linbot
-Replaces: linbot
 Description: website link and structure checker
  webcheck is a website checking tool for webmasters. It crawls a given
  website and generates a number of reports in the form of html pages.
