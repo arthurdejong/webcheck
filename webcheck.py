@@ -92,7 +92,7 @@ def parse_args(site):
           'i:x:y:l:baqdo:cfr:w:Vh',
           ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
            'ignore-robots',
-           'quiet', 'silent', 'debug', 'output=', 'continue',
+           'quiet', 'silent', 'debug', 'profile', 'output=', 'continue',
            'force', 'redirects=', 'wait=', 'version', 'help'))
         for flag, arg in optlist:
             if flag in ('-i', '--internal'):
@@ -106,11 +106,14 @@ def parse_args(site):
             elif flag in ('-a', '--avoid-external'):
                 config.AVOID_EXTERNAL_LINKS = True
             elif flag in ('--ignore-robots'):
-                 config.USE_ROBOTS = False
+                config.USE_ROBOTS = False
             elif flag in ('-q', '--quiet', '--silent'):
                 debugio.loglevel = debugio.ERROR
             elif flag in ('-d', '--debug'):
                 debugio.loglevel = debugio.DEBUG
+            elif flag in ('--profile'):
+                # undocumented on purpose
+                config.PROFILE = True
             elif flag in ('-o', '--output'):
                 config.OUTPUT_DIR = arg
             elif flag in ('-c', '--continue'):
@@ -197,11 +200,8 @@ def install_file(source, text=False):
     tfp.close()
     sfp.close()
 
-def main():
+def main(site):
     """Main program."""
-    site = crawler.Site()
-    # parse command-line arguments
-    parse_args(site)
     # read serialized file
     if config.CONTINUE:
         fname = os.path.join(config.OUTPUT_DIR, 'webcheck.dat')
@@ -246,7 +246,20 @@ def main():
 
 if __name__ == '__main__':
     try:
-        main()
+        # initialize site object
+        site = crawler.Site()
+        # parse command-line arguments
+        parse_args(site)
+        # run the main program
+        if config.PROFILE:
+            fname = os.path.join(config.OUTPUT_DIR, 'webcheck.prof')
+            try:
+                import cProfile
+            except ImportError:
+                import profile as cProfile
+            cProfile.run('main(site)', fname)
+        else:
+            main(site)
     except KeyboardInterrupt:
         sys.stderr.write('Interrupted\n')
         sys.exit(1)

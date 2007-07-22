@@ -56,6 +56,11 @@ OUTPUT_DIR = '.'
 # Whether to try to read a state file to continue from.
 CONTINUE = False
 
+# Whether to produce profiling information. This is for development
+# purposes and as such undocumented.
+# http://docs.python.org/lib/profile.html
+PROFILE = False
+
 # This is the time in seconds to wait between requests. This is the state of
 # the -w command line option.
 WAIT_BETWEEN_REQUESTS = 0
