@@ -37,6 +37,11 @@ from parsers.html import htmlunescape
 _refreshhttpequivpattern = re.compile('^refresh$', re.I)
 _refershcontentpattern = re.compile('^[0-9]+;url=(.*)$', re.I)
 
+# check BeautifulSoup find() function for bugs
+if BeautifulSoup.BeautifulSoup('<foo>').find('foo', bar=True):
+    import debugio
+    debugio.warn('using buggy version of BeautifulSoup (%s)' % BeautifulSoup.__version__)
+
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
     title and an author. The content is assumed to contain HMTL."""
