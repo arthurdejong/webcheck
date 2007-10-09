@@ -38,6 +38,12 @@ import re
 import time
 import myurllib
 
+# this is a workaround for Python 2.3
+try:
+    set
+except NameError:
+    from sets import Set as set
+
 # pattern for matching spaces
 _spacepattern = re.compile(' ')
 

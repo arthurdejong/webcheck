@@ -31,6 +31,12 @@ __outputfile__ = 'index.html'
 import config
 import plugins
 
+# this is a workaround for Python 2.3
+try:
+    set
+except NameError:
+    from sets import Set as set
+
 def _explore(fp, link, explored, depth=0, indent='    '):
     """Recursively do a breadth first traversal of the graph of links on the
     site. Prints the html results to the file descriptor."""

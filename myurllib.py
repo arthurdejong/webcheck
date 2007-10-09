@@ -24,10 +24,15 @@ import urlparse
 import re
 import urllib
 
+# this is a workaround for Python 2.3
+try:
+    set
+except NameError:
+    from sets import Set as set
 
 # The way I read RFC3986 (especially sections 3.3 and 6.2) is that these
 # are all separate and valid URLs that point to the same resource.
-# 
+#
 # In section 6.2.2.3 only the removal of "." and ".." in paths is
 # mentioned although 6.2.3 does leave some room for other normalisation.
 
