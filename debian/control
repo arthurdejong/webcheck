@@ -6,8 +6,9 @@ Standards-Version: 3.7.2
 Build-Depends: debhelper (>= 5.0.37.2)
 Build-Depends-Indep: python, python-support (>= 0.4)
 XS-Python-Version: current
-XS-Vcs-Svn: http://arthurenhella.demon.nl/svn/webcheck
-XS-Vcs-Browser: http://arthurenhella.demon.nl/viewcvs/webcheck
+Homepage: http://ch.tudelft.nl/~arthur/webcheck
+Vcs-Svn: http://arthurenhella.demon.nl/svn/webcheck
+Vcs-Browser: http://arthurenhella.demon.nl/viewcvs/webcheck
 
 Package: webcheck
 Architecture: all
@@ -27,5 +28,4 @@ Description: website link and structure checker
   * find potentially outdated and new pages
   * list links pointing to external sites
   * can run without user intervention
- .
-  Homepage: http://ch.tudelft.nl/~arthur/webcheck
+
