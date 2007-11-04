@@ -55,10 +55,11 @@ Features of webcheck include:
  * list links pointing to external sites
  * can run without user intervention
 
-webcheck is written in python and is developed on a Debian system with python
-2.3. Previous versions of python are not tested but python 2.4 is tested
-occasionally. Patches to support a wider range of python releases are welcome
-(provided they are not too intrusive).
+webcheck is written in Python and is developed on a Debian system with Python
+2.4. Previous versions of Python are not tested regularly. More recent
+versions of Python have much better performance for large sites. Patches to
+support a wider range of Python releases are welcome (provided they are not
+too intrusive).
 
 
 INSTALLING WEBCHECK
@@ -76,6 +77,12 @@ Unix-like systems. Other operating systems may differ.
 
   3. Put the manual page in the MANPATH.
      % ln -s /opt/webcheck-1.10.1/webcheck.1 /usr/local/man/man1/webcheck.1
+
+webcheck does not use Distutils because that tool is meant to install Python
+modules which should end up in the default Python path (from what the author
+understands of Distutils). Since webcheck does not expose any public API, it
+is an application with only private modules. A (maintainable) setup.py which
+installs webcheck outside the public patch is welcome.
 
 
 RUNNING WEBCHECK
