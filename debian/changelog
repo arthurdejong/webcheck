@@ -1,3 +1,19 @@
+webcheck (1.10.2) unstable; urgency=low
+
+  * changed the recommends to python-beautifulsoup to be more recent than
+    3.0.2 since that  version fixes a bug that causes severe problems for
+    webcheck (beware backporters to etch) (closes: #433446)
+  * remove old linbot provides/conflicts/replaces stuff as linbot last shipped
+    in woody
+  * move Homepage pseudo header to control header and remove XS- prefix for
+    Vcs tags
+  * add checking for bug in BeautifulSoup and issue warning if bug is found
+  * added support for Python 2.3 (alhough more recent versions of Python
+    are recommended)
+  * small documentation improvements
+
+ -- Arthur de Jong <adejong@debian.org>  Fri, 20 Jul 2007 21:12:56 +0200
+
 webcheck (1.10.1) unstable; urgency=low
 
   * some extra Unicode handling precautions

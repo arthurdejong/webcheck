@@ -2,6 +2,7 @@ before next release
 -------------------
 * go over all FIXMEs in code (ftp)
 * follow redirects (to a limit) of external sites
+* -U,  --user-agent=AGENT    identify as AGENT instead of Wget/VERSION.
 
 probably before 2.0 release
 ---------------------------
@@ -62,3 +63,4 @@ wishlist
 * warn if URL contains unencoded characters
 * see section 6 of rfc3986.txt for URL comparison (esp. 6.2.2.)
 * implement paging for huge reports
+* check out python-coverage

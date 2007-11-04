@@ -1,3 +1,13 @@
+changes from 1.10.1 to 1.10.2
+-----------------------------
+
+* add checking for bug in BeautifulSoup and issue warning if bug is found
+* added support for Python 2.3 (alhough more recent versions of Python
+  are recommended)
+* small documentation improvements
+* Debian package improvements
+
+
 changes from 1.10.0 to 1.10.1
 -----------------------------
 
@@ -9,7 +19,7 @@ changes from 1.10.0 to 1.10.1
 * a number of big performance improvements
 * fix a bug in handling some zero-size pages
 * parse http-equiv meta HTML header to parse refresh option
-* webcheck now requires python 2.4 or more recent
+* webcheck now requires Python 2.4 or more recent
 
 
 changes from 1.9.8 to 1.10.0

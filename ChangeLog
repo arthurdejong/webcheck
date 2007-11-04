@@ -1,3 +1,54 @@
+2007-11-04 08:27  arthur
+
+	* [r362] debian/control: move Homepage pseudo header to control
+	  header and remove XS- prefix for Vcs tags
+
+2007-11-04 07:38  arthur
+
+	* [r361] webcheck.1: add comma for readability
+
+2007-11-04 07:37  arthur
+
+	* [r360] debian/copyright: fix reference to GPL file in
+	  common-licenses
+
+2007-11-04 07:35  arthur
+
+	* [r359] README: updated information about Python versions to use
+	  and add section about Distutils
+
+2007-10-09 19:34  arthur
+
+	* [r358] AUTHORS, crawler.py, myurllib.py, plugins/sitemap.py: add
+	  workaround for Python 2.3 (based on a patch by Claire Connelly
+	  <cmc@math.hmc.edu>)
+
+2007-09-17 19:11  arthur
+
+	* [r357] parsers/html/beautifulsoup.py: add a warning if the used
+	  version of BeautifulSoup contains a bug
+
+2007-07-22 14:32  arthur
+
+	* [r356] config.py, webcheck.py: implement undocumented --profile
+	  option to write profiling information in output directory
+
+2007-07-22 14:23  arthur
+
+	* [r355] debian/control: remove old linbot
+	  provides/conflicts/replaces stuff as linbot last shipped in woody
+
+2007-07-22 13:27  arthur
+
+	* [r354] debian/control: update recommends to python-beautifulsoup
+	  version 3.0.2 or later since that version fixes a problem with
+	  find(attr=True)
+
+2007-07-15 13:07  arthur
+
+	* [r352] ChangeLog, NEWS, README, TODO, config.py,
+	  debian/changelog, webcheck.1: get files ready for 1.10.1 release
+
 2007-07-15 08:23  arthur
 
 	* [r351] crawler.py: output which parser module is used in debug
