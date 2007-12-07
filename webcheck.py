@@ -56,7 +56,7 @@ def print_usage():
 def print_tryhelp():
     """Print friendly pointer to more information."""
     sys.stderr.write(
-      'Try `webcheck --help\' for more information.\n')
+      'Try \'webcheck --help\' for more information.\n')
 
 def print_help():
     """Print the option list."""
