@@ -508,8 +508,10 @@ class Link:
         # only think about problems on internal pages
         if not self.isinternal:
             return
-        self.pageproblems.append(problem)
-        self._ischanged = True
+        # only include a single problem once (e.g. multiple anchors)
+        if problem not in self.pageproblems:
+            self.pageproblems.append(problem)
+            self._ischanged = True
 
     def fetch(self):
         """Attempt to fetch the url (if isyanked is not True) and fill in link
