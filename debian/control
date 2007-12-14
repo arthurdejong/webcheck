@@ -7,8 +7,8 @@ Build-Depends: debhelper (>= 5.0.37.2)
 Build-Depends-Indep: python, python-support (>= 0.4)
 XS-Python-Version: current
 Homepage: http://ch.tudelft.nl/~arthur/webcheck
-Vcs-Svn: http://arthurenhella.demon.nl/svn/webcheck
-Vcs-Browser: http://arthurenhella.demon.nl/viewcvs/webcheck
+Vcs-Svn: http://arthurenhella.demon.nl/svn/webcheck/webcheck/
+Vcs-Browser: http://arthurenhella.demon.nl/viewcvs/webcheck/webcheck/
 
 Package: webcheck
 Architecture: all
