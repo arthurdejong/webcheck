@@ -105,13 +105,13 @@ def parse_args(site):
                 config.BASE_URLS_ONLY = True
             elif flag in ('-a', '--avoid-external'):
                 config.AVOID_EXTERNAL_LINKS = True
-            elif flag in ('--ignore-robots'):
+            elif flag in ('--ignore-robots',):
                 config.USE_ROBOTS = False
             elif flag in ('-q', '--quiet', '--silent'):
                 debugio.loglevel = debugio.ERROR
             elif flag in ('-d', '--debug'):
                 debugio.loglevel = debugio.DEBUG
-            elif flag in ('--profile'):
+            elif flag in ('--profile',):
                 # undocumented on purpose
                 config.PROFILE = True
             elif flag in ('-o', '--output'):
