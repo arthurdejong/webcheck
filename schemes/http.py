@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,6 +47,11 @@ def fetch(link, acceptedtypes):
     # TODO: implement proxy requests for https
     # split netloc in user:pass part and host:port part
     (userpass, netloc) = urllib.splituser(link.netloc)
+    # if the URL did not contain userpass and the netloc is configured
+    # get the userpass from that
+    if not userpass and netloc in config.USERPASS:
+        userpass=config.USERPASS[netloc]
+        debugio.debug('schemes.http.fetch(): using userpass=%s' % userpass)
     proxyuserpass = None
     scheme = link.scheme
     # check validity of netloc (to work around bug in idna module)

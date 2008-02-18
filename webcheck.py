@@ -33,6 +33,8 @@ import sys
 import os
 import re
 import serialize
+import urlparse
+import urllib
 
 debugio.loglevel = debugio.INFO
 
@@ -42,7 +44,7 @@ def print_version():
       'webcheck %(version)s\n'
       'Written by Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n'
       '\n'
-      'Copyright (C) 1998, 1999, 2002, 2005, 2006, 2007 Albert Hopkins (marduk),\n'
+      'Copyright (C) 1998, 1999, 2002, 2005, 2006, 2007, 2008 Albert Hopkins (marduk),\n'
       'Mike W. Meyer and Arthur de Jong.\n'
       'This is free software; see the source for copying conditions.  There is NO\n'
       'warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n'
@@ -79,6 +81,8 @@ def print_help():
       '  -f, --force            overwrite files without asking\n'
       '  -r, --redirects=N      the number of redirects webcheck should follow,\n'
       '                         0 implies to follow all redirects (default=%(redirects)d)\n'
+      '  -u, --userpass=URL     specify a URL with user:pass so username and password are given\n'
+      '                         to matching network locations, -u http://user:pass@example.com\n'
       '  -w, --wait=SECONDS     wait SECONDS between retrievals\n'
       '  -V, --version          output version information and exit\n'
       '  -h, --help             display this help and exit\n'
@@ -89,11 +93,11 @@ def parse_args(site):
     import getopt
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
-          'i:x:y:l:baqdo:cfr:w:Vh',
+          'i:x:y:l:baqdo:cfr:u:w:Vh',
           ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
            'ignore-robots',
            'quiet', 'silent', 'debug', 'profile', 'output=', 'continue',
-           'force', 'redirects=', 'wait=', 'version', 'help'))
+           'force', 'redirects=', 'userpass=', 'wait=', 'version', 'help'))
         for flag, arg in optlist:
             if flag in ('-i', '--internal'):
                 site.add_internal_re(arg)
@@ -122,6 +126,11 @@ def parse_args(site):
                 config.OVERWRITE_FILES = True
             elif flag in ('-r', '--redirects'):
                 config.REDIRECT_DEPTH = int(arg)
+            elif flag in ('-u', '--userpass'):
+                (_scheme, _netloc, _path, _params, _query, _frag) = urlparse.urlparse(arg)
+                (_userpass, _netloc) = urllib.splituser(_netloc)
+                config.USERPASS[_netloc] = _userpass
+                print config.USERPASS
             elif flag in ('-w', '--wait'):
                 config.WAIT_BETWEEN_REQUESTS = float(arg)
             elif flag in ('-V', '--version'):
@@ -136,8 +145,6 @@ def parse_args(site):
             sys.exit(1)
         for arg in args:
             # if it does not look like a url it is probably a local file
-            import urlparse
-            import urllib
             if urlparse.urlsplit(arg)[0] == '':
                 arg = 'file://' + urllib.pathname2url(os.path.abspath(arg))
             site.add_internal(arg)

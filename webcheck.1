@@ -1,20 +1,20 @@
-.\" Copyright (C) 2005, 2006, 2007 Arthur de Jong
-.\" 
+.\" Copyright (C) 2005, 2006, 2007, 2008 Arthur de Jong
+.\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
-.\" 
+.\"
 .\" This program is distributed in the hope that it will be useful,
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
-.\" 
+.\"
 .\" You should have received a copy of the GNU General Public License
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 .\" .nh
-.\" 
+.\"
 .TH "webcheck" "1" "Nov 2007" "Version 1.10.2" "User Commands"
 .nh
 .SH "NAME"
@@ -29,7 +29,7 @@ webcheck \- website link checker
 \fBwebcheck\fP will check the document at the specified URL for links to other
 documents, follow these links recursively and generate an HTML report.
 
-.TP 
+.TP
 .BI "\-i,  \-\-internal=" "PATTERN"
 Mark URLs matching the
 .I PATTERN
@@ -39,7 +39,7 @@ Note that the PATTERN is matched against the full URL.
 URLs matching this PATTERN will be considered internal, even if they match one
 of the \-\-external PATTERNs.
 
-.TP 
+.TP
 .BI "\-x,  \-\-external=" "PATTERN"
 Mark URLs matching the
 .I PATTERN
@@ -47,7 +47,7 @@ Mark URLs matching the
 Can be used multiple times.
 Note that the PATTERN is matched against the full URL.
 
-.TP 
+.TP
 .BI "\-y, \-\-yank=" "PATTERN"
 Do not check URLs matching the
 .I PATTERN
@@ -58,7 +58,7 @@ not its children.
 Can be used multiple times.
 Note that the PATTERN is matched against the full URL.
 
-.TP 
+.TP
 .B \-b, \-\-base\-only
 Consider any URL not starting with the base URL to be external.
 For example, if you run
@@ -71,7 +71,7 @@ considered internal whereas http://www.example.com/ will
 be considered external.
 By default all the pages on the site will be considered internal.
 
-.TP 
+.TP
 .B \-a, \-\-avoid\-external
 Avoid external links.
 Normally if webcheck is examining an HTML page
@@ -79,7 +79,7 @@ and it finds a link that points to an external document, it will
 check to see if that external document exists.
 This flag disables that action.
 
-.TP 
+.TP
 .B \-\-ignore\-robots
 Do not retrieve and parse robots.txt files.
 By default robots.txt files are retrieved and honored.
@@ -88,7 +88,7 @@ decision this option can be used.
 .br
 For more information on robots.txt handling see the NOTES section below.
 
-.TP 
+.TP
 .B \-q, \-\-quiet, \-\-silent
 Do not print out progress as webcheck traverses a site.
 
@@ -97,14 +97,14 @@ Do not print out progress as webcheck traverses a site.
 Print debugging information while crawling the site.
 This option is mainly useful for developers.
 
-.TP 
+.TP
 .BI "\-o, \-\-output=" "DIRECTORY"
 Output directory. Use to specify the directory where webcheck will
 dump its reports. The default is the current directory or as
 specified by config.py. If this directory does not exist it will
 be created for you (if possible).
 
-.TP 
+.TP
 .BI "\-c, \-\-continue"
 Try to continue from a previous run. When using this option webcheck
 will look for a webcheck.dat in the output directory.
@@ -120,17 +120,26 @@ with coming releases (especially in relation to other options).
 Also note that the stored files are not guaranteed to be compatible
 between releases.
 
-.TP 
+.TP
 .B \-f, \-\-force
 Overwrite files without asking.
 This option is required for running webcheck non-interactively.
 
-.TP 
+.TP
 .BI "\-r, \-\-redirects=" "N"
 Redirect depth. the number of redirects webcheck should follow when
 following a link. 0 implies to follow all redirects.
 
-.TP 
+.TP
+.BI "\-u, \-\-userpass=" "URL"
+Specify a URL with username and password information to use for basic
+authentication when visiting the site.
+.br
+e.g. http://test:secret@example.com/
+.br
+This option may be specified multiple times.
+
+.TP
 .BI "\-w, \-\-wait=" "SECONDS"
 Wait
 .I SECONDS
@@ -139,11 +148,11 @@ and immediately move on to the next. However on some loaded
 systems it may be desirable to have webcheck pause between requests.
 This option can be set to any non-negative number.
 
-.TP 
+.TP
 .B \-v, \-\-version
 Show version of program.
 
-.TP 
+.TP
 .B \-h, \-\-help
 Show short summary of options.
 
@@ -205,11 +214,11 @@ http://ch.tudelft.nl/~arthur/webcheck/
 
 .SH "COPYRIGHT"
 Copyright \(co 1998, 1999 Albert Hopkins (marduk)
-.br 
+.br
 Copyright \(co 2002 Mike W. Meyer
-.br 
-Copyright \(co 2005, 2006, 2007 Arthur de Jong
-.br 
+.br
+Copyright \(co 2005, 2006, 2007, 2008 Arthur de Jong
+.br
 webcheck is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .br
