@@ -119,6 +119,21 @@ def parse(content, link):
         embed = myurllib.normalizeurl(htmlunescape(frame['src']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
+    # <iframe src="URL"...>
+    for frame in soup.findAll('iframe', src=True):
+        embed = myurllib.normalizeurl(htmlunescape(frame['src']).strip())
+        if embed:
+            link.add_embed(urlparse.urljoin(base, embed))
+    # <object data="URL"...>
+    for obj in soup.findAll('object', data=True):
+        embed = myurllib.normalizeurl(htmlunescape(obj['data']).strip())
+        if embed:
+            link.add_embed(urlparse.urljoin(base, embed))
+    # <object><param name="movie" value="URL"...></object>
+    for para in soup.findAll('param', name='movie' value=True):
+        embed = myurllib.normalizeurl(htmlunescape(para['value']).strip())
+        if embed:
+            link.add_embed(urlparse.urljoin(base, embed))
     # <map><area href="URL"...>...</map>
     for area in soup.findAll('area', href=True):
         child = myurllib.normalizeurl(htmlunescape(area['href']).strip())
