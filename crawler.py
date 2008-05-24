@@ -543,7 +543,10 @@ class Link:
             return
         # parse the content
         debugio.debug('crawler.Link.fetch(): parsing using %s' % parsermodule.__name__)
-        parsermodule.parse(content, self)
+        try:
+            parsermodule.parse(content, self)
+        except Exception, e:
+            self.add_pageproblem('problem parsing page: ' + str(e))
 
     def follow_link(self, visited=set()):
         """If this link represents a redirect return the redirect target,
