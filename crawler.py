@@ -547,6 +547,9 @@ class Link:
             parsermodule.parse(content, self)
         except Exception, e:
             self.add_pageproblem('problem parsing page: ' + str(e))
+            debugio.warn('problem parsing page: ' + str(e))
+            import traceback
+            traceback.print_exc()
 
     def follow_link(self, visited=set()):
         """If this link represents a redirect return the redirect target,
