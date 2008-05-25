@@ -130,7 +130,7 @@ def parse(content, link):
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <object><param name="movie" value="URL"...></object>
-    for para in soup.findAll('param', name='movie' value=True):
+    for para in soup.findAll('param', attrs={'name': 'movie', 'value': True}):
         embed = myurllib.normalizeurl(htmlunescape(para['value']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
