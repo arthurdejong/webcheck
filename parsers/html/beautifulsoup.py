@@ -164,5 +164,15 @@ def parse(content, link):
             # delegate handling of inline css to css module
             import parsers.css
             parsers.css.parse(htmlunescape(style.string), link)
+    # <script src="url">
+    for script in soup.findAll('img', src=True):
+        embed = myurllib.normalizeurl(htmlunescape(script['src']).strip())
+        if embed:
+            link.add_embed(urlparse.urljoin(base, embed))
+    # <body|table|td background="url">
+    for t in soup.findAll( ('body', 'table', 'td'), background=True):
+        embed = myurllib.normalizeurl(htmlunescape(t['background']).strip())
+        if embed:
+            link.add_embed(urlparse.urljoin(base, embed))
     # flag that the link contains a valid page
     link.ispage = True

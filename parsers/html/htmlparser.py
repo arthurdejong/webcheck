@@ -200,6 +200,12 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # <style>content</style>
         elif tag == 'style':
             self.collect = ''
+        # <script src="url">
+        elif tag == 'script' and attrs.has_key('src'):
+            self.embedded.append(self._cleanurl(attrs['src']))
+        # <body|table|td background="url">
+        elif tag in ('body', 'table', 'td') and attrs.has_key('background'):
+            self.embedded.append(self._cleanurl(attrs['background']))
 
     def handle_endtag(self, tag):
         """Handle end tags in html."""
