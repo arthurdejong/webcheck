@@ -1,3 +1,9 @@
+webcheck (1.10.2.0) unstable; urgency=low
+
+  * Re-upload of version 1.10.2 because the previous 1.10.2 got lost somehow.
+
+ -- Arthur de Jong <adejong@debian.org>  Fri, 30 May 2008 08:20:00 +0200
+
 webcheck (1.10.2) unstable; urgency=low
 
   * changed the recommends to python-beautifulsoup to be more recent than
