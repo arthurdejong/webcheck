@@ -159,7 +159,7 @@ def parse(content, link):
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <style>content</style>
-    for style in soup.findAll('style', src=True):
+    for style in soup.findAll('style'):
         if style.string:
             # delegate handling of inline css to css module
             import parsers.css
