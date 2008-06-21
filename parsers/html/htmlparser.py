@@ -206,6 +206,11 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # <body|table|td background="url">
         elif tag in ('body', 'table', 'td') and attrs.has_key('background'):
             self.embedded.append(self._cleanurl(attrs['background']))
+        # pick up any tags with a style attribute
+        if attrs.has_key('style'):
+            # delegate handling of inline css to css module
+            import parsers.css
+            parsers.css.parse(attrs['style'], self.link)
 
     def handle_endtag(self, tag):
         """Handle end tags in html."""
