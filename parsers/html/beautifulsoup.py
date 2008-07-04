@@ -1,5 +1,5 @@
 
-# html.py - parser functions for html content
+# beautifulsoup.py - parser functions for html content
 #
 # Copyright (C) 2007, 2008 Arthur de Jong
 #
