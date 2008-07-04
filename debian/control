@@ -14,7 +14,7 @@ Package: webcheck
 Architecture: all
 Depends: ${python:Depends}
 XB-Python-Version: ${python:Versions}
-Recommends: python-beautifulsoup (>= 3.0.2)
+Recommends: python-beautifulsoup (>= 3.0.2), python-utidylib
 Suggests: lynx | www-browser
 Description: website link and structure checker
  webcheck is a website checking tool for webmasters. It crawls a given

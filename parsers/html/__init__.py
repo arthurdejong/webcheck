@@ -1,7 +1,7 @@
 
 # html.py - parser functions for html content
 #
-# Copyright (C) 2005, 2006, 2007 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ back to loading the legacy HTMLParser parser."""
 import debugio
 import re
 import htmlentitydefs
+import config
 
 # the list of mimetypes this module should be able to handle
 mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
@@ -91,18 +92,34 @@ def htmlunescape(txt):
     # we're done
     return txt
 
-def parse(content, link):
-    """Parse the specified content and extract an url list, a list of images a
-    title and an author. The content is assumed to contain HMTL."""
+def _parsefunction(content, link):
+    # we find a suitable parse function
+    global _parsefunction
     try:
         # try BeautifulSoup parser first
         import parsers.html.beautifulsoup
         debugio.debug('parsers.html.parse(): the BeautifulSoup parser is ok')
-        parsers.html.parse = parsers.html.beautifulsoup.parse
+        _parsefunction = parsers.html.beautifulsoup.parse
     except ImportError:
         # fall back to legacy HTMLParser parser
         debugio.warn('falling back to the legacy HTML parser, consider installing BeautifulSoup')
         import parsers.html.htmlparser
-        parsers.html.parse = parsers.html.htmlparser.parse
+        _parsefunction = parsers.html.htmlparser.parse
     # call the actual parse function
-    parse(content, link)
+    _parsefunction(content, link)
+
+def parse(content, link):
+    """Parse the specified content and extract an url list, a list of images a
+    title and an author. The content is assumed to contain HMTL."""
+    # call the normal parse function
+    _parsefunction(content, link)
+    # call the tidy parse function
+    if config.TIDY_OPTIONS:
+        try:
+            import calltidy
+            debugio.debug('parsers.html.parse(): the Tidy parser is ok')
+            calltidy.parse(content, link)
+        except ImportError:
+            debugio.warn('tidy library (python-utidylib) is unavailable')
+            # remove config to only try once
+            config.TIDY_OPTIONS = None
