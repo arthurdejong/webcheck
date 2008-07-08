@@ -80,8 +80,10 @@ def fetch(link, acceptedtypes):
                 conn = httplib.HTTPConnection(netloc)
             elif scheme == 'https':
                 conn = httplib.HTTPSConnection(netloc)
-            # the requests adds a correct host header for us
-            conn.putrequest('GET', path)
+            conn.set_debuglevel(100)
+            # start the request
+            conn.putrequest('GET', path, skip_host=True)
+            conn.putheader('Host', urllib.splitport(netloc)[0])
             if userpass is not None:
                 (user, passwd) = urllib.splitpasswd(userpass)
                 conn.putheader(
