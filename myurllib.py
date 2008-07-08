@@ -87,6 +87,12 @@ def _urlclean(url):
             path = '/'
         # make hostname lower case
         (userpass, hostport) = urllib.splituser(netloc)
+        (host, port) = urllib.splitport(hostport)
+        # remove default port
+        if scheme == 'http' and str(port) == '80':
+            hostport = host
+        elif scheme == 'https' and str(port) == '443':
+            hostport = host
         netloc = hostport.lower()
         # trim trailing :
         if netloc[-1:] == ':':
