@@ -170,7 +170,7 @@ def parse(content, link):
         import parsers.css
         parsers.css.parse(elem['style'], link)
     # <script src="url">
-    for script in soup.findAll('img', src=True):
+    for script in soup.findAll('script', src=True):
         embed = myurllib.normalizeurl(htmlunescape(script['src']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
