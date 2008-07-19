@@ -2,7 +2,6 @@ webcheck (1.10.3) unstable; urgency=low
 
   * take a shot at making debian/copyright machine parseable
   * support <iframe> and some common usages of <object>
-  * upgrade to standards-version 3.7.3 (no changes needed)
   * fix bug in command-line parsing of short -r option
   * implement the --userpass option to pass username and password information
     to specific sites based on a patch by Chris Shenton
