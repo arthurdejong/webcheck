@@ -253,6 +253,8 @@ class Site:
             serfp.flush()
 
     def postprocess(self):
+        """Do some basic post processing of the collected data, including
+        depth of every link."""
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
         for url in self._internal_urls:
