@@ -1,3 +1,21 @@
+changes from 1.10.2 to 1.10.3
+-----------------------------
+
+* take a shot at making debian/copyright machine parseable
+* support <iframe> and some common usages of <object>
+* upgrade to standards-version 3.7.3 (no changes needed)
+* fix bug in command-line parsing of short -r option
+* implement the --userpass option to pass username and password information to
+  specific sites based on a patch by Chris Shenton
+* handle errors while parsing more gracefully
+* add parsing of <script> tag and background attributes, based on a patch by
+  Robert M. Jansen
+* fix in parsing <style> tags and support style attributes
+* call tidy (if available) on HTML content, based on a patch by Henning
+  Sielaff
+* fix problem with port numbers in host headers
+
+
 changes from 1.10.1 to 1.10.2
 -----------------------------
 
@@ -236,7 +254,7 @@ b Fixed problem when server redirects a URL to itself. This fix seems to work
 b Fixed bug that caused linbot to not check for yanked URLs
 + Added -l command-line option. Usage: -l <url> where <url> is a URL pointing
   to an image to be used as the report's logo.
-b "patched" strings.py so that it can better parse html files created in 
+b "patched" strings.py so that it can better parse html files created in
    Windows/DOS (I think).
 + Made report LOGO a link to the base URL
 + httplink does not HEAD a redirected URL if it is already in the link list

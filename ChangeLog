@@ -1,3 +1,130 @@
+2008-07-19 11:34  arthur
+
+	* [r389] debian/control: build-depend on newer version of
+	  python-support and support any python version>=2.3
+
+2008-07-19 11:28  arthur
+
+	* [r388] debian/control: upgrade to standards-version 3.8.0 (no
+	  changes needed)
+
+2008-07-19 11:07  arthur
+
+	* [r387] crawler.py: add docstring
+
+2008-07-13 09:39  arthur
+
+	* [r386] parsers/html/beautifulsoup.py: copy-paste fix (thanks
+	  Robert M. Jansen <dutch12154@yahoo.com>)
+
+2008-07-08 19:43  arthur
+
+	* [r385] schemes/http.py: set correct Host header without port
+	  number in it
+
+2008-07-08 19:42  arthur
+
+	* [r384] myurllib.py: remove default port from URLs
+
+2008-07-04 13:00  arthur
+
+	* [r383] AUTHORS, config.py, debian/control,
+	  parsers/html/__init__.py, parsers/html/calltidy.py: call tidy (if
+	  available) on HTML content (based on a patch by Henning Sielaff
+	  <hsielaff@eformation.de>)
+
+2008-07-04 12:58  arthur
+
+	* [r382] parsers/html/beautifulsoup.py: fix name of file
+
+2008-06-21 08:36  arthur
+
+	* [r381] parsers/html/beautifulsoup.py, parsers/html/htmlparser.py:
+	  also pick up any style attributes and parse as css, based on a
+	  patch by Robert M. Jansen <dutch12154@yahoo.com>
+
+2008-06-15 21:17  arthur
+
+	* [r380] AUTHORS, parsers/html/beautifulsoup.py,
+	  parsers/html/htmlparser.py: add parsing of script tag and
+	  background attributes, based on a patch by Robert M. Jansen
+	  <dutch12154@yahoo.com>
+
+2008-06-15 21:00  arthur
+
+	* [r379] parsers/html/beautifulsoup.py: do not require src
+	  attribute for parsing inline style tags
+
+2008-06-15 20:56  arthur
+
+	* [r378] crawler.py, debian/copyright,
+	  parsers/html/beautifulsoup.py, webcheck.py: update copyright year
+
+2008-06-15 20:54  arthur
+
+	* [r377] debian/changelog: include change log from release 1.10.2.0
+
+2008-05-25 12:31  arthur
+
+	* [r376] parsers/html/beautifulsoup.py: fix parsing of <param> tag
+
+2008-05-25 12:30  arthur
+
+	* [r375] crawler.py: also log exception information to the output
+
+2008-05-24 21:38  arthur
+
+	* [r374] AUTHORS: add Chris Shenton since he provided a patch for
+	  part of the -u functionality
+
+2008-05-24 21:35  arthur
+
+	* [r373] parsers/html/beautifulsoup.py: support <iframe> and some
+	  common usages of <object>
+
+2008-05-24 21:32  arthur
+
+	* [r372] crawler.py: catch exceptions from parsing module
+
+2008-05-24 20:06  arthur
+
+	* [r371] debian/copyright: take a shot at making debian/copyright
+	  machine parseable
+
+2008-02-18 20:35  arthur
+
+	* [r370] config.py, schemes/http.py, webcheck.1, webcheck.py:
+	  implement the --userpass option to pass username and password
+	  information to specific sites based on a patch by Chris Shenton
+	  <Chris.Shenton@nasa.gov>
+
+2008-02-18 20:03  arthur
+
+	* [r369] webcheck.py: fix bug in command-line parsing of short -r
+	  option
+
+2007-12-14 16:03  arthur
+
+	* [r368] crawler.py: avoid reporting a problem more than once
+
+2007-12-14 16:02  arthur
+
+	* [r367] debian/control: upgrade to standards-version 3.7.3 (no
+	  changes needed)
+
+2007-12-14 15:57  arthur
+
+	* [r366] debian/control: make Vcs URLs link to the trunk
+
+2007-12-07 13:06  arthur
+
+	* [r365] webcheck.py: fix usage of backtick
+
+2007-11-04 08:31  arthur
+
+	* [r363] ChangeLog, NEWS, README, TODO, config.py,
+	  debian/changelog, webcheck.1: get files ready for 1.10.2 release
+
 2007-11-04 08:27  arthur
 
 	* [r362] debian/control: move Homepage pseudo header to control

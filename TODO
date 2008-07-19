@@ -6,7 +6,7 @@ before next release
 
 probably before 2.0 release
 ---------------------------
-* support for mult-threading (use -t, --threads as option)
+* support for multi-threading (use -t, --threads as option)
 * find a fix for redirecting stdout and stderr to work properly
 * implement a maximum transfer size for downloading
 * support ftp proxies
@@ -16,6 +16,7 @@ probably before 2.0 release
 * implement a --html-only option to not copy css and other files
 * check for missing encoding (report problem)
 * for FTP: don't fail if SIZE is not allowed
+* record with which parameters webcheck was started
 
 wishlist
 --------
@@ -64,3 +65,4 @@ wishlist
 * see section 6 of rfc3986.txt for URL comparison (esp. 6.2.2.)
 * implement paging for huge reports
 * check out python-coverage
+* output timing information on scan (e.g. scan took 30 minutes)

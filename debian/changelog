@@ -1,3 +1,22 @@
+webcheck (1.10.3) unstable; urgency=low
+
+  * take a shot at making debian/copyright machine parseable
+  * support <iframe> and some common usages of <object>
+  * upgrade to standards-version 3.7.3 (no changes needed)
+  * fix bug in command-line parsing of short -r option
+  * implement the --userpass option to pass username and password information
+    to specific sites based on a patch by Chris Shenton
+  * handle errors while parsing more gracefully (addresses: #483579)
+  * add parsing of <script> tag and background attributes, based on a patch by
+    Robert M. Jansen
+  * fix in parsing <style> tags and support style attributes
+  * call tidy (if available) on HTML content, based on a patch by Henning
+    Sielaff
+  * fix problem with port numbers in host headers
+  * upgrade to standards-version 3.8.0 (no changes needed)
+
+ -- Arthur de Jong <adejong@debian.org>  Sat, 19 Jul 2008 13:30:00 +0200
+
 webcheck (1.10.2.0) unstable; urgency=low
 
   * Re-upload of version 1.10.2 because the previous 1.10.2 got lost somehow.
