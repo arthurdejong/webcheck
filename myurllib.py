@@ -51,6 +51,9 @@ _urlprobpattern = re.compile('([^-;/?:@&=+$,%#.0123456789' \
 # pattern for double slashes
 _doubleslashpattern = re.compile('//+')
 
+# pattern for leading dots
+_leadingdotpattern = re.compile('^(/\.\.)*')
+
 def _unescape_printable(match):
     """Helper function for _normalize_escapes() to perform the expansion of
     html entity refs that are normal printable (but not reserver)
@@ -99,6 +102,10 @@ def _urlclean(url):
             netloc = netloc[:-1]
         if userpass is not None:
             netloc = userpass+'@'+netloc
+    # remove any leading /../ parts
+    print 'path=%r' % path
+    if scheme in ( 'http', 'https' ):
+        path = _leadingdotpattern.sub('', path)
     # get rid of double slashes in some paths
     if ( scheme == 'file' ):
         path = _doubleslashpattern.sub('/', path)
