@@ -84,6 +84,9 @@ def _urlclean(url):
     url = _normalize_escapes(url)
     # split the url in useful parts
     (scheme, netloc, path, query) = urlparse.urlsplit(url)[:4]
+    # remove any leading /../ parts
+    if scheme in ( 'http', 'https' ):
+        path = _leadingdotpattern.sub('', path)
     if ( scheme == 'http' or scheme == 'https' or scheme == 'ftp' ):
         # http(s) urls should have a non-empty path
         if path == '':
@@ -102,10 +105,6 @@ def _urlclean(url):
             netloc = netloc[:-1]
         if userpass is not None:
             netloc = userpass+'@'+netloc
-    # remove any leading /../ parts
-    print 'path=%r' % path
-    if scheme in ( 'http', 'https' ):
-        path = _leadingdotpattern.sub('', path)
     # get rid of double slashes in some paths
     if ( scheme == 'file' ):
         path = _doubleslashpattern.sub('/', path)
