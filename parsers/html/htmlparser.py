@@ -210,7 +210,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         if attrs.has_key('style'):
             # delegate handling of inline css to css module
             import parsers.css
-            parsers.css.parse(attrs['style'], self.link)
+            parsers.css.parse(attrs['style'], self.link, self.base)
 
     def handle_endtag(self, tag):
         """Handle end tags in html."""
@@ -220,7 +220,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         elif tag == 'style' and self.collect is not None:
             # delegate handling of inline css to css module
             import parsers.css
-            parsers.css.parse(self.collect, self.link)
+            parsers.css.parse(self.collect, self.link, self.base)
 
     def handle_data(self, data):
         """Collect data if we were collecting data."""

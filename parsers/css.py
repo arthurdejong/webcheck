@@ -39,14 +39,16 @@ _importpattern = re.compile('@import\s+["\']([^"\']*)["\']',
 # pattern for matching url(...) in css
 _urlpattern = re.compile('url\(["\']?(.*?)["\']?\)')
 
-def parse(content, link):
+def parse(content, link, baseurl=None):
     """Parse the specified content and extract information for crawling the
     site further."""
+    # if no baseurl is specified, get it from the link
+    baseurl = link.url
     # strip out comments from the content
     content = _commentpattern.sub('', content)
     # handler @imports
     for i in _importpattern.findall(content):
-        link.add_embed(urlparse.urljoin(link.url, i))
+        link.add_embed(urlparse.urljoin(baseurl, i))
     # handle url()s
     for i in _urlpattern.findall(content):
-        link.add_embed(urlparse.urljoin(link.url, i))
+        link.add_embed(urlparse.urljoin(baseurl, i))

@@ -163,12 +163,12 @@ def parse(content, link):
         if style.string:
             # delegate handling of inline css to css module
             import parsers.css
-            parsers.css.parse(htmlunescape(style.string), link)
+            parsers.css.parse(htmlunescape(style.string), link, base)
     # <ANY style="CSS">
     for elem in soup.findAll(style=True):
         # delegate handling of inline css to css module
         import parsers.css
-        parsers.css.parse(elem['style'], link)
+        parsers.css.parse(elem['style'], link, base)
     # <script src="url">
     for script in soup.findAll('script', src=True):
         embed = myurllib.normalizeurl(htmlunescape(script['src']).strip())
