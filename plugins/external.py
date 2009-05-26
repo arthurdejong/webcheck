@@ -37,6 +37,7 @@ def generate(site):
               for x in site.linkMap.values()
               if not x.isinternal ]
     # sort list
+    # FIXME: use sort(key=....) (adds dependency on python>=2.4)
     links.sort(lambda a, b: cmp(a.url, b.url))
     # present results
     fp = plugins.open_html(plugins.external, site)
