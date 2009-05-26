@@ -104,6 +104,9 @@ REPORT_WHATSNEW_URL_AGE = 7
 # The size of a page in kilobytes after which the page is considered too big.
 REPORT_SLOW_URL_SIZE = 76
 
+# The maximum number of links to show in the "referenced from:" lists
+PARENT_LISTLEN = 10
+
 # Whether to open links in a new window (add target="_blank")
 # (disabled by default because it is not xhtml 1.1)
 REPORT_LINKS_IN_NEW_WINDOW = False

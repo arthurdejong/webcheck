@@ -159,10 +159,18 @@ def print_parents(fp, link, indent='     '):
       indent+'<div class="parents">\n'+
       indent+' referenced from:\n'+
       indent+' <ul>\n' )
+    more = 0
+    if len(parents) > config.PARENT_LISTLEN+1:
+        more = len(parents) - config.PARENT_LISTLEN
+        parents = parents[:config.PARENT_LISTLEN]
     for parent in parents:
         fp.write(
           indent+'  <li>%(parent)s</li>\n'
           % { 'parent': make_link(parent) })
+    if more:
+        fp.write(
+          indent+'  <li>%(more)d more...</li>\n'
+          % { 'more': more })
     fp.write(
       indent+' </ul>\n'+
       indent+'</div>\n' )
