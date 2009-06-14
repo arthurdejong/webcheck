@@ -6,8 +6,8 @@ Hopkins (marduk) <marduk@python.net>.
 Versions up till 1.0 were maintained by Mike W. Meyer <mwm@mired.org> who
 changed the name to webcheck, http://www.mired.org/webcheck/.
 
-After that Arthur de Jong <arthur@ch.tudelft.nl> took up the work and did
-a complete rewrite, http://ch.tudelft.nl/~arthur/webcheck/.
+After that Arthur de Jong <arthur@arthurdejong.org> took up the work and did
+a complete rewrite, http://arthurdejong.org/webcheck/.
 
 Arthur de Jong is both the upstream and Debian package maintainer, so
 there are no differences between the Debian package and the upstream
