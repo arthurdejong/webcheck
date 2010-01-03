@@ -3,7 +3,7 @@ Section: web
 Priority: extra
 Maintainer: Arthur de Jong <adejong@debian.org>
 Standards-Version: 3.8.0
-Build-Depends: debhelper (>= 5.0.37.2)
+Build-Depends: debhelper (>= 7)
 Build-Depends-Indep: python, python-support (>= 0.5.3)
 XS-Python-Version: >= 2.3
 Homepage: http://arthurdejong.org/webcheck/
@@ -12,7 +12,7 @@ Vcs-Browser: http://arthurdejong.org/viewcvs/webcheck/webcheck/
 
 Package: webcheck
 Architecture: all
-Depends: ${python:Depends}
+Depends: ${python:Depends}, ${misc:Depends}
 XB-Python-Version: ${python:Versions}
 Recommends: python-beautifulsoup (>= 3.0.2), python-utidylib
 Suggests: lynx | www-browser
