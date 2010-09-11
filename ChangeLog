@@ -1,3 +1,89 @@
+2010-09-11 18:56  arthur
+
+	* [r409] README, webcheck.1: direct bugreports to mailing list
+	  instead of personal address
+
+2010-09-11 18:39  arthur
+
+	* [r408] debian/control: upgrade to standards-version 3.9.1
+
+2010-09-11 18:32  arthur
+
+	* [r407] debian/postinst: drop removing legacy configuration
+	  (/etc/webcheck) as this directory was already removed in etch
+
+2010-09-11 18:14  arthur
+
+	* [r406] debian/source, debian/source/format: switch to source
+	  format 3.0 (native)
+
+2010-09-11 12:43  arthur
+
+	* [r405] schemes/http.py: add a Referer header if possible (thanks
+	  Devin Bayer)
+
+2010-09-11 12:31  arthur
+
+	* [r404] config.py: pass char_encoding option to tidy
+
+2010-01-03 19:29  arthur
+
+	* [r403] debian/compat, debian/control, debian/rules: upgrade to
+	  debhelper compatibility level 7
+
+2010-01-03 15:15  arthur
+
+	* [r402] schemes/http.py: remove debugging code
+
+2010-01-03 15:13  arthur
+
+	* [r401] webcheck.py: remove debugging statement
+
+2009-06-14 14:47  arthur
+
+	* [r400] AUTHORS, README, config.py, debian/control,
+	  debian/copyright, webcheck.1: switch from ch.tudelft.nl to
+	  arthurdejong.org
+
+2009-05-26 20:25  arthur
+
+	* [r399] config.py, plugins/__init__.py: limit list of "referenced
+	  from" items to 10
+
+2009-05-26 20:24  arthur
+
+	* [r398] plugins/external.py: add FIXME note
+
+2009-01-14 22:10  arthur
+
+	* [r397] parsers/css.py, parsers/html/beautifulsoup.py,
+	  parsers/html/htmlparser.py: handle case where inline CSS is used
+	  on a page with <base href="..">
+
+2008-11-27 12:42  arthur
+
+	* [r396] schemes/http.py: remove socket.sslerror in exception
+	  handling because socket.sslerror is a subclass of socket.error
+	  since Python 2.4 and this causes problems for systems without SSL
+
+2008-11-19 19:03  arthur
+
+	* [r395] myurllib.py: remove print statement that was used for
+	  debugging and ensure that the dots are slash-terminated
+
+2008-11-19 18:55  arthur
+
+	* [r394] myurllib.py: remove leading .. from URL path elements
+
+2008-07-19 11:47  arthur
+
+	* [r393] NEWS, debian/changelog: merge changes in 1.10.3 release
+
+2008-07-19 11:38  arthur
+
+	* [r390] ChangeLog, NEWS, TODO, config.py, debian/changelog,
+	  webcheck.1: get files ready for 1.10.3 release
+
 2008-07-19 11:34  arthur
 
 	* [r389] debian/control: build-depend on newer version of

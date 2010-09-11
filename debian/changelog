@@ -1,3 +1,16 @@
+webcheck (1.10.4) unstable; urgency=low
+
+  * switch to source format 3.0 (native)
+  * remove some left-over debuging code (LP: #401050)
+  * remove old /etc/webcheck removal code
+  * upgrade to standards-version 3.9.1 (no changes needed)
+  * several small bugfixes which more or less drop support for Python 2.3
+  * limit list of "referenced from" to 10 items
+  * pass char_encoding option to tidy to fix some tidy-related errors
+  * add a Referer header if possible (thanks Devin Bayer)
+
+ -- Arthur de Jong <adejong@debian.org>  Sat, 11 Sep 2010 20:11:49 +0200
+
 webcheck (1.10.3) unstable; urgency=low
 
   * take a shot at making debian/copyright machine parseable
