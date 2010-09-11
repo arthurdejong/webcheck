@@ -83,6 +83,8 @@ def fetch(link, acceptedtypes):
             # start the request
             conn.putrequest('GET', path, skip_host=True)
             conn.putheader('Host', urllib.splitport(netloc)[0])
+            if len(link.parents) > 0:
+                conn.putheader('Referer', list(link.parents)[0].url)
             if userpass is not None:
                 (user, passwd) = urllib.splitpasswd(userpass)
                 conn.putheader(
