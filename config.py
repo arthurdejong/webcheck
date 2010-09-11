@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike Meyer
-# Copyright (C) 2005, 2006, 2007, 2008 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008, 2010 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,7 +129,9 @@ USE_ROBOTS = True
 USERPASS = {}
 
 # Options for tidy (make None to disable running tidy)
+# See http://tidy.sourceforge.net/docs/quickref.html for details.
 TIDY_OPTIONS = dict(quiet=1,
                     accessibility_check=1,
                     show_errors=6,
-                    show_warnings=1)
+                    show_warnings=1,
+                    char_encoding='raw')
