@@ -87,7 +87,7 @@ def _urlclean(url):
     # remove any leading /../ parts
     if scheme in ( 'http', 'https' ):
         path = _leadingdotpattern.sub('', path)
-    if ( scheme == 'http' or scheme == 'https' or scheme == 'ftp' ):
+    if scheme in ( 'http', 'https', 'ftp' ):
         # http(s) urls should have a non-empty path
         if path == '':
             path = '/'
