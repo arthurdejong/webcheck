@@ -55,6 +55,10 @@ def fetch(link, acceptedtypes):
     proxyuserpass = None
     scheme = link.scheme
     # check validity of netloc (to work around bug in idna module)
+    if not netloc:
+        debugio.debug('schemes.http.fetch(): empty hostname')
+        link.add_linkproblem('empty hostname')
+        return None
     if netloc[0] == '.':
         debugio.debug('schemes.http.fetch(): fail on hostname starting with dot')
         link.add_linkproblem('hostname starts with a dot')
