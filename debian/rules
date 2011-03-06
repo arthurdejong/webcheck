@@ -27,7 +27,7 @@ install: build
 binary-indep: build install
 	dh_testdir
 	dh_testroot
-	dh_pysupport
+	dh_python2
 	dh_installdocs README TODO AUTHORS NEWS HACKING
 	dh_installman webcheck.1
 	dh_installchangelogs
