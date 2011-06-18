@@ -4,7 +4,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007, 2008, 2010 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008, 2010, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,16 +25,18 @@
 
 """This is the main webcheck module."""
 
+import sys
+import os
+import re
+import urlparse
+import urllib
+
 import config
 import crawler
 import plugins
 import debugio
-import sys
-import os
-import re
 import serialize
-import urlparse
-import urllib
+import monkeypatch
 
 debugio.loglevel = debugio.INFO
 
