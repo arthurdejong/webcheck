@@ -43,12 +43,6 @@ import atexit
 import cookielib
 import os
 
-# this is a workaround for Python 2.3
-try:
-    set
-except NameError:
-    from sets import Set as set
-
 # set up our cookie jar
 cookiejar = cookielib.LWPCookieJar('cookies.lwp')
 try:
