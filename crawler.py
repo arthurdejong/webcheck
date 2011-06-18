@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007, 2008 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,17 +32,53 @@ import debugio
 import urlparse
 import urllib
 import robotparser
-import schemes
 import parsers
 import re
 import time
 import myurllib
+import urllib2
+import httplib
+import socket
+import atexit
+import cookielib
+import os
 
 # this is a workaround for Python 2.3
 try:
     set
 except NameError:
     from sets import Set as set
+
+# set up our cookie jar
+cookiejar = cookielib.LWPCookieJar('cookies.lwp')
+try:
+    cookiejar.load(ignore_discard=False, ignore_expires=False)
+except IOError:
+    pass
+atexit.register(cookiejar.save, ignore_discard=False, ignore_expires=False)
+
+class RedirectError(urllib2.HTTPError):
+    def __init__(self, url, code, msg, hdrs, fp, newurl):
+        self.newurl = newurl
+        urllib2.HTTPError.__init__(self, url, code, msg, hdrs, fp)
+
+class NoRedirectHandler(urllib2.HTTPRedirectHandler):
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise RedirectError(req.get_full_url(), code, msg, headers, fp, newurl)
+
+
+# set up our custom opener that logs a meaningful user agent
+opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar), NoRedirectHandler())
+opener.addheaders = [
+  ('User-agent', 'webcheck %s' % config.VERSION),
+  ]
+if config.BYPASSHTTPCACHE:
+    opener.addheaders.append(('Cache-control', 'no-cache'))
+    opener.addheaders.append(('Pragma', 'no-cache'))
+
+urllib2.install_opener(opener)
+
 
 # pattern for matching spaces
 _spacepattern = re.compile(' ')
@@ -254,7 +290,7 @@ class Site:
 
     def postprocess(self):
         """Do some basic post processing of the collected data, including
-        depth of every link."""
+        depth calculation of every link."""
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
         for url in self._internal_urls:
@@ -518,30 +554,64 @@ class Link:
     def fetch(self):
         """Attempt to fetch the url (if isyanked is not True) and fill in link
         attributes (based on isinternal)."""
+        debugio.info('  %s' % self.url)
         # fully ignore links that should not be feteched
         if self.isyanked:
-            debugio.info('  %s' % self.url)
             debugio.info('    ' + self.isyanked)
             return
         # see if we can import the proper module for this scheme
-        schememodule = schemes.get_schememodule(self.scheme)
-        if schememodule is None:
-            self.isyanked = 'unsupported scheme (' + self.scheme + ')'
+        try:
+            # FIXME: if an URI has a username:passwd add the uri, username and password to the HTTPPasswordMgr
+            request = urllib2.Request(self.url)
+            if self.parents:
+                request.add_header('Referer', iter(self.parents).next().url)
+            response = urllib2.urlopen(request)
+            self.mimetype = response.info().gettype()
+            self.set_encoding(response.info().getencoding())
+            # FIXME: get result code and other stuff
+            self.status = str(response.code)
+            # link.size = int(response.getheader('Content-length'))
+            # link.mtime = time.mktime(response.msg.getdate('Last-Modified'))
+            # if response.status == 301: link.add_linkproblem(str(response.status)+': '+response.reason)
+            # elif response.status != 200: link.add_linkproblem(str(response.status)+': '+response.reason)
+            # TODO: add checking for size
+        except RedirectError, e:
+            self.status = str(e.code)
+            debugio.info('    ' + str(e))
+            if e.code == 301:
+                self.add_linkproblem(str(e))
+            self.redirect(e.newurl)
+            return
+        except urllib2.HTTPError, e:
+            self.status = str(e.code)
+            debugio.info('    ' + str(e))
+            self.add_linkproblem(str(e))
+            return
+        except urllib2.URLError, e:
+            debugio.info('    ' + str(e))
+            self.add_linkproblem(str(e))
+            return
+        except KeyboardInterrupt:
+            # handle this in a higher-level exception handler
+            raise
+        except Exception, e:
+            # handle all other exceptions
+            debugio.warn('unknown exception caught: '+str(e))
+            self.add_linkproblem('error reading HTTP response: '+str(e))
+            import traceback
+            traceback.print_exc()
+            return
+        finally:
+            self.isfetched = True
             self._ischanged = True
-            debugio.info('  %s' % self.url)
-            debugio.info('    ' + self.isyanked)
-            return
-        debugio.info('  %s' % self.url)
-        content = schememodule.fetch(self, parsers.get_mimetypes())
-        self.isfetched = True
-        self._ischanged = True
-        # skip parsing of content if we were returned nothing
-        if content is None:
-            return
         # find a parser for the content-type
         parsermodule = parsers.get_parsermodule(self.mimetype)
         if parsermodule is None:
             debugio.debug('crawler.Link.fetch(): unsupported content-type: %s' % self.mimetype)
+            return
+        # skip parsing of content if we were returned nothing
+        content = response.read()
+        if content is None:
             return
         # parse the content
         debugio.debug('crawler.Link.fetch(): parsing using %s' % parsermodule.__name__)
