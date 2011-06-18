@@ -25,6 +25,9 @@
 
 """This is the main webcheck module."""
 
+__version__ = '1.10.4'
+__homepage__ = 'http://arthurdejong.org/webcheck/'
+
 import sys
 import os
 import re
@@ -32,6 +35,10 @@ import urlparse
 import urllib
 
 import config
+# update some fields that currently are stored in config
+config.VERSION = __version__
+config.HOMEPAGE = __homepage__
+
 import crawler
 import plugins
 import debugio
@@ -40,17 +47,18 @@ import monkeypatch
 
 debugio.loglevel = debugio.INFO
 
+
 def print_version():
     """Print version information."""
     sys.stdout.write(
       'webcheck %(version)s\n'
       'Written by Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n'
       '\n'
-      'Copyright (C) 1998, 1999, 2002, 2005, 2006, 2007, 2008, 2009, 2010\n'
+      'Copyright (C) 1998-2011\n'
       'Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n'
       'This is free software; see the source for copying conditions.  There is NO\n'
       'warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n'
-      % { 'version': config.VERSION })
+      % { 'version': __version__ })
 
 def print_usage():
     """Print short usage information."""
