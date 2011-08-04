@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,21 +28,19 @@ __title__ = 'images'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'images.html'
 
-import plugins
 import re
+from sqlalchemy.sql.expression import or_
+
+import db
+import plugins
+
 
 def generate(site):
     """Output a list of images to the given file descriptor."""
-    # this finds all links with a reasonable image-like content-type
-    matcher = re.compile('^image/.*$')
     # get non-page images that have an image/* mimetype
-    links = [ x
-              for x in site.linkMap.values()
-              if not x.ispage and
-                     x.mimetype is not None and
-                     matcher.search(x.mimetype) ]
-    # sort list
-    links.sort(lambda a, b: cmp(a.url, b.url))
+    links = site.links.filter(or_(db.Link.is_page != True, db.Link.is_page == None))
+    links = links.filter(db.Link.mimetype.startswith('image/'))
+    links = links.order_by('url')
     # present results
     fp = plugins.open_html(plugins.images, site)
     if not links:

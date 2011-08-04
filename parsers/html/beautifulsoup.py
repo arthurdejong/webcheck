@@ -1,7 +1,7 @@
 
 # beautifulsoup.py - parser functions for html content
 #
-# Copyright (C) 2007, 2008, 2009 Arthur de Jong
+# Copyright (C) 2007, 2008, 2009, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -80,10 +80,10 @@ def parse(content, link):
     if refresh and refresh['content']:
         try:
             child = _refershcontentpattern.search(refresh['content']).group(1)
-            link.add_child(urlparse.urljoin(base, child))
         except AttributeError:
-            # ignore cases where refresh header parsing causes problems
-            pass
+            pass # ignore cases where refresh header parsing causes problems
+        else:
+            link.add_child(urlparse.urljoin(base, child))
     # <img src="URL">
     for img in soup.findAll('img', src=True):
         embed = myurllib.normalizeurl(htmlunescape(img['src']).strip())
@@ -180,4 +180,4 @@ def parse(content, link):
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # flag that the link contains a valid page
-    link.ispage = True
+    link.is_page = True

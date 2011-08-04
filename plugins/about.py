@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,9 +28,11 @@ __title__ = 'about webcheck'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'about.html'
 
+import time
+
 import config
 import plugins
-import time
+
 
 def generate(site):
     """Output a list of modules, it's authors and it's version to the
@@ -55,7 +57,7 @@ def generate(site):
       '   </p>\n\n'
       % { 'version':  plugins.htmlescape(config.VERSION),
           'time':     plugins.htmlescape(time.ctime(time.time())),
-          'numurls':  len(site.linkMap),
+          'numurls':  site.links.count(),
           'homepage': config.HOMEPAGE } )
     # output copyright information
     fp.write(
@@ -74,7 +76,7 @@ def generate(site):
       '    particular purpose. See the source for further details.\n'
       '   </p>\n'
       '   <p>\n'
-      '    Copyright &copy; 1998, 1999, 2002, 2005, 2006, 2007 Albert Hopkins (marduk),\n'
+      '    Copyright &copy; 1998-2011 Albert Hopkins (marduk),\n'
       '    Mike W. Meyer and Arthur de Jong\n'
       '   </p>\n'
       '   <p>\n'
@@ -89,7 +91,7 @@ def generate(site):
       '    notices (see <tt>fancytooltips.js</tt> for details):\n'
       '   </p>\n'
       '   <p>\n'
-      '    Copyright &copy; 2003, 2005 Stuart Langridge, Paul McLanahan,\n'
+      '    Copyright &copy; 2003-2005 Stuart Langridge, Paul McLanahan,\n'
       '    Peter Janes, Brad Choate, Dunstan Orchard, Ethan Marcotte,\n'
       '    Mark Wubben and Victor Kulinski\n'
       '   </p>\n\n' )
@@ -98,7 +100,7 @@ def generate(site):
       '   <h3>Plugins</h3>\n'
       '   <ul>\n')
     for plugin in config.PLUGINS:
-        report = __import__('plugins.'+plugin, globals(), locals(), [plugin])
+        report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
         fp.write(
           '    <li>\n'
           '     <strong>%s</strong><br />\n'

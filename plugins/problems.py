@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,8 +28,11 @@ __title__ = 'problems by author'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'problems.html'
 
-import plugins
 import urllib
+
+import db
+import plugins
+
 
 def _mk_id(name):
     """Convert the name to a string that may be used inside an
@@ -48,10 +51,10 @@ def generate(site):
     """Output the overview of problems to the given file descriptor."""
     # make a list of problems per author
     problem_db = {}
-    for link in site.linkMap.values():
-        # skip external pages
-        if not link.isinternal or len(link.pageproblems) == 0:
-            continue
+    # get internal links with page problems
+    links = site.links.filter_by(is_internal=True)
+    links = links.filter(db.Link.pageproblems.any()).order_by('url')
+    for link in links:
         # make a normal name for the author
         if link.author:
             author = link.author.strip()

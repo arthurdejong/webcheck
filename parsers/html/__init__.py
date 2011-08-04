@@ -1,7 +1,7 @@
 
 # html.py - parser functions for html content
 #
-# Copyright (C) 2005, 2006, 2007, 2008 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ def htmlescape(txt, inattr=False):
         return u''
     # convert to unicode object
     if not isinstance(txt, unicode):
-        txt = unicode(txt, errors='replace')
+        txt = unicode(txt)
     # the output string
     out = ''
     # loop over the characters of the string

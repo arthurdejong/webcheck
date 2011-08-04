@@ -42,8 +42,8 @@ config.HOMEPAGE = __homepage__
 import crawler
 import plugins
 import debugio
-import serialize
 import monkeypatch
+import db
 
 debugio.loglevel = debugio.INFO
 
@@ -108,13 +108,16 @@ def parse_args(site):
            'ignore-robots',
            'quiet', 'silent', 'debug', 'profile', 'output=', 'continue',
            'force', 'redirects=', 'userpass=', 'wait=', 'version', 'help'))
+        internal_urls = []
+        external_urls = []
+        yank_urls = []
         for flag, arg in optlist:
             if flag in ('-i', '--internal'):
-                site.add_internal_re(arg)
+                internal_urls.append(arg)
             elif flag in ('-x', '--external'):
-                site.add_external_re(arg)
+                external_urls.append(arg)
             elif flag in ('-y', '--yank'):
-                site.add_yanked_re(arg)
+                yank_urls.append(arg)
             elif flag in ('-b', '--base-only'):
                 config.BASE_URLS_ONLY = True
             elif flag in ('-a', '--avoid-external'):
@@ -152,6 +155,24 @@ def parse_args(site):
             print_usage()
             print_tryhelp()
             sys.exit(1)
+        # ensure output directory exists
+        if not os.path.isdir(config.OUTPUT_DIR):
+            os.mkdir(config.OUTPUT_DIR)
+        # set up database connection
+        filename = os.path.join(config.OUTPUT_DIR, 'webcheck.sqlite')
+        from sqlalchemy import create_engine
+        engine = create_engine('sqlite:///' + filename)
+        db.Session.configure(bind=engine)
+        # ensure that all tables are created
+        db.Base.metadata.create_all(engine)
+        # TODO: schema migraton goes here
+        # add configuration to site
+        for pattern in internal_urls:
+            site.add_internal_re(pattern)
+        for pattern in external_urls:
+            site.add_external_re(pattern)
+        for pattern in yank_urls:
+            site.add_yanked_re(pattern)
         for arg in args:
             # if it does not look like a url it is probably a local file
             if urlparse.urlsplit(arg)[0] == '':
@@ -218,33 +239,10 @@ def install_file(source, text=False):
 
 def main(site):
     """Main program."""
-    # read serialized file
-    if config.CONTINUE:
-        fname = os.path.join(config.OUTPUT_DIR, 'webcheck.dat')
-        debugio.info('reading stored crawler data....')
-        try:
-            fp = open(fname, 'r')
-            site = serialize.deserialize(fp)
-            fp.close()
-        except IOError, (errno, strerror):
-            debugio.error('%(fname)s: %(strerror)s' %
-                          { 'fname': fname,
-                            'strerror': strerror })
-            sys.exit(1)
-        debugio.info('done.')
-    # create seriazlized file
-    fp = plugins.open_file('webcheck.dat', makebackup=True)
-    serialize.serialize_site(fp, site)
     # crawl through the website
     debugio.info('checking site....')
-    site.crawl(fp) # this will take a while
+    site.crawl() # this will take a while
     debugio.info('done.')
-    fp.close()
-    # serialize the final state again
-    fp = plugins.open_file('webcheck.dat', makebackup=True)
-    serialize.serialize_site(fp, site)
-    serialize.serialize_links(fp, site)
-    fp.close()
     # do postprocessing (building site structure, etc)
     debugio.info('postprocessing....')
     site.postprocess()

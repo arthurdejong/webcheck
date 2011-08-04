@@ -1,7 +1,7 @@
 
 # css.py - parser functions for css content
 #
-# Copyright (C) 2005, 2006, 2009 Arthur de Jong
+# Copyright (C) 2005, 2006, 2009, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,16 +39,16 @@ _importpattern = re.compile('@import\s+["\']([^"\']*)["\']',
 # pattern for matching url(...) in css
 _urlpattern = re.compile('url\(["\']?(.*?)["\']?\)')
 
-def parse(content, link, baseurl=None):
+def parse(content, link, base=None):
     """Parse the specified content and extract information for crawling the
     site further."""
-    # if no baseurl is specified, get it from the link
-    baseurl = link.url
+    # if no base is specified, get it from the link
+    base = base or link.url
     # strip out comments from the content
     content = _commentpattern.sub('', content)
-    # handler @imports
-    for i in _importpattern.findall(content):
-        link.add_embed(urlparse.urljoin(baseurl, i))
+    # handle @imports
+    for embed in _importpattern.findall(content):
+        link.add_embed(urlparse.urljoin(base, embed))
     # handle url()s
-    for i in _urlpattern.findall(content):
-        link.add_embed(urlparse.urljoin(baseurl, i))
+    for embed in _urlpattern.findall(content):
+        link.add_embed(urlparse.urljoin(base, embed))

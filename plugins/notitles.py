@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,17 +28,19 @@ __title__ = 'missing titles'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'notitles.html'
 
+from sqlalchemy.sql.functions import char_length
+from sqlalchemy.sql.expression import or_
+
+import db
 import plugins
+
 
 def generate(site):
     """Output the list of pages without a title to the given file descriptor."""
     # get all internal pages without a title
-    links = [ x
-              for x in site.linkMap.values()
-              if x.ispage and
-                 x.isinternal and
-                 (x.title is None or x.title == '') ]
-    links.sort(lambda a, b: cmp(a.url, b.url))
+    links = site.links.filter_by(is_page=True, is_internal=True)
+    links = links.filter(or_(char_length(db.Link.title) == 0,
+                             db.Link.title ==None)).order_by('url')
     # present results
     fp = plugins.open_html(plugins.notitles, site)
     if not links:

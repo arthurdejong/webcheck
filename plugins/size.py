@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ __outputfile__ = 'size.html'
 import config
 import plugins
 
+
 def _getsize(link, done=None):
     """Return the size of the link and all its embedded links, counting each
     link only once."""
@@ -40,7 +41,7 @@ def _getsize(link, done=None):
     # add this link to the list
     done.append(link)
     # if we don't known about our total size yet, calculate
-    if not hasattr(link, 'totalSize'):
+    if not hasattr(link, 'total_size'):
         size = 0
         # add our size
         if link.size is not None:
@@ -49,19 +50,17 @@ def _getsize(link, done=None):
         for embed in link.embedded:
             if embed not in done:
                 size += _getsize(embed, done)
-        link.totalSize = size
-    return link.totalSize
+        link.total_size = size
+    return link.total_size
 
 def generate(site):
     """Output the list of large pages to the given file descriptor."""
     # get all internal pages and get big links
-    links = [ x
-              for x in site.linkMap.values()
-              if x.ispage and
-                 x.isinternal and
-                 _getsize(x) >= config.REPORT_SLOW_URL_SIZE*1024 ]
+    links = site.links.filter_by(is_page=True, is_internal=True)
+    links = [ x for x in links
+              if _getsize(x) >= config.REPORT_SLOW_URL_SIZE * 1024 ]
     # sort links by size (biggest first)
-    links.sort(lambda a, b: cmp(b.totalSize, a.totalSize))
+    links.sort(lambda a, b: cmp(b.total_size, a.total_size))
     # present results
     fp = plugins.open_html(plugins.size, site)
     if not links:
@@ -80,7 +79,7 @@ def generate(site):
       '   <ul>\n'
       % { 'size': config.REPORT_SLOW_URL_SIZE })
     for link in links:
-        size = plugins.get_size(link.totalSize)
+        size = plugins.get_size(link.total_size)
         fp.write(
           '    <li>\n'
           '     %(link)s\n'

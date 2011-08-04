@@ -1,7 +1,7 @@
 
 # calltidy.py - parser functions for html content
 #
-# Copyright (C) 2008 Arthur de Jong
+# Copyright (C) 2008, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ def parse(content, link):
     """Parse the specified content with tidy and add any errors to the
     link."""
     # only call tidy on internal pages
-    if link.isinternal:
+    if link.is_internal:
         t = tidy.parseString(content, **config.TIDY_OPTIONS)
         for err in t.errors:
             # error messages are escaped so we unescape them

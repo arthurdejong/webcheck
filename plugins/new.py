@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,25 +28,22 @@ __title__ = "what's new"
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'new.html'
 
-import config
-import plugins
 import time
 
-SECS_PER_DAY = 60*60*24
+import config
+import db
+import plugins
+
+
+SECS_PER_DAY = 60 * 60 * 24
 
 def generate(site):
     """Output the list of recently modified pages to the specified file descriptor."""
     # the time for which links are considered new
-    newtime = time.time()-SECS_PER_DAY*config.REPORT_WHATSNEW_URL_AGE
+    newtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSNEW_URL_AGE
     # get all internal pages that are new
-    links = [ x
-              for x in site.linkMap.values()
-              if x.ispage and
-                 x.isinternal and
-                 x.mtime is not None and
-                 x.mtime > newtime ]
-    # sort links
-    links.sort(lambda a, b: cmp(b.mtime, a.mtime))
+    links = site.links.filter_by(is_page=True, is_internal=True)
+    links = links.filter(db.Link.mtime > newtime).order_by('-mtime')
     # present results
     fp = plugins.open_html(plugins.new, site)
     if not links:

@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,16 +28,14 @@ __title__ = 'bad links'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'badlinks.html'
 
+import db
 import plugins
+
 
 def generate(site):
     """Present the list of bad links to the given file descriptor."""
     # find all links with link problems
-    links = [ x
-              for x in site.linkMap.values()
-              if len(x.linkproblems)>0 ]
-    # sort list
-    links.sort(lambda a, b: cmp(a.url, b.url))
+    links = site.links.filter(db.Link.linkproblems.any()).order_by('url')
     # present results
     fp = plugins.open_html(plugins.badlinks, site)
     if not links:
@@ -71,7 +69,7 @@ def generate(site):
         # add a reference to the problem map
         for problem in link.linkproblems:
             for parent in link.parents:
-                parent.add_pageproblem('bad link: ' + link.url + ': ' + problem)
+                parent.add_pageproblem('bad link: %s: %s' % (link.url, problem))
         fp.write(
           '    </li>\n')
     fp.write(

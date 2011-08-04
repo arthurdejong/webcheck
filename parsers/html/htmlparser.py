@@ -1,7 +1,7 @@
 
 # html.py - parser functions for html content
 #
-# Copyright (C) 2005, 2006, 2007, 2009 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2009, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -269,15 +269,15 @@ def parse(content, link):
         parser.close()
     except Exception, e:
         # ignore (but log) all errors
-        debugio.debug('parsers.html.htmlparser.parse(): caught exception: '+str(e))
+        debugio.debug('parsers.html.htmlparser.parse(): caught exception: ' + str(e))
     # check for parser errors
     if parser.errmsg is not None:
-        debugio.debug('parsers.html.htmlparser.parse(): problem parsing html: '+parser.errmsg)
+        debugio.debug('parsers.html.htmlparser.parse(): problem parsing html: ' + parser.errmsg)
         link.add_pageproblem('problem parsing html: %s' % parser.errmsg)
     # dump encoding
     debugio.debug('parsers.html.htmlparser.parse(): html encoding: %s' % str(link.encoding))
     # flag that the link contains a valid page
-    link.ispage = True
+    link.is_page = True
     # save the title
     if parser.title is not None:
         link.title = _maketxt(parser.title, link.encoding).strip()

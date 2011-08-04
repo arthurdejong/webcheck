@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,25 +28,22 @@ __title__ = "what's old"
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'old.html'
 
-import config
-import plugins
 import time
 
-SECS_PER_DAY = 60*60*24
+import config
+import db
+import plugins
+
+
+SECS_PER_DAY = 60 * 60 * 24
 
 def generate(site):
     """Output the list of outdated pages to the specified file descriptor."""
     # the time for which links are considered old
-    oldtime = time.time()-SECS_PER_DAY*config.REPORT_WHATSOLD_URL_AGE
+    oldtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSOLD_URL_AGE
     # get all internal pages that are old
-    links = [ x
-              for x in site.linkMap.values()
-              if x.ispage and
-                 x.isinternal and
-                 x.mtime is not None and
-                 x.mtime < oldtime ]
-    # sort links
-    links.sort(lambda a, b: cmp(a.mtime, b.mtime))
+    links = site.links.filter_by(is_page=True, is_internal=True)
+    links = links.filter(db.Link.mtime < oldtime).order_by('mtime').all()
     # present results
     fp = plugins.open_html(plugins.old, site)
     if not links:
@@ -65,7 +62,7 @@ def generate(site):
       '   <ul>\n'
       % {'old': config.REPORT_WHATSOLD_URL_AGE })
     for link in links:
-        age = (time.time()-link.mtime)/SECS_PER_DAY
+        age = (time.time() - link.mtime) / SECS_PER_DAY
         fp.write(
           '    <li>\n'
           '     %(link)s\n'

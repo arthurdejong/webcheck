@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2009 Arthur de Jong
+# Copyright (C) 2005, 2006, 2009, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,17 +28,14 @@ __title__ = 'external links'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'external.html'
 
+import db
 import plugins
+
 
 def generate(site):
     """Generate the list of external links to the given file descriptor."""
     # get all external links
-    links = [ x
-              for x in site.linkMap.values()
-              if not x.isinternal ]
-    # sort list
-    # FIXME: use sort(key=....) (adds dependency on python>=2.4)
-    links.sort(lambda a, b: cmp(a.url, b.url))
+    links = site.links.filter(db.Link.is_internal != True).order_by('url')
     # present results
     fp = plugins.open_html(plugins.external, site)
     if not links:

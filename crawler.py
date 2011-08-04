@@ -27,21 +27,24 @@ containing the state for the crawled site and some functions to access and
 manipulate the crawling of the website. This module also contains the Link
 class that holds all the link related properties."""
 
-import config
-import debugio
-import urlparse
-import urllib
-import robotparser
-import parsers
-import re
-import time
-import myurllib
-import urllib2
-import httplib
-import socket
 import atexit
 import cookielib
+import datetime
+import httplib
 import os
+import re
+import robotparser
+import socket
+import time
+import urllib
+import urllib2
+import urlparse
+
+import config
+import db
+import debugio
+import parsers
+
 
 # set up our cookie jar
 cookiejar = cookielib.LWPCookieJar('cookies.lwp')
@@ -80,12 +83,13 @@ _spacepattern = re.compile(' ')
 # pattern to match anchor part of a url
 _anchorpattern = re.compile('#([^#]+)$')
 
-class Site:
+
+# TODO: rename Site to Crawler
+class Site(object):
     """Class to represent gathered data of a site.
 
     The available properties of this class are:
 
-      linkMap    - a map of urls to link objects
       bases      - a list of base link object
    """
 
@@ -102,15 +106,13 @@ class Site:
         self._yanked_res = {}
         # map of scheme+netloc to robot handleds
         self._robotparsers = {}
-        # a map of urls to Link objects
-        self.linkMap = {}
         # list of base urls (these are the internal urls to start from)
         self.bases = []
 
     def add_internal(self, url):
         """Add the given url and consider all urls below it to be internal.
         These links are all marked for checking with the crawl() function."""
-        url = myurllib.normalizeurl(url)
+        url = db.Link.clean_url(url)
         if url not in self._internal_urls:
             self._internal_urls.add(url)
 
@@ -129,53 +131,53 @@ class Site:
         will not be checked at all."""
         self._yanked_res[exp] = re.compile(exp, re.IGNORECASE)
 
-    def _is_internal(self, link):
+    def _is_internal(self, url):
         """Check whether the specified url is external or internal.
         This uses the urls marked with add_internal() and the regular
         expressions passed with add_external_re()."""
         # check if it is internal through the regexps
         for regexp in self._internal_res.values():
-            if regexp.search(link.url) is not None:
+            if regexp.search(url) is not None:
                 return True
         res = False
         # check that the url starts with an internal url
         if config.BASE_URLS_ONLY:
             # the url must start with one of the _internal_urls
             for i in self._internal_urls:
-                res |= (i==link.url[:len(i)])
+                res |= (i==url[:len(i)])
         else:
             # the netloc must match a netloc of an _internal_url
+            netloc = urlparse.urlsplit(url)[1]
             for i in self._internal_urls:
-                res |= (urlparse.urlsplit(i)[1]==link.netloc)
+                res |= (urlparse.urlsplit(i)[1] == netloc)
         # if it is not internal now, it never will be
         if not res:
             return False
         # check if it is external through the regexps
         for x in self._external_res.values():
             # if the url matches it is external and we can stop
-            if x.search(link.url) is not None:
+            if x.search(url):
                 return False
         return True
 
-    def _get_robotparser(self, link):
+    def _get_robotparser(self, scheme, netloc):
         """Return the proper robots parser for the given url or None if one
         cannot be constructed. Robot parsers are cached per scheme and
         netloc."""
         # only some schemes have a meaningful robots.txt file
-        if link.scheme != 'http' and link.scheme != 'https':
-            debugio.debug('crawler._get_robotparser() called with unsupported scheme (%s)' % link.scheme)
+        if scheme != 'http' and scheme != 'https':
+            debugio.debug('crawler._get_robotparser() called with unsupported scheme (%s)' % scheme)
             return None
         # split out the key part of the url
-        location = urlparse.urlunsplit((link.scheme, link.netloc, '', '', ''))
+        location = urlparse.urlunsplit((scheme, netloc, '', '', ''))
         # try to create a new robotparser if we don't already have one
         if not self._robotparsers.has_key(location):
-            import httplib
             debugio.info('  getting robots.txt for %s' % location)
             self._robotparsers[location] = None
             try:
                 rp = robotparser.RobotFileParser()
                 rp.set_url(urlparse.urlunsplit(
-                  (link.scheme, link.netloc, '/robots.txt', '', '') ))
+                  (scheme, netloc, '/robots.txt', '', '') ))
                 rp.read()
                 self._robotparsers[location] = rp
             except (TypeError, IOError, httplib.HTTPException):
@@ -183,425 +185,155 @@ class Site:
                 pass
         return self._robotparsers[location]
 
-    def _is_yanked(self, link):
+    def _is_yanked(self, url):
         """Check whether the specified url should not be checked at all.
         This uses the regualr expressions passed with add_yanked_re() and the
         robots information present."""
         # check if it is yanked through the regexps
         for regexp in self._yanked_res.values():
             # if the url matches it is yanked and we can stop
-            if regexp.search(link.url) is not None:
+            if regexp.search(url):
                 return 'yanked'
         # check if we should avoid external links
-        if not link.isinternal and config.AVOID_EXTERNAL_LINKS:
+        is_internal = self._is_internal(url)
+        if not is_internal and config.AVOID_EXTERNAL_LINKS:
             return 'external avoided'
         # check if we should use robot parsers
         if not config.USE_ROBOTS:
-            return False
-        # skip schemes not haveing robot.txt files
-        if link.scheme != 'http' and link.scheme != 'https':
-            return False
+            return None
+        (scheme, netloc) = urlparse.urlsplit(url)[0:2]
+        # skip schemes not having robot.txt files
+        if scheme not in ('http', 'https'):
+            return None
         # skip robot checks for external urls
         # TODO: make this configurable
-        if not link.isinternal:
-            return False
+        if not is_internal:
+            return None
         # check robots for remaining links
-        rp = self._get_robotparser(link)
-        if rp is not None and not rp.can_fetch('webcheck', link.url):
+        rp = self._get_robotparser(scheme, netloc)
+        if rp and not rp.can_fetch('webcheck', url):
             return 'robot restriced'
         # fall back to allowing the url
-        return False
+        return None
 
-    def get_link(self, url):
-        """Return a link object for the given url.
-        This function checks the map of cached link objects for an
-        instance."""
-        # clean the url
-        url = myurllib.normalizeurl(url)
-        # check if we have an object ready
-        if self.linkMap.has_key(url):
-            return self.linkMap[url]
-        # create a new instance
-        return Link(self, url)
+    def get_link(self, session, url):
+        # try to find the URL
+        url = db.Link.clean_url(url)
+        link = session.query(db.Link).filter_by(url=url).first()
+        if not link:
+            link = db.Link(url=url)
+            session.add(link)
+        return link
 
-    def crawl(self, serfp=None):
+    def get_links_to_crawl(self, session):
+        links = session.query(db.Link).filter(db.Link.fetched == None)
+        return links.filter(db.Link.yanked == None)[:100]
+
+    def crawl(self):
         """Crawl the website based on the urls specified with
         add_internal(). If the serialization file pointer
         is specified the crawler writes out updated links to
         the file while crawling the site."""
-        # TODO: have some different scheme to crawl a site (e.g. separate
-        #       internal and external queues, threading, etc)
-        tocheck = set()
-        # add all unfetched site urls
-        for link in self.linkMap.values():
-            if not link.isyanked and not link.isfetched:
-                tocheck.add(link)
-        # add all internal urls
+        # get a database session
+        session = db.Session()
+        # remove all links
+        if not config.CONTINUE:
+            session.query(db.LinkProblem).delete()
+            session.commit()
+            session.query(db.PageProblem).delete()
+            session.commit()
+            session.execute(db.children.delete())
+            session.commit()
+            session.execute(db.embedded.delete())
+            session.commit()
+            session.query(db.Link).delete()
+            session.commit()
+        # add all internal urls to the database
         for url in self._internal_urls:
-            tocheck.add(self.get_link(url))
+            url = db.Link.clean_url(url)
+            self.get_link(session, url)
+        # add some URLs from the database that haven't been fetched
+        tocheck = self.get_links_to_crawl(session)
         # repeat until we have nothing more to check
-        fetchedlinks = 0
-        while len(tocheck) > 0:
+        while tocheck:
             debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
             # choose a link from the tocheck list
             link = tocheck.pop()
+            link.is_internal = self._is_internal(link.url)
+            link.yanked = self._is_yanked(link.url)
+            # see if there are any more links to check
+            if not tocheck:
+                tocheck = self.get_links_to_crawl(session)
             # skip link it there is nothing to check
-            if link.isyanked or link.isfetched:
+            if link.yanked or link.fetched:
                 continue
             # fetch the link's contents
-            link.fetch()
-            # add children to tocheck
-            for child in link.children:
-                if not child.isyanked and not child.isfetched:
-                    tocheck.add(child)
-            # add embedded content
-            for embed in link.embedded:
-                if not embed.isyanked and not embed.isfetched:
-                    tocheck.add(embed)
-            # serialize all as of yet unserialized links
-            fetchedlinks += 1
-            # TODO: make this configurable
-            if serfp and fetchedlinks >= 5:
-                fetchedlinks = 0
-                import serialize
-                for link in self.linkMap.values():
-                    if link._ischanged:
-                        serialize.serialize_link(serfp, link)
-                        link._ischanged = False
-                serfp.flush()
+            response = self.fetch(link)
+            if response:
+                self.parse(link, response)
+            # flush database changes
+            session.commit()
             # sleep between requests if configured
             if config.WAIT_BETWEEN_REQUESTS > 0:
                 debugio.debug('crawler.crawl(): sleeping %s seconds' % config.WAIT_BETWEEN_REQUESTS)
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
-        # serialize remaining changed links
-        if serfp:
-            import serialize
-            for link in self.linkMap.values():
-                if link._ischanged:
-                    serialize.serialize_link(serfp, link)
-                    link._ischanged = False
-            serfp.flush()
 
-    def postprocess(self):
-        """Do some basic post processing of the collected data, including
-        depth calculation of every link."""
-        # build the list of urls that were set up with add_internal() that
-        # do not have a parent (they form the base for the site)
-        for url in self._internal_urls:
-            link = self.linkMap[url].follow_link()
-            if link == None:
-                debugio.warn('base link %s redirects to nowhere' % url)
-                continue
-            # add the link to bases
-            debugio.debug('crawler.postprocess(): adding %s to bases' % link.url)
-            self.bases.append(link)
-        # if we got no bases, just use the first internal one
-        if len(self.bases) == 0:
-            debugio.debug('crawler.postprocess(): fallback to adding %s to bases' % self._internal_urls[0])
-            self.bases.append(self.linkMap[self._internal_urls[0]])
-        # do a breadth first traversal of the website to determin depth and
-        # figure out page children
-        tocheck = set()
-        for link in self.bases:
-            link.depth = 0
-            tocheck.add(link)
-        # repeat until we have nothing more to check
-        while len(tocheck) > 0:
-            debugio.debug('crawler.postprocess(): items left to examine: %d' % len(tocheck))
-            # choose a link from the tocheck list
-            link = tocheck.pop()
-            # figure out page children
-            for child in link._pagechildren():
-                # skip children with the wrong depth
-                if child.depth != link.depth+1:
-                    continue
-                tocheck.add(child)
-
-class Link:
-    """This is a basic class representing a url.
-
-    Some basic information about a url is stored in instances of this
-    class:
-
-      url        - the url this link represents
-      scheme     - the scheme part of the url
-      netloc     - the netloc part of the url
-      path       - the path part of the url
-      query      - the query part of the url
-      parents    - list of parent links (all the Links that link to this
-                   page)
-      children   - list of child links (the Links that this page links to)
-      pagechildren - list of child pages, including children of embedded
-                     elements
-      embedded   - list of links to embeded content
-      anchors    - list of anchors defined on the page
-      reqanchors - list of anchors requesten for this page anchor->link*
-      depth      - the number of clicks from the base urls this page to
-                   find
-      isinternal - whether the link is considered to be internal
-      isyanked   - whether the link should be checked at all
-      isfetched  - whether the lis is fetched already
-      ispage     - whether the link represents a page
-      mtime      - modification time (in seconds since the Epoch)
-      size       - the size of this document
-      mimetype   - the content-type of the document
-      encoding   - the character set used in the document
-      title      - the title of this document (unicode)
-      author     - the author of this document (unicode)
-      status     - the result of retreiving the document
-      linkproblems - list of problems with retrieving the link
-      pageproblems - list of problems in the parsed page
-      redirectdepth - the number of this redirect (=0 not a redirect)
-
-   Instances of this class should be made through a site instance
-   by adding internal urls and calling crawl().
-   """
-
-    def __init__(self, site, url):
-        """Creates an instance of the Link class and initializes the
-        documented properties to some sensible value."""
-        # store a reference to the site
-        self.site = site
-        # split the url in useful parts and store the parts
-        (self.scheme, self.netloc, self.path, self.query) = \
-          urlparse.urlsplit(url)[0:4]
-        # store the url (without the fragment)
-        url = urlparse.urlunsplit(
-          (self.scheme, self.netloc, self.path, self.query, '') )
-        self.url = url
-        # ensure that we are not creating something that already exists
-        assert not self.site.linkMap.has_key(url)
-        # store the Link object in the linkMap
-        self.site.linkMap[url] = self
-        # deternmin the kind of url (internal or external)
-        self.isinternal = self.site._is_internal(self)
-        # check if the url is yanked
-        self.isyanked = self.site._is_yanked(self)
-        # initialize some properties
-        self.parents = set()
-        self.children = set()
-        self.pagechildren = None
-        self.embedded = set()
-        self.anchors = set()
-        self.reqanchors = {}
-        self.depth = None
-        self.isfetched = False
-        self.ispage = False
-        self.mtime = None
-        self.size = None
-        self.mimetype = None
-        self.encoding = None
-        self.title = None
-        self.author = None
-        self.status = None
-        self.linkproblems = []
-        self.pageproblems = []
-        self.redirectdepth = 0
-        self.redirectlist = None
-        self._ischanged = False
-
-    def __checkurl(self, url):
-        """Check to see if the url is formatted properly, correct formatting
-        if possible and log an error in the formatting to the current page."""
-        # search for spaces in the url
-        if _spacepattern.search(url):
-            self.add_pageproblem('link contains unescaped spaces: %s' % url)
-            # replace spaces by %20
-            url = _spacepattern.sub('%20', url)
-        # find anchor part
-        try:
-            # get the anchor
-            anchor = _anchorpattern.search(url).group(1)
-            # get link for url we link to
-            child = self.site.get_link(url)
-            # store anchor
-            child.add_reqanchor(self, anchor)
-        except AttributeError:
-            # ignore problems lookup up anchor
-            pass
-        return url
-
-    def __tolink(self, link):
-        """Convert the link to a link object, either it is already a link,
-        a link object is returned from the database or a new link is
-        created. This returns None for empty strings."""
-        # ignore if child is empty string
-        if link == '' or link == u'':
-            return None
-        if type(link) is unicode and self.encoding:
-            # convert url to binary if passed as unicode
-            link = link.encode(self.encoding)
-        # convert the url to a link object if we were called with a url
-        if type(link) is unicode or type(link) is str:
-            link = self.site.get_link(self.__checkurl(link))
-        # re're done
-        return link
-
-    def add_child(self, child):
-        """Add a link object to the child relation of this link.
-        The reverse relation is also made."""
-        # ignore children for external links
-        if not self.isinternal:
-            return
-        # convert to link object
-        child = self.__tolink(child)
-        if child is None:
-            return
-        # add to children
-        if child not in self.children:
-            self.children.add(child)
-            self._ischanged = True
-        # add self to parents of child
-        if self not in child.parents:
-            child.parents.add(self)
-
-    def add_embed(self, link):
-        """Mark the given link object as used as an image on this page."""
-        # ignore embeds for external links
-        if not self.isinternal:
-            return
-        # convert to link object
-        link = self.__tolink(link)
-        if link is None:
-            return
-        # add to embedded
-        if link not in self.embedded:
-            self.embedded.add(link)
-            self._ischanged = True
-        # add self to parents of embed
-        if self not in link.parents:
-            link.parents.add(self)
-
-    def add_anchor(self, anchor):
-        """Indicate that this page contains the specified anchor."""
-        # lowercase anchor
-        anchor = anchor.lower()
-        # add anchor
-        if anchor in self.anchors:
-            self.add_pageproblem(
-              'anchor/id "%(anchor)s" defined multiple times'
-              % { 'anchor':   anchor })
-        else:
-            self.anchors.add(anchor)
-            self._ischanged = True
-
-    def add_reqanchor(self, parent, anchor):
-        """Indicate that the specified link contains a reference to the
-        specified anchor. This can be checked later."""
-        # lowercase anchor
-        anchor = anchor.lower()
-        # convert the url to a link object if we were called with a url
-        parent = self.__tolink(parent)
-        # add anchor
-        if anchor in self.reqanchors:
-            if parent not in self.reqanchors[anchor]:
-                self.reqanchors[anchor].add(parent)
-                self._ischanged = True
-        else:
-            self.reqanchors[anchor] = set([parent])
-            self._ischanged = True
-
-    def redirect(self, url):
-        """Indicate that this link redirects to the specified url. Maximum
-        redirect counting is done as well as loop detection."""
-        # figure out depth and urls that have been visited in this
-        # redirect list
-        redirectdepth = 0
-        redirectlist = set()
-        for parent in self.parents:
-            if parent.redirectdepth > redirectdepth:
-                redirectdepth = parent.redirectdepth
-                redirectlist = parent.redirectlist
-        self.redirectdepth = redirectdepth + 1
-        self.redirectlist = redirectlist
-        self.redirectlist.add(self.url)
-        # check depth
-        if self.redirectdepth >= config.REDIRECT_DEPTH:
-            self.add_linkproblem('too many redirects (%d)' % self.redirectdepth)
-            return None
-        # check for redirect to self
-        url = self.__checkurl(url)
-        if url == self.url:
-            self.add_linkproblem('redirect same as source: %s' % url)
-            return None
-        # check for redirect loop
-        if url in self.redirectlist:
-            self.add_linkproblem('redirect loop %s' % url)
-        # add child
-        self.add_child(url)
-
-    def add_linkproblem(self, problem):
-        """Indicate that something went wrong while retreiving this link."""
-        self.linkproblems.append(problem)
-        self._ischanged = True
-
-    def add_pageproblem(self, problem):
-        """Indicate that something went wrong with parsing the document."""
-        # only think about problems on internal pages
-        if not self.isinternal:
-            return
-        # only include a single problem once (e.g. multiple anchors)
-        if problem not in self.pageproblems:
-            self.pageproblems.append(problem)
-            self._ischanged = True
-
-    def fetch(self):
-        """Attempt to fetch the url (if isyanked is not True) and fill in link
-        attributes (based on isinternal)."""
-        debugio.info('  %s' % self.url)
-        # fully ignore links that should not be feteched
-        if self.isyanked:
-            debugio.info('    ' + self.isyanked)
-            return
+    def fetch(self, link):
+        """Attempt to fetch the url (if not yanked) and fill in link
+        attributes (based on is_internal)."""
+        debugio.info('  %s' % link.url)
+        # mark the link as fetched to avoid loops
+        link.fetched = datetime.datetime.now()
         # see if we can import the proper module for this scheme
         try:
             # FIXME: if an URI has a username:passwd add the uri, username and password to the HTTPPasswordMgr
-            request = urllib2.Request(self.url)
-            if self.parents:
-                request.add_header('Referer', iter(self.parents).next().url)
+            request = urllib2.Request(link.url)
+            if link.parents:
+                request.add_header('Referer', iter(link.parents).next().url)
             response = urllib2.urlopen(request)
-            self.mimetype = response.info().gettype()
-            self.set_encoding(response.info().getencoding())
+            link.mimetype = response.info().gettype()
+            link.set_encoding(response.headers.getparam('charset'))
             # FIXME: get result code and other stuff
-            self.status = str(response.code)
+            link.status = str(response.code)
             # link.size = int(response.getheader('Content-length'))
             # link.mtime = time.mktime(response.msg.getdate('Last-Modified'))
             # if response.status == 301: link.add_linkproblem(str(response.status)+': '+response.reason)
             # elif response.status != 200: link.add_linkproblem(str(response.status)+': '+response.reason)
             # TODO: add checking for size
+            return response
         except RedirectError, e:
-            self.status = str(e.code)
+            link.status = str(e.code)
             debugio.info('    ' + str(e))
             if e.code == 301:
-                self.add_linkproblem(str(e))
-            self.redirect(e.newurl)
+                link.add_linkproblem(str(e))
+            link.add_redirect(e.newurl)
             return
         except urllib2.HTTPError, e:
-            self.status = str(e.code)
+            link.status = str(e.code)
             debugio.info('    ' + str(e))
-            self.add_linkproblem(str(e))
+            link.add_linkproblem(str(e))
             return
         except urllib2.URLError, e:
             debugio.info('    ' + str(e))
-            self.add_linkproblem(str(e))
+            link.add_linkproblem(str(e))
             return
         except KeyboardInterrupt:
             # handle this in a higher-level exception handler
             raise
         except Exception, e:
             # handle all other exceptions
-            debugio.warn('unknown exception caught: '+str(e))
-            self.add_linkproblem('error reading HTTP response: '+str(e))
+            debugio.warn('unknown exception caught: ' + str(e))
+            link.add_linkproblem('error reading HTTP response: %s' % str(e))
             import traceback
             traceback.print_exc()
             return
-        finally:
-            self.isfetched = True
-            self._ischanged = True
+
+    def parse(self, link, response):
+        """Parse the fetched response."""
         # find a parser for the content-type
-        parsermodule = parsers.get_parsermodule(self.mimetype)
+        parsermodule = parsers.get_parsermodule(link.mimetype)
         if parsermodule is None:
-            debugio.debug('crawler.Link.fetch(): unsupported content-type: %s' % self.mimetype)
+            debugio.debug('crawler.Link.fetch(): unsupported content-type: %s' % link.mimetype)
             return
         # skip parsing of content if we were returned nothing
         content = response.read()
@@ -610,69 +342,52 @@ class Link:
         # parse the content
         debugio.debug('crawler.Link.fetch(): parsing using %s' % parsermodule.__name__)
         try:
-            parsermodule.parse(content, self)
+            parsermodule.parse(content, link)
         except Exception, e:
-            self.add_pageproblem('problem parsing page: ' + str(e))
-            debugio.warn('problem parsing page: ' + str(e))
             import traceback
             traceback.print_exc()
+            debugio.warn('problem parsing page: ' + str(e))
+            link.add_pageproblem('problem parsing page: ' + str(e))
 
-    def follow_link(self, visited=set()):
-        """If this link represents a redirect return the redirect target,
-        otherwise return self. If this redirect does not find a referenced
-        link None is returned."""
-        # if this is not a redirect just return
-        if self.redirectdepth == 0:
-            return self
-        # if we don't know where this redirects, return None
-        if len(self.children) == 0:
-            return None
-        # the first (and only) child is the redirect target
-        visited.add(self)
-        # check for loops
-        child = self.children.copy().pop()
-        if child in visited:
-            return None
-        # check where we redirect to
-        return child.follow_link(visited)
-
-    def _pagechildren(self):
-        """Determin the page children of this link, combining the children of
-        embedded items and following redirects."""
-        # if we already have pagechildren defined we're done
-        if self.pagechildren is not None:
-            return self.pagechildren
-        self.pagechildren = set()
-        # add my own children, following redirects
-        for child in self.children:
-            # follow redirects
-            child = child.follow_link()
-            # skip children we already have
-            if child is None:
+    def postprocess(self):
+        """Do some basic post processing of the collected data, including
+        depth calculation of every link."""
+        # get a database session
+        session = db.Session()
+        # build the list of urls that were set up with add_internal() that
+        # do not have a parent (they form the base for the site)
+        for url in self._internal_urls:
+            link = self.get_link(session, url).follow_link()
+            if not link:
+                debugio.warn('base link %s redirects to nowhere' % url)
                 continue
-            # set depth of child if it is not already set
-            if child.depth is None:
-                child.depth = self.depth+1
-            # add child pages to out pagechildren
-            if child.ispage:
-                self.pagechildren.add(child)
-        # add my embedded element's children
-        for embed in self.embedded:
-            # set depth of embed if it is not already set
-            if embed.depth is None:
-                embed.depth = self.depth
-            # merge in children of embeds
-            self.pagechildren.update(embed._pagechildren())
-        # return the results
-        return self.pagechildren
-
-    def set_encoding(self, encoding):
-        """Set the encoding of the link doing some basic checks
-        to see if the encoding is supported."""
-        if self.encoding is None and encoding is not None:
-            try:
-                debugio.debug('crawler.Link.set_encoding("'+str(encoding)+'")')
-                unicode('just some random text', encoding, 'replace')
-                self.encoding = encoding
-            except Exception:
-                self.add_pageproblem('unknown encoding: ' + str(encoding))
+            # add the link to bases
+            debugio.debug('crawler.postprocess(): adding %s to bases' % link.url)
+            self.bases.append(link)
+        # if we got no bases, just use the first internal one
+        if not self.bases:
+            link = session.query(db.Link).filter(db.Link.is_internal == True).first()
+            debugio.debug('crawler.postprocess(): fallback to adding %s to bases' % link.url)
+            self.bases.append(link)
+        # do a breadth first traversal of the website to determine depth and
+        # figure out page children
+        session.query(db.Link).update(dict(depth=None), synchronize_session=False)
+        session.commit()
+        depth = 0
+        count = len(self.bases)
+        for link in self.bases:
+            link.depth = 0
+        session.commit()
+        debugio.debug('crawler.postprocess(): %d links at depth 0' % count)
+        while count > 0:
+            # update the depth of all links without a depth that have a
+            # parent with the previous depth
+            qry = session.query(db.Link).filter(db.Link.depth == None)
+            qry = qry.filter(db.Link.linked_from.any(db.Link.depth == depth))
+            count = qry.update(dict(depth=depth + 1), synchronize_session=False)
+            session.commit()
+            depth += 1
+            debugio.debug('crawler.postprocess(): %d links at depth %d' % (count, depth))
+            # TODO: also handle embeds
+        # make the list of links (and session) available to the plugins
+        self.links = session.query(db.Link)

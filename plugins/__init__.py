@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007, 2009 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2009, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ def get_size(i):
 def _mk_unicode(txt):
     """Returns a unicode instance of the string."""
     if not isinstance(txt, unicode):
-        txt = unicode(txt, errors='replace')
+        txt = unicode(txt)
     return txt
 
 def get_info(link):
@@ -96,15 +96,15 @@ def get_info(link):
         info += 'title: %s\n' % link.title.strip()
     if link.author:
         info += 'author: %s\n' % link.author.strip()
-    if link.isinternal:
+    if link.is_internal:
         info += 'internal link'
     else:
         info += 'external link'
-    if link.isyanked:
-        if isinstance(link.isyanked, unicode):
-            info += ', not checked (%s)\n' % link.isyanked
-        if isinstance(link.isyanked, str):
-            info += ', not checked (%s)\n' % _mk_unicode(link.isyanked)
+    if link.yanked:
+        if isinstance(link.yanked, unicode):
+            info += ', not checked (%s)\n' % link.yanked
+        if isinstance(link.yanked, str):
+            info += ', not checked (%s)\n' % _mk_unicode(link.yanked)
         else:
             info += ', not checked\n'
     else:
@@ -135,7 +135,7 @@ def make_link(link, title=None):
     """Return an <a>nchor to a url with title. If url is in the Linklist and
     is external, insert "class=external" in the <a> tag."""
     # try to fetch the link object for this url
-    if link.isinternal:
+    if link.is_internal:
         cssclass = 'internal'
     else:
         cssclass = 'external'
@@ -152,7 +152,7 @@ def print_parents(fp, link, indent='     '):
     The output is indeted with the specified indent."""
     parents = list(link.parents)
     # if there are no parents print nothing
-    if len(parents) == 0:
+    if not parents:
         return
     parents.sort(lambda a, b: cmp(a.title, b.title) or cmp(a.url, b.url))
     fp.write(
@@ -160,7 +160,7 @@ def print_parents(fp, link, indent='     '):
       indent+' referenced from:\n'+
       indent+' <ul>\n' )
     more = 0
-    if len(parents) > config.PARENT_LISTLEN+1:
+    if len(parents) > config.PARENT_LISTLEN + 1:
         more = len(parents) - config.PARENT_LISTLEN
         parents = parents[:config.PARENT_LISTLEN]
     for parent in parents:

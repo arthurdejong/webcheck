@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,15 +28,14 @@ __title__ = 'not checked'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'notchkd.html'
 
+import db
 import plugins
+
 
 def generate(site):
     """Output the list of not checked pages to the given file descriptor."""
     # get all yanked urls
-    links = [ x
-              for x in site.linkMap.values()
-              if x.isyanked ]
-    links.sort(lambda a, b: cmp(a.url, b.url))
+    links = site.links.filter(db.Link.yanked != None).order_by('url')
     # present results
     fp = plugins.open_html(plugins.notchkd, site)
     if not links:
