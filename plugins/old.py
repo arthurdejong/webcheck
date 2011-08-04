@@ -43,7 +43,7 @@ def generate(site):
     oldtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSOLD_URL_AGE
     # get all internal pages that are old
     links = site.links.filter_by(is_page=True, is_internal=True)
-    links = links.filter(db.Link.mtime < oldtime).order_by('mtime').all()
+    links = links.filter(db.Link.mtime < oldtime).order_by(db.Link.mtime).all()
     # present results
     fp = plugins.open_html(plugins.old, site)
     if not links:

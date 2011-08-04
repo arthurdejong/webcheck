@@ -40,7 +40,7 @@ def generate(site):
     # get all internal pages without a title
     links = site.links.filter_by(is_page=True, is_internal=True)
     links = links.filter(or_(char_length(db.Link.title) == 0,
-                             db.Link.title ==None)).order_by('url')
+                             db.Link.title ==None)).order_by(db.Link.url)
     # present results
     fp = plugins.open_html(plugins.notitles, site)
     if not links:

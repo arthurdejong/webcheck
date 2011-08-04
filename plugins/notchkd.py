@@ -35,7 +35,7 @@ import plugins
 def generate(site):
     """Output the list of not checked pages to the given file descriptor."""
     # get all yanked urls
-    links = site.links.filter(db.Link.yanked != None).order_by('url')
+    links = site.links.filter(db.Link.yanked != None).order_by(db.Link.url)
     # present results
     fp = plugins.open_html(plugins.notchkd, site)
     if not links:

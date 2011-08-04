@@ -29,7 +29,6 @@ __author__ = 'Arthur de Jong'
 __outputfile__ = 'images.html'
 
 import re
-from sqlalchemy.sql.expression import or_
 
 import db
 import plugins
@@ -38,9 +37,9 @@ import plugins
 def generate(site):
     """Output a list of images to the given file descriptor."""
     # get non-page images that have an image/* mimetype
-    links = site.links.filter(or_(db.Link.is_page != True, db.Link.is_page == None))
+    links = site.links.filter((db.Link.is_page != True) | (db.Link.is_page == None))
     links = links.filter(db.Link.mimetype.startswith('image/'))
-    links = links.order_by('url')
+    links = links.order_by(db.Link.url)
     # present results
     fp = plugins.open_html(plugins.images, site)
     if not links:

@@ -35,7 +35,7 @@ import plugins
 def generate(site):
     """Generate the list of external links to the given file descriptor."""
     # get all external links
-    links = site.links.filter(db.Link.is_internal != True).order_by('url')
+    links = site.links.filter(db.Link.is_internal != True).order_by(db.Link.url)
     # present results
     fp = plugins.open_html(plugins.external, site)
     if not links:

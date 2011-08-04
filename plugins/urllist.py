@@ -26,6 +26,7 @@ __title__ = 'url list'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'urllist.html'
 
+import db
 import plugins
 
 
@@ -39,7 +40,7 @@ def generate(site):
       '    non-examined urls.\n'
       '   </p>\n'
       '   <ol>\n' )
-    links = site.links.order_by('url')
+    links = site.links.order_by(db.Link.url)
     for link in links:
         fp.write('    <li>' + plugins.make_link(link, link.url) + '</li>\n')
     fp.write(

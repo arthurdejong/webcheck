@@ -28,7 +28,6 @@ __title__ = 'site map'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'index.html'
 
-from sqlalchemy.sql.expression import or_
 from sqlalchemy.orm.session import object_session
 
 import config
@@ -44,8 +43,7 @@ def add_pagechildren(link, children, explored):
     qry = links.filter(db.Link.linked_from.contains(link))
     qry = qry.filter(db.Link.is_internal == True)
     if link.depth:
-        qry = qry.filter(or_(db.Link.depth > link.depth, db.Link.depth == None))
-    #qry = qry.filter(~db.Link.id.in_(explored))
+        qry = qry.filter((db.Link.depth > link.depth) | (db.Link.depth == None))
     # follow redirects
     children.update(y
                     for y in (x.follow_link() for x in qry)

@@ -53,7 +53,7 @@ def generate(site):
     problem_db = {}
     # get internal links with page problems
     links = site.links.filter_by(is_internal=True)
-    links = links.filter(db.Link.pageproblems.any()).order_by('url')
+    links = links.filter(db.Link.pageproblems.any()).order_by(db.Link.url)
     for link in links:
         # make a normal name for the author
         if link.author:

@@ -35,7 +35,7 @@ import plugins
 def generate(site):
     """Present the list of bad links to the given file descriptor."""
     # find all links with link problems
-    links = site.links.filter(db.Link.linkproblems.any()).order_by('url')
+    links = site.links.filter(db.Link.linkproblems.any()).order_by(db.Link.url)
     # present results
     fp = plugins.open_html(plugins.badlinks, site)
     if not links:

@@ -43,7 +43,7 @@ def generate(site):
     newtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSNEW_URL_AGE
     # get all internal pages that are new
     links = site.links.filter_by(is_page=True, is_internal=True)
-    links = links.filter(db.Link.mtime > newtime).order_by('-mtime')
+    links = links.filter(db.Link.mtime > newtime).order_by(db.Link.mtime.desc())
     # present results
     fp = plugins.open_html(plugins.new, site)
     if not links:
