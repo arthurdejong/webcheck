@@ -241,6 +241,7 @@ def main(site):
     """Main program."""
     # crawl through the website
     debugio.info('checking site....')
+    crawler.setup_urllib2()
     site.crawl() # this will take a while
     debugio.info('done.')
     # do postprocessing (building site structure, etc)

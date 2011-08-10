@@ -46,18 +46,11 @@ import debugio
 import parsers
 
 
-# set up our cookie jar
-cookiejar = cookielib.LWPCookieJar('cookies.lwp')
-try:
-    cookiejar.load(ignore_discard=False, ignore_expires=False)
-except IOError:
-    pass
-atexit.register(cookiejar.save, ignore_discard=False, ignore_expires=False)
-
 class RedirectError(urllib2.HTTPError):
     def __init__(self, url, code, msg, hdrs, fp, newurl):
         self.newurl = newurl
         urllib2.HTTPError.__init__(self, url, code, msg, hdrs, fp)
+
 
 class NoRedirectHandler(urllib2.HTTPRedirectHandler):
 
@@ -65,16 +58,26 @@ class NoRedirectHandler(urllib2.HTTPRedirectHandler):
         raise RedirectError(req.get_full_url(), code, msg, headers, fp, newurl)
 
 
-# set up our custom opener that logs a meaningful user agent
-opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar), NoRedirectHandler())
-opener.addheaders = [
-  ('User-agent', 'webcheck %s' % config.VERSION),
-  ]
-if config.BYPASSHTTPCACHE:
-    opener.addheaders.append(('Cache-control', 'no-cache'))
-    opener.addheaders.append(('Pragma', 'no-cache'))
-
-urllib2.install_opener(opener)
+def setup_urllib2():
+    """Configure the urllib2 module to store cookies in the output
+    directory."""
+    filename = os.path.join(config.OUTPUT_DIR, 'cookies.lwp')
+    # set up our cookie jar
+    cookiejar = cookielib.LWPCookieJar(filename)
+    try:
+        cookiejar.load(ignore_discard=False, ignore_expires=False)
+    except IOError:
+        pass
+    atexit.register(cookiejar.save, ignore_discard=False, ignore_expires=False)
+    # set up our custom opener that sets a meaningful user agent
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar), NoRedirectHandler())
+    opener.addheaders = [
+      ('User-agent', 'webcheck %s' % config.VERSION),
+      ]
+    if config.BYPASSHTTPCACHE:
+        opener.addheaders.append(('Cache-control', 'no-cache'))
+        opener.addheaders.append(('Pragma', 'no-cache'))
+    urllib2.install_opener(opener)
 
 
 # pattern for matching spaces
