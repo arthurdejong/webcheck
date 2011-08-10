@@ -28,8 +28,6 @@ __title__ = 'site map'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'index.html'
 
-from sqlalchemy.orm.session import object_session
-
 import config
 import db
 import plugins
@@ -38,10 +36,8 @@ import plugins
 def add_pagechildren(link, children, explored):
     """Determine the page children of this link, combining the children of
     embedded items and following redirects."""
-    links = object_session(link).query(db.Link)
     # get all internal children
-    qry = links.filter(db.Link.linked_from.contains(link))
-    qry = qry.filter(db.Link.is_internal == True)
+    qry = link.children.filter(db.Link.is_internal == True)
     if link.depth:
         qry = qry.filter((db.Link.depth > link.depth) | (db.Link.depth == None))
     # follow redirects
@@ -50,10 +46,9 @@ def add_pagechildren(link, children, explored):
                     if y and y.is_page and y.is_internal and y.id not in explored)
     explored.update(x.id for x in children)
     # add embedded element's pagechildren (think frames)
-    for embed in link.embedded:
+    for embed in link.embedded.filter(db.Link.is_internal == True).filter(db.Link.is_page == True):
         # TODO: put this in a query
-        if embed.is_internal and embed.is_page and \
-           embed.id not in explored and \
+        if embed.id not in explored and \
            (embed.depth == None or embed.depth > link.depth):
             add_pagechildren(embed, children, explored)
 

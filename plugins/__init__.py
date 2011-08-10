@@ -43,6 +43,8 @@ fields:
 
 Pluings can use the functions exported by this module."""
 
+from sqlalchemy.orm.session import object_session
+
 import sys
 import debugio
 import config
@@ -110,8 +112,8 @@ def get_info(link):
     else:
         info += '\n'
     if link.redirectdepth > 0:
-        if len(link.children) > 0:
-            info += 'redirect: %s\n' % _mk_unicode(link.children.copy().pop().url)
+        if link.children.count() > 0:
+            info += 'redirect: %s\n' % _mk_unicode(link.children.first().url)
         else:
             info += 'redirect (not followed)\n'
     if len(link.parents) == 1:
@@ -301,3 +303,4 @@ def generate(site):
         plugin = __import__('plugins.' + p, globals(), locals(), [p])
         # run the plugin
         plugin.generate(site)
+        object_session(site.links[0]).commit()
