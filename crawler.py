@@ -256,7 +256,6 @@ class Site(object):
         tocheck = self.get_links_to_crawl(session)
         # repeat until we have nothing more to check
         while tocheck:
-            debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
             # choose a link from the tocheck list
             link = tocheck.pop()
             link.is_internal = self._is_internal(link.url)
@@ -277,6 +276,8 @@ class Site(object):
             if config.WAIT_BETWEEN_REQUESTS > 0:
                 debugio.debug('crawler.crawl(): sleeping %s seconds' % config.WAIT_BETWEEN_REQUESTS)
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
+            debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
+        session.commit()
 
     def fetch(self, link):
         """Attempt to fetch the url (if not yanked) and fill in link
@@ -369,8 +370,7 @@ class Site(object):
             link = session.query(db.Link).filter(db.Link.is_internal == True).first()
             debugio.debug('crawler.postprocess(): fallback to adding %s to bases' % link.url)
             self.bases.append(link)
-        # do a breadth first traversal of the website to determine depth and
-        # figure out page children
+        # do a breadth first traversal of the website to determine depth
         session.query(db.Link).update(dict(depth=None), synchronize_session=False)
         session.commit()
         depth = 0
