@@ -172,31 +172,23 @@ class Link(Base):
 
     def add_anchor(self, anchor):
         """Indicate that this page contains the specified anchor."""
-        return # FIXME: implement/update
         # lowercase anchor
         anchor = anchor.lower()
-        # add anchor
-        if anchor in self.anchors:
+        if self.anchors.filter(Anchor.anchor == anchor).first():
             self.add_pageproblem(
               'anchor/id "%(anchor)s" defined multiple times'
               % { 'anchor':   anchor })
         else:
-            self.anchors.add(anchor)
+            self.anchors.append(Anchor(anchor=anchor))
 
     def add_reqanchor(self, parent, anchor):
         """Indicate that the specified link contains a reference to the
         specified anchor. This can be checked later."""
-        return # FIXME: implement/update
         # lowercase anchor
         anchor = anchor.lower()
-        # convert the url to a link object if we were called with a url
-        parent = self.__tolink(parent)
-        # add anchor
-        if anchor in self.reqanchors:
-            if parent not in self.reqanchors[anchor]:
-                self.reqanchors[anchor].add(parent)
-        else:
-            self.reqanchors[anchor] = set([parent])
+        # if RequestedAnchor doesn't exist, add it
+        if not self.reqanchors.filter((RequestedAnchor.parent_id == parent.id) & (RequestedAnchor.anchor == anchor)).first():
+            self.reqanchors.append(RequestedAnchor(parent_id=parent.id, anchor=anchor))
 
     def follow_link(self, visited=None):
         """If this link represents a redirect return the redirect target,
@@ -254,3 +246,38 @@ class PageProblem(Base):
 
     def __unicode__(self):
         return self.message
+
+
+class Anchor(Base):
+    """The named anchors (IDs) found on the page."""
+
+    __tablename__ = 'anchors'
+
+    id = Column(Integer, primary_key=True)
+    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'))
+    link = relationship(Link, backref=backref('anchors',
+                        lazy='dynamic',
+                        cascade='all,delete,delete-orphan'))
+    anchor = Column(String)
+
+    def __unicode__(self):
+        return self.anchor
+
+
+class RequestedAnchor(Base):
+    """The named anchors (IDs) found on the page."""
+
+    __tablename__ = 'reqanchors'
+
+    id = Column(Integer, primary_key=True)
+    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'))
+    link = relationship(Link, backref=backref('reqanchors',
+                        lazy='dynamic',
+                        cascade='all,delete,delete-orphan',
+                        ), primaryjoin='Link.id == RequestedAnchor.link_id')
+    parent_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'))
+    parent = relationship(Link, primaryjoin='Link.id == RequestedAnchor.parent_id')
+    anchor = Column(String)
+
+    def __unicode__(self):
+        return self.anchor

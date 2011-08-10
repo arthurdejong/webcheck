@@ -1,7 +1,7 @@
 
 # anchors.py - plugin check for missing anchors
 #
-# Copyright (C) 2006, 2007 Arthur de Jong
+# Copyright (C) 2006, 2007, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,21 +27,23 @@ This plugin does not output any files, it just finds problems."""
 __title__ = 'missing anchors'
 __author__ = 'Arthur de Jong'
 
+from sqlalchemy.orm.session import object_session
+
+import db
+
+
 def generate(site):
     """Present the list of bad links to the given file descriptor."""
-    # find all links with requested anchors
-    links = [ x
-              for x in site.linkMap.values()
-              if len(x.reqanchors)>0 and x.isfetched ]
+    # find all fetched links with requested anchors
+    links = site.links.filter(db.Link.reqanchors.any()).filter(db.Link.fetched != None)
     # go over list and find missing anchors
     for link in links:
-        # check all requested anchors
+        # check that all requested anchors exist
         for anchor in link.reqanchors:
-            # if the anchor is there there is no prolem
-            if anchor in link.anchors:
-                continue
-            # report problem
-            for parent in link.reqanchors[anchor]:
-                parent.add_pageproblem(
-                  'reference to undefined anchor/id "%(anchor)s"'
-                  % { 'anchor': anchor })
+            # if the anchor is not there there, report problem
+            if not link.anchors.filter(db.Anchor.anchor == anchor.anchor).first():
+                anchor.parent.add_pageproblem(
+                  u'bad link: %(url)s#%(anchor)s: unknown anchor'
+                  % {'url': link.url,
+                     'anchor': anchor })
+    # FIXME: commit changes in session

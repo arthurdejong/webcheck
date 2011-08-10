@@ -1,7 +1,7 @@
 
 # myurllib.py - general purpose URL handling library
 #
-# Copyright (C) 2007 Arthur de Jong
+# Copyright (C) 2007, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ def _urlclean(url):
     # make escaping consistent
     url = _normalize_escapes(url)
     # split the url in useful parts
-    (scheme, netloc, path, query) = urlparse.urlsplit(url)[:4]
+    (scheme, netloc, path, query, fragment) = urlparse.urlsplit(url)
     # remove any leading /../ parts
     if scheme in ( 'http', 'https' ):
         path = _leadingdotpattern.sub('', path)
@@ -108,8 +108,8 @@ def _urlclean(url):
     # get rid of double slashes in some paths
     if ( scheme == 'file' ):
         path = _doubleslashpattern.sub('/', path)
-    # put the url back together again (discarding fragment)
-    return urlparse.urlunsplit((scheme, netloc, path, query, ''))
+    # put the url back together again
+    return urlparse.urlunsplit((scheme, netloc, path, query, fragment))
 
 def normalizeurl(url):
     """Return a normalized URL."""
