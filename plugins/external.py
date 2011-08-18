@@ -42,7 +42,7 @@ def generate(site):
         fp.write(
           '   <p class="description">'
           '    No external links were found on the website.'
-          '   </p>\n' )
+          '   </p>\n')
         plugins.close_html(fp)
         return
     fp.write(
@@ -50,16 +50,16 @@ def generate(site):
       '    This is the list of all external urls encountered during the'
       '    examination of the website.'
       '   </p>\n'
-      '   <ol>\n' )
+      '   <ol>\n')
     for link in links:
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
-          % { 'link':  plugins.make_link(link) })
+          % {'link': plugins.make_link(link)})
         # present a list of parents
         plugins.print_parents(fp, link, '     ')
         fp.write(
           '    </li>\n')
     fp.write(
-      '   </ol>\n' )
+      '   </ol>\n')
     plugins.close_html(fp)

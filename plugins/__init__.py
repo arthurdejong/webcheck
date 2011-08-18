@@ -54,11 +54,13 @@ import parsers.html
 # reference function from html module
 htmlescape = parsers.html.htmlescape
 
+
 def get_title(link):
     """Returns the title of a link if it is set otherwise returns url."""
     if link.title is None or link.title == '':
         return link.url
     return link.title
+
 
 def _floatformat(f):
     """Return a float as a string while trying to keep it within three
@@ -69,25 +71,28 @@ def _floatformat(f):
         txt = txt[:txt.find('.')]
     return txt
 
+
 def get_size(i):
     """Return the size in bytes as a readble string."""
     K = 1024
-    M = K*1024
-    G = M*1024
-    if i > 1024*1024*999:
-        return _floatformat(float(i)/float(G))+'G'
-    elif i > 1024*999:
-        return _floatformat(float(i)/float(M))+'M'
+    M = K * 1024
+    G = M * 1024
+    if i > 1024 * 1024 * 999:
+        return _floatformat(float(i) / float(G)) + 'G'
+    elif i > 1024 * 999:
+        return _floatformat(float(i) / float(M)) + 'M'
     elif i >= 1024:
-        return _floatformat(float(i)/float(K))+'K'
+        return _floatformat(float(i) / float(K)) + 'K'
     else:
         return '%d' % i
+
 
 def _mk_unicode(txt):
     """Returns a unicode instance of the string."""
     if not isinstance(txt, unicode):
         txt = unicode(txt)
     return txt
+
 
 def get_info(link):
     """Return a string with a summary of the information in the link."""
@@ -133,6 +138,7 @@ def get_info(link):
     # trim trailing newline
     return info.strip()
 
+
 def make_link(link, title=None):
     """Return an <a>nchor to a url with title. If url is in the Linklist and
     is external, insert "class=external" in the <a> tag."""
@@ -147,7 +153,13 @@ def make_link(link, title=None):
     if config.REPORT_LINKS_IN_NEW_WINDOW:
         target = 'target="_blank" '
     # gather some information about the link to report
-    return '<a href="'+htmlescape(link.url, True)+'" '+target+'class="'+cssclass+'" title="'+htmlescape(get_info(link), True)+'">'+htmlescape(title)+'</a>'
+    return '<a href="%(url)s" %(target)sclass="%(cssclass)s" title="%(info)s">%(title)s</a>' % \
+            dict(url=htmlescape(link.url, True),
+                 target=target,
+                 cssclass=cssclass,
+                 info=htmlescape(get_info(link), True),
+                 title=htmlescape(title))
+
 
 def print_parents(fp, link, indent='     '):
     """Write a list of parents to the output file descriptor.
@@ -158,24 +170,25 @@ def print_parents(fp, link, indent='     '):
         return
     parents.sort(lambda a, b: cmp(a.title, b.title) or cmp(a.url, b.url))
     fp.write(
-      indent+'<div class="parents">\n'+
-      indent+' referenced from:\n'+
-      indent+' <ul>\n' )
+      indent + '<div class="parents">\n' +
+      indent + ' referenced from:\n' +
+      indent + ' <ul>\n')
     more = 0
     if len(parents) > config.PARENT_LISTLEN + 1:
         more = len(parents) - config.PARENT_LISTLEN
         parents = parents[:config.PARENT_LISTLEN]
     for parent in parents:
         fp.write(
-          indent+'  <li>%(parent)s</li>\n'
-          % { 'parent': make_link(parent) })
+          indent + '  <li>%(parent)s</li>\n'
+          % {'parent': make_link(parent)})
     if more:
         fp.write(
-          indent+'  <li>%(more)d more...</li>\n'
-          % { 'more': more })
+          indent + '  <li>%(more)d more...</li>\n'
+          % {'more': more})
     fp.write(
-      indent+' </ul>\n'+
-      indent+'</div>\n' )
+      indent + ' </ul>\n' +
+      indent + '</div>\n')
+
 
 def open_file(filename, istext=True, makebackup=False):
     """This returns an open file object which can be used for writing. This
@@ -189,8 +202,8 @@ def open_file(filename, istext=True, makebackup=False):
             os.mkdir(config.OUTPUT_DIR)
         except OSError, (errno, strerror):
             debugio.error('error creating directory %(dir)s: %(strerror)s' %
-                          { 'dir': config.OUTPUT_DIR,
-                            'strerror': strerror })
+                          {'dir': config.OUTPUT_DIR,
+                           'strerror': strerror})
             sys.exit(1)
     # build the output file name
     fname = os.path.join(config.OUTPUT_DIR, filename)
@@ -198,7 +211,7 @@ def open_file(filename, istext=True, makebackup=False):
     if os.path.exists(fname):
         if makebackup:
             # create backup of original (overwriting previous backup)
-            os.rename(fname, fname+'~')
+            os.rename(fname, fname + '~')
         elif not config.OVERWRITE_FILES:
             # ask to overwrite
             try:
@@ -221,9 +234,10 @@ def open_file(filename, istext=True, makebackup=False):
             return open(fname, 'wb')
     except IOError, (errno, strerror):
         debugio.error('error creating output file %(fname)s: %(strerror)s' %
-                      { 'fname': fname,
-                        'strerror': strerror })
+                      {'fname': fname,
+                       'strerror': strerror})
         sys.exit(1)
+
 
 def _print_navbar(fp, plugin):
     """Return an html fragement representing the navigation bar for a page."""
@@ -240,11 +254,12 @@ def _print_navbar(fp, plugin):
             selected = ' class="selected"'
         fp.write(
           '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n'
-          % { 'pluginfile' : report.__outputfile__,
-              'selected'   : selected,
-              'title'      : htmlescape(report.__title__),
-              'description': htmlescape(report.__doc__) })
+          % {'pluginfile':  report.__outputfile__,
+             'selected':    selected,
+             'title':       htmlescape(report.__title__),
+             'description': htmlescape(report.__doc__)})
     fp.write('  </ul>\n')
+
 
 def open_html(plugin, site):
     """Print an html fragment for the start of an html page."""
@@ -268,10 +283,10 @@ def open_html(plugin, site):
       ' </head>\n'
       ' <body>\n'
       '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n'
-      % { 'sitetitle':  htmlescape(get_title(base)),
-          'plugintitle': htmlescape(plugin.__title__),
-          'siteurl':    base.url,
-          'version':    config.VERSION })
+      % {'sitetitle':   htmlescape(get_title(base)),
+         'plugintitle': htmlescape(plugin.__title__),
+         'siteurl':     base.url,
+         'version':     config.VERSION})
     # write navigation bar
     _print_navbar(fp, plugin)
     # write plugin heading
@@ -279,6 +294,7 @@ def open_html(plugin, site):
     # write plugin contents
     fp.write('  <div class="content">\n')
     return fp
+
 
 def close_html(fp):
     """Print an html fragment as footer of an html page."""
@@ -290,10 +306,11 @@ def close_html(fp):
       '  </p>\n'
       ' </body>\n'
       '</html>\n'
-      % { 'time':     htmlescape(time.ctime(time.time())),
-          'homepage': config.HOMEPAGE,
-          'version':  htmlescape(config.VERSION) })
+      % {'time':     htmlescape(time.ctime(time.time())),
+         'homepage': config.HOMEPAGE,
+         'version':  htmlescape(config.VERSION)})
     fp.close()
+
 
 def generate(site):
     """Generate pages for plugins."""

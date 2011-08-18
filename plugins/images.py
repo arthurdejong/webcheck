@@ -47,16 +47,16 @@ def generate(site):
           '   <p class="description">\n'
           '    No images were linked on the website.\n'
           '   </p>\n'
-          '   <ol>\n' )
+          '   <ol>\n')
         plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
       '    This is the list of all images found linked on the website.\n'
       '   </p>\n'
-      '   <ol>\n' )
+      '   <ol>\n')
     for link in links:
         fp.write('    <li>%s</li>\n' % plugins.make_link(link, link.url))
     fp.write(
-      '   </ol>\n' )
+      '   </ol>\n')
     plugins.close_html(fp)

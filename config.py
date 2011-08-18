@@ -64,19 +64,19 @@ WAIT_BETWEEN_REQUESTS = 0
 REDIRECT_DEPTH = 5
 
 # The list of plugins that will be used to generate the report.
-PLUGINS = [ 'anchors',
-            'sitemap',
-            'urllist',
-            'images',
-            'external',
-            'notchkd',
-            'badlinks',
-            'old',
-            'new',
-            'size',
-            'notitles',
-            'problems',
-            'about' ]
+PLUGINS = ['anchors',
+           'sitemap',
+           'urllist',
+           'images',
+           'external',
+           'notchkd',
+           'badlinks',
+           'old',
+           'new',
+           'size',
+           'notitles',
+           'problems',
+           'about']
 
 # Whether to overwrite files without asking. This is the state of the -f
 # command line option.
@@ -107,11 +107,11 @@ REPORT_LINKS_IN_NEW_WINDOW = False
 
 # A list of names that will be checked when encountering an file:///
 # directory. This file will be picked up instead of the directory list.
-FILE_INDEXES = [ 'index.html', 'index.htm' ]
+FILE_INDEXES = ['index.html', 'index.htm']
 
 # A list of names that will be checked when encountering an ftp://
 # directory. This file will be picked up instead of the directory list.
-FTP_INDEXES = [ 'index.html', 'index.htm' ]
+FTP_INDEXES = ['index.html', 'index.htm']
 
 # Whether to fetch robots.txt files and do checking based on the information
 # present in those files (normally matching links are yanked).

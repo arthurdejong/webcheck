@@ -41,11 +41,12 @@ def _mk_id(name):
     name = name.lower()
     import re
     # strip any leading non alpha characters
-    name = re.sub('^[^a-z]*','',name)
+    name = re.sub('^[^a-z]*', '', name)
     # remove any non-allowed characters
-    name = re.sub('[^a-z0-9_:.]+','-',name)
+    name = re.sub('[^a-z0-9_:.]+', '-', name)
     # we're done
     return name
+
 
 def generate(site):
     """Output the overview of problems to the given file descriptor."""
@@ -61,7 +62,7 @@ def generate(site):
         else:
             author = unicode('Unknown')
         # store the problem
-        if problem_db.has_key(author):
+        if author in problem_db:
             problem_db[author].append(link)
         else:
             problem_db[author] = [link]
@@ -70,7 +71,7 @@ def generate(site):
         fp.write(
           '   <p class="description">\n'
           '    No problems were found on this site, hurray.\n'
-          '   </p>\n' )
+          '   </p>\n')
         plugins.close_html(fp)
         return
     # print description
@@ -78,7 +79,7 @@ def generate(site):
       '   <p class="description">\n'
       '    This is an overview of all the problems on the site, grouped by\n'
       '    author.\n'
-      '   </p>\n' )
+      '   </p>\n')
     # get a list of authors
     authors = problem_db.keys()
     authors.sort()
@@ -88,8 +89,8 @@ def generate(site):
         for author in authors:
             fp.write(
               '    <li><a href="#author_%(authorref)s">Author: %(author)s</a></li>\n'
-              % { 'authorref': plugins.htmlescape(_mk_id(author)),
-                  'author':    plugins.htmlescape(author) })
+              % {'authorref': plugins.htmlescape(_mk_id(author)),
+                 'author':    plugins.htmlescape(author)})
         fp.write('   </ul>\n')
     # generate problem report
     fp.write('   <ul>\n')
@@ -98,8 +99,8 @@ def generate(site):
           '     <li id="author_%(authorref)s">\n'
           '      Author: %(author)s\n'
           '      <ul>\n'
-          % { 'authorref': plugins.htmlescape(_mk_id(author)),
-              'author':    plugins.htmlescape(author) })
+          % {'authorref': plugins.htmlescape(_mk_id(author)),
+             'author':    plugins.htmlescape(author)})
         # sort pages by url
         problem_db[author].sort(lambda a, b: cmp(a.url, b.url))
         # list problems for this author
@@ -109,19 +110,19 @@ def generate(site):
               '    <li>\n'
               '     %(link)s\n'
               '     <ul class="problems">\n'
-              % { 'link':    plugins.make_link(link) })
+              % {'link': plugins.make_link(link)})
             # list the problems
             for problem in link.pageproblems.order_by(db.PageProblem.message):
                 fp.write(
                   '      <li>%(problem)s</li>\n'
-                  % { 'problem':  plugins.htmlescape(problem) })
+                  % {'problem':  plugins.htmlescape(problem)})
             # end the list item
             fp.write(
               '     </ul>\n'
-              '    </li>\n' )
+              '    </li>\n')
         fp.write(
           '      </ul>\n'
-          '     </li>\n' )
+          '     </li>\n')
     fp.write(
-      '   </ul>\n' )
+      '   </ul>\n')
     plugins.close_html(fp)

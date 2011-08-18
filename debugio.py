@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,30 +32,34 @@ import sys
 
 # log levels that can be used
 ERROR = 0
-WARN  = 1
-INFO  = 2
+WARN = 1
+INFO = 2
 DEBUG = 3
 
 # initialize logging at default level
 loglevel = INFO
 
+
 def debug(msg):
     """Log the message to stderr if loglevel will allow it."""
     if loglevel >= DEBUG:
-        sys.stderr.write('webcheck: DEBUG: '+str(msg)+'\n')
+        sys.stderr.write('webcheck: DEBUG: ' + str(msg) + '\n')
+
 
 def info(msg):
     """Log the message to stdout if loglevel will allow it."""
     if loglevel >= INFO:
-        sys.stdout.write('webcheck: '+str(msg)+'\n')
+        sys.stdout.write('webcheck: ' + str(msg) + '\n')
         sys.stdout.flush()
+
 
 def warn(msg):
     """Log a warning to stderr if loglevel will allow it."""
     if loglevel >= WARN:
-        sys.stderr.write('webcheck: Warning: '+str(msg)+'\n')
+        sys.stderr.write('webcheck: Warning: ' + str(msg) + '\n')
+
 
 def error(msg):
     """Log an error to stderr if loglevel will allow it."""
     if loglevel >= ERROR:
-        sys.stderr.write('webcheck: Error: '+str(msg)+'\n')
+        sys.stderr.write('webcheck: Error: ' + str(msg) + '\n')

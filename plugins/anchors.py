@@ -45,5 +45,5 @@ def generate(site):
                 anchor.parent.add_pageproblem(
                   u'bad link: %(url)s#%(anchor)s: unknown anchor'
                   % {'url': link.url,
-                     'anchor': anchor })
+                     'anchor': anchor})
     # FIXME: commit changes in session

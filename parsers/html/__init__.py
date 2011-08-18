@@ -35,6 +35,7 @@ mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 # pattern for matching all html entities
 _entitypattern = re.compile('&(#[0-9]{1,6}|[a-zA-Z]{2,10});')
 
+
 def htmlescape(txt, inattr=False):
     """HTML escape the given string and return an ASCII clean string with
     known entities and character entities for the other values.
@@ -54,21 +55,22 @@ def htmlescape(txt, inattr=False):
                 out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
             else:
                 out += '"'
-        elif htmlentitydefs.codepoint2name.has_key(ord(c)):
+        elif ord(c) in htmlentitydefs.codepoint2name:
             out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
         elif ord(c) > 126:
-            out += '&#%d;'% ord(c)
+            out += '&#%d;' % ord(c)
         elif inattr and c == u'\n':
             out += '&#10;'
         else:
             out += c.encode('utf-8')
     return out
 
+
 def _unescape_entity(match):
     """Helper function for htmlunescape().
     This funcion unescapes a html entity, it is passed to the sub()
     function."""
-    if htmlentitydefs.name2codepoint.has_key(match.group(1)):
+    if match.group(1) in htmlentitydefs.name2codepoint:
         # we have a named entity, return proper character
         return unichr(htmlentitydefs.name2codepoint[match.group(1)])
     elif match.group(1)[0] == '#':
@@ -77,6 +79,7 @@ def _unescape_entity(match):
     else:
         # we have something else, just keep the original
         return match.group(0)
+
 
 def htmlunescape(txt):
     """This function unescapes a html encoded string.
@@ -92,6 +95,7 @@ def htmlunescape(txt):
     # we're done
     return txt
 
+
 def _parsefunction(content, link):
     # we find a suitable parse function
     global _parsefunction
@@ -102,11 +106,13 @@ def _parsefunction(content, link):
         _parsefunction = parsers.html.beautifulsoup.parse
     except ImportError:
         # fall back to legacy HTMLParser parser
-        debugio.warn('falling back to the legacy HTML parser, consider installing BeautifulSoup')
+        debugio.warn('falling back to the legacy HTML parser, '
+                     'consider installing BeautifulSoup')
         import parsers.html.htmlparser
         _parsefunction = parsers.html.htmlparser.parse
     # call the actual parse function
     _parsefunction(content, link)
+
 
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a

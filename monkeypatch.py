@@ -28,6 +28,7 @@ import sys
 
 __all__ = []
 
+
 # This monkeypatches RuleLine.applies_to to support * and $ characters in
 # robots.txt path names.
 def my_applies_to(ruleline, filename):

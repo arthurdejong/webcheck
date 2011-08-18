@@ -40,7 +40,9 @@ _refershcontentpattern = re.compile('^[0-9]+;url=(.*)$', re.I)
 # check BeautifulSoup find() function for bugs
 if BeautifulSoup.BeautifulSoup('<foo>').find('foo', bar=True):
     import debugio
-    debugio.warn('using buggy version of BeautifulSoup (%s)' % BeautifulSoup.__version__)
+    debugio.warn('using buggy version of BeautifulSoup (%s)' %
+                 BeautifulSoup.__version__)
+
 
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
@@ -67,21 +69,24 @@ def parse(content, link):
         base = link.url
     # <link rel="TYPE" href="URL">
     for l in soup.findAll('link', rel=True, href=True):
-        if l['rel'].lower() in ('stylesheet', 'alternate stylesheet', 'icon', 'shortcut icon'):
+        if l['rel'].lower() in ('stylesheet', 'alternate stylesheet', 'icon',
+                                'shortcut icon'):
             embed = myurllib.normalizeurl(htmlunescape(l['href']).strip())
             if embed:
                 link.add_embed(urlparse.urljoin(base, embed))
     # <meta name="author" content="AUTHOR">
-    author = soup.find('meta', attrs={'name': re.compile("^author$", re.I), 'content': True})
+    author = soup.find('meta', attrs={'name': re.compile("^author$", re.I),
+                                      'content': True})
     if author and author['content']:
         link.author = htmlunescape(author['content']).strip()
     # <meta http-equiv="refresh" content="0;url=URL">
-    refresh = soup.find('meta', attrs={'http-equiv': _refreshhttpequivpattern, 'content': True})
+    refresh = soup.find('meta', attrs={'http-equiv': _refreshhttpequivpattern,
+                                       'content': True})
     if refresh and refresh['content']:
         try:
             child = _refershcontentpattern.search(refresh['content']).group(1)
         except AttributeError:
-            pass # ignore cases where refresh header parsing causes problems
+            pass  # ignore cases where refresh header parsing causes problems
         else:
             link.add_child(urlparse.urljoin(base, child))
     # <img src="URL">
@@ -100,7 +105,8 @@ def parse(content, link):
         # get anchor name
         a_name = myurllib.normalizeurl(htmlunescape(a['name']).strip())
         # if both id and name are used they should be the same
-        if a.has_key('id') and a_name != myurllib.normalizeurl(htmlunescape(a['id']).strip()):
+        if 'id' in a and \
+           a_name != myurllib.normalizeurl(htmlunescape(a['id']).strip()):
             link.add_pageproblem(
               'anchors defined in name and id attributes do not match')
             # add the id anchor anyway
@@ -110,7 +116,7 @@ def parse(content, link):
     # <ANY id="ID">
     for elem in soup.findAll(id=True):
         # skip anchor that have a name
-        if elem.name == 'a' and elem.has_key('name'):
+        if elem.name == 'a' and 'name' in elem:
             continue
         # add the anchor
         link.add_anchor(myurllib.normalizeurl(htmlunescape(elem['id']).strip()))
@@ -142,7 +148,7 @@ def parse(content, link):
     # <applet code="URL" [archive="URL"]...>
     for applet in soup.findAll('applet', code=True):
         # if applet has archive tag check that
-        if applet.has_key('archive'):
+        if 'archive' in applet:
             embed = myurllib.normalizeurl(htmlunescape(applet['archive']).strip())
         else:
             embed = myurllib.normalizeurl(htmlunescape(applet['code']).strip())
@@ -154,7 +160,9 @@ def parse(content, link):
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <embed><param name="movie" value="url"></embed>
-    for param in soup.findAll('param', attrs={'name': re.compile("^movie$", re.I), 'value': True}):
+    for param in soup.findAll('param', attrs={
+                  'name': re.compile("^movie$", re.I),
+                  'value': True}):
         embed = myurllib.normalizeurl(htmlunescape(param['value']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
@@ -175,7 +183,7 @@ def parse(content, link):
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))
     # <body|table|td background="url">
-    for t in soup.findAll( ('body', 'table', 'td'), background=True):
+    for t in soup.findAll(('body', 'table', 'td'), background=True):
         embed = myurllib.normalizeurl(htmlunescape(t['background']).strip())
         if embed:
             link.add_embed(urlparse.urljoin(base, embed))

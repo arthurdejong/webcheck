@@ -24,6 +24,7 @@ import tidy
 import config
 import parsers.html
 
+
 def parse(content, link):
     """Parse the specified content with tidy and add any errors to the
     link."""

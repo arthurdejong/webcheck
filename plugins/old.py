@@ -37,6 +37,7 @@ import plugins
 
 SECS_PER_DAY = 60 * 60 * 24
 
+
 def generate(site):
     """Output the list of outdated pages to the specified file descriptor."""
     # the time for which links are considered old
@@ -51,7 +52,7 @@ def generate(site):
           '   <p class="description">\n'
           '    No pages were found that were older than %(old)d days old.\n'
           '   </p>\n'
-          % { 'old': config.REPORT_WHATSOLD_URL_AGE })
+          % {'old': config.REPORT_WHATSOLD_URL_AGE})
         plugins.close_html(fp)
         return
     fp.write(
@@ -60,7 +61,7 @@ def generate(site):
       '    days) and may be outdated.\n'
       '   </p>\n'
       '   <ul>\n'
-      % {'old': config.REPORT_WHATSOLD_URL_AGE })
+      % {'old': config.REPORT_WHATSOLD_URL_AGE})
     for link in links:
         age = (time.time() - link.mtime) / SECS_PER_DAY
         fp.write(
@@ -70,10 +71,10 @@ def generate(site):
           '      <li>age: %(age)d days</li>\n'
           '     </ul>\n'
           '    </li>\n'
-          % { 'link':  plugins.make_link(link),
-              'age':   age })
+          % {'link': plugins.make_link(link),
+             'age':  age})
         # add link to problem database
         link.add_pageproblem('this page is %d days old' % age)
     fp.write(
-      '   </ul>\n' )
+      '   </ul>\n')
     plugins.close_html(fp)

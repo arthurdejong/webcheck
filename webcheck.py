@@ -58,17 +58,20 @@ def print_version():
       'Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n'
       'This is free software; see the source for copying conditions.  There is NO\n'
       'warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n'
-      % { 'version': __version__ })
+      % {'version': __version__})
+
 
 def print_usage():
     """Print short usage information."""
     sys.stderr.write(
       'Usage: webcheck [OPTION]... URL...\n')
 
+
 def print_tryhelp():
     """Print friendly pointer to more information."""
     sys.stderr.write(
       'Try \'webcheck --help\' for more information.\n')
+
 
 def print_help():
     """Print the option list."""
@@ -96,7 +99,8 @@ def print_help():
       '  -w, --wait=SECONDS     wait SECONDS between retrievals\n'
       '  -V, --version          output version information and exit\n'
       '  -h, --help             display this help and exit\n'
-      % { 'redirects': config.REDIRECT_DEPTH } )
+      % {'redirects': config.REDIRECT_DEPTH})
+
 
 def parse_args(site):
     """Parse command-line arguments."""
@@ -151,7 +155,7 @@ def parse_args(site):
             elif flag in ('-h', '--help'):
                 print_help()
                 sys.exit(0)
-        if len(args)==0 and not config.CONTINUE:
+        if len(args) == 0 and not config.CONTINUE:
             print_usage()
             print_tryhelp()
             sys.exit(1)
@@ -185,6 +189,7 @@ def parse_args(site):
     except re.error, e:
         sys.stderr.write('webcheck: %s\n' % str(e))
         sys.exit(1)
+
 
 def install_file(source, text=False):
     """Install the given file in the output directory.
@@ -226,23 +231,24 @@ def install_file(source, text=False):
         sfp = open(source, mode)
     except IOError, (errno, strerror):
         debugio.error('%(fname)s: %(strerror)s' %
-                      { 'fname': source,
-                        'strerror': strerror })
+                      {'fname': source,
+                       'strerror': strerror})
         sys.exit(1)
     # create file in output directory (with overwrite question)
-    tfp = plugins.open_file(os.path.basename(source));
+    tfp = plugins.open_file(os.path.basename(source))
     # copy contents
     shutil.copyfileobj(sfp, tfp)
     # close files
     tfp.close()
     sfp.close()
 
+
 def main(site):
     """Main program."""
     # crawl through the website
     debugio.info('checking site....')
     crawler.setup_urllib2()
-    site.crawl() # this will take a while
+    site.crawl()  # this will take a while
     debugio.info('done.')
     # do postprocessing (building site structure, etc)
     debugio.info('postprocessing....')
@@ -258,6 +264,7 @@ def main(site):
     install_file('fancytooltips/fancytooltips.js', True)
     install_file('favicon.ico', False)
     debugio.info('done.')
+
 
 if __name__ == '__main__':
     try:

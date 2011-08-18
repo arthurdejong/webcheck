@@ -30,14 +30,15 @@ import urlparse
 import re
 
 # pattern for matching /* ... */ comments in css
-_commentpattern = re.compile('/\*.*?\*/', re.IGNORECASE|re.DOTALL)
+_commentpattern = re.compile('/\*.*?\*/', re.IGNORECASE | re.DOTALL)
 
 # pattern for matching @import "url" statments in css
 _importpattern = re.compile('@import\s+["\']([^"\']*)["\']',
-                            re.IGNORECASE|re.DOTALL)
+                            re.IGNORECASE | re.DOTALL)
 
 # pattern for matching url(...) in css
 _urlpattern = re.compile('url\(["\']?(.*?)["\']?\)')
+
 
 def parse(content, link, base=None):
     """Parse the specified content and extract information for crawling the

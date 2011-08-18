@@ -42,7 +42,7 @@ def generate(site):
         fp.write(
           '   <p class="description">\n'
           '    All links have been checked.\n'
-          '   </p>\n' )
+          '   </p>\n')
         plugins.close_html(fp)
         return
     fp.write(
@@ -55,11 +55,11 @@ def generate(site):
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
-          % { 'link': plugins.make_link(link, link.url) })
+          % {'link': plugins.make_link(link, link.url)})
         # present a list of parents
         plugins.print_parents(fp, link, '     ')
         fp.write(
           '    </li>\n')
     fp.write(
-      '   </ol>\n' )
+      '   </ol>\n')
     plugins.close_html(fp)

@@ -37,6 +37,7 @@ import plugins
 
 SECS_PER_DAY = 60 * 60 * 24
 
+
 def generate(site):
     """Output the list of recently modified pages to the specified file descriptor."""
     # the time for which links are considered new
@@ -51,7 +52,7 @@ def generate(site):
           '   <p class="description">\n'
           '    No pages were found that were modified within the last %(new)d days.\n'
           '   </p>\n'
-          % { 'new': config.REPORT_WHATSNEW_URL_AGE })
+          % {'new': config.REPORT_WHATSNEW_URL_AGE})
         plugins.close_html(fp)
         return
     fp.write(
@@ -59,9 +60,9 @@ def generate(site):
       '    These pages have been recently modified (within %(new)d days).\n'
       '   </p>\n'
       '   <ul>\n'
-      % { 'new': config.REPORT_WHATSNEW_URL_AGE })
+      % {'new': config.REPORT_WHATSNEW_URL_AGE})
     for link in links:
-        age = (time.time()-link.mtime)/SECS_PER_DAY
+        age = (time.time() - link.mtime) / SECS_PER_DAY
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
@@ -69,7 +70,7 @@ def generate(site):
           '      <li>age: %(age)d days</li>\n'
           '     </ul>\n'
           '    </li>\n'
-          % { 'link':  plugins.make_link(link),
-              'age':   age })
+          % {'link': plugins.make_link(link),
+             'age':  age})
     fp.write('   </ul>\n')
     plugins.close_html(fp)

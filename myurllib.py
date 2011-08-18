@@ -54,6 +54,7 @@ _doubleslashpattern = re.compile('//+')
 # pattern for leading dots
 _leadingdotpattern = re.compile('^(/\.\.)*')
 
+
 def _unescape_printable(match):
     """Helper function for _normalize_escapes() to perform the expansion of
     html entity refs that are normal printable (but not reserver)
@@ -65,6 +66,7 @@ def _unescape_printable(match):
     # transform remaining escapes to uppercase
     return match.group(1).upper()
 
+
 def _normalize_escapes(url):
     """Ensure that escaping in the url is consistent. Any reserved characters
     are left alone. Any characters that are printable but are escaped are
@@ -75,8 +77,9 @@ def _normalize_escapes(url):
     # url encode any nonprintable or problematic characters (but not reserved
     # characters) so we're left with a string with everything that needs to be
     # quoted as such
-    url = _urlprobpattern.sub(lambda x:'%%%02X' % ord(x.group(1)), url)
+    url = _urlprobpattern.sub(lambda x: '%%%02X' % ord(x.group(1)), url)
     return url
+
 
 def _urlclean(url):
     """Clean the url of uneccesary parts."""
@@ -85,9 +88,9 @@ def _urlclean(url):
     # split the url in useful parts
     (scheme, netloc, path, query, fragment) = urlparse.urlsplit(url)
     # remove any leading /../ parts
-    if scheme in ( 'http', 'https' ):
+    if scheme in ('http', 'https'):
         path = _leadingdotpattern.sub('', path)
-    if scheme in ( 'http', 'https', 'ftp' ):
+    if scheme in ('http', 'https', 'ftp'):
         # http(s) urls should have a non-empty path
         if path == '':
             path = '/'
@@ -104,12 +107,13 @@ def _urlclean(url):
         if netloc[-1:] == ':':
             netloc = netloc[:-1]
         if userpass is not None:
-            netloc = userpass+'@'+netloc
+            netloc = userpass + '@' + netloc
     # get rid of double slashes in some paths
-    if ( scheme == 'file' ):
+    if scheme == 'file':
         path = _doubleslashpattern.sub('/', path)
     # put the url back together again
     return urlparse.urlunsplit((scheme, netloc, path, query, fragment))
+
 
 def normalizeurl(url):
     """Return a normalized URL."""

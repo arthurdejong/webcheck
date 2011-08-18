@@ -42,26 +42,26 @@ def generate(site):
         fp.write(
           '   <p class="description">\n'
           '    There were no problems retrieving links from the website.\n'
-          '   </p>\n' )
+          '   </p>\n')
         plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
       '    These links could not be retrieved during the crawling of the website.\n'
       '   </p>\n'
-      '   <ol>\n' )
+      '   <ol>\n')
     for link in links:
         # list the link
         fp.write(
           '    <li>\n'
           '     %(badurl)s\n'
           '     <ul class="problems">\n'
-          % { 'badurl':  plugins.make_link(link,link.url) })
+          % {'badurl':  plugins.make_link(link, link.url)})
         # list the problems
         for problem in link.linkproblems:
             fp.write(
               '      <li>%(problem)s</li>\n'
-              % { 'problem':  plugins.htmlescape(problem) })
+              % {'problem':  plugins.htmlescape(problem)})
         fp.write(
           '     </ul>\n')
         # present a list of parents
@@ -73,5 +73,5 @@ def generate(site):
         fp.write(
           '    </li>\n')
     fp.write(
-      '   </ol>\n' )
+      '   </ol>\n')
     plugins.close_html(fp)

@@ -177,7 +177,7 @@ class Link(Base):
         if self.anchors.filter(Anchor.anchor == anchor).first():
             self.add_pageproblem(
               'anchor/id "%(anchor)s" defined multiple times'
-              % { 'anchor':   anchor })
+              % {'anchor': anchor})
         else:
             self.anchors.append(Anchor(anchor=anchor))
 

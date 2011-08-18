@@ -52,6 +52,7 @@ def add_pagechildren(link, children, explored):
            (embed.depth == None or embed.depth > link.depth):
             add_pagechildren(embed, children, explored)
 
+
 def _explore(fp, link, explored, depth=0, indent='    '):
     """Recursively do a breadth first traversal of the graph of links on the
     site. Prints the html results to the file descriptor."""
@@ -76,6 +77,7 @@ def _explore(fp, link, explored, depth=0, indent='    '):
             fp.write(indent + ' </ul>\n')
     fp.write(indent + '</li>\n')
 
+
 def generate(site):
     """Output the sitemap to the specified file descriptor."""
     fp = plugins.open_html(plugins.sitemap, site)
@@ -84,10 +86,10 @@ def generate(site):
       '   <p class="description">\n'
       '    This an overview of the crawled site.\n'
       '   </p>\n'
-      '   <ul>\n' )
+      '   <ul>\n')
     explored = set(x.id for x in site.bases)
     for l in site.bases:
         _explore(fp, l, explored)
     fp.write(
-      '   </ul>\n' )
+      '   </ul>\n')
     plugins.close_html(fp)

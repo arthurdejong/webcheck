@@ -55,10 +55,10 @@ def generate(site):
       '    This report was generated on %(time)s, a total of %(numurls)d\n'
       '    links were found.\n'
       '   </p>\n\n'
-      % { 'version':  plugins.htmlescape(config.VERSION),
-          'time':     plugins.htmlescape(time.ctime(time.time())),
-          'numurls':  site.links.count(),
-          'homepage': config.HOMEPAGE } )
+      % {'version':  plugins.htmlescape(config.VERSION),
+         'time':     plugins.htmlescape(time.ctime(time.time())),
+         'numurls':  site.links.count(),
+         'homepage': config.HOMEPAGE})
     # output copyright information
     fp.write(
       '   <h3>Copyright</h3>\n'
@@ -94,7 +94,7 @@ def generate(site):
       '    Copyright &copy; 2003-2005 Stuart Langridge, Paul McLanahan,\n'
       '    Peter Janes, Brad Choate, Dunstan Orchard, Ethan Marcotte,\n'
       '    Mark Wubben and Victor Kulinski\n'
-      '   </p>\n\n' )
+      '   </p>\n\n')
     # output plugin information
     fp.write(
       '   <h3>Plugins</h3>\n'
@@ -104,10 +104,10 @@ def generate(site):
         fp.write(
           '    <li>\n'
           '     <strong>%s</strong><br />\n'
-          % plugins.htmlescape(report.__title__) )
+          % plugins.htmlescape(report.__title__))
         if hasattr(report, '__doc__'):
             fp.write('     %s<br />\n' % plugins.htmlescape(report.__doc__))
         fp.write('    </li>\n')
     fp.write(
-      '   </ul>\n' )
+      '   </ul>\n')
     plugins.close_html(fp)

@@ -53,12 +53,13 @@ def _getsize(link, done=None):
         link.total_size = size
     return link.total_size
 
+
 def generate(site):
     """Output the list of large pages to the given file descriptor."""
     # get all internal pages and get big links
     links = site.links.filter_by(is_page=True, is_internal=True)
-    links = [ x for x in links
-              if _getsize(x) >= config.REPORT_SLOW_URL_SIZE * 1024 ]
+    links = [x for x in links
+             if _getsize(x) >= config.REPORT_SLOW_URL_SIZE * 1024]
     # sort links by size (biggest first)
     links.sort(lambda a, b: cmp(b.total_size, a.total_size))
     # present results
@@ -68,7 +69,7 @@ def generate(site):
           '   <p class="description">\n'
           '    No pages over %(size)dK were found.\n'
           '   </p>\n'
-          % { 'size': config.REPORT_SLOW_URL_SIZE })
+          % {'size': config.REPORT_SLOW_URL_SIZE})
         plugins.close_html(fp)
         return
     fp.write(
@@ -77,7 +78,7 @@ def generate(site):
       '    slow to download.\n'
       '   </p>\n'
       '   <ul>\n'
-      % { 'size': config.REPORT_SLOW_URL_SIZE })
+      % {'size': config.REPORT_SLOW_URL_SIZE})
     for link in links:
         size = plugins.get_size(link.total_size)
         fp.write(
@@ -87,11 +88,11 @@ def generate(site):
           '      <li>size: %(size)s</li>\n'
           '     </ul>\n'
           '    </li>\n'
-          % { 'link': plugins.make_link(link),
-              'size': size })
+          % {'link': plugins.make_link(link),
+             'size': size})
         link.add_pageproblem(
           'this page and its components is %(size)s'
-          % { 'size': size })
+          % {'size': size})
     fp.write(
-      '   </ul>\n' )
+      '   </ul>\n')
     plugins.close_html(fp)

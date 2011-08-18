@@ -40,14 +40,14 @@ def generate(site):
     # get all internal pages without a title
     links = site.links.filter_by(is_page=True, is_internal=True)
     links = links.filter(or_(char_length(db.Link.title) == 0,
-                             db.Link.title ==None)).order_by(db.Link.url)
+                             db.Link.title == None)).order_by(db.Link.url)
     # present results
     fp = plugins.open_html(plugins.notitles, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
           '    All pages had a title specified.\n'
-          '   </p>\n' )
+          '   </p>\n')
         plugins.close_html(fp)
         return
     fp.write(
@@ -59,8 +59,8 @@ def generate(site):
     for link in links:
         fp.write(
           '    <li>%(link)s</li>\n'
-          % { 'link': plugins.make_link(link,link.url) })
+          % {'link': plugins.make_link(link, link.url)})
         link.add_pageproblem('missing title')
     fp.write(
-      '   </ol>\n' )
+      '   </ol>\n')
     plugins.close_html(fp)

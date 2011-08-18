@@ -39,10 +39,10 @@ def generate(site):
       '    the website. It lists internal as well as external and\n'
       '    non-examined urls.\n'
       '   </p>\n'
-      '   <ol>\n' )
+      '   <ol>\n')
     links = site.links.order_by(db.Link.url)
     for link in links:
         fp.write('    <li>' + plugins.make_link(link, link.url) + '</li>\n')
     fp.write(
-      '   </ol>\n' )
+      '   </ol>\n')
     plugins.close_html(fp)

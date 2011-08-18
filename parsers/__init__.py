@@ -1,7 +1,7 @@
 
 # __init__.py - general content-type parser interface
 #
-# Copyright (C) 2005, 2006 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,23 +34,26 @@ _modules = ('html', 'css')
 # a map of mimetypes to modules
 _parsermodules = {}
 
+
 def _init_modules():
     """Initialize the modules."""
     # go throught all known modules to probe the content-types
     # (do this only once)
     for mod in _modules:
-        parser = __import__('parsers.'+mod, globals(), locals(), [mod])
+        parser = __import__('parsers.' + mod, globals(), locals(), [mod])
         for mimetype in parser.mimetypes:
             _parsermodules[mimetype] = parser
+
 
 def get_parsermodule(mimetype):
     """Look up the correct module for the specified mimetype."""
     if _parsermodules == {}:
         _init_modules()
     # check if we have a supported content-type
-    if _parsermodules.has_key(mimetype):
+    if mimetype in _parsermodules:
         return _parsermodules[mimetype]
     return None
+
 
 def get_mimetypes():
     """Return a list of supported mime types that can be parsed

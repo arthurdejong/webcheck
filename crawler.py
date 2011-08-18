@@ -70,7 +70,8 @@ def setup_urllib2():
         pass
     atexit.register(cookiejar.save, ignore_discard=False, ignore_expires=False)
     # set up our custom opener that sets a meaningful user agent
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar), NoRedirectHandler())
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar),
+                                  NoRedirectHandler())
     opener.addheaders = [
       ('User-agent', 'webcheck %s' % config.VERSION),
       ]
@@ -147,7 +148,7 @@ class Site(object):
         if config.BASE_URLS_ONLY:
             # the url must start with one of the _internal_urls
             for i in self._internal_urls:
-                res |= (i==url[:len(i)])
+                res |= (i == url[:len(i)])
         else:
             # the netloc must match a netloc of an _internal_url
             netloc = urlparse.urlsplit(url)[1]
@@ -169,18 +170,19 @@ class Site(object):
         netloc."""
         # only some schemes have a meaningful robots.txt file
         if scheme != 'http' and scheme != 'https':
-            debugio.debug('crawler._get_robotparser() called with unsupported scheme (%s)' % scheme)
+            debugio.debug('crawler._get_robotparser() '
+                          'called with unsupported scheme (%s)' % scheme)
             return None
         # split out the key part of the url
         location = urlparse.urlunsplit((scheme, netloc, '', '', ''))
         # try to create a new robotparser if we don't already have one
-        if not self._robotparsers.has_key(location):
+        if location not in self._robotparsers:
             debugio.info('  getting robots.txt for %s' % location)
             self._robotparsers[location] = None
             try:
                 rp = robotparser.RobotFileParser()
                 rp.set_url(urlparse.urlunsplit(
-                  (scheme, netloc, '/robots.txt', '', '') ))
+                  (scheme, netloc, '/robots.txt', '', '')))
                 rp.read()
                 self._robotparsers[location] = rp
             except (TypeError, IOError, httplib.HTTPException):
@@ -277,7 +279,8 @@ class Site(object):
             session.commit()
             # sleep between requests if configured
             if config.WAIT_BETWEEN_REQUESTS > 0:
-                debugio.debug('crawler.crawl(): sleeping %s seconds' % config.WAIT_BETWEEN_REQUESTS)
+                debugio.debug('crawler.crawl(): sleeping %s seconds' %
+                              config.WAIT_BETWEEN_REQUESTS)
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
             debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
         session.commit()
