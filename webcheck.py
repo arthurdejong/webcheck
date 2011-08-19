@@ -279,7 +279,15 @@ if __name__ == '__main__':
                 import cProfile
             except ImportError:
                 import profile as cProfile
+            try:
+                import sqltap
+                sqltap.start()
+            except ImportError:
+                pass
             cProfile.run('main(site)', fname)
+            if 'sqltap' in locals():
+                statistics = sqltap.collect()
+                sqltap.report(statistics, os.path.join(config.OUTPUT_DIR, 'sqltap.html'))
         else:
             main(site)
     except KeyboardInterrupt:
