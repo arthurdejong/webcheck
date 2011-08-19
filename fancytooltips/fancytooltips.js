@@ -35,7 +35,7 @@ function FancyTooltips(sTemplate, nDelay, nStringMaxLength, nMarginX, nMarginY, 
 	if(!nDelay || nDelay <= 0){ nDelay = false;}
 	if(!nStringMaxLength){ nStringMaxLength = 8000; }
 	if(!nMarginX){ nMarginX = 15; }
-	if(!nMarginY){ nMarginY = 35; }
+	if(!nMarginY){ nMarginY = 15; }
 	if(!sContainerID){ sContainerID = "fancytooltipcontainer";}
 	if(!sClassName){ sClassName = "fancytooltip";}
 
@@ -146,21 +146,14 @@ function FancyTooltips(sTemplate, nDelay, nStringMaxLength, nMarginX, nMarginY, 
 			oCoords.x += nMarginX;
 			oCoords.y += nMarginY;			
 		} else {
-			oCoords = { x : commonEventInterface.clientX + oViewport.x + nMarginX, y : commonEventInterface.clientY + oViewport.y + nMarginY};
-		}
-
-		oContainer.style.visiblity = "hidden"; // oContainer needs to be displayed before width and height can be retrieved.
-		oContainer.style.display =  "block";
-		var containerWidth = oContainer.offsetWidth;
-		var containerHeight = oContainer.offsetHeight;
-		oContainer.style.display = "none"; // And hide it again.
-		oContainer.style.visiblity = "visible";
-
-		if(oCoords.x + containerWidth + 10 >= oViewport.width + oViewport.x){
-			oCoords.x = oViewport.width + oViewport.x - containerWidth - 10;
-		}
-		if(oCoords.y + containerHeight + 10 >= oViewport.height + oViewport.y){
-			oCoords.y = oViewport.height + oViewport.y - containerHeight - oNode.offsetHeight - 10;
+			oCoords = { x: commonEventInterface.clientX +
+			               (document.documentElement.scrollLeft ? document.documentElement.scrollLeft
+			                                                    : document.body.scrollLeft) +
+			               nMarginX,
+			            y: commonEventInterface.clientY +
+			               (document.documentElement.scrollTop ? document.documentElement.scrollTop
+			                                                   : document.body.scrollTop) +
+			               nMarginY };
 		}
 
 		oCoords.x += "px";
