@@ -28,6 +28,8 @@ __title__ = 'not checked'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'notchkd.html'
 
+from sqlalchemy.orm import joinedload
+
 import db
 import plugins
 
@@ -38,7 +40,7 @@ def generate(site):
     links = site.links.filter(db.Link.yanked != None).order_by(db.Link.url)
     # present results
     fp = plugins.open_html(plugins.notchkd, site)
-    if not links:
+    if not links.count():
         fp.write(
           '   <p class="description">\n'
           '    All links have been checked.\n'
@@ -51,7 +53,7 @@ def generate(site):
       '    at all during the examination of the website.\n'
       '   </p>\n'
       '   <ol>\n')
-    for link in links:
+    for link in links.options(joinedload(db.Link.linkproblems)):
         fp.write(
           '    <li>\n'
           '     %(link)s\n'

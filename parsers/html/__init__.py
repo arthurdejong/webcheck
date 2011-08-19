@@ -36,10 +36,9 @@ mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 _entitypattern = re.compile('&(#[0-9]{1,6}|[a-zA-Z]{2,10});')
 
 
-def htmlescape(txt, inattr=False):
+def htmlescape(txt):
     """HTML escape the given string and return an ASCII clean string with
-    known entities and character entities for the other values.
-    If the inattr parameter is set quotes and newlines will also be escaped."""
+    known entities and character entities for the other values."""
     # check for empty string
     if not txt:
         return u''
@@ -50,17 +49,10 @@ def htmlescape(txt, inattr=False):
     out = ''
     # loop over the characters of the string
     for c in txt:
-        if c == '"':
-            if inattr:
-                out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
-            else:
-                out += '"'
-        elif ord(c) in htmlentitydefs.codepoint2name:
+        if ord(c) in htmlentitydefs.codepoint2name:
             out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
         elif ord(c) > 126:
             out += '&#%d;' % ord(c)
-        elif inattr and c == u'\n':
-            out += '&#10;'
         else:
             out += c.encode('utf-8')
     return out

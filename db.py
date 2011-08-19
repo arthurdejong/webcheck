@@ -23,10 +23,11 @@
 import urlparse
 
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import distinct, func
 from sqlalchemy import Table, Column, Integer, Boolean, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.orm.session import object_session
-from sqlalchemy.sql.expression import ClauseElement
+from sqlalchemy.sql.expression import ClauseElement, union
 
 import config
 import debugio
@@ -40,15 +41,15 @@ Base = declarative_base()
 
 children = Table(
     'children', Base.metadata,
-    Column('parent_id', Integer, ForeignKey('links.id', ondelete='CASCADE')),
-    Column('child_id', Integer, ForeignKey('links.id', ondelete='CASCADE'))
+    Column('parent_id', Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True),
+    Column('child_id', Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True)
     )
 
 
 embedded = Table(
     'embedded', Base.metadata,
-    Column('parent_id', Integer, ForeignKey('links.id', ondelete='CASCADE')),
-    Column('child_id', Integer, ForeignKey('links.id', ondelete='CASCADE'))
+    Column('parent_id', Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True),
+    Column('child_id', Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True)
     )
 
 
@@ -68,9 +69,9 @@ class Link(Base):
     mimetype = Column(String)
     encoding = Column(String)
     size = Column(Integer)
-    mtime = Column(DateTime)
+    mtime = Column(DateTime, index=True)
     is_page = Column(Boolean, index=True)
-    title = Column(String)
+    title = Column(String, index=True)
     author = Column(String)
 
     # relationships between links
@@ -212,8 +213,24 @@ class Link(Base):
         return child.follow_link(visited)
 
     @property
+    def count_parents(self):
+        session = object_session(self)
+        p1 = session.query(func.count(distinct(children.c.parent_id))).filter(children.c.child_id == self.id)
+        p2 = session.query(func.count(distinct(embedded.c.parent_id))).filter(embedded.c.child_id == self.id)
+        return p1.scalar() + p2.scalar()
+
+    @property
     def parents(self):
-        return set(self.linked_from).union(self.embedded_in)
+        session = object_session(self)
+        #links = object_session(self).query(Link)
+        #links = links.join(children, Link.id == children.c.parent_id)
+        #links = links.join(embedded, Link.id == embedded.c.parent_id)
+        #return links.filter((children.c.child_id == self.id) |
+        #                    (embedded.c.child_id == self.id)).distinct()
+        parent_ids = union(session.query(children.c.parent_id).filter(children.c.child_id == self.id),
+                           session.query(embedded.c.parent_id).filter(embedded.c.child_id == self.id))
+
+        return session.query(Link).filter(Link.id == parent_ids.c.children_parent_id).distinct()
 
 
 class LinkProblem(Base):
@@ -223,10 +240,10 @@ class LinkProblem(Base):
     __tablename__ = 'linkproblems'
 
     id = Column(Integer, primary_key=True)
-    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'))
-    link = relationship(Link, backref=backref('linkproblems',
-                        cascade='all,delete,delete-orphan', lazy='dynamic'))
-    message = Column(String)
+    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True)
+    message = Column(String, index=True)
+    link = relationship(Link, backref=backref('linkproblems', order_by=message,
+                        cascade='all,delete,delete-orphan'))
 
     def __unicode__(self):
         return self.message
@@ -239,10 +256,10 @@ class PageProblem(Base):
     __tablename__ = 'pageproblems'
 
     id = Column(Integer, primary_key=True)
-    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'))
-    link = relationship(Link, backref=backref('pageproblems',
-                        cascade='all,delete,delete-orphan', lazy='dynamic'))
-    message = Column(String)
+    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True)
+    message = Column(String, index=True)
+    link = relationship(Link, backref=backref('pageproblems', order_by=message,
+                        cascade='all,delete,delete-orphan'))
 
     def __unicode__(self):
         return self.message
@@ -254,7 +271,7 @@ class Anchor(Base):
     __tablename__ = 'anchors'
 
     id = Column(Integer, primary_key=True)
-    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'))
+    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True)
     link = relationship(Link, backref=backref('anchors',
                         lazy='dynamic',
                         cascade='all,delete,delete-orphan'))
@@ -270,12 +287,12 @@ class RequestedAnchor(Base):
     __tablename__ = 'reqanchors'
 
     id = Column(Integer, primary_key=True)
-    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'))
+    link_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True)
     link = relationship(Link, backref=backref('reqanchors',
                         lazy='dynamic',
                         cascade='all,delete,delete-orphan',
                         ), primaryjoin='Link.id == RequestedAnchor.link_id')
-    parent_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'))
+    parent_id = Column(Integer, ForeignKey('links.id', ondelete='CASCADE'), index=True)
     parent = relationship(Link, primaryjoin='Link.id == RequestedAnchor.parent_id')
     anchor = Column(String)
 

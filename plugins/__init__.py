@@ -43,23 +43,19 @@ fields:
 
 Pluings can use the functions exported by this module."""
 
+import sys
+import time
+
+from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import object_session
 
-import sys
-import debugio
 import config
-import time
+import db
+import debugio
 import parsers.html
 
 # reference function from html module
 htmlescape = parsers.html.htmlescape
-
-
-def get_title(link):
-    """Returns the title of a link if it is set otherwise returns url."""
-    if link.title is None or link.title == '':
-        return link.url
-    return link.title
 
 
 def _floatformat(f):
@@ -87,54 +83,43 @@ def get_size(i):
         return '%d' % i
 
 
-def _mk_unicode(txt):
-    """Returns a unicode instance of the string."""
-    if not isinstance(txt, unicode):
-        txt = unicode(txt)
-    return txt
-
-
-def get_info(link):
+def _get_info(link):
     """Return a string with a summary of the information in the link."""
-    info = u'url: %s\n' % _mk_unicode(link.url)
+    info = u'url: %s\n' % link.url
     if link.status:
-        info += '%s\n' % _mk_unicode(link.status)
+        info += u'%s\n' % link.status
     if link.title:
-        info += 'title: %s\n' % link.title.strip()
+        info += u'title: %s\n' % link.title.strip()
     if link.author:
-        info += 'author: %s\n' % link.author.strip()
+        info += u'author: %s\n' % link.author.strip()
     if link.is_internal:
-        info += 'internal link'
+        info += u'internal link'
     else:
-        info += 'external link'
+        info += u'external link'
     if link.yanked:
-        if isinstance(link.yanked, unicode):
-            info += ', not checked (%s)\n' % link.yanked
-        if isinstance(link.yanked, str):
-            info += ', not checked (%s)\n' % _mk_unicode(link.yanked)
-        else:
-            info += ', not checked\n'
+        info += u', not checked (%s)\n' % link.yanked
     else:
-        info += '\n'
-    if link.redirectdepth > 0:
+        info += u'\n'
+    if link.redirectdepth:
         if link.children.count() > 0:
-            info += 'redirect: %s\n' % _mk_unicode(link.children.first().url)
+            info += u'redirect: %s\n' % link.children.first().url
         else:
-            info += 'redirect (not followed)\n'
-    if len(link.parents) == 1:
-        info += 'linked from 1 page\n'
-    elif len(link.parents) > 1:
-        info += 'linked from %d pages\n' % len(link.parents)
+            info += u'redirect (not followed)\n'
+    count = link.count_parents
+    if count == 1:
+        info += u'linked from 1 page\n'
+    elif count > 1:
+        info += u'linked from %d pages\n' % count
     if link.mtime:
-        info += 'last modified: %s\n' % time.ctime(link.mtime)
+        info += u'last modified: %s\n' % time.ctime(link.mtime)
     if link.size:
-        info += 'size: %s\n' % get_size(link.size)
+        info += u'size: %s\n' % get_size(link.size)
     if link.mimetype:
-        info += 'mime-type: %s\n' % _mk_unicode(link.mimetype)
+        info += u'mime-type: %s\n' % link.mimetype
     if link.encoding:
-        info += 'encoding: %s\n' % _mk_unicode(link.encoding)
+        info += u'encoding: %s\n' % link.encoding
     for problem in link.linkproblems:
-        info += 'problem: %s\n' % _mk_unicode(problem)
+        info += u'problem: %s\n' % problem.message
     # trim trailing newline
     return info.strip()
 
@@ -142,41 +127,27 @@ def get_info(link):
 def make_link(link, title=None):
     """Return an <a>nchor to a url with title. If url is in the Linklist and
     is external, insert "class=external" in the <a> tag."""
-    # try to fetch the link object for this url
-    if link.is_internal:
-        cssclass = 'internal'
-    else:
-        cssclass = 'external'
-    if title is None:
-        title = get_title(link)
-    target = ''
-    if config.REPORT_LINKS_IN_NEW_WINDOW:
-        target = 'target="_blank" '
-    # gather some information about the link to report
     return '<a href="%(url)s" %(target)sclass="%(cssclass)s" title="%(info)s">%(title)s</a>' % \
-            dict(url=htmlescape(link.url, True),
-                 target=target,
-                 cssclass=cssclass,
-                 info=htmlescape(get_info(link), True),
-                 title=htmlescape(title))
+            dict(url=htmlescape(link.url),
+                 target='target="_blank" ' if config.REPORT_LINKS_IN_NEW_WINDOW else '',
+                 cssclass='internal' if link.is_internal else 'external',
+                 info=htmlescape(_get_info(link)).replace('\n', '&#10;'),
+                 title=htmlescape(title or link.title or link.url))
 
 
 def print_parents(fp, link, indent='     '):
     """Write a list of parents to the output file descriptor.
     The output is indeted with the specified indent."""
-    parents = list(link.parents)
     # if there are no parents print nothing
-    if not parents:
+    count = link.count_parents
+    if not count:
         return
-    parents.sort(lambda a, b: cmp(a.title, b.title) or cmp(a.url, b.url))
+    parents = link.parents.order_by(db.Link.title, db.Link.url).options(joinedload(db.Link.linkproblems))[:config.PARENT_LISTLEN]
     fp.write(
       indent + '<div class="parents">\n' +
       indent + ' referenced from:\n' +
       indent + ' <ul>\n')
     more = 0
-    if len(parents) > config.PARENT_LISTLEN + 1:
-        more = len(parents) - config.PARENT_LISTLEN
-        parents = parents[:config.PARENT_LISTLEN]
     for parent in parents:
         fp.write(
           indent + '  <li>%(parent)s</li>\n'
@@ -283,7 +254,7 @@ def open_html(plugin, site):
       ' </head>\n'
       ' <body>\n'
       '  <h1 class="basename">Webcheck report for <a href="%(siteurl)s">%(sitetitle)s</a></h1>\n'
-      % {'sitetitle':   htmlescape(get_title(base)),
+      % {'sitetitle':   htmlescape(base.title or base.url),
          'plugintitle': htmlescape(plugin.__title__),
          'siteurl':     base.url,
          'version':     config.VERSION})

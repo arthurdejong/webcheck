@@ -295,8 +295,9 @@ class Site(object):
         try:
             # FIXME: if an URI has a username:passwd add the uri, username and password to the HTTPPasswordMgr
             request = urllib2.Request(link.url)
-            if link.parents:
-                request.add_header('Referer', iter(link.parents).next().url)
+            parent = link.parents.first()
+            if parent:
+                request.add_header('Referer', parent.url)
             response = urllib2.urlopen(request)
             link.mimetype = response.info().gettype()
             link.set_encoding(response.headers.getparam('charset'))

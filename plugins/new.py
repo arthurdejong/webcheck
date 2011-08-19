@@ -47,7 +47,7 @@ def generate(site):
     links = links.filter(db.Link.mtime > newtime).order_by(db.Link.mtime.desc())
     # present results
     fp = plugins.open_html(plugins.new, site)
-    if not links:
+    if not links.count():
         fp.write(
           '   <p class="description">\n'
           '    No pages were found that were modified within the last %(new)d days.\n'

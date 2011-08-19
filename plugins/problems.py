@@ -112,7 +112,7 @@ def generate(site):
               '     <ul class="problems">\n'
               % {'link': plugins.make_link(link)})
             # list the problems
-            for problem in link.pageproblems.order_by(db.PageProblem.message):
+            for problem in link.pageproblems:
                 fp.write(
                   '      <li>%(problem)s</li>\n'
                   % {'problem':  plugins.htmlescape(problem)})

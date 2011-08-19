@@ -28,6 +28,8 @@ __title__ = 'external links'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'external.html'
 
+from sqlalchemy.orm import joinedload
+
 import db
 import plugins
 
@@ -51,7 +53,7 @@ def generate(site):
       '    examination of the website.'
       '   </p>\n'
       '   <ol>\n')
-    for link in links:
+    for link in links.options(joinedload(db.Link.linkproblems)):
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
