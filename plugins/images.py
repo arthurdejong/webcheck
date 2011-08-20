@@ -35,9 +35,11 @@ import plugins
 
 
 def generate(site):
-    """Output a list of images to the given file descriptor."""
-    # get non-page images that have an image/* mimetype
-    links = site.links.filter((db.Link.is_page != True) | (db.Link.is_page == None))
+    """Generate a list of image URLs that were found."""
+    session = db.Session()
+    # get non-page links that have an image/* mimetype
+    links = session.query(db.Link)
+    links = links.filter((db.Link.is_page != True) | (db.Link.is_page == None))
     links = links.filter(db.Link.mimetype.startswith('image/'))
     links = links.order_by(db.Link.url)
     # present results

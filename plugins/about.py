@@ -31,13 +31,14 @@ __outputfile__ = 'about.html'
 import time
 
 import config
+import db
 import plugins
 
 
 def generate(site):
-    """Output a list of modules, it's authors and it's version to the
-    file descriptor."""
+    """Output a list of modules, it's authors and the webcheck version."""
     fp = plugins.open_html(plugins.about, site)
+    session = db.Session()
     # TODO: xxx links were fetched, xxx pages were examined and a total of xxx notes and problems were found
     # TODO: include some runtime information (e.g. supported schemes, user configuration, etc)
     # output some general information about the report
@@ -57,7 +58,7 @@ def generate(site):
       '   </p>\n\n'
       % {'version':  plugins.htmlescape(config.VERSION),
          'time':     plugins.htmlescape(time.ctime(time.time())),
-         'numurls':  site.links.count(),
+         'numurls':  session.query(db.Link).count(),
          'homepage': config.HOMEPAGE})
     # output copyright information
     fp.write(

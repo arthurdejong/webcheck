@@ -40,10 +40,11 @@ SECS_PER_DAY = 60 * 60 * 24
 
 def generate(site):
     """Output the list of outdated pages to the specified file descriptor."""
+    session = db.Session()
     # the time for which links are considered old
     oldtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSOLD_URL_AGE
     # get all internal pages that are old
-    links = site.links.filter_by(is_page=True, is_internal=True)
+    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
     links = links.filter(db.Link.mtime < oldtime).order_by(db.Link.mtime)
     # present results
     fp = plugins.open_html(plugins.old, site)
@@ -73,8 +74,6 @@ def generate(site):
           '    </li>\n'
           % {'link': plugins.make_link(link),
              'age':  age})
-        # add link to problem database
-        link.add_pageproblem('this page is %d days old' % age)
     fp.write(
       '   </ul>\n')
     plugins.close_html(fp)

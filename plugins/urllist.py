@@ -31,7 +31,8 @@ import plugins
 
 
 def generate(site):
-    """Output a sorted list of urls to the specified file descriptor."""
+    """Output a sorted list of URLs."""
+    session = db.Session()
     fp = plugins.open_html(plugins.urllist, site)
     fp.write(
       '   <p class="description">\n'
@@ -40,7 +41,7 @@ def generate(site):
       '    non-examined urls.\n'
       '   </p>\n'
       '   <ol>\n')
-    links = site.links.order_by(db.Link.url)
+    links = session.query(db.Link).order_by(db.Link.url)
     for link in links:
         fp.write('    <li>' + plugins.make_link(link, link.url) + '</li>\n')
     fp.write(

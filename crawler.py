@@ -396,5 +396,19 @@ class Site(object):
             depth += 1
             debugio.debug('crawler.postprocess(): %d links at depth %d' % (count, depth))
             # TODO: also handle embeds
-        # make the list of links (and session) available to the plugins
-        self.links = session.query(db.Link)
+        # see if any of the plugins want to do postprocessing
+        for p in config.PLUGINS:
+            # import the plugin
+            plugin = __import__('plugins.' + p, globals(), locals(), [p])
+            if hasattr(plugin, 'postprocess'):
+                debugio.info('  ' + p)
+                plugin.postprocess(self)
+
+    def generate(self):
+        """Generate pages for plugins."""
+        for p in config.PLUGINS:
+            # import the plugin
+            plugin = __import__('plugins.' + p, globals(), locals(), [p])
+            if hasattr(plugin, 'generate'):
+                debugio.info('  ' + p)
+                plugin.generate(self)

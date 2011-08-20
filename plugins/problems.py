@@ -49,11 +49,12 @@ def _mk_id(name):
 
 
 def generate(site):
-    """Output the overview of problems to the given file descriptor."""
+    """Output the overview of problems per author."""
+    session = db.Session()
     # make a list of problems per author
     problem_db = {}
     # get internal links with page problems
-    links = site.links.filter_by(is_internal=True)
+    links = session.query(db.Link).filter_by(is_internal=True)
     links = links.filter(db.Link.pageproblems.any()).order_by(db.Link.url)
     for link in links:
         # make a normal name for the author

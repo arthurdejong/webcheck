@@ -79,7 +79,8 @@ def _explore(fp, link, explored, depth=0, indent='    '):
 
 
 def generate(site):
-    """Output the sitemap to the specified file descriptor."""
+    """Output the sitemap."""
+    session = db.Session()
     fp = plugins.open_html(plugins.sitemap, site)
     # output the site structure using breadth first traversal
     fp.write(

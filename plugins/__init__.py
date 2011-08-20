@@ -281,14 +281,3 @@ def close_html(fp):
          'homepage': config.HOMEPAGE,
          'version':  htmlescape(config.VERSION)})
     fp.close()
-
-
-def generate(site):
-    """Generate pages for plugins."""
-    for p in config.PLUGINS:
-        debugio.info('  ' + p)
-        # import the plugin
-        plugin = __import__('plugins.' + p, globals(), locals(), [p])
-        # run the plugin
-        plugin.generate(site)
-        object_session(site.links[0]).commit()

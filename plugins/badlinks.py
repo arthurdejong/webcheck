@@ -34,10 +34,25 @@ import db
 import plugins
 
 
-def generate(site):
-    """Present the list of bad links to the given file descriptor."""
+def postporcess(site):
+    """Add all bad links as pageproblems on pages where they are linked."""
+    session = db.Session()
     # find all links with link problems
-    links = site.links.filter(db.Link.linkproblems.any()).order_by(db.Link.url).options(joinedload(db.Link.linkproblems))
+    links = session.query(db.Link).filter(db.Link.linkproblems.any()).options(joinedload(db.Link.linkproblems))
+    # TODO: probably make it a nicer query over all linkproblems
+    for link in links:
+        # add a reference to the problem map
+        for problem in link.linkproblems:
+            for parent in link.parents:
+                parent.add_pageproblem('bad link: %s: %s' % (link.url, problem))
+    session.commit()
+
+
+def generate(site):
+    """Present the list of bad links."""
+    session = db.Session()
+    # find all links with link problems
+    links = session.query(db.Link).filter(db.Link.linkproblems.any()).order_by(db.Link.url).options(joinedload(db.Link.linkproblems))
     # present results
     fp = plugins.open_html(plugins.badlinks, site)
     if not links:
@@ -68,10 +83,6 @@ def generate(site):
           '     </ul>\n')
         # present a list of parents
         plugins.print_parents(fp, link, '     ')
-        # add a reference to the problem map
-        for problem in link.linkproblems:
-            for parent in link.parents:
-                parent.add_pageproblem('bad link: %s: %s' % (link.url, problem))
         fp.write(
           '    </li>\n')
     fp.write(

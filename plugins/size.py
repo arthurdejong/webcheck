@@ -29,6 +29,7 @@ __author__ = 'Arthur de Jong'
 __outputfile__ = 'size.html'
 
 import config
+import db
 import plugins
 
 
@@ -55,9 +56,10 @@ def _getsize(link, done=None):
 
 
 def generate(site):
-    """Output the list of large pages to the given file descriptor."""
+    """Output the list of large pages."""
+    session = db.Session()
     # get all internal pages and get big links
-    links = site.links.filter_by(is_page=True, is_internal=True)
+    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
     links = [x for x in links
              if _getsize(x) >= config.REPORT_SLOW_URL_SIZE * 1024]
     # sort links by size (biggest first)
@@ -90,9 +92,6 @@ def generate(site):
           '    </li>\n'
           % {'link': plugins.make_link(link),
              'size': size})
-        link.add_pageproblem(
-          'this page and its components is %(size)s'
-          % {'size': size})
     fp.write(
       '   </ul>\n')
     plugins.close_html(fp)

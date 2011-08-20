@@ -29,21 +29,33 @@ __author__ = 'Arthur de Jong'
 __outputfile__ = 'notitles.html'
 
 from sqlalchemy.sql.functions import char_length
-from sqlalchemy.sql.expression import or_
 
 import db
 import plugins
 
 
-def generate(site):
-    """Output the list of pages without a title to the given file descriptor."""
+def postprocess(site):
+    """Add page problems for all pages without a title."""
+    session = db.Session()
     # get all internal pages without a title
-    links = site.links.filter_by(is_page=True, is_internal=True)
-    links = links.filter(or_(char_length(db.Link.title) == 0,
-                             db.Link.title == None)).order_by(db.Link.url)
+    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
+    links = links.filter((char_length(db.Link.title) == 0) |
+                         (db.Link.title == None))
+    for link in links:
+        link.add_pageproblem('missing title')
+    session.commit()
+
+
+def generate(site):
+    """Output the list of pages without a title."""
+    session = db.Session()
+    # get all internal pages without a title
+    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
+    links = links.filter((char_length(db.Link.title) == 0) |
+                         (db.Link.title == None)).order_by(db.Link.url)
     # present results
     fp = plugins.open_html(plugins.notitles, site)
-    if not links:
+    if not links.count():
         fp.write(
           '   <p class="description">\n'
           '    All pages had a title specified.\n'
@@ -60,7 +72,6 @@ def generate(site):
         fp.write(
           '    <li>%(link)s</li>\n'
           % {'link': plugins.make_link(link, link.url)})
-        link.add_pageproblem('missing title')
     fp.write(
       '   </ol>\n')
     plugins.close_html(fp)

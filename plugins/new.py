@@ -39,11 +39,12 @@ SECS_PER_DAY = 60 * 60 * 24
 
 
 def generate(site):
-    """Output the list of recently modified pages to the specified file descriptor."""
+    """Output the list of recently modified pages."""
+    session = db.Session()
     # the time for which links are considered new
     newtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSNEW_URL_AGE
     # get all internal pages that are new
-    links = site.links.filter_by(is_page=True, is_internal=True)
+    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
     links = links.filter(db.Link.mtime > newtime).order_by(db.Link.mtime.desc())
     # present results
     fp = plugins.open_html(plugins.new, site)
