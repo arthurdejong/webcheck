@@ -232,7 +232,7 @@ class Site(object):
 
     def get_links_to_crawl(self, session):
         links = session.query(db.Link).filter(db.Link.fetched == None)
-        return links.filter(db.Link.yanked == None)[:100]
+        return links.filter(db.Link.yanked == None)
 
     def crawl(self):
         """Crawl the website based on the urls specified with
@@ -259,6 +259,9 @@ class Site(object):
             self.get_link(session, url)
         # add some URLs from the database that haven't been fetched
         tocheck = self.get_links_to_crawl(session)
+        remaining = tocheck.count()
+        tocheck = tocheck[:100]
+        remaining -= len(tocheck)
         # repeat until we have nothing more to check
         while tocheck:
             # choose a link from the tocheck list
@@ -268,6 +271,9 @@ class Site(object):
             # see if there are any more links to check
             if not tocheck:
                 tocheck = self.get_links_to_crawl(session)
+                remaining = tocheck.count()
+                tocheck = tocheck[:100]
+                remaining -= len(tocheck)
             # skip link it there is nothing to check
             if link.yanked or link.fetched:
                 continue
@@ -282,7 +288,8 @@ class Site(object):
                 debugio.debug('crawler.crawl(): sleeping %s seconds' %
                               config.WAIT_BETWEEN_REQUESTS)
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
-            debugio.debug('crawler.crawl(): items left to check: %d' % len(tocheck))
+            debugio.debug('crawler.crawl(): items left to check: %d' %
+                          (remaining + len(tocheck)))
         session.commit()
 
     def fetch(self, link):
