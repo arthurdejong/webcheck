@@ -147,11 +147,12 @@ def print_parents(fp, link, indent='     '):
       indent + '<div class="parents">\n' +
       indent + ' referenced from:\n' +
       indent + ' <ul>\n')
-    more = 0
+    more = link.count_parents
     for parent in parents:
         fp.write(
           indent + '  <li>%(parent)s</li>\n'
           % {'parent': make_link(parent)})
+        more -= 1
     if more:
         fp.write(
           indent + '  <li>%(more)d more...</li>\n'
