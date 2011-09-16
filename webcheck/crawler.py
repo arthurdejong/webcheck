@@ -405,18 +405,18 @@ class Site(object):
             debugio.debug('crawler.postprocess(): %d links at depth %d' % (count, depth))
             # TODO: also handle embeds
         # see if any of the plugins want to do postprocessing
-        for p in webcheck.config.PLUGINS:
+        for plugin in webcheck.config.PLUGINS:
             # import the plugin
-            plugin = __import__('plugins.' + p, globals(), locals(), [p])
-            if hasattr(plugin, 'postprocess'):
-                debugio.info('  ' + p)
-                plugin.postprocess(self)
+            pluginmod = __import__(plugin, globals(), locals(), [plugin])
+            if hasattr(pluginmod, 'postprocess'):
+                debugio.info('  ' + plugin)
+                pluginmod.postprocess(self)
 
     def generate(self):
         """Generate pages for plugins."""
-        for p in webcheck.config.PLUGINS:
+        for plugin in webcheck.config.PLUGINS:
             # import the plugin
-            plugin = __import__('plugins.' + p, globals(), locals(), [p])
-            if hasattr(plugin, 'generate'):
-                debugio.info('  ' + p)
-                plugin.generate(self)
+            pluginmod = __import__(plugin, globals(), locals(), [plugin])
+            if hasattr(pluginmod, 'generate'):
+                debugio.info('  ' + plugin)
+                pluginmod.generate(self)

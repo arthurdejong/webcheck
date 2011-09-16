@@ -101,13 +101,13 @@ def generate(site):
       '   <h3>Plugins</h3>\n'
       '   <ul>\n')
     for plugin in webcheck.config.PLUGINS:
-        report = __import__('webcheck.plugins.' + plugin, globals(), locals(), [plugin])
+        pluginmod = __import__(plugin, globals(), locals(), [plugin])
         fp.write(
           '    <li>\n'
           '     <strong>%s</strong><br />\n'
-          % webcheck.plugins.htmlescape(report.__title__))
-        if hasattr(report, '__doc__'):
-            fp.write('     %s<br />\n' % webcheck.plugins.htmlescape(report.__doc__))
+          % webcheck.plugins.htmlescape(pluginmod.__title__))
+        if hasattr(pluginmod, '__doc__'):
+            fp.write('     %s<br />\n' % webcheck.plugins.htmlescape(pluginmod.__doc__))
         fp.write('    </li>\n')
     fp.write(
       '   </ul>\n')

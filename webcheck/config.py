@@ -65,19 +65,19 @@ WAIT_BETWEEN_REQUESTS = 0
 REDIRECT_DEPTH = 5
 
 # The list of plugins that will be used to generate the report.
-PLUGINS = ['anchors',
-           'sitemap',
-           'urllist',
-           'images',
-           'external',
-           'notchkd',
-           'badlinks',
-           'old',
-           'new',
-           'size',
-           'notitles',
-           'problems',
-           'about']
+PLUGINS = ['webcheck.plugins.anchors',
+           'webcheck.plugins.sitemap',
+           'webcheck.plugins.urllist',
+           'webcheck.plugins.images',
+           'webcheck.plugins.external',
+           'webcheck.plugins.notchkd',
+           'webcheck.plugins.badlinks',
+           'webcheck.plugins.old',
+           'webcheck.plugins.new',
+           'webcheck.plugins.size',
+           'webcheck.plugins.notitles',
+           'webcheck.plugins.problems',
+           'webcheck.plugins.about']
 
 # Whether to overwrite files without asking. This is the state of the -f
 # command line option.

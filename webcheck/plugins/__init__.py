@@ -208,25 +208,25 @@ def open_file(filename, istext=True, makebackup=False):
         sys.exit(1)
 
 
-def _print_navbar(fp, plugin):
+def _print_navbar(fp, selected):
     """Return an html fragement representing the navigation bar for a page."""
     fp.write('  <ul class="navbar">\n')
-    for p in webcheck.config.PLUGINS:
+    for plugin in webcheck.config.PLUGINS:
         # import the plugin
-        report = __import__('webcheck.plugins.' + p, globals(), locals(), [p])
+        pluginmod = __import__(plugin, globals(), locals(), [plugin])
         # skip if no outputfile
-        if not hasattr(report, '__outputfile__'):
+        if not hasattr(pluginmod, '__outputfile__'):
             continue
         # generate a link to the plugin page
         selected = ''
-        if report == plugin:
+        if pluginmod == selected:
             selected = ' class="selected"'
         fp.write(
           '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n'
-          % {'pluginfile':  report.__outputfile__,
+          % {'pluginfile':  pluginmod.__outputfile__,
              'selected':    selected,
-             'title':       htmlescape(report.__title__),
-             'description': htmlescape(report.__doc__)})
+             'title':       htmlescape(pluginmod.__title__),
+             'description': htmlescape(pluginmod.__doc__)})
     fp.write('  </ul>\n')
 
 
