@@ -38,9 +38,6 @@ BASE_URLS_ONLY = False
 # line option.
 AVOID_EXTERNAL_LINKS = False
 
-# The proxy configuration.
-PROXIES = urllib.getproxies_environment()
-
 # IO timeout as passed to socket.setdefaulttimeout()
 # value is a float in seconds None disables the timeout
 IOTIMEOUT = 10.0
@@ -106,22 +103,9 @@ PARENT_LISTLEN = 10
 # (disabled by default because it is not xhtml 1.1)
 REPORT_LINKS_IN_NEW_WINDOW = False
 
-# A list of names that will be checked when encountering an file:///
-# directory. This file will be picked up instead of the directory list.
-FILE_INDEXES = ['index.html', 'index.htm']
-
-# A list of names that will be checked when encountering an ftp://
-# directory. This file will be picked up instead of the directory list.
-FTP_INDEXES = ['index.html', 'index.htm']
-
 # Whether to fetch robots.txt files and do checking based on the information
 # present in those files (normally matching links are yanked).
 USE_ROBOTS = True
-
-# This is a hash that maps netlocs (e.g. some.server.com:8000) to
-# username/password combinations that are passed as basic authentication
-# to that netloc
-USERPASS = {}
 
 # Options for tidy (make None to disable running tidy)
 # See http://tidy.sourceforge.net/docs/quickref.html for details.
