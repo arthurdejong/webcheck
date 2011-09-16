@@ -34,9 +34,7 @@ import httplib
 import os
 import re
 import robotparser
-import socket
 import time
-import urllib
 import urllib2
 import urlparse
 
@@ -48,6 +46,7 @@ import webcheck.parsers
 
 
 class RedirectError(urllib2.HTTPError):
+
     def __init__(self, url, code, msg, hdrs, fp, newurl):
         self.newurl = newurl
         urllib2.HTTPError.__init__(self, url, code, msg, hdrs, fp)
@@ -306,7 +305,7 @@ class Site(object):
             parent = link.parents.first()
             if parent:
                 request.add_header('Referer', parent.url)
-            response = urllib2.urlopen(request)
+            response = urllib2.urlopen(request, timeout=webcheck.config.IOTIMEOUT)
             link.mimetype = response.info().gettype()
             link.set_encoding(response.headers.getparam('charset'))
             # FIXME: get result code and other stuff
