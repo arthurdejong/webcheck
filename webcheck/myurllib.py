@@ -24,11 +24,6 @@ import re
 import urllib
 import urlparse
 
-# this is a workaround for Python 2.3
-try:
-    set
-except NameError:
-    from sets import Set as set
 
 # The way I read RFC3986 (especially sections 3.3 and 6.2) is that these
 # are all separate and valid URLs that point to the same resource.
