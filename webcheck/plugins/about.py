@@ -30,15 +30,15 @@ __outputfile__ = 'about.html'
 
 import time
 
-import config
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.config
+import webcheck.plugins
 
 
 def generate(site):
     """Output a list of modules, it's authors and the webcheck version."""
-    fp = plugins.open_html(plugins.about, site)
-    session = db.Session()
+    fp = webcheck.plugins.open_html(webcheck.plugins.about, site)
+    session = Session()
     # TODO: xxx links were fetched, xxx pages were examined and a total of xxx notes and problems were found
     # TODO: include some runtime information (e.g. supported schemes, user configuration, etc)
     # output some general information about the report
@@ -56,10 +56,10 @@ def generate(site):
       '    This report was generated on %(time)s, a total of %(numurls)d\n'
       '    links were found.\n'
       '   </p>\n\n'
-      % {'version':  plugins.htmlescape(config.VERSION),
-         'time':     plugins.htmlescape(time.ctime(time.time())),
-         'numurls':  session.query(db.Link).count(),
-         'homepage': config.HOMEPAGE})
+      % {'version':  webcheck.plugins.htmlescape(webcheck.config.VERSION),
+         'time':     webcheck.plugins.htmlescape(time.ctime(time.time())),
+         'numurls':  session.query(Link).count(),
+         'homepage': webcheck.config.HOMEPAGE})
     # output copyright information
     fp.write(
       '   <h3>Copyright</h3>\n'
@@ -100,15 +100,15 @@ def generate(site):
     fp.write(
       '   <h3>Plugins</h3>\n'
       '   <ul>\n')
-    for plugin in config.PLUGINS:
-        report = __import__('plugins.' + plugin, globals(), locals(), [plugin])
+    for plugin in webcheck.config.PLUGINS:
+        report = __import__('webcheck.plugins.' + plugin, globals(), locals(), [plugin])
         fp.write(
           '    <li>\n'
           '     <strong>%s</strong><br />\n'
-          % plugins.htmlescape(report.__title__))
+          % webcheck.plugins.htmlescape(report.__title__))
         if hasattr(report, '__doc__'):
-            fp.write('     %s<br />\n' % plugins.htmlescape(report.__doc__))
+            fp.write('     %s<br />\n' % webcheck.plugins.htmlescape(report.__doc__))
         fp.write('    </li>\n')
     fp.write(
       '   </ul>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

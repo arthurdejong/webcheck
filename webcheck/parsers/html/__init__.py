@@ -24,10 +24,12 @@
 module that tries to load the BeatifulSoup parser first and falls
 back to loading the legacy HTMLParser parser."""
 
-import debugio
-import re
 import htmlentitydefs
-import config
+import re
+
+from webcheck import debugio
+import webcheck.config
+
 
 # the list of mimetypes this module should be able to handle
 mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
@@ -93,15 +95,15 @@ def _parsefunction(content, link):
     global _parsefunction
     try:
         # try BeautifulSoup parser first
-        import parsers.html.beautifulsoup
-        debugio.debug('parsers.html.parse(): the BeautifulSoup parser is ok')
-        _parsefunction = parsers.html.beautifulsoup.parse
+        import webcheck.parsers.html.beautifulsoup
+        debugio.debug('webcheck.parsers.html.parse(): the BeautifulSoup parser is ok')
+        _parsefunction = webcheck.parsers.html.beautifulsoup.parse
     except ImportError:
         # fall back to legacy HTMLParser parser
         debugio.warn('falling back to the legacy HTML parser, '
                      'consider installing BeautifulSoup')
-        import parsers.html.htmlparser
-        _parsefunction = parsers.html.htmlparser.parse
+        import webcheck.parsers.html.htmlparser
+        _parsefunction = webcheck.parsers.html.htmlparser.parse
     # call the actual parse function
     _parsefunction(content, link)
 
@@ -112,12 +114,12 @@ def parse(content, link):
     # call the normal parse function
     _parsefunction(content, link)
     # call the tidy parse function
-    if config.TIDY_OPTIONS:
+    if webcheck.config.TIDY_OPTIONS:
         try:
             import calltidy
-            debugio.debug('parsers.html.parse(): the Tidy parser is ok')
+            debugio.debug('webcheck.parsers.html.parse(): the Tidy parser is ok')
             calltidy.parse(content, link)
         except ImportError:
             debugio.warn('tidy library (python-utidylib) is unavailable')
             # remove config to only try once
-            config.TIDY_OPTIONS = None
+            webcheck.config.TIDY_OPTIONS = None

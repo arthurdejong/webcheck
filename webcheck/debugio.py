@@ -30,6 +30,7 @@ info(), warn() and error() whenever you want to print something."""
 
 import sys
 
+
 # log levels that can be used
 ERROR = 0
 WARN = 1

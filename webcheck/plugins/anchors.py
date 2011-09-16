@@ -27,22 +27,22 @@ This plugin does not output any files, it just finds problems."""
 __title__ = 'missing anchors'
 __author__ = 'Arthur de Jong'
 
-import db
+from webcheck.db import Session, Link, Anchor
 
 
 def postprocess(site):
     """Add all missing anchors as page problems to the referring page."""
-    session = db.Session()
+    session = Session()
     # find all fetched links with requested anchors
-    links = session.query(db.Link).filter(db.Link.reqanchors.any())
-    links = links.filter(db.Link.fetched != None)
+    links = session.query(Link).filter(Link.reqanchors.any())
+    links = links.filter(Link.fetched != None)
     # go over list and find missing anchors
     # TODO: we can probably make a nicer query for this
     for link in links:
         # check that all requested anchors exist
         for anchor in link.reqanchors:
             # if the anchor is not there there, report problem
-            if not link.anchors.filter(db.Anchor.anchor == anchor.anchor).first():
+            if not link.anchors.filter(Anchor.anchor == anchor.anchor).first():
                 anchor.parent.add_pageproblem(
                   u'bad link: %(url)s#%(anchor)s: unknown anchor'
                   % {'url': link.url,

@@ -26,8 +26,9 @@ looks for @import processing directives."""
 
 mimetypes = ('text/css',)
 
-import urlparse
 import re
+import urlparse
+
 
 # pattern for matching /* ... */ comments in css
 _commentpattern = re.compile('/\*.*?\*/', re.IGNORECASE | re.DOTALL)

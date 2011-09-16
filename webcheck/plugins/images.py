@@ -30,27 +30,27 @@ __outputfile__ = 'images.html'
 
 import re
 
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.plugins
 
 
 def generate(site):
     """Generate a list of image URLs that were found."""
-    session = db.Session()
+    session = Session()
     # get non-page links that have an image/* mimetype
-    links = session.query(db.Link)
-    links = links.filter((db.Link.is_page != True) | (db.Link.is_page == None))
-    links = links.filter(db.Link.mimetype.startswith('image/'))
-    links = links.order_by(db.Link.url)
+    links = session.query(Link)
+    links = links.filter((Link.is_page != True) | (Link.is_page == None))
+    links = links.filter(Link.mimetype.startswith('image/'))
+    links = links.order_by(Link.url)
     # present results
-    fp = plugins.open_html(plugins.images, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.images, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
           '    No images were linked on the website.\n'
           '   </p>\n'
           '   <ol>\n')
-        plugins.close_html(fp)
+        webcheck.plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
@@ -58,7 +58,7 @@ def generate(site):
       '   </p>\n'
       '   <ol>\n')
     for link in links:
-        fp.write('    <li>%s</li>\n' % plugins.make_link(link, link.url))
+        fp.write('    <li>%s</li>\n' % webcheck.plugins.make_link(link, link.url))
     fp.write(
       '   </ol>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

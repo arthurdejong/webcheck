@@ -30,9 +30,9 @@ __outputfile__ = 'new.html'
 
 import time
 
-import config
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.config
+import webcheck.plugins
 
 
 SECS_PER_DAY = 60 * 60 * 24
@@ -40,28 +40,28 @@ SECS_PER_DAY = 60 * 60 * 24
 
 def generate(site):
     """Output the list of recently modified pages."""
-    session = db.Session()
+    session = Session()
     # the time for which links are considered new
-    newtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSNEW_URL_AGE
+    newtime = time.time() - SECS_PER_DAY * webcheck.config.REPORT_WHATSNEW_URL_AGE
     # get all internal pages that are new
-    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
-    links = links.filter(db.Link.mtime > newtime).order_by(db.Link.mtime.desc())
+    links = session.query(Link).filter_by(is_page=True, is_internal=True)
+    links = links.filter(Link.mtime > newtime).order_by(Link.mtime.desc())
     # present results
-    fp = plugins.open_html(plugins.new, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.new, site)
     if not links.count():
         fp.write(
           '   <p class="description">\n'
           '    No pages were found that were modified within the last %(new)d days.\n'
           '   </p>\n'
-          % {'new': config.REPORT_WHATSNEW_URL_AGE})
-        plugins.close_html(fp)
+          % {'new': webcheck.config.REPORT_WHATSNEW_URL_AGE})
+        webcheck.plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
       '    These pages have been recently modified (within %(new)d days).\n'
       '   </p>\n'
       '   <ul>\n'
-      % {'new': config.REPORT_WHATSNEW_URL_AGE})
+      % {'new': webcheck.config.REPORT_WHATSNEW_URL_AGE})
     for link in links:
         age = (time.time() - link.mtime) / SECS_PER_DAY
         fp.write(
@@ -71,7 +71,7 @@ def generate(site):
           '      <li>age: %(age)d days</li>\n'
           '     </ul>\n'
           '    </li>\n'
-          % {'link': plugins.make_link(link),
+          % {'link': webcheck.plugins.make_link(link),
              'age':  age})
     fp.write('   </ul>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

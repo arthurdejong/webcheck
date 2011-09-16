@@ -29,6 +29,7 @@ items should be changeble from the command line."""
 
 import urllib
 
+
 # Whether to consider any URL not starting with the base URL to be external.
 # This is the state of the -b command line option.
 BASE_URLS_ONLY = False

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# webcheck.py - main module of webcheck doing command-line checking
+# cmd.py - command-line front-end for webcheck
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
@@ -28,22 +28,22 @@
 __version__ = '1.10.4'
 __homepage__ = 'http://arthurdejong.org/webcheck/'
 
-import sys
 import os
 import re
-import urlparse
+import sys
 import urllib
+import urlparse
 
-import config
+from webcheck import config
 # update some fields that currently are stored in config
 config.VERSION = __version__
 config.HOMEPAGE = __homepage__
 
-import crawler
-import plugins
-import debugio
-import monkeypatch
-import db
+from webcheck import debugio
+import webcheck.crawler
+import webcheck.db
+import webcheck.monkeypatch
+import webcheck.plugins
 
 debugio.loglevel = debugio.INFO
 
@@ -166,9 +166,9 @@ def parse_args(site):
         filename = os.path.join(config.OUTPUT_DIR, 'webcheck.sqlite')
         from sqlalchemy import create_engine
         engine = create_engine('sqlite:///' + filename)
-        db.Session.configure(bind=engine)
+        webcheck.db.Session.configure(bind=engine)
         # ensure that all tables are created
-        db.Base.metadata.create_all(engine)
+        webcheck.db.Base.metadata.create_all(engine)
         # TODO: schema migraton goes here
         # add configuration to site
         for pattern in internal_urls:
@@ -235,7 +235,7 @@ def install_file(source, text=False):
                        'strerror': strerror})
         sys.exit(1)
     # create file in output directory (with overwrite question)
-    tfp = plugins.open_file(os.path.basename(source))
+    tfp = webcheck.plugins.open_file(os.path.basename(source))
     # copy contents
     shutil.copyfileobj(sfp, tfp)
     # close files
@@ -247,7 +247,7 @@ def main(site):
     """Main program."""
     # crawl through the website
     debugio.info('checking site....')
-    crawler.setup_urllib2()
+    webcheck.crawler.setup_urllib2()
     site.crawl()  # this will take a while
     debugio.info('done.')
     # do postprocessing (building site structure, etc)
@@ -269,7 +269,7 @@ def main(site):
 if __name__ == '__main__':
     try:
         # initialize site object
-        site = crawler.Site()
+        site = webcheck.crawler.Site()
         # parse command-line arguments
         parse_args(site)
         # run the main program

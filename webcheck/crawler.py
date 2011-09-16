@@ -40,10 +40,11 @@ import urllib
 import urllib2
 import urlparse
 
-import config
-import db
-import debugio
-import parsers
+from webcheck.db import Session, Link, LinkProblem, PageProblem, children, \
+                        embedded
+from webcheck import debugio
+import webcheck.config
+import webcheck.parsers
 
 
 class RedirectError(urllib2.HTTPError):
@@ -61,7 +62,7 @@ class NoRedirectHandler(urllib2.HTTPRedirectHandler):
 def setup_urllib2():
     """Configure the urllib2 module to store cookies in the output
     directory."""
-    filename = os.path.join(config.OUTPUT_DIR, 'cookies.lwp')
+    filename = os.path.join(webcheck.config.OUTPUT_DIR, 'cookies.lwp')
     # set up our cookie jar
     cookiejar = cookielib.LWPCookieJar(filename)
     try:
@@ -73,9 +74,9 @@ def setup_urllib2():
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar),
                                   NoRedirectHandler())
     opener.addheaders = [
-      ('User-agent', 'webcheck %s' % config.VERSION),
+      ('User-agent', 'webcheck %s' % webcheck.config.VERSION),
       ]
-    if config.BYPASSHTTPCACHE:
+    if webcheck.config.BYPASSHTTPCACHE:
         opener.addheaders.append(('Cache-control', 'no-cache'))
         opener.addheaders.append(('Pragma', 'no-cache'))
     urllib2.install_opener(opener)
@@ -116,7 +117,7 @@ class Site(object):
     def add_internal(self, url):
         """Add the given url and consider all urls below it to be internal.
         These links are all marked for checking with the crawl() function."""
-        url = db.Link.clean_url(url)
+        url = Link.clean_url(url)
         if url not in self._internal_urls:
             self._internal_urls.add(url)
 
@@ -145,7 +146,7 @@ class Site(object):
                 return True
         res = False
         # check that the url starts with an internal url
-        if config.BASE_URLS_ONLY:
+        if webcheck.config.BASE_URLS_ONLY:
             # the url must start with one of the _internal_urls
             for i in self._internal_urls:
                 res |= (i == url[:len(i)])
@@ -201,10 +202,10 @@ class Site(object):
                 return 'yanked'
         # check if we should avoid external links
         is_internal = self._is_internal(url)
-        if not is_internal and config.AVOID_EXTERNAL_LINKS:
+        if not is_internal and webcheck.config.AVOID_EXTERNAL_LINKS:
             return 'external avoided'
         # check if we should use robot parsers
-        if not config.USE_ROBOTS:
+        if not webcheck.config.USE_ROBOTS:
             return None
         (scheme, netloc) = urlparse.urlsplit(url)[0:2]
         # skip schemes not having robot.txt files
@@ -223,16 +224,16 @@ class Site(object):
 
     def get_link(self, session, url):
         # try to find the URL
-        url = db.Link.clean_url(url)
-        link = session.query(db.Link).filter_by(url=url).first()
+        url = Link.clean_url(url)
+        link = session.query(Link).filter_by(url=url).first()
         if not link:
-            link = db.Link(url=url)
+            link = Link(url=url)
             session.add(link)
         return link
 
     def get_links_to_crawl(self, session):
-        links = session.query(db.Link).filter(db.Link.fetched == None)
-        return links.filter(db.Link.yanked == None)
+        links = session.query(Link).filter(Link.fetched == None)
+        return links.filter(Link.yanked == None)
 
     def crawl(self):
         """Crawl the website based on the urls specified with
@@ -240,22 +241,22 @@ class Site(object):
         is specified the crawler writes out updated links to
         the file while crawling the site."""
         # get a database session
-        session = db.Session()
+        session = Session()
         # remove all links
-        if not config.CONTINUE:
-            session.query(db.LinkProblem).delete()
+        if not webcheck.config.CONTINUE:
+            session.query(LinkProblem).delete()
             session.commit()
-            session.query(db.PageProblem).delete()
+            session.query(PageProblem).delete()
             session.commit()
-            session.execute(db.children.delete())
+            session.execute(children.delete())
             session.commit()
-            session.execute(db.embedded.delete())
+            session.execute(embedded.delete())
             session.commit()
-            session.query(db.Link).delete()
+            session.query(Link).delete()
             session.commit()
         # add all internal urls to the database
         for url in self._internal_urls:
-            url = db.Link.clean_url(url)
+            url = Link.clean_url(url)
             self.get_link(session, url)
         # add some URLs from the database that haven't been fetched
         tocheck = self.get_links_to_crawl(session)
@@ -284,10 +285,10 @@ class Site(object):
             # flush database changes
             session.commit()
             # sleep between requests if configured
-            if config.WAIT_BETWEEN_REQUESTS > 0:
+            if webcheck.config.WAIT_BETWEEN_REQUESTS > 0:
                 debugio.debug('crawler.crawl(): sleeping %s seconds' %
-                              config.WAIT_BETWEEN_REQUESTS)
-                time.sleep(config.WAIT_BETWEEN_REQUESTS)
+                              webcheck.config.WAIT_BETWEEN_REQUESTS)
+                time.sleep(webcheck.config.WAIT_BETWEEN_REQUESTS)
             debugio.debug('crawler.crawl(): items left to check: %d' %
                           (remaining + len(tocheck)))
         session.commit()
@@ -346,7 +347,7 @@ class Site(object):
     def parse(self, link, response):
         """Parse the fetched response."""
         # find a parser for the content-type
-        parsermodule = parsers.get_parsermodule(link.mimetype)
+        parsermodule = webcheck.parsers.get_parsermodule(link.mimetype)
         if parsermodule is None:
             debugio.debug('crawler.Link.fetch(): unsupported content-type: %s' % link.mimetype)
             return
@@ -368,7 +369,7 @@ class Site(object):
         """Do some basic post processing of the collected data, including
         depth calculation of every link."""
         # get a database session
-        session = db.Session()
+        session = Session()
         # build the list of urls that were set up with add_internal() that
         # do not have a parent (they form the base for the site)
         for url in self._internal_urls:
@@ -381,11 +382,11 @@ class Site(object):
             self.bases.append(link)
         # if we got no bases, just use the first internal one
         if not self.bases:
-            link = session.query(db.Link).filter(db.Link.is_internal == True).first()
+            link = session.query(Link).filter(Link.is_internal == True).first()
             debugio.debug('crawler.postprocess(): fallback to adding %s to bases' % link.url)
             self.bases.append(link)
         # do a breadth first traversal of the website to determine depth
-        session.query(db.Link).update(dict(depth=None), synchronize_session=False)
+        session.query(Link).update(dict(depth=None), synchronize_session=False)
         session.commit()
         depth = 0
         count = len(self.bases)
@@ -396,15 +397,15 @@ class Site(object):
         while count > 0:
             # update the depth of all links without a depth that have a
             # parent with the previous depth
-            qry = session.query(db.Link).filter(db.Link.depth == None)
-            qry = qry.filter(db.Link.linked_from.any(db.Link.depth == depth))
+            qry = session.query(Link).filter(Link.depth == None)
+            qry = qry.filter(Link.linked_from.any(Link.depth == depth))
             count = qry.update(dict(depth=depth + 1), synchronize_session=False)
             session.commit()
             depth += 1
             debugio.debug('crawler.postprocess(): %d links at depth %d' % (count, depth))
             # TODO: also handle embeds
         # see if any of the plugins want to do postprocessing
-        for p in config.PLUGINS:
+        for p in webcheck.config.PLUGINS:
             # import the plugin
             plugin = __import__('plugins.' + p, globals(), locals(), [p])
             if hasattr(plugin, 'postprocess'):
@@ -413,7 +414,7 @@ class Site(object):
 
     def generate(self):
         """Generate pages for plugins."""
-        for p in config.PLUGINS:
+        for p in webcheck.config.PLUGINS:
             # import the plugin
             plugin = __import__('plugins.' + p, globals(), locals(), [p])
             if hasattr(plugin, 'generate'):

@@ -30,17 +30,17 @@ __outputfile__ = 'notitles.html'
 
 from sqlalchemy.sql.functions import char_length
 
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.plugins
 
 
 def postprocess(site):
     """Add page problems for all pages without a title."""
-    session = db.Session()
+    session = Session()
     # get all internal pages without a title
-    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
-    links = links.filter((char_length(db.Link.title) == 0) |
-                         (db.Link.title == None))
+    links = session.query(Link).filter_by(is_page=True, is_internal=True)
+    links = links.filter((char_length(Link.title) == 0) |
+                         (Link.title == None))
     for link in links:
         link.add_pageproblem('missing title')
     session.commit()
@@ -48,19 +48,19 @@ def postprocess(site):
 
 def generate(site):
     """Output the list of pages without a title."""
-    session = db.Session()
+    session = Session()
     # get all internal pages without a title
-    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
-    links = links.filter((char_length(db.Link.title) == 0) |
-                         (db.Link.title == None)).order_by(db.Link.url)
+    links = session.query(Link).filter_by(is_page=True, is_internal=True)
+    links = links.filter((char_length(Link.title) == 0) |
+                         (Link.title == None)).order_by(Link.url)
     # present results
-    fp = plugins.open_html(plugins.notitles, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.notitles, site)
     if not links.count():
         fp.write(
           '   <p class="description">\n'
           '    All pages had a title specified.\n'
           '   </p>\n')
-        plugins.close_html(fp)
+        webcheck.plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
@@ -71,7 +71,7 @@ def generate(site):
     for link in links:
         fp.write(
           '    <li>%(link)s</li>\n'
-          % {'link': plugins.make_link(link, link.url)})
+          % {'link': webcheck.plugins.make_link(link, link.url)})
     fp.write(
       '   </ol>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

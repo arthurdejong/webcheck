@@ -40,7 +40,7 @@ def _init_modules():
     # go throught all known modules to probe the content-types
     # (do this only once)
     for mod in _modules:
-        parser = __import__('parsers.' + mod, globals(), locals(), [mod])
+        parser = __import__('webcheck.parsers.' + mod, globals(), locals(), [mod])
         for mimetype in parser.mimetypes:
             _parsermodules[mimetype] = parser
 

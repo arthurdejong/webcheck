@@ -30,23 +30,23 @@ __outputfile__ = 'notchkd.html'
 
 from sqlalchemy.orm import joinedload
 
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.plugins
 
 
 def generate(site):
     """Output the list of not checked pages."""
-    session = db.Session()
+    session = Session()
     # get all yanked urls
-    links = session.query(db.Link).filter(db.Link.yanked != None).order_by(db.Link.url)
+    links = session.query(Link).filter(Link.yanked != None).order_by(Link.url)
     # present results
-    fp = plugins.open_html(plugins.notchkd, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.notchkd, site)
     if not links.count():
         fp.write(
           '   <p class="description">\n'
           '    All links have been checked.\n'
           '   </p>\n')
-        plugins.close_html(fp)
+        webcheck.plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
@@ -54,15 +54,15 @@ def generate(site):
       '    at all during the examination of the website.\n'
       '   </p>\n'
       '   <ol>\n')
-    for link in links.options(joinedload(db.Link.linkproblems)):
+    for link in links.options(joinedload(Link.linkproblems)):
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
-          % {'link': plugins.make_link(link, link.url)})
+          % {'link': webcheck.plugins.make_link(link, link.url)})
         # present a list of parents
-        plugins.print_parents(fp, link, '     ')
+        webcheck.plugins.print_parents(fp, link, '     ')
         fp.write(
           '    </li>\n')
     fp.write(
       '   </ol>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

@@ -30,8 +30,8 @@ __outputfile__ = 'problems.html'
 
 import urllib
 
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.plugins
 
 
 def _mk_id(name):
@@ -50,12 +50,12 @@ def _mk_id(name):
 
 def generate(site):
     """Output the overview of problems per author."""
-    session = db.Session()
+    session = Session()
     # make a list of problems per author
     problem_db = {}
     # get internal links with page problems
-    links = session.query(db.Link).filter_by(is_internal=True)
-    links = links.filter(db.Link.pageproblems.any()).order_by(db.Link.url)
+    links = session.query(Link).filter_by(is_internal=True)
+    links = links.filter(Link.pageproblems.any()).order_by(Link.url)
     for link in links:
         # make a normal name for the author
         if link.author:
@@ -67,13 +67,13 @@ def generate(site):
             problem_db[author].append(link)
         else:
             problem_db[author] = [link]
-    fp = plugins.open_html(plugins.problems, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.problems, site)
     if not problem_db:
         fp.write(
           '   <p class="description">\n'
           '    No problems were found on this site, hurray.\n'
           '   </p>\n')
-        plugins.close_html(fp)
+        webcheck.plugins.close_html(fp)
         return
     # print description
     fp.write(
@@ -90,8 +90,8 @@ def generate(site):
         for author in authors:
             fp.write(
               '    <li><a href="#author_%(authorref)s">Author: %(author)s</a></li>\n'
-              % {'authorref': plugins.htmlescape(_mk_id(author)),
-                 'author':    plugins.htmlescape(author)})
+              % {'authorref': webcheck.plugins.htmlescape(_mk_id(author)),
+                 'author':    webcheck.plugins.htmlescape(author)})
         fp.write('   </ul>\n')
     # generate problem report
     fp.write('   <ul>\n')
@@ -100,8 +100,8 @@ def generate(site):
           '     <li id="author_%(authorref)s">\n'
           '      Author: %(author)s\n'
           '      <ul>\n'
-          % {'authorref': plugins.htmlescape(_mk_id(author)),
-             'author':    plugins.htmlescape(author)})
+          % {'authorref': webcheck.plugins.htmlescape(_mk_id(author)),
+             'author':    webcheck.plugins.htmlescape(author)})
         # sort pages by url
         problem_db[author].sort(lambda a, b: cmp(a.url, b.url))
         # list problems for this author
@@ -111,12 +111,12 @@ def generate(site):
               '    <li>\n'
               '     %(link)s\n'
               '     <ul class="problems">\n'
-              % {'link': plugins.make_link(link)})
+              % {'link': webcheck.plugins.make_link(link)})
             # list the problems
             for problem in link.pageproblems:
                 fp.write(
                   '      <li>%(problem)s</li>\n'
-                  % {'problem':  plugins.htmlescape(problem)})
+                  % {'problem':  webcheck.plugins.htmlescape(problem)})
             # end the list item
             fp.write(
               '     </ul>\n'
@@ -126,4 +126,4 @@ def generate(site):
           '     </li>\n')
     fp.write(
       '   </ul>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

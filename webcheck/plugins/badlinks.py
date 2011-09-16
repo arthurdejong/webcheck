@@ -30,15 +30,15 @@ __outputfile__ = 'badlinks.html'
 
 from sqlalchemy.orm import joinedload
 
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.plugins
 
 
 def postporcess(site):
     """Add all bad links as pageproblems on pages where they are linked."""
-    session = db.Session()
+    session = Session()
     # find all links with link problems
-    links = session.query(db.Link).filter(db.Link.linkproblems.any()).options(joinedload(db.Link.linkproblems))
+    links = session.query(Link).filter(Link.linkproblems.any()).options(joinedload(Link.linkproblems))
     # TODO: probably make it a nicer query over all linkproblems
     for link in links:
         # add a reference to the problem map
@@ -50,17 +50,17 @@ def postporcess(site):
 
 def generate(site):
     """Present the list of bad links."""
-    session = db.Session()
+    session = Session()
     # find all links with link problems
-    links = session.query(db.Link).filter(db.Link.linkproblems.any()).order_by(db.Link.url).options(joinedload(db.Link.linkproblems))
+    links = session.query(Link).filter(Link.linkproblems.any()).order_by(Link.url).options(joinedload(Link.linkproblems))
     # present results
-    fp = plugins.open_html(plugins.badlinks, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.badlinks, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
           '    There were no problems retrieving links from the website.\n'
           '   </p>\n')
-        plugins.close_html(fp)
+        webcheck.plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
@@ -73,18 +73,18 @@ def generate(site):
           '    <li>\n'
           '     %(badurl)s\n'
           '     <ul class="problems">\n'
-          % {'badurl':  plugins.make_link(link, link.url)})
+          % {'badurl':  webcheck.plugins.make_link(link, link.url)})
         # list the problems
         for problem in link.linkproblems:
             fp.write(
               '      <li>%(problem)s</li>\n'
-              % {'problem':  plugins.htmlescape(problem)})
+              % {'problem':  webcheck.plugins.htmlescape(problem)})
         fp.write(
           '     </ul>\n')
         # present a list of parents
-        plugins.print_parents(fp, link, '     ')
+        webcheck.plugins.print_parents(fp, link, '     ')
         fp.write(
           '    </li>\n')
     fp.write(
       '   </ol>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

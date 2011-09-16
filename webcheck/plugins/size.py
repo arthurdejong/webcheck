@@ -28,9 +28,9 @@ __title__ = "what's big"
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'size.html'
 
-import config
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.config
+import webcheck.plugins
 
 
 def _getsize(link, done=None):
@@ -57,22 +57,22 @@ def _getsize(link, done=None):
 
 def generate(site):
     """Output the list of large pages."""
-    session = db.Session()
+    session = Session()
     # get all internal pages and get big links
-    links = session.query(db.Link).filter_by(is_page=True, is_internal=True)
+    links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = [x for x in links
-             if _getsize(x) >= config.REPORT_SLOW_URL_SIZE * 1024]
+             if _getsize(x) >= webcheck.config.REPORT_SLOW_URL_SIZE * 1024]
     # sort links by size (biggest first)
     links.sort(lambda a, b: cmp(b.total_size, a.total_size))
     # present results
-    fp = plugins.open_html(plugins.size, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.size, site)
     if not links:
         fp.write(
           '   <p class="description">\n'
           '    No pages over %(size)dK were found.\n'
           '   </p>\n'
-          % {'size': config.REPORT_SLOW_URL_SIZE})
-        plugins.close_html(fp)
+          % {'size': webcheck.config.REPORT_SLOW_URL_SIZE})
+        webcheck.plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">\n'
@@ -80,9 +80,9 @@ def generate(site):
       '    slow to download.\n'
       '   </p>\n'
       '   <ul>\n'
-      % {'size': config.REPORT_SLOW_URL_SIZE})
+      % {'size': webcheck.config.REPORT_SLOW_URL_SIZE})
     for link in links:
-        size = plugins.get_size(link.total_size)
+        size = webcheck.plugins.get_size(link.total_size)
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
@@ -90,8 +90,8 @@ def generate(site):
           '      <li>size: %(size)s</li>\n'
           '     </ul>\n'
           '    </li>\n'
-          % {'link': plugins.make_link(link),
+          % {'link': webcheck.plugins.make_link(link),
              'size': size})
     fp.write(
       '   </ul>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

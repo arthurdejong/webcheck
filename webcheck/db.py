@@ -29,9 +29,9 @@ from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.orm.session import object_session
 from sqlalchemy.sql.expression import ClauseElement, union
 
-import config
-import debugio
-import myurllib
+from webcheck.myurllib import normalizeurl
+import webcheck.config
+import webcheck.debugio
 
 
 # provide session and schema classes
@@ -93,15 +93,14 @@ class Link(Base):
     @staticmethod
     def clean_url(url):
         # normalise the URL, removing the fragment from the URL
-        url = myurllib.normalizeurl(url)
-        return urlparse.urldefrag(myurllib.normalizeurl(url))[0]
+        return urlparse.urldefrag(normalizeurl(url))[0]
 
     def _get_link(self, url):
         """Get a link object for the specified URL."""
         # get the session
         session = object_session(self)
         # normalise the URL, removing the fragment from the URL
-        url, fragment = urlparse.urldefrag(myurllib.normalizeurl(url))
+        url, fragment = urlparse.urldefrag(normalizeurl(url))
         # try to find the link
         instance = session.query(Link).filter_by(url=url).first()
         if not instance:
@@ -118,7 +117,7 @@ class Link(Base):
         the encoding is supported."""
         if not self.encoding and encoding:
             try:
-                debugio.debug('crawler.Link.set_encoding(%r)' % encoding)
+                webcheck.debugio.debug('crawler.Link.set_encoding(%r)' % encoding)
                 unicode('just some random text', encoding, 'replace')
                 self.encoding = encoding
             except Exception, e:
@@ -133,7 +132,7 @@ class Link(Base):
         self.redirectdepth = max([self.redirectdepth] +
                                  [x.redirectdepth for x in self.parents]) + 1
         # check depth
-        if self.redirectdepth >= config.REDIRECT_DEPTH:
+        if self.redirectdepth >= webcheck.config.REDIRECT_DEPTH:
             self.add_linkproblem('too many redirects (%d)' % self.redirectdepth)
             return
         # check for redirect to self

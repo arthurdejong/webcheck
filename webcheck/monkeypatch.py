@@ -21,9 +21,9 @@
 # under the copyright of the software, unless explicitly stated otherwise.
 
 import re
-import urlparse
-import urllib
 import sys
+import urllib
+import urlparse
 
 
 __all__ = []

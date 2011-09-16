@@ -20,9 +20,9 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
-import urlparse
 import re
 import urllib
+import urlparse
 
 # this is a workaround for Python 2.3
 try:

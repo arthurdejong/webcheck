@@ -49,13 +49,10 @@ import time
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import object_session
 
-import config
-import db
-import debugio
-import parsers.html
-
-# reference function from html module
-htmlescape = parsers.html.htmlescape
+from webcheck.db import Link
+from webcheck.parsers.html import htmlescape
+import webcheck.config
+import webcheck.debugio
 
 
 def _floatformat(f):
@@ -129,7 +126,7 @@ def make_link(link, title=None):
     is external, insert "class=external" in the <a> tag."""
     return '<a href="%(url)s" %(target)sclass="%(cssclass)s" title="%(info)s">%(title)s</a>' % \
             dict(url=htmlescape(link.url),
-                 target='target="_blank" ' if config.REPORT_LINKS_IN_NEW_WINDOW else '',
+                 target='target="_blank" ' if webcheck.config.REPORT_LINKS_IN_NEW_WINDOW else '',
                  cssclass='internal' if link.is_internal else 'external',
                  info=htmlescape(_get_info(link)).replace('\n', '&#10;'),
                  title=htmlescape(title or link.title or link.url))
@@ -142,7 +139,7 @@ def print_parents(fp, link, indent='     '):
     count = link.count_parents
     if not count:
         return
-    parents = link.parents.order_by(db.Link.title, db.Link.url).options(joinedload(db.Link.linkproblems))[:config.PARENT_LISTLEN]
+    parents = link.parents.order_by(Link.title, Link.url).options(joinedload(Link.linkproblems))[:webcheck.config.PARENT_LISTLEN]
     fp.write(
       indent + '<div class="parents">\n' +
       indent + ' referenced from:\n' +
@@ -165,26 +162,26 @@ def print_parents(fp, link, indent='     '):
 def open_file(filename, istext=True, makebackup=False):
     """This returns an open file object which can be used for writing. This
     file is created in the output directory. The output directory (stored in
-    config.OUTPUT_DIR is created if it does not yet exist. If the second
+    webcheck.config.OUTPUT_DIR is created if it does not yet exist. If the second
     parameter is True (default) the file is opened as an UTF-8 text file."""
     import os
     # check if output directory exists and create it if needed
-    if not os.path.isdir(config.OUTPUT_DIR):
+    if not os.path.isdir(webcheck.config.OUTPUT_DIR):
         try:
-            os.mkdir(config.OUTPUT_DIR)
+            os.mkdir(webcheck.config.OUTPUT_DIR)
         except OSError, (errno, strerror):
             debugio.error('error creating directory %(dir)s: %(strerror)s' %
-                          {'dir': config.OUTPUT_DIR,
+                          {'dir': webcheck.config.OUTPUT_DIR,
                            'strerror': strerror})
             sys.exit(1)
     # build the output file name
-    fname = os.path.join(config.OUTPUT_DIR, filename)
+    fname = os.path.join(webcheck.config.OUTPUT_DIR, filename)
     # check if file exists
     if os.path.exists(fname):
         if makebackup:
             # create backup of original (overwriting previous backup)
             os.rename(fname, fname + '~')
-        elif not config.OVERWRITE_FILES:
+        elif not webcheck.config.OVERWRITE_FILES:
             # ask to overwrite
             try:
                 res = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
@@ -194,7 +191,7 @@ def open_file(filename, istext=True, makebackup=False):
                 res = 'q'
             res = res.lower() + ' '
             if res[0] == 'a':
-                config.OVERWRITE_FILES = True
+                webcheck.config.OVERWRITE_FILES = True
             elif res[0] != 'y':
                 print 'Aborted.'
                 sys.exit(1)
@@ -214,9 +211,9 @@ def open_file(filename, istext=True, makebackup=False):
 def _print_navbar(fp, plugin):
     """Return an html fragement representing the navigation bar for a page."""
     fp.write('  <ul class="navbar">\n')
-    for p in config.PLUGINS:
+    for p in webcheck.config.PLUGINS:
         # import the plugin
-        report = __import__('plugins.' + p, globals(), locals(), [p])
+        report = __import__('webcheck.plugins.' + p, globals(), locals(), [p])
         # skip if no outputfile
         if not hasattr(report, '__outputfile__'):
             continue
@@ -258,7 +255,7 @@ def open_html(plugin, site):
       % {'sitetitle':   htmlescape(base.title or base.url),
          'plugintitle': htmlescape(plugin.__title__),
          'siteurl':     base.url,
-         'version':     config.VERSION})
+         'version':     webcheck.config.VERSION})
     # write navigation bar
     _print_navbar(fp, plugin)
     # write plugin heading
@@ -279,6 +276,6 @@ def close_html(fp):
       ' </body>\n'
       '</html>\n'
       % {'time':     htmlescape(time.ctime(time.time())),
-         'homepage': config.HOMEPAGE,
-         'version':  htmlescape(config.VERSION)})
+         'homepage': webcheck.config.HOMEPAGE,
+         'version':  htmlescape(webcheck.config.VERSION)})
     fp.close()

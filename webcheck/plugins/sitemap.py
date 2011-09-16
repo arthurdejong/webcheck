@@ -28,25 +28,25 @@ __title__ = 'site map'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'index.html'
 
-import config
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.config
+import webcheck.plugins
 
 
 def add_pagechildren(link, children, explored):
     """Determine the page children of this link, combining the children of
     embedded items and following redirects."""
     # get all internal children
-    qry = link.children.filter(db.Link.is_internal == True)
+    qry = link.children.filter(Link.is_internal == True)
     if link.depth:
-        qry = qry.filter((db.Link.depth > link.depth) | (db.Link.depth == None))
+        qry = qry.filter((Link.depth > link.depth) | (Link.depth == None))
     # follow redirects
     children.update(y
                     for y in (x.follow_link() for x in qry)
                     if y and y.is_page and y.is_internal and y.id not in explored)
     explored.update(x.id for x in children)
     # add embedded element's pagechildren (think frames)
-    for embed in link.embedded.filter(db.Link.is_internal == True).filter(db.Link.is_page == True):
+    for embed in link.embedded.filter(Link.is_internal == True).filter(Link.is_page == True):
         # TODO: put this in a query
         if embed.id not in explored and \
            (embed.depth == None or embed.depth > link.depth):
@@ -58,9 +58,9 @@ def _explore(fp, link, explored, depth=0, indent='    '):
     site. Prints the html results to the file descriptor."""
     # output this link
     fp.write(indent + '<li>\n')
-    fp.write(indent + ' ' + plugins.make_link(link) + '\n')
+    fp.write(indent + ' ' + webcheck.plugins.make_link(link) + '\n')
     # only check children if we are not too deep yet
-    if depth <= config.REPORT_SITEMAP_LEVEL:
+    if depth <= webcheck.config.REPORT_SITEMAP_LEVEL:
         # figure out the links to follow and ensure that they are only
         # explored from here
         children = set()
@@ -80,8 +80,8 @@ def _explore(fp, link, explored, depth=0, indent='    '):
 
 def generate(site):
     """Output the sitemap."""
-    session = db.Session()
-    fp = plugins.open_html(plugins.sitemap, site)
+    session = Session()
+    fp = webcheck.plugins.open_html(webcheck.plugins.sitemap, site)
     # output the site structure using breadth first traversal
     fp.write(
       '   <p class="description">\n'
@@ -93,4 +93,4 @@ def generate(site):
         _explore(fp, l, explored)
     fp.write(
       '   </ul>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

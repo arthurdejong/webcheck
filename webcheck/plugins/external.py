@@ -30,23 +30,23 @@ __outputfile__ = 'external.html'
 
 from sqlalchemy.orm import joinedload
 
-import db
-import plugins
+from webcheck.db import Session, Link
+import webcheck.plugins
 
 
 def generate(site):
     """Generate the list of external links."""
-    session = db.Session()
+    session = Session()
     # get all external links
-    links = session.query(db.Link).filter(db.Link.is_internal != True).order_by(db.Link.url)
+    links = session.query(Link).filter(Link.is_internal != True).order_by(Link.url)
     # present results
-    fp = plugins.open_html(plugins.external, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.external, site)
     if not links:
         fp.write(
           '   <p class="description">'
           '    No external links were found on the website.'
           '   </p>\n')
-        plugins.close_html(fp)
+        webcheck.plugins.close_html(fp)
         return
     fp.write(
       '   <p class="description">'
@@ -54,15 +54,15 @@ def generate(site):
       '    examination of the website.'
       '   </p>\n'
       '   <ol>\n')
-    for link in links.options(joinedload(db.Link.linkproblems)):
+    for link in links.options(joinedload(Link.linkproblems)):
         fp.write(
           '    <li>\n'
           '     %(link)s\n'
-          % {'link': plugins.make_link(link)})
+          % {'link': webcheck.plugins.make_link(link)})
         # present a list of parents
-        plugins.print_parents(fp, link, '     ')
+        webcheck.plugins.print_parents(fp, link, '     ')
         fp.write(
           '    </li>\n')
     fp.write(
       '   </ol>\n')
-    plugins.close_html(fp)
+    webcheck.plugins.close_html(fp)

@@ -25,13 +25,15 @@ the legacy HTMLParser module. It will only be used if BeatifulSoup
 is not available and can be considered depricated. This parser
 will only handle properly formatted HTML."""
 
-import debugio
 import HTMLParser
-import urlparse
 import re
-import crawler
-import myurllib
-from parsers.html import htmlunescape
+import urlparse
+
+from webcheck import debugio
+from webcheck.myurllib import normalizeurl
+from webcheck.parsers.html import htmlunescape
+import webcheck.crawler
+
 
 # pattern for matching numeric html entities
 _charentitypattern = re.compile('&#([0-9]{1,3});')
@@ -79,20 +81,20 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
     def _cleanurl(self, url, what='link'):
         """Do some translations of url."""
         # check for spaces in urls
-        # (characters are escaped in myurllib.normalizeurl())
+        # (characters are escaped in normalizeurl())
         if _spacepattern.search(url):
             self.link.add_pageproblem(
               what + ' contains unescaped spaces: ' + url + ', ' + self._location())
         # replace &#nnn; entity refs with proper characters
         url = _charentitypattern.sub(lambda x: chr(int(x.group(1))), url)
-        return myurllib.normalizeurl(url)
+        return normalizeurl(url)
 
     def error(self, message):
         """Override superclass' error() method to ignore errors."""
         # construct error message
         message += ', ' + self._location()
         # store error message
-        debugio.debug('parsers.html.htmlparser._MyHTMLParser.error(): problem parsing html: ' + message)
+        debugio.debug('webcheck.parsers.html.htmlparser._MyHTMLParser.error(): problem parsing html: ' + message)
         if self.errmsg is None:
             self.errmsg = message
         # increment error count
@@ -105,7 +107,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         try:
             return HTMLParser.HTMLParser.check_for_whole_start_tag(self, i)
         except AssertionError:
-            debugio.debug('parsers.html.htmlparser._MyHTMLParser.check_for_whole_start_tag(): caught assertion error')
+            debugio.debug('webcheck.parsers.html.htmlparser._MyHTMLParser.check_for_whole_start_tag(): caught assertion error')
             return None
 
     def handle_starttag(self, tag, attrs):
@@ -210,8 +212,8 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # pick up any tags with a style attribute
         if 'style' in attrs:
             # delegate handling of inline css to css module
-            import parsers.css
-            parsers.css.parse(attrs['style'], self.link, self.base)
+            import webcheck.parsers.css
+            webcheck.parsers.css.parse(attrs['style'], self.link, self.base)
 
     def handle_endtag(self, tag):
         """Handle end tags in html."""
@@ -220,8 +222,8 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             self.collect = None
         elif tag == 'style' and self.collect is not None:
             # delegate handling of inline css to css module
-            import parsers.css
-            parsers.css.parse(self.collect, self.link, self.base)
+            import webcheck.parsers.css
+            webcheck.parsers.css.parse(self.collect, self.link, self.base)
 
     def handle_data(self, data):
         """Collect data if we were collecting data."""
@@ -272,13 +274,13 @@ def parse(content, link):
         parser.close()
     except Exception, e:
         # ignore (but log) all errors
-        debugio.debug('parsers.html.htmlparser.parse(): caught exception: ' + str(e))
+        debugio.debug('webcheck.parsers.html.htmlparser.parse(): caught exception: ' + str(e))
     # check for parser errors
     if parser.errmsg is not None:
-        debugio.debug('parsers.html.htmlparser.parse(): problem parsing html: ' + parser.errmsg)
+        debugio.debug('webcheck.parsers.html.htmlparser.parse(): problem parsing html: ' + parser.errmsg)
         link.add_pageproblem('problem parsing html: %s' % parser.errmsg)
     # dump encoding
-    debugio.debug('parsers.html.htmlparser.parse(): html encoding: %s' % str(link.encoding))
+    debugio.debug('webcheck.parsers.html.htmlparser.parse(): html encoding: %s' % str(link.encoding))
     # flag that the link contains a valid page
     link.is_page = True
     # save the title
