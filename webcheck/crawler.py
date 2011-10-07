@@ -41,6 +41,7 @@ import urlparse
 from webcheck.db import Session, Link, LinkProblem, PageProblem, children, \
                         embedded
 from webcheck import debugio
+from webcheck.util import install_file
 import webcheck.config
 import webcheck.parsers
 
@@ -420,3 +421,7 @@ class Site(object):
             if hasattr(pluginmod, 'generate'):
                 debugio.info('  ' + plugin)
                 pluginmod.generate(self)
+        # install theme files
+        install_file('webcheck.css', True)
+        install_file('fancytooltips/fancytooltips.js', True)
+        install_file('favicon.ico', False)

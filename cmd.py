@@ -185,58 +185,6 @@ def parse_args(site):
         sys.exit(1)
 
 
-def install_file(source, text=False):
-    """Install the given file in the output directory.
-    If the text flag is set to true it is assumed the file is text,
-    translating line endings."""
-    import shutil
-    import urlparse
-    # figure out mode to open the file with
-    mode = 'r'
-    if text:
-        mode += 'U'
-    # check with what kind of argument we are called
-    scheme = urlparse.urlsplit(source)[0]
-    if scheme == 'file':
-        # this is a file:/// url, translate to normal path and open
-        import urllib
-        source = urllib.url2pathname(urlparse.urlsplit(source)[2])
-    elif scheme == '' and os.path.isabs(source):
-        # this is an absolute path, just open it as is
-        pass
-    elif scheme == '':
-        # this is a relavite path, try to fetch it from the python path
-        for directory in sys.path:
-            tst = os.path.join(directory, source)
-            if os.path.isfile(tst):
-                source = tst
-                break
-    # TODO: support more schemes here
-    # figure out the destination name
-    target = os.path.join(config.OUTPUT_DIR, os.path.basename(source))
-    # test if source and target are the same
-    source = os.path.realpath(source)
-    if source == os.path.realpath(target):
-        debugio.warn('attempt to overwrite %(fname)s with itself' % {'fname': source})
-        return
-    # open the input file
-    sfp = None
-    try:
-        sfp = open(source, mode)
-    except IOError, (errno, strerror):
-        debugio.error('%(fname)s: %(strerror)s' %
-                      {'fname': source,
-                       'strerror': strerror})
-        sys.exit(1)
-    # create file in output directory (with overwrite question)
-    tfp = webcheck.plugins.open_file(os.path.basename(source))
-    # copy contents
-    shutil.copyfileobj(sfp, tfp)
-    # close files
-    tfp.close()
-    sfp.close()
-
-
 def main(site):
     """Main program."""
     # crawl through the website
@@ -254,9 +202,6 @@ def main(site):
     # for every plugin, generate a page
     site.generate()
     # put extra files in the output directory
-    install_file('webcheck.css', True)
-    install_file('fancytooltips/fancytooltips.js', True)
-    install_file('favicon.ico', False)
     debugio.info('done.')
 
 

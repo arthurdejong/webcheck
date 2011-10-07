@@ -52,6 +52,7 @@ from sqlalchemy.orm.session import object_session
 import webcheck
 from webcheck.db import Link
 from webcheck.parsers.html import htmlescape
+from webcheck.util import open_file
 import webcheck.config
 import webcheck.debugio
 
@@ -158,55 +159,6 @@ def print_parents(fp, link, indent='     '):
     fp.write(
       indent + ' </ul>\n' +
       indent + '</div>\n')
-
-
-def open_file(filename, istext=True, makebackup=False):
-    """This returns an open file object which can be used for writing. This
-    file is created in the output directory. The output directory (stored in
-    webcheck.config.OUTPUT_DIR is created if it does not yet exist. If the second
-    parameter is True (default) the file is opened as an UTF-8 text file."""
-    import os
-    # check if output directory exists and create it if needed
-    if not os.path.isdir(webcheck.config.OUTPUT_DIR):
-        try:
-            os.mkdir(webcheck.config.OUTPUT_DIR)
-        except OSError, (errno, strerror):
-            debugio.error('error creating directory %(dir)s: %(strerror)s' %
-                          {'dir': webcheck.config.OUTPUT_DIR,
-                           'strerror': strerror})
-            sys.exit(1)
-    # build the output file name
-    fname = os.path.join(webcheck.config.OUTPUT_DIR, filename)
-    # check if file exists
-    if os.path.exists(fname):
-        if makebackup:
-            # create backup of original (overwriting previous backup)
-            os.rename(fname, fname + '~')
-        elif not webcheck.config.OVERWRITE_FILES:
-            # ask to overwrite
-            try:
-                res = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
-            except EOFError:
-                # bail out in case raw_input() failed
-                debugio.error('error reading response')
-                res = 'q'
-            res = res.lower() + ' '
-            if res[0] == 'a':
-                webcheck.config.OVERWRITE_FILES = True
-            elif res[0] != 'y':
-                print 'Aborted.'
-                sys.exit(1)
-    # open the file for writing
-    try:
-        if istext:
-            return open(fname, 'w')
-        else:
-            return open(fname, 'wb')
-    except IOError, (errno, strerror):
-        debugio.error('error creating output file %(fname)s: %(strerror)s' %
-                      {'fname': fname,
-                       'strerror': strerror})
-        sys.exit(1)
 
 
 def _print_navbar(fp, selected):
