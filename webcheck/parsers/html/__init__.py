@@ -27,8 +27,7 @@ back to loading the legacy HTMLParser parser."""
 import htmlentitydefs
 import re
 
-from webcheck import debugio
-import webcheck.config
+from webcheck import debugio, config
 
 
 # the list of mimetypes this module should be able to handle
@@ -114,7 +113,7 @@ def parse(content, link):
     # call the normal parse function
     _parsefunction(content, link)
     # call the tidy parse function
-    if webcheck.config.TIDY_OPTIONS:
+    if config.TIDY_OPTIONS:
         try:
             import webcheck.parsers.html.calltidy
             debugio.debug('webcheck.parsers.html.parse(): the Tidy parser is ok')
@@ -122,4 +121,4 @@ def parse(content, link):
         except ImportError:
             debugio.warn('tidy library (python-utidylib) is unavailable')
             # remove config to only try once
-            webcheck.config.TIDY_OPTIONS = None
+            config.TIDY_OPTIONS = None
