@@ -40,7 +40,7 @@ _refershcontentpattern = re.compile('^[0-9]+;url=(.*)$', re.I)
 
 # check BeautifulSoup find() function for bugs
 if BeautifulSoup.BeautifulSoup('<foo>').find('foo', bar=True):
-    import debugio
+    from webcheck import debugio
     debugio.warn('using buggy version of BeautifulSoup (%s)' %
                  BeautifulSoup.__version__)
 
@@ -171,12 +171,12 @@ def parse(content, link):
     for style in soup.findAll('style'):
         if style.string:
             # delegate handling of inline css to css module
-            import parsers.css
+            import webcheck.parsers.css
             parsers.css.parse(htmlunescape(style.string), link, base)
     # <ANY style="CSS">
     for elem in soup.findAll(style=True):
         # delegate handling of inline css to css module
-        import parsers.css
+        import webcheck.parsers.css
         parsers.css.parse(elem['style'], link, base)
     # <script src="url">
     for script in soup.findAll('script', src=True):

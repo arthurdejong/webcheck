@@ -116,7 +116,7 @@ def parse(content, link):
     # call the tidy parse function
     if webcheck.config.TIDY_OPTIONS:
         try:
-            import calltidy
+            import webcheck.parsers.html.calltidy
             debugio.debug('webcheck.parsers.html.parse(): the Tidy parser is ok')
             calltidy.parse(content, link)
         except ImportError:
