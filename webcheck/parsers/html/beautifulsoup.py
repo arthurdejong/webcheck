@@ -24,7 +24,6 @@
 BeautifulSoup HTML parser and is more flexible than the legacy HTMLParser
 module."""
 
-import htmlentitydefs
 import re
 import urlparse
 
@@ -32,7 +31,6 @@ import BeautifulSoup
 
 from webcheck.myurllib import normalizeurl
 from webcheck.parsers.html import htmlunescape
-import crawler
 
 
 # pattern for matching http-equiv and content part of

@@ -28,8 +28,6 @@ __title__ = 'problems by author'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'problems.html'
 
-import urllib
-
 from webcheck.db import Session, Link
 import webcheck.plugins
 

@@ -27,7 +27,7 @@ from sqlalchemy import distinct, func
 from sqlalchemy import Table, Column, Integer, Boolean, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.orm.session import object_session
-from sqlalchemy.sql.expression import ClauseElement, union
+from sqlalchemy.sql.expression import union
 
 from webcheck.myurllib import normalizeurl
 import webcheck.config

@@ -28,8 +28,6 @@ __title__ = 'images'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'images.html'
 
-import re
-
 from webcheck.db import Session, Link
 import webcheck.plugins
 
