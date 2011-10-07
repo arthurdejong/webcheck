@@ -25,20 +25,14 @@
 
 """This is the main webcheck module."""
 
-__version__ = '1.10.4'
-__homepage__ = 'http://arthurdejong.org/webcheck/'
-
 import os
 import re
 import sys
 import urllib
 import urlparse
 
+import webcheck
 from webcheck import config
-# update some fields that currently are stored in config
-config.VERSION = __version__
-config.HOMEPAGE = __homepage__
-
 from webcheck import debugio
 import webcheck.crawler
 import webcheck.db
@@ -58,7 +52,7 @@ def print_version():
       'Albert Hopkins (marduk), Mike W. Meyer and Arthur de Jong.\n'
       'This is free software; see the source for copying conditions.  There is NO\n'
       'warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n'
-      % {'version': __version__})
+      % {'version': webcheck.__version__})
 
 
 def print_usage():

@@ -30,6 +30,7 @@ __outputfile__ = 'about.html'
 
 import time
 
+import webcheck
 from webcheck.db import Session, Link
 import webcheck.config
 import webcheck.plugins
@@ -56,10 +57,10 @@ def generate(site):
       '    This report was generated on %(time)s, a total of %(numurls)d\n'
       '    links were found.\n'
       '   </p>\n\n'
-      % {'version':  webcheck.plugins.htmlescape(webcheck.config.VERSION),
+      % {'version':  webcheck.plugins.htmlescape(webcheck.__version__),
          'time':     webcheck.plugins.htmlescape(time.ctime(time.time())),
          'numurls':  session.query(Link).count(),
-         'homepage': webcheck.config.HOMEPAGE})
+         'homepage': webcheck.__homepage__})
     # output copyright information
     fp.write(
       '   <h3>Copyright</h3>\n'

@@ -49,6 +49,7 @@ import time
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import object_session
 
+import webcheck
 from webcheck.db import Link
 from webcheck.parsers.html import htmlescape
 import webcheck.config
@@ -255,7 +256,7 @@ def open_html(plugin, site):
       % {'sitetitle':   htmlescape(base.title or base.url),
          'plugintitle': htmlescape(plugin.__title__),
          'siteurl':     base.url,
-         'version':     webcheck.config.VERSION})
+         'version':     webcheck.__version__})
     # write navigation bar
     _print_navbar(fp, plugin)
     # write plugin heading
@@ -276,6 +277,6 @@ def close_html(fp):
       ' </body>\n'
       '</html>\n'
       % {'time':     htmlescape(time.ctime(time.time())),
-         'homepage': webcheck.config.HOMEPAGE,
-         'version':  htmlescape(webcheck.config.VERSION)})
+         'homepage': webcheck.__homepage__,
+         'version':  htmlescape(webcheck.__version__)})
     fp.close()

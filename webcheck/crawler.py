@@ -61,6 +61,7 @@ class NoRedirectHandler(urllib2.HTTPRedirectHandler):
 def setup_urllib2():
     """Configure the urllib2 module to store cookies in the output
     directory."""
+    import webcheck  # local import to avoid import loop
     filename = os.path.join(webcheck.config.OUTPUT_DIR, 'cookies.lwp')
     # set up our cookie jar
     cookiejar = cookielib.LWPCookieJar(filename)
@@ -73,7 +74,7 @@ def setup_urllib2():
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar),
                                   NoRedirectHandler())
     opener.addheaders = [
-      ('User-agent', 'webcheck %s' % webcheck.config.VERSION),
+      ('User-agent', 'webcheck %s' % webcheck.__version__),
       ]
     if webcheck.config.BYPASSHTTPCACHE:
         opener.addheaders.append(('Cache-control', 'no-cache'))
