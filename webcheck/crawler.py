@@ -116,6 +116,13 @@ class Crawler(object):
         self.bases = []
 
     def setup_database(self):
+        if hasattr(self, 'database_configed'):
+            return
+        self.database_configed = True
+        # ensure output directory exists
+        if not os.path.isdir(config.OUTPUT_DIR):
+            os.mkdir(config.OUTPUT_DIR)
+        # open the sqlite file
         filename = os.path.join(config.OUTPUT_DIR, 'webcheck.sqlite')
         engine = create_engine('sqlite:///' + filename)
         Session.configure(bind=engine)
@@ -123,9 +130,12 @@ class Crawler(object):
         Base.metadata.create_all(engine)
         # TODO: schema migraton goes here
 
-    def add_internal(self, url):
+    def add_base(self, url):
         """Add the given url and consider all urls below it to be internal.
         These links are all marked for checking with the crawl() function."""
+        # ensure we have a connection to the database
+        self.setup_database()
+        # clean the URL and add it
         url = Link.clean_url(url)
         if url not in self._internal_urls:
             self._internal_urls.add(url)
@@ -146,9 +156,9 @@ class Crawler(object):
         self._yanked_res[exp] = re.compile(exp, re.IGNORECASE)
 
     def _is_internal(self, url):
-        """Check whether the specified url is external or internal.
-        This uses the urls marked with add_internal() and the regular
-        expressions passed with add_external_re()."""
+        """Check whether the specified url is external or internal. This
+        uses the urls marked with add_base() and the regular expressions
+        passed with add_external_re()."""
         # check if it is internal through the regexps
         for regexp in self._internal_res.values():
             if regexp.search(url) is not None:
@@ -245,10 +255,11 @@ class Crawler(object):
         return links.filter(Link.yanked == None)
 
     def crawl(self):
-        """Crawl the website based on the urls specified with
-        add_internal(). If the serialization file pointer
-        is specified the crawler writes out updated links to
-        the file while crawling the site."""
+        """Crawl the website based on the urls specified with add_base().
+        If the serialization file pointer is specified the crawler writes
+        out updated links to the file while crawling the site."""
+        # connect to the database
+        self.setup_database()
         # configure urllib2 to store cookies in the output directory
         _setup_urllib2()
         # get a database session
@@ -379,9 +390,11 @@ class Crawler(object):
     def postprocess(self):
         """Do some basic post processing of the collected data, including
         depth calculation of every link."""
+        # ensure we have a connection to the database
+        self.setup_database()
         # get a database session
         session = Session()
-        # build the list of urls that were set up with add_internal() that
+        # build the list of urls that were set up with add_base() that
         # do not have a parent (they form the base for the site)
         for url in self._internal_urls:
             link = self.get_link(session, url).follow_link()
@@ -425,6 +438,9 @@ class Crawler(object):
 
     def generate(self):
         """Generate pages for plugins."""
+        # ensure we have a connection to the database
+        self.setup_database()
+        # call all the plugins
         for plugin in config.PLUGINS:
             # import the plugin
             pluginmod = __import__(plugin, globals(), locals(), [plugin])

@@ -150,11 +150,6 @@ def parse_args(crawler):
             print_usage()
             print_tryhelp()
             sys.exit(1)
-        # ensure output directory exists
-        if not os.path.isdir(config.OUTPUT_DIR):
-            os.mkdir(config.OUTPUT_DIR)
-        # set up database connection
-        crawler.setup_database()
         # add configuration to site
         for pattern in internal_urls:
             crawler.add_internal_re(pattern)
@@ -166,7 +161,7 @@ def parse_args(crawler):
             # if it does not look like a url it is probably a local file
             if urlparse.urlsplit(arg)[0] == '':
                 arg = 'file://' + urllib.pathname2url(os.path.abspath(arg))
-            crawler.add_internal(arg)
+            crawler.add_base(arg)
     except getopt.error, reason:
         sys.stderr.write('webcheck: %s\n' % reason)
         print_tryhelp()
