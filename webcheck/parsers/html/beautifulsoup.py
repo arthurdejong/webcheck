@@ -31,6 +31,7 @@ import BeautifulSoup
 
 from webcheck.myurllib import normalizeurl
 from webcheck.parsers.html import htmlunescape
+import webcheck.parsers.css
 
 
 # pattern for matching http-equiv and content part of
@@ -171,13 +172,11 @@ def parse(content, link):
     for style in soup.findAll('style'):
         if style.string:
             # delegate handling of inline css to css module
-            import webcheck.parsers.css
-            parsers.css.parse(htmlunescape(style.string), link, base)
+            webcheck.parsers.css.parse(htmlunescape(style.string), link, base)
     # <ANY style="CSS">
     for elem in soup.findAll(style=True):
         # delegate handling of inline css to css module
-        import webcheck.parsers.css
-        parsers.css.parse(elem['style'], link, base)
+        webcheck.parsers.css.parse(elem['style'], link, base)
     # <script src="url">
     for script in soup.findAll('script', src=True):
         embed = normalizeurl(htmlunescape(script['src']).strip())

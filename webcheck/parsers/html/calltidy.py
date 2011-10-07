@@ -22,8 +22,8 @@
 
 import tidy
 
-import webcheck.config
-import webcheck.parsers.html
+from webcheck import config
+from webcheck.parsers.html import htmlunescape
 
 
 def parse(content, link):
@@ -31,7 +31,7 @@ def parse(content, link):
     link."""
     # only call tidy on internal pages
     if link.is_internal:
-        t = tidy.parseString(content, **webcheck.config.TIDY_OPTIONS)
+        t = tidy.parseString(content, **config.TIDY_OPTIONS)
         for err in t.errors:
             # error messages are escaped so we unescape them
-            link.add_pageproblem(webcheck.parsers.html.htmlunescape(unicode(err)))
+            link.add_pageproblem(htmlunescape(unicode(err)))

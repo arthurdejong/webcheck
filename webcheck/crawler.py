@@ -38,12 +38,13 @@ import time
 import urllib2
 import urlparse
 
-from webcheck.db import Session, Link, LinkProblem, PageProblem, children, \
-                        embedded
-from webcheck import debugio
+from webcheck import config, debugio
+from webcheck.db import Session, Base, Link, LinkProblem, PageProblem, \
+        children, embedded
 from webcheck.util import install_file
-import webcheck.config
 import webcheck.parsers
+
+from sqlalchemy import create_engine
 
 
 class RedirectError(urllib2.HTTPError):
@@ -59,11 +60,11 @@ class NoRedirectHandler(urllib2.HTTPRedirectHandler):
         raise RedirectError(req.get_full_url(), code, msg, headers, fp, newurl)
 
 
-def setup_urllib2():
+def _setup_urllib2():
     """Configure the urllib2 module to store cookies in the output
     directory."""
     import webcheck  # local import to avoid import loop
-    filename = os.path.join(webcheck.config.OUTPUT_DIR, 'cookies.lwp')
+    filename = os.path.join(config.OUTPUT_DIR, 'cookies.lwp')
     # set up our cookie jar
     cookiejar = cookielib.LWPCookieJar(filename)
     try:
@@ -77,7 +78,7 @@ def setup_urllib2():
     opener.addheaders = [
       ('User-agent', 'webcheck %s' % webcheck.__version__),
       ]
-    if webcheck.config.BYPASSHTTPCACHE:
+    if config.BYPASSHTTPCACHE:
         opener.addheaders.append(('Cache-control', 'no-cache'))
         opener.addheaders.append(('Pragma', 'no-cache'))
     urllib2.install_opener(opener)
@@ -115,6 +116,14 @@ class Site(object):
         # list of base urls (these are the internal urls to start from)
         self.bases = []
 
+    def setup_database(self):
+        filename = os.path.join(config.OUTPUT_DIR, 'webcheck.sqlite')
+        engine = create_engine('sqlite:///' + filename)
+        Session.configure(bind=engine)
+        # ensure that all tables are created
+        Base.metadata.create_all(engine)
+        # TODO: schema migraton goes here
+
     def add_internal(self, url):
         """Add the given url and consider all urls below it to be internal.
         These links are all marked for checking with the crawl() function."""
@@ -147,7 +156,7 @@ class Site(object):
                 return True
         res = False
         # check that the url starts with an internal url
-        if webcheck.config.BASE_URLS_ONLY:
+        if config.BASE_URLS_ONLY:
             # the url must start with one of the _internal_urls
             for i in self._internal_urls:
                 res |= (i == url[:len(i)])
@@ -203,10 +212,10 @@ class Site(object):
                 return 'yanked'
         # check if we should avoid external links
         is_internal = self._is_internal(url)
-        if not is_internal and webcheck.config.AVOID_EXTERNAL_LINKS:
+        if not is_internal and config.AVOID_EXTERNAL_LINKS:
             return 'external avoided'
         # check if we should use robot parsers
-        if not webcheck.config.USE_ROBOTS:
+        if not config.USE_ROBOTS:
             return None
         (scheme, netloc) = urlparse.urlsplit(url)[0:2]
         # skip schemes not having robot.txt files
@@ -241,10 +250,12 @@ class Site(object):
         add_internal(). If the serialization file pointer
         is specified the crawler writes out updated links to
         the file while crawling the site."""
+        # configure urllib2 to store cookies in the output directory
+        _setup_urllib2()
         # get a database session
         session = Session()
         # remove all links
-        if not webcheck.config.CONTINUE:
+        if not config.CONTINUE:
             session.query(LinkProblem).delete()
             session.commit()
             session.query(PageProblem).delete()
@@ -286,10 +297,10 @@ class Site(object):
             # flush database changes
             session.commit()
             # sleep between requests if configured
-            if webcheck.config.WAIT_BETWEEN_REQUESTS > 0:
+            if config.WAIT_BETWEEN_REQUESTS > 0:
                 debugio.debug('crawler.crawl(): sleeping %s seconds' %
-                              webcheck.config.WAIT_BETWEEN_REQUESTS)
-                time.sleep(webcheck.config.WAIT_BETWEEN_REQUESTS)
+                              config.WAIT_BETWEEN_REQUESTS)
+                time.sleep(config.WAIT_BETWEEN_REQUESTS)
             debugio.debug('crawler.crawl(): items left to check: %d' %
                           (remaining + len(tocheck)))
         session.commit()
@@ -307,7 +318,7 @@ class Site(object):
             parent = link.parents.first()
             if parent:
                 request.add_header('Referer', parent.url)
-            response = urllib2.urlopen(request, timeout=webcheck.config.IOTIMEOUT)
+            response = urllib2.urlopen(request, timeout=config.IOTIMEOUT)
             link.mimetype = response.info().gettype()
             link.set_encoding(response.headers.getparam('charset'))
             # FIXME: get result code and other stuff
@@ -406,7 +417,7 @@ class Site(object):
             debugio.debug('crawler.postprocess(): %d links at depth %d' % (count, depth))
             # TODO: also handle embeds
         # see if any of the plugins want to do postprocessing
-        for plugin in webcheck.config.PLUGINS:
+        for plugin in config.PLUGINS:
             # import the plugin
             pluginmod = __import__(plugin, globals(), locals(), [plugin])
             if hasattr(pluginmod, 'postprocess'):
@@ -415,7 +426,7 @@ class Site(object):
 
     def generate(self):
         """Generate pages for plugins."""
-        for plugin in webcheck.config.PLUGINS:
+        for plugin in config.PLUGINS:
             # import the plugin
             pluginmod = __import__(plugin, globals(), locals(), [plugin])
             if hasattr(pluginmod, 'generate'):

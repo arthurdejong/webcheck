@@ -30,8 +30,8 @@ __outputfile__ = 'new.html'
 
 import time
 
+from webcheck import config
 from webcheck.db import Session, Link
-import webcheck.config
 import webcheck.plugins
 
 
@@ -42,7 +42,7 @@ def generate(site):
     """Output the list of recently modified pages."""
     session = Session()
     # the time for which links are considered new
-    newtime = time.time() - SECS_PER_DAY * webcheck.config.REPORT_WHATSNEW_URL_AGE
+    newtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSNEW_URL_AGE
     # get all internal pages that are new
     links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = links.filter(Link.mtime > newtime).order_by(Link.mtime.desc())
@@ -53,7 +53,7 @@ def generate(site):
           '   <p class="description">\n'
           '    No pages were found that were modified within the last %(new)d days.\n'
           '   </p>\n'
-          % {'new': webcheck.config.REPORT_WHATSNEW_URL_AGE})
+          % {'new': config.REPORT_WHATSNEW_URL_AGE})
         webcheck.plugins.close_html(fp)
         return
     fp.write(
@@ -61,7 +61,7 @@ def generate(site):
       '    These pages have been recently modified (within %(new)d days).\n'
       '   </p>\n'
       '   <ul>\n'
-      % {'new': webcheck.config.REPORT_WHATSNEW_URL_AGE})
+      % {'new': config.REPORT_WHATSNEW_URL_AGE})
     for link in links:
         age = (time.time() - link.mtime) / SECS_PER_DAY
         fp.write(

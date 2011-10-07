@@ -29,9 +29,8 @@ from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.orm.session import object_session
 from sqlalchemy.sql.expression import union
 
+from webcheck import config, debugio
 from webcheck.myurllib import normalizeurl
-import webcheck.config
-import webcheck.debugio
 
 
 # provide session and schema classes
@@ -117,7 +116,7 @@ class Link(Base):
         the encoding is supported."""
         if not self.encoding and encoding:
             try:
-                webcheck.debugio.debug('crawler.Link.set_encoding(%r)' % encoding)
+                debugio.debug('crawler.Link.set_encoding(%r)' % encoding)
                 unicode('just some random text', encoding, 'replace')
                 self.encoding = encoding
             except Exception, e:
@@ -132,7 +131,7 @@ class Link(Base):
         self.redirectdepth = max([self.redirectdepth] +
                                  [x.redirectdepth for x in self.parents]) + 1
         # check depth
-        if self.redirectdepth >= webcheck.config.REDIRECT_DEPTH:
+        if self.redirectdepth >= config.REDIRECT_DEPTH:
             self.add_linkproblem('too many redirects (%d)' % self.redirectdepth)
             return
         # check for redirect to self

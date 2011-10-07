@@ -31,7 +31,7 @@ __outputfile__ = 'old.html'
 import time
 
 from webcheck.db import Session, Link
-import webcheck.config
+from webcheck import config
 import webcheck.plugins
 
 
@@ -42,7 +42,7 @@ def generate(site):
     """Output the list of outdated pages to the specified file descriptor."""
     session = Session()
     # the time for which links are considered old
-    oldtime = time.time() - SECS_PER_DAY * webcheck.config.REPORT_WHATSOLD_URL_AGE
+    oldtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSOLD_URL_AGE
     # get all internal pages that are old
     links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = links.filter(Link.mtime < oldtime).order_by(Link.mtime)
@@ -53,7 +53,7 @@ def generate(site):
           '   <p class="description">\n'
           '    No pages were found that were older than %(old)d days old.\n'
           '   </p>\n'
-          % {'old': webcheck.config.REPORT_WHATSOLD_URL_AGE})
+          % {'old': config.REPORT_WHATSOLD_URL_AGE})
         webcheck.plugins.close_html(fp)
         return
     fp.write(
@@ -62,7 +62,7 @@ def generate(site):
       '    days) and may be outdated.\n'
       '   </p>\n'
       '   <ul>\n'
-      % {'old': webcheck.config.REPORT_WHATSOLD_URL_AGE})
+      % {'old': config.REPORT_WHATSOLD_URL_AGE})
     for link in links:
         age = (time.time() - link.mtime) / SECS_PER_DAY
         fp.write(

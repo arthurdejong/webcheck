@@ -50,11 +50,10 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.session import object_session
 
 import webcheck
+from webcheck import config
 from webcheck.db import Link
 from webcheck.parsers.html import htmlescape
 from webcheck.util import open_file
-import webcheck.config
-import webcheck.debugio
 
 
 def _floatformat(f):
@@ -128,7 +127,7 @@ def make_link(link, title=None):
     is external, insert "class=external" in the <a> tag."""
     return '<a href="%(url)s" %(target)sclass="%(cssclass)s" title="%(info)s">%(title)s</a>' % \
             dict(url=htmlescape(link.url),
-                 target='target="_blank" ' if webcheck.config.REPORT_LINKS_IN_NEW_WINDOW else '',
+                 target='target="_blank" ' if config.REPORT_LINKS_IN_NEW_WINDOW else '',
                  cssclass='internal' if link.is_internal else 'external',
                  info=htmlescape(_get_info(link)).replace('\n', '&#10;'),
                  title=htmlescape(title or link.title or link.url))
@@ -141,7 +140,7 @@ def print_parents(fp, link, indent='     '):
     count = link.count_parents
     if not count:
         return
-    parents = link.parents.order_by(Link.title, Link.url).options(joinedload(Link.linkproblems))[:webcheck.config.PARENT_LISTLEN]
+    parents = link.parents.order_by(Link.title, Link.url).options(joinedload(Link.linkproblems))[:config.PARENT_LISTLEN]
     fp.write(
       indent + '<div class="parents">\n' +
       indent + ' referenced from:\n' +
@@ -164,7 +163,7 @@ def print_parents(fp, link, indent='     '):
 def _print_navbar(fp, selected):
     """Return an html fragement representing the navigation bar for a page."""
     fp.write('  <ul class="navbar">\n')
-    for plugin in webcheck.config.PLUGINS:
+    for plugin in config.PLUGINS:
         # import the plugin
         pluginmod = __import__(plugin, globals(), locals(), [plugin])
         # skip if no outputfile

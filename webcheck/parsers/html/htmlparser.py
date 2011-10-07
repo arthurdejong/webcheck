@@ -32,7 +32,6 @@ import urlparse
 from webcheck import debugio
 from webcheck.myurllib import normalizeurl
 from webcheck.parsers.html import htmlunescape
-import webcheck.crawler
 
 
 # pattern for matching numeric html entities

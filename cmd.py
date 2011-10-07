@@ -32,12 +32,10 @@ import urllib
 import urlparse
 
 import webcheck
-from webcheck import config
-from webcheck import debugio
-import webcheck.crawler
-import webcheck.db
 import webcheck.monkeypatch
-import webcheck.plugins
+from webcheck.crawler import Site
+from webcheck import config, debugio
+
 
 debugio.loglevel = debugio.INFO
 
@@ -157,13 +155,7 @@ def parse_args(site):
         if not os.path.isdir(config.OUTPUT_DIR):
             os.mkdir(config.OUTPUT_DIR)
         # set up database connection
-        filename = os.path.join(config.OUTPUT_DIR, 'webcheck.sqlite')
-        from sqlalchemy import create_engine
-        engine = create_engine('sqlite:///' + filename)
-        webcheck.db.Session.configure(bind=engine)
-        # ensure that all tables are created
-        webcheck.db.Base.metadata.create_all(engine)
-        # TODO: schema migraton goes here
+        site.setup_database()
         # add configuration to site
         for pattern in internal_urls:
             site.add_internal_re(pattern)
@@ -189,7 +181,6 @@ def main(site):
     """Main program."""
     # crawl through the website
     debugio.info('checking site....')
-    webcheck.crawler.setup_urllib2()
     site.crawl()  # this will take a while
     debugio.info('done.')
     # do postprocessing (building site structure, etc)
@@ -201,14 +192,13 @@ def main(site):
     debugio.info('generating reports...')
     # for every plugin, generate a page
     site.generate()
-    # put extra files in the output directory
     debugio.info('done.')
 
 
 if __name__ == '__main__':
     try:
         # initialize site object
-        site = webcheck.crawler.Site()
+        site = Site()
         # parse command-line arguments
         parse_args(site)
         # run the main program

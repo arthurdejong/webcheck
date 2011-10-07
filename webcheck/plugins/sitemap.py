@@ -28,8 +28,8 @@ __title__ = 'site map'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'index.html'
 
-from webcheck.db import Session, Link
-import webcheck.config
+from webcheck import config
+from webcheck.db import Link
 import webcheck.plugins
 
 
@@ -60,7 +60,7 @@ def _explore(fp, link, explored, depth=0, indent='    '):
     fp.write(indent + '<li>\n')
     fp.write(indent + ' ' + webcheck.plugins.make_link(link) + '\n')
     # only check children if we are not too deep yet
-    if depth <= webcheck.config.REPORT_SITEMAP_LEVEL:
+    if depth <= config.REPORT_SITEMAP_LEVEL:
         # figure out the links to follow and ensure that they are only
         # explored from here
         children = set()
@@ -80,7 +80,6 @@ def _explore(fp, link, explored, depth=0, indent='    '):
 
 def generate(site):
     """Output the sitemap."""
-    session = Session()
     fp = webcheck.plugins.open_html(webcheck.plugins.sitemap, site)
     # output the site structure using breadth first traversal
     fp.write(

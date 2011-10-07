@@ -34,7 +34,7 @@ from webcheck import config, debugio
 def open_file(filename, istext=True, makebackup=False):
     """This returns an open file object which can be used for writing. This
     file is created in the output directory. The output directory (stored in
-    webcheck.config.OUTPUT_DIR is created if it does not yet exist. If the second
+    config.OUTPUT_DIR is created if it does not yet exist. If the second
     parameter is True (default) the file is opened as an UTF-8 text file."""
     # check if output directory exists and create it if needed
     if not os.path.isdir(config.OUTPUT_DIR):

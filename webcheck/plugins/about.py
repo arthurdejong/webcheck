@@ -31,8 +31,8 @@ __outputfile__ = 'about.html'
 import time
 
 import webcheck
+from webcheck import config
 from webcheck.db import Session, Link
-import webcheck.config
 import webcheck.plugins
 
 
@@ -101,7 +101,7 @@ def generate(site):
     fp.write(
       '   <h3>Plugins</h3>\n'
       '   <ul>\n')
-    for plugin in webcheck.config.PLUGINS:
+    for plugin in config.PLUGINS:
         pluginmod = __import__(plugin, globals(), locals(), [plugin])
         fp.write(
           '    <li>\n'

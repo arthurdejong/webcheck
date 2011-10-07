@@ -29,7 +29,7 @@ __author__ = 'Arthur de Jong'
 __outputfile__ = 'size.html'
 
 from webcheck.db import Session, Link
-import webcheck.config
+from webcheck import config
 import webcheck.plugins
 
 
@@ -61,7 +61,7 @@ def generate(site):
     # get all internal pages and get big links
     links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = [x for x in links
-             if _getsize(x) >= webcheck.config.REPORT_SLOW_URL_SIZE * 1024]
+             if _getsize(x) >= config.REPORT_SLOW_URL_SIZE * 1024]
     # sort links by size (biggest first)
     links.sort(lambda a, b: cmp(b.total_size, a.total_size))
     # present results
@@ -71,7 +71,7 @@ def generate(site):
           '   <p class="description">\n'
           '    No pages over %(size)dK were found.\n'
           '   </p>\n'
-          % {'size': webcheck.config.REPORT_SLOW_URL_SIZE})
+          % {'size': config.REPORT_SLOW_URL_SIZE})
         webcheck.plugins.close_html(fp)
         return
     fp.write(
@@ -80,7 +80,7 @@ def generate(site):
       '    slow to download.\n'
       '   </p>\n'
       '   <ul>\n'
-      % {'size': webcheck.config.REPORT_SLOW_URL_SIZE})
+      % {'size': config.REPORT_SLOW_URL_SIZE})
     for link in links:
         size = webcheck.plugins.get_size(link.total_size)
         fp.write(

@@ -117,7 +117,7 @@ def parse(content, link):
         try:
             import webcheck.parsers.html.calltidy
             debugio.debug('webcheck.parsers.html.parse(): the Tidy parser is ok')
-            calltidy.parse(content, link)
+            webcheck.parsers.html.calltidy.parse(content, link)
         except ImportError:
             debugio.warn('tidy library (python-utidylib) is unavailable')
             # remove config to only try once
