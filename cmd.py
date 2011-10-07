@@ -94,8 +94,6 @@ def print_help():
       '  -f, --force            overwrite files without asking\n'
       '  -r, --redirects=N      the number of redirects webcheck should follow,\n'
       '                         0 implies to follow all redirects (default=%(redirects)d)\n'
-      '  -u, --userpass=URL     specify a URL with user:pass so username and password are given\n'
-      '                         to matching network locations, -u http://user:pass@example.com\n'
       '  -w, --wait=SECONDS     wait SECONDS between retrievals\n'
       '  -V, --version          output version information and exit\n'
       '  -h, --help             display this help and exit\n'
@@ -111,7 +109,7 @@ def parse_args(site):
           ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
            'ignore-robots',
            'quiet', 'silent', 'debug', 'profile', 'output=', 'continue',
-           'force', 'redirects=', 'userpass=', 'wait=', 'version', 'help'))
+           'force', 'redirects=', 'wait=', 'version', 'help'))
         internal_urls = []
         external_urls = []
         yank_urls = []
@@ -143,10 +141,6 @@ def parse_args(site):
                 config.OVERWRITE_FILES = True
             elif flag in ('-r', '--redirects'):
                 config.REDIRECT_DEPTH = int(arg)
-            elif flag in ('-u', '--userpass'):
-                (_scheme, _netloc, _path, _params, _query, _frag) = urlparse.urlparse(arg)
-                (_userpass, _netloc) = urllib.splituser(_netloc)
-                config.USERPASS[_netloc] = _userpass
             elif flag in ('-w', '--wait'):
                 config.WAIT_BETWEEN_REQUESTS = float(arg)
             elif flag in ('-V', '--version'):
