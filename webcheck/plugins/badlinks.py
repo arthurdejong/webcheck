@@ -34,7 +34,7 @@ from webcheck.db import Session, Link
 import webcheck.plugins
 
 
-def postporcess(site):
+def postporcess(crawler):
     """Add all bad links as pageproblems on pages where they are linked."""
     session = Session()
     # find all links with link problems
@@ -48,13 +48,13 @@ def postporcess(site):
     session.commit()
 
 
-def generate(site):
+def generate(crawler):
     """Present the list of bad links."""
     session = Session()
     # find all links with link problems
     links = session.query(Link).filter(Link.linkproblems.any()).order_by(Link.url).options(joinedload(Link.linkproblems))
     # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.badlinks, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.badlinks, crawler)
     if not links:
         fp.write(
           '   <p class="description">\n'

@@ -32,7 +32,7 @@ from webcheck.db import Session, Link
 import webcheck.plugins
 
 
-def generate(site):
+def generate(crawler):
     """Generate a list of image URLs that were found."""
     session = Session()
     # get non-page links that have an image/* mimetype
@@ -41,7 +41,7 @@ def generate(site):
     links = links.filter(Link.mimetype.startswith('image/'))
     links = links.order_by(Link.url)
     # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.images, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.images, crawler)
     if not links:
         fp.write(
           '   <p class="description">\n'

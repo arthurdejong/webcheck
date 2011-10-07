@@ -23,3 +23,5 @@
 
 __version__ = '1.10.4'
 __homepage__ = 'http://arthurdejong.org/webcheck/'
+
+from webcheck.crawler import Crawler

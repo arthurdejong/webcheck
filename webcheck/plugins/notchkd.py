@@ -34,13 +34,13 @@ from webcheck.db import Session, Link
 import webcheck.plugins
 
 
-def generate(site):
+def generate(crawler):
     """Output the list of not checked pages."""
     session = Session()
     # get all yanked urls
     links = session.query(Link).filter(Link.yanked != None).order_by(Link.url)
     # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.notchkd, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.notchkd, crawler)
     if not links.count():
         fp.write(
           '   <p class="description">\n'

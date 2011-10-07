@@ -34,13 +34,13 @@ from webcheck.db import Session, Link
 import webcheck.plugins
 
 
-def generate(site):
+def generate(crawler):
     """Generate the list of external links."""
     session = Session()
     # get all external links
     links = session.query(Link).filter(Link.is_internal != True).order_by(Link.url)
     # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.external, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.external, crawler)
     if not links:
         fp.write(
           '   <p class="description">'

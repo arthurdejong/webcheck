@@ -30,7 +30,7 @@ __author__ = 'Arthur de Jong'
 from webcheck.db import Session, Link, Anchor
 
 
-def postprocess(site):
+def postprocess(crawler):
     """Add all missing anchors as page problems to the referring page."""
     session = Session()
     # find all fetched links with requested anchors

@@ -38,7 +38,7 @@ import webcheck.plugins
 SECS_PER_DAY = 60 * 60 * 24
 
 
-def generate(site):
+def generate(crawler):
     """Output the list of recently modified pages."""
     session = Session()
     # the time for which links are considered new
@@ -47,7 +47,7 @@ def generate(site):
     links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = links.filter(Link.mtime > newtime).order_by(Link.mtime.desc())
     # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.new, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.new, crawler)
     if not links.count():
         fp.write(
           '   <p class="description">\n'

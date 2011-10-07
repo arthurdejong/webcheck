@@ -55,7 +55,7 @@ def _getsize(link, done=None):
     return link.total_size
 
 
-def generate(site):
+def generate(crawler):
     """Output the list of large pages."""
     session = Session()
     # get all internal pages and get big links
@@ -65,7 +65,7 @@ def generate(site):
     # sort links by size (biggest first)
     links.sort(lambda a, b: cmp(b.total_size, a.total_size))
     # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.size, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.size, crawler)
     if not links:
         fp.write(
           '   <p class="description">\n'

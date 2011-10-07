@@ -28,7 +28,7 @@ When generating the report each plugin is called in turn with
 the generate() function. Each plugin should export the following
 fields:
 
-    generate(site)
+    generate(crawler)
         Based on the site generate all the output files as needed.
     __title__
         A short description of the plugin that is used when linking
@@ -182,12 +182,12 @@ def _print_navbar(fp, selected):
     fp.write('  </ul>\n')
 
 
-def open_html(plugin, site):
+def open_html(plugin, crawler):
     """Print an html fragment for the start of an html page."""
     # open the file
     fp = open_file(plugin.__outputfile__)
     # get the first base url
-    base = site.bases[0]
+    base = crawler.bases[0]
     # write basic html head
     fp.write(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'

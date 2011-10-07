@@ -46,7 +46,7 @@ def _mk_id(name):
     return name
 
 
-def generate(site):
+def generate(crawler):
     """Output the overview of problems per author."""
     session = Session()
     # make a list of problems per author
@@ -65,7 +65,7 @@ def generate(site):
             problem_db[author].append(link)
         else:
             problem_db[author] = [link]
-    fp = webcheck.plugins.open_html(webcheck.plugins.problems, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.problems, crawler)
     if not problem_db:
         fp.write(
           '   <p class="description">\n'

@@ -78,17 +78,17 @@ def _explore(fp, link, explored, depth=0, indent='    '):
     fp.write(indent + '</li>\n')
 
 
-def generate(site):
+def generate(crawler):
     """Output the sitemap."""
-    fp = webcheck.plugins.open_html(webcheck.plugins.sitemap, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.sitemap, crawler)
     # output the site structure using breadth first traversal
     fp.write(
       '   <p class="description">\n'
       '    This an overview of the crawled site.\n'
       '   </p>\n'
       '   <ul>\n')
-    explored = set(x.id for x in site.bases)
-    for l in site.bases:
+    explored = set(x.id for x in crawler.bases)
+    for l in crawler.bases:
         _explore(fp, l, explored)
     fp.write(
       '   </ul>\n')

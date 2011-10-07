@@ -34,7 +34,7 @@ from webcheck.db import Session, Link
 import webcheck.plugins
 
 
-def postprocess(site):
+def postprocess(crawler):
     """Add page problems for all pages without a title."""
     session = Session()
     # get all internal pages without a title
@@ -46,7 +46,7 @@ def postprocess(site):
     session.commit()
 
 
-def generate(site):
+def generate(crawler):
     """Output the list of pages without a title."""
     session = Session()
     # get all internal pages without a title
@@ -54,7 +54,7 @@ def generate(site):
     links = links.filter((char_length(Link.title) == 0) |
                          (Link.title == None)).order_by(Link.url)
     # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.notitles, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.notitles, crawler)
     if not links.count():
         fp.write(
           '   <p class="description">\n'

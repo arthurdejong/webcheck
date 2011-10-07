@@ -33,8 +33,7 @@ import urlparse
 
 import webcheck
 import webcheck.monkeypatch
-from webcheck.crawler import Site
-from webcheck import config, debugio
+from webcheck import config, debugio, Crawler
 
 
 debugio.loglevel = debugio.INFO
@@ -97,7 +96,7 @@ def print_help():
       % {'redirects': config.REDIRECT_DEPTH})
 
 
-def parse_args(site):
+def parse_args(crawler):
     """Parse command-line arguments."""
     import getopt
     try:
@@ -155,19 +154,19 @@ def parse_args(site):
         if not os.path.isdir(config.OUTPUT_DIR):
             os.mkdir(config.OUTPUT_DIR)
         # set up database connection
-        site.setup_database()
+        crawler.setup_database()
         # add configuration to site
         for pattern in internal_urls:
-            site.add_internal_re(pattern)
+            crawler.add_internal_re(pattern)
         for pattern in external_urls:
-            site.add_external_re(pattern)
+            crawler.add_external_re(pattern)
         for pattern in yank_urls:
-            site.add_yanked_re(pattern)
+            crawler.add_yanked_re(pattern)
         for arg in args:
             # if it does not look like a url it is probably a local file
             if urlparse.urlsplit(arg)[0] == '':
                 arg = 'file://' + urllib.pathname2url(os.path.abspath(arg))
-            site.add_internal(arg)
+            crawler.add_internal(arg)
     except getopt.error, reason:
         sys.stderr.write('webcheck: %s\n' % reason)
         print_tryhelp()
@@ -177,30 +176,30 @@ def parse_args(site):
         sys.exit(1)
 
 
-def main(site):
+def main(crawler):
     """Main program."""
     # crawl through the website
     debugio.info('checking site....')
-    site.crawl()  # this will take a while
+    crawler.crawl()  # this will take a while
     debugio.info('done.')
     # do postprocessing (building site structure, etc)
     debugio.info('postprocessing....')
-    site.postprocess()
+    crawler.postprocess()
     debugio.info('done.')
     # now we can write out the files
     # start with the frame-description page
     debugio.info('generating reports...')
     # for every plugin, generate a page
-    site.generate()
+    crawler.generate()
     debugio.info('done.')
 
 
 if __name__ == '__main__':
     try:
-        # initialize site object
-        site = Site()
+        # initialize crawler object
+        crawler = Crawler()
         # parse command-line arguments
-        parse_args(site)
+        parse_args(crawler)
         # run the main program
         if PROFILE:
             fname = os.path.join(config.OUTPUT_DIR, 'webcheck.prof')
@@ -213,12 +212,12 @@ if __name__ == '__main__':
                 sqltap.start()
             except ImportError:
                 pass
-            cProfile.run('main(site)', fname)
+            cProfile.run('main(crawler)', fname)
             if 'sqltap' in locals():
                 statistics = sqltap.collect()
                 sqltap.report(statistics, os.path.join(config.OUTPUT_DIR, 'sqltap.html'))
         else:
-            main(site)
+            main(crawler)
     except KeyboardInterrupt:
         sys.stderr.write('Interrupted\n')
         sys.exit(1)

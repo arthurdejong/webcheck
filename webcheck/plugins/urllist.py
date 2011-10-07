@@ -30,10 +30,10 @@ from webcheck.db import Session, Link
 import webcheck.plugins
 
 
-def generate(site):
+def generate(crawler):
     """Output a sorted list of URLs."""
     session = Session()
-    fp = webcheck.plugins.open_html(webcheck.plugins.urllist, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.urllist, crawler)
     fp.write(
       '   <p class="description">\n'
       '    This is the list of all urls encountered during the examination of\n'

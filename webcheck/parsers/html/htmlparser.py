@@ -32,6 +32,7 @@ import urlparse
 from webcheck import debugio
 from webcheck.myurllib import normalizeurl
 from webcheck.parsers.html import htmlunescape
+import webcheck.parsers.css
 
 
 # pattern for matching numeric html entities
@@ -211,7 +212,6 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # pick up any tags with a style attribute
         if 'style' in attrs:
             # delegate handling of inline css to css module
-            import webcheck.parsers.css
             webcheck.parsers.css.parse(attrs['style'], self.link, self.base)
 
     def handle_endtag(self, tag):
@@ -221,7 +221,6 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
             self.collect = None
         elif tag == 'style' and self.collect is not None:
             # delegate handling of inline css to css module
-            import webcheck.parsers.css
             webcheck.parsers.css.parse(self.collect, self.link, self.base)
 
     def handle_data(self, data):

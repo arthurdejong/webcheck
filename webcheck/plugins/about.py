@@ -36,9 +36,9 @@ from webcheck.db import Session, Link
 import webcheck.plugins
 
 
-def generate(site):
+def generate(crawler):
     """Output a list of modules, it's authors and the webcheck version."""
-    fp = webcheck.plugins.open_html(webcheck.plugins.about, site)
+    fp = webcheck.plugins.open_html(webcheck.plugins.about, crawler)
     session = Session()
     # TODO: xxx links were fetched, xxx pages were examined and a total of xxx notes and problems were found
     # TODO: include some runtime information (e.g. supported schemes, user configuration, etc)

@@ -22,7 +22,7 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
-"""General module to do site-checking. This module contains the Site class
+"""General module to do site-checking. This module contains the Crawler class
 containing the state for the crawled site and some functions to access and
 manipulate the crawling of the website. This module also contains the Link
 class that holds all the link related properties."""
@@ -91,8 +91,7 @@ _spacepattern = re.compile(' ')
 _anchorpattern = re.compile('#([^#]+)$')
 
 
-# TODO: rename Site to Crawler
-class Site(object):
+class Crawler(object):
     """Class to represent gathered data of a site.
 
     The available properties of this class are:
@@ -101,7 +100,7 @@ class Site(object):
    """
 
     def __init__(self):
-        """Creates an instance of the Site class and initializes the
+        """Creates an instance of the Crawler class and initializes the
         state of the site."""
         # list of internal urls
         self._internal_urls = set()
