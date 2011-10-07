@@ -41,6 +41,11 @@ import webcheck.plugins
 
 debugio.loglevel = debugio.INFO
 
+# Whether to produce profiling information. This is for development
+# purposes and as such undocumented.
+# http://docs.python.org/lib/profile.html
+PROFILE = False
+
 
 def print_version():
     """Print version information."""
@@ -126,7 +131,8 @@ def parse_args(site):
                 debugio.loglevel = debugio.DEBUG
             elif flag in ('--profile',):
                 # undocumented on purpose
-                config.PROFILE = True
+                global PROFILE
+                PROFILE = True
             elif flag in ('-o', '--output'):
                 config.OUTPUT_DIR = arg
             elif flag in ('-c', '--continue'):
@@ -261,7 +267,7 @@ if __name__ == '__main__':
         # parse command-line arguments
         parse_args(site)
         # run the main program
-        if config.PROFILE:
+        if PROFILE:
             fname = os.path.join(config.OUTPUT_DIR, 'webcheck.prof')
             try:
                 import cProfile
