@@ -363,14 +363,17 @@ class Crawler(object):
         if parsermodule is None:
             debugio.debug('crawler.Link.fetch(): unsupported content-type: %s' % link.mimetype)
             return
-        # skip parsing of content if we were returned nothing
-        content = response.read()
-        if content is None:
-            return
-        # parse the content
-        debugio.debug('crawler.Link.fetch(): parsing using %s' % parsermodule.__name__)
         try:
+            # skip parsing of content if we were returned nothing
+            content = response.read()
+            if content is None:
+                return
+            # parse the content
+            debugio.debug('crawler.Link.fetch(): parsing using %s' % parsermodule.__name__)
             parsermodule.parse(content, link)
+        except KeyboardInterrupt:
+            # handle this in a higher-level exception handler
+            raise
         except Exception, e:
             import traceback
             traceback.print_exc()
