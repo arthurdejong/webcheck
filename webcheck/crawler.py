@@ -39,7 +39,7 @@ import urllib2
 import urlparse
 
 from webcheck import config, debugio
-from webcheck.db import Session, Base, Link
+from webcheck.db import Session, Base, Link, truncate_db
 from webcheck.util import install_file
 import webcheck.parsers
 
