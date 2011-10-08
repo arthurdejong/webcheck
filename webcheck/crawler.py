@@ -39,8 +39,7 @@ import urllib2
 import urlparse
 
 from webcheck import config, debugio
-from webcheck.db import Session, Base, Link, LinkProblem, PageProblem, \
-        children, embedded
+from webcheck.db import Session, Base, Link
 from webcheck.util import install_file
 import webcheck.parsers
 
@@ -266,16 +265,7 @@ class Crawler(object):
         session = Session()
         # remove all links
         if not config.CONTINUE:
-            session.query(LinkProblem).delete()
-            session.commit()
-            session.query(PageProblem).delete()
-            session.commit()
-            session.execute(children.delete())
-            session.commit()
-            session.execute(embedded.delete())
-            session.commit()
-            session.query(Link).delete()
-            session.commit()
+            truncate_db()
         # add all internal urls to the database
         for url in self._internal_urls:
             url = Link.clean_url(url)

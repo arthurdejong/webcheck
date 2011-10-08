@@ -296,3 +296,22 @@ class RequestedAnchor(Base):
 
     def __unicode__(self):
         return self.anchor
+
+
+def truncate_db():
+    """Clear all tables in the database."""
+    session = Session()
+    session.query(LinkProblem).delete()
+    session.commit()
+    session.query(PageProblem).delete()
+    session.commit()
+    session.query(Anchor).delete()
+    session.commit()
+    session.query(RequestedAnchor).delete()
+    session.commit()
+    session.execute(children.delete())
+    session.commit()
+    session.execute(embedded.delete())
+    session.commit()
+    session.query(Link).delete()
+    session.commit()
