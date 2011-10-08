@@ -64,9 +64,9 @@ def _setup_urllib2():
     """Configure the urllib2 module to store cookies in the output
     directory."""
     import webcheck  # local import to avoid import loop
-    filename = os.path.join(config.OUTPUT_DIR, 'cookies.lwp')
+    filename = os.path.join(config.OUTPUT_DIR, 'cookies.txt')
     # set up our cookie jar
-    cookiejar = cookielib.LWPCookieJar(filename)
+    cookiejar = cookielib.MozillaCookieJar(filename)
     try:
         cookiejar.load(ignore_discard=False, ignore_expires=False)
     except IOError:
