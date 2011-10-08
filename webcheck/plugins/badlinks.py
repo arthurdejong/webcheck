@@ -34,7 +34,7 @@ from webcheck.db import Session, Link
 import webcheck.plugins
 
 
-def postporcess(crawler):
+def postprocess(crawler):
     """Add all bad links as pageproblems on pages where they are linked."""
     session = Session()
     # find all links with link problems
