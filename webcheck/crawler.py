@@ -410,8 +410,8 @@ class Crawler(object):
         for link in self.bases:
             link.depth = 0
         session.commit()
-        debugio.debug('crawler.postprocess(): %d links at depth 0' % count)
         while count > 0:
+            debugio.debug('crawler.postprocess(): %d links at depth %d' % (count, depth))
             # update the depth of all links without a depth that have a
             # parent with the previous depth
             qry = session.query(Link).filter(Link.depth == None)
@@ -419,7 +419,6 @@ class Crawler(object):
             count = qry.update(dict(depth=depth + 1), synchronize_session=False)
             session.commit()
             depth += 1
-            debugio.debug('crawler.postprocess(): %d links at depth %d' % (count, depth))
             # TODO: also handle embeds
         # see if any of the plugins want to do postprocessing
         for plugin in config.PLUGINS:
