@@ -31,6 +31,7 @@ import atexit
 import cookielib
 import datetime
 import httplib
+import logging
 import os
 import re
 import robotparser
@@ -38,12 +39,15 @@ import time
 import urllib2
 import urlparse
 
-from webcheck import config, debugio
+from webcheck import config
 from webcheck.db import Session, Base, Link, truncate_db
 from webcheck.util import install_file
 import webcheck.parsers
 
 from sqlalchemy import create_engine
+
+
+logger = logging.getLogger(__name__)
 
 
 class RedirectError(urllib2.HTTPError):
@@ -189,14 +193,13 @@ class Crawler(object):
         netloc."""
         # only some schemes have a meaningful robots.txt file
         if scheme != 'http' and scheme != 'https':
-            debugio.debug('crawler._get_robotparser() '
-                          'called with unsupported scheme (%s)' % scheme)
+            logger.debug('called with unsupported scheme (%s)', scheme)
             return None
         # split out the key part of the url
         location = urlparse.urlunsplit((scheme, netloc, '', '', ''))
         # try to create a new robotparser if we don't already have one
         if location not in self._robotparsers:
-            debugio.info('  getting robots.txt for %s' % location)
+            logger.info('getting robots.txt for %s', location)
             self._robotparsers[location] = None
             try:
                 rp = robotparser.RobotFileParser()
@@ -298,17 +301,17 @@ class Crawler(object):
             session.commit()
             # sleep between requests if configured
             if config.WAIT_BETWEEN_REQUESTS > 0:
-                debugio.debug('crawler.crawl(): sleeping %s seconds' %
-                              config.WAIT_BETWEEN_REQUESTS)
+                logger.debug('sleeping %s seconds',
+                             config.WAIT_BETWEEN_REQUESTS)
                 time.sleep(config.WAIT_BETWEEN_REQUESTS)
-            debugio.debug('crawler.crawl(): items left to check: %d' %
+            logger.debug('items left to check: %d' %
                           (remaining + len(tocheck)))
         session.commit()
 
     def fetch(self, link):
         """Attempt to fetch the url (if not yanked) and fill in link
         attributes (based on is_internal)."""
-        debugio.info('  %s' % link.url)
+        logger.info(link.url)
         # mark the link as fetched to avoid loops
         link.fetched = datetime.datetime.now()
         # see if we can import the proper module for this scheme
@@ -331,37 +334,31 @@ class Crawler(object):
             return response
         except RedirectError, e:
             link.status = str(e.code)
-            debugio.info('    ' + str(e))
+            logger.info(str(e))
             if e.code == 301:
                 link.add_linkproblem(str(e))
             link.add_redirect(e.newurl)
-            return
         except urllib2.HTTPError, e:
             link.status = str(e.code)
-            debugio.info('    ' + str(e))
+            logger.info(str(e))
             link.add_linkproblem(str(e))
-            return
         except urllib2.URLError, e:
-            debugio.info('    ' + str(e))
+            logger.info(str(e))
             link.add_linkproblem(str(e))
-            return
         except KeyboardInterrupt:
             # handle this in a higher-level exception handler
             raise
         except Exception, e:
             # handle all other exceptions
-            debugio.warn('unknown exception caught: ' + str(e))
+            logger.exception('unknown exception caught: ' + str(e))
             link.add_linkproblem('error reading HTTP response: %s' % str(e))
-            import traceback
-            traceback.print_exc()
-            return
 
     def parse(self, link, response):
         """Parse the fetched response."""
         # find a parser for the content-type
         parsermodule = webcheck.parsers.get_parsermodule(link.mimetype)
         if parsermodule is None:
-            debugio.debug('crawler.Link.fetch(): unsupported content-type: %s' % link.mimetype)
+            logger.debug('unsupported content-type: %s', link.mimetype)
             return
         try:
             # skip parsing of content if we were returned nothing
@@ -369,16 +366,14 @@ class Crawler(object):
             if content is None:
                 return
             # parse the content
-            debugio.debug('crawler.Link.fetch(): parsing using %s' % parsermodule.__name__)
+            logger.debug('parsing using %s', parsermodule.__name__)
             parsermodule.parse(content, link)
         except KeyboardInterrupt:
             # handle this in a higher-level exception handler
             raise
         except Exception, e:
-            import traceback
-            traceback.print_exc()
-            debugio.warn('problem parsing page: ' + str(e))
-            link.add_pageproblem('problem parsing page: ' + str(e))
+            logger.exception('problem parsing page: %s', str(e))
+            link.add_pageproblem('problem parsing page: %s' % str(e))
 
     def postprocess(self):
         """Do some basic post processing of the collected data, including
@@ -392,15 +387,15 @@ class Crawler(object):
         for url in self._internal_urls:
             link = self.get_link(session, url).follow_link()
             if not link:
-                debugio.warn('base link %s redirects to nowhere' % url)
+                logger.warn('base link %s redirects to nowhere', url)
                 continue
             # add the link to bases
-            debugio.debug('crawler.postprocess(): adding %s to bases' % link.url)
+            logger.debug('adding %s to bases', link.url)
             self.bases.append(link)
         # if we got no bases, just use the first internal one
         if not self.bases:
             link = session.query(Link).filter(Link.is_internal == True).first()
-            debugio.debug('crawler.postprocess(): fallback to adding %s to bases' % link.url)
+            logger.debug('fallback to adding %s to bases', link.url)
             self.bases.append(link)
         # do a breadth first traversal of the website to determine depth
         session.query(Link).update(dict(depth=None), synchronize_session=False)
@@ -411,7 +406,7 @@ class Crawler(object):
             link.depth = 0
         session.commit()
         while count > 0:
-            debugio.debug('crawler.postprocess(): %d links at depth %d' % (count, depth))
+            logger.debug('%d links at depth %d', count, depth)
             # update the depth of all links without a depth that have a
             # parent with the previous depth
             qry = session.query(Link).filter(Link.depth == None)
@@ -425,7 +420,7 @@ class Crawler(object):
             # import the plugin
             pluginmod = __import__(plugin, globals(), locals(), [plugin])
             if hasattr(pluginmod, 'postprocess'):
-                debugio.info('  ' + plugin)
+                logger.info(plugin)
                 pluginmod.postprocess(self)
 
     def generate(self):
@@ -437,7 +432,7 @@ class Crawler(object):
             # import the plugin
             pluginmod = __import__(plugin, globals(), locals(), [plugin])
             if hasattr(pluginmod, 'generate'):
-                debugio.info('  ' + plugin)
+                logger.info(plugin)
                 pluginmod.generate(self)
         # install theme files
         install_file('webcheck.css', True)

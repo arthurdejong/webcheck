@@ -26,13 +26,16 @@ is not available and can be considered depricated. This parser
 will only handle properly formatted HTML."""
 
 import HTMLParser
+import logging
 import re
 import urlparse
 
-from webcheck import debugio
 from webcheck.myurllib import normalizeurl
 from webcheck.parsers.html import htmlunescape
 import webcheck.parsers.css
+
+
+logger = logging.getLogger(__name__)
 
 
 # pattern for matching numeric html entities
@@ -94,7 +97,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         # construct error message
         message += ', ' + self._location()
         # store error message
-        debugio.debug('webcheck.parsers.html.htmlparser._MyHTMLParser.error(): problem parsing html: ' + message)
+        logger.debug('problem parsing html: %s', message)
         if self.errmsg is None:
             self.errmsg = message
         # increment error count
@@ -107,7 +110,7 @@ class _MyHTMLParser(HTMLParser.HTMLParser):
         try:
             return HTMLParser.HTMLParser.check_for_whole_start_tag(self, i)
         except AssertionError:
-            debugio.debug('webcheck.parsers.html.htmlparser._MyHTMLParser.check_for_whole_start_tag(): caught assertion error')
+            logger.exception('caught assertion error')
             return None
 
     def handle_starttag(self, tag, attrs):
@@ -257,7 +260,7 @@ def _maketxt(txt, encoding):
         try:
             return htmlunescape(unicode(txt, encoding, 'replace'))
         except (LookupError, TypeError, ValueError), e:
-            debugio.warn('page has unknown encoding: %s' % str(encoding))
+            logger.warn('page has unknown encoding: %s', str(encoding))
     # fall back to locale's encoding
     return htmlunescape(unicode(txt, errors='replace'))
 
@@ -272,13 +275,13 @@ def parse(content, link):
         parser.close()
     except Exception, e:
         # ignore (but log) all errors
-        debugio.debug('webcheck.parsers.html.htmlparser.parse(): caught exception: ' + str(e))
+        logger.exception('caught exception: %s', str(e))
     # check for parser errors
     if parser.errmsg is not None:
-        debugio.debug('webcheck.parsers.html.htmlparser.parse(): problem parsing html: ' + parser.errmsg)
+        logger.debug('problem parsing html: %s', parser.errmsg)
         link.add_pageproblem('problem parsing html: %s' % parser.errmsg)
     # dump encoding
-    debugio.debug('webcheck.parsers.html.htmlparser.parse(): html encoding: %s' % str(link.encoding))
+    logger.debug('html encoding: %s', str(link.encoding))
     # flag that the link contains a valid page
     link.is_page = True
     # save the title

@@ -25,9 +25,13 @@ module that tries to load the BeatifulSoup parser first and falls
 back to loading the legacy HTMLParser parser."""
 
 import htmlentitydefs
+import logging
 import re
 
-from webcheck import debugio, config
+from webcheck import config
+
+
+logger = logging.getLogger(__name__)
 
 
 # the list of mimetypes this module should be able to handle
@@ -95,12 +99,12 @@ def _parsefunction(content, link):
     try:
         # try BeautifulSoup parser first
         import webcheck.parsers.html.beautifulsoup
-        debugio.debug('webcheck.parsers.html.parse(): the BeautifulSoup parser is ok')
+        logger.debug('the BeautifulSoup parser is ok')
         _parsefunction = webcheck.parsers.html.beautifulsoup.parse
     except ImportError:
         # fall back to legacy HTMLParser parser
-        debugio.warn('falling back to the legacy HTML parser, '
-                     'consider installing BeautifulSoup')
+        logger.warn('falling back to the legacy HTML parser, '
+                    'consider installing BeautifulSoup')
         import webcheck.parsers.html.htmlparser
         _parsefunction = webcheck.parsers.html.htmlparser.parse
     # call the actual parse function
@@ -116,9 +120,9 @@ def parse(content, link):
     if config.TIDY_OPTIONS:
         try:
             import webcheck.parsers.html.calltidy
-            debugio.debug('webcheck.parsers.html.parse(): the Tidy parser is ok')
+            logger.debug('the Tidy parser is ok')
             webcheck.parsers.html.calltidy.parse(content, link)
         except ImportError:
-            debugio.warn('tidy library (python-utidylib) is unavailable')
+            logger.warn('tidy library (python-utidylib) is unavailable')
             # remove config to only try once
             config.TIDY_OPTIONS = None

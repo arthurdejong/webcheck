@@ -20,6 +20,7 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
+import logging
 import urlparse
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -29,8 +30,12 @@ from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.orm.session import object_session
 from sqlalchemy.sql.expression import union
 
-from webcheck import config, debugio
+from webcheck import config
 from webcheck.myurllib import normalizeurl
+
+
+logger = logging.getLogger(__name__)
+
 
 
 # provide session and schema classes
@@ -116,12 +121,11 @@ class Link(Base):
         the encoding is supported."""
         if not self.encoding and encoding:
             try:
-                debugio.debug('crawler.Link.set_encoding(%r)' % encoding)
+                logger.debug('crawler.Link.set_encoding(%r)', encoding)
                 unicode('just some random text', encoding, 'replace')
                 self.encoding = encoding
             except Exception, e:
-                import traceback
-                traceback.print_exc()
+                logger.exception('unknown encoding: %s', encoding)
                 self.add_pageproblem('unknown encoding: %s' % encoding)
 
     def add_redirect(self, url):

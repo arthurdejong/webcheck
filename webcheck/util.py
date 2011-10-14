@@ -22,13 +22,17 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
+import logging
 import os
 import shutil
 import sys
 import urllib
 import urlparse
 
-from webcheck import config, debugio
+from webcheck import config
+
+
+logger = logging.getLogger(__name__)
 
 
 def open_file(filename, istext=True, makebackup=False):
@@ -52,7 +56,7 @@ def open_file(filename, istext=True, makebackup=False):
                 res = raw_input('webcheck: overwrite %s? [y]es, [a]ll, [q]uit: ' % fname)
             except EOFError:
                 # bail out in case raw_input() failed
-                debugio.error('error reading response')
+                logger.exception('error reading response')
                 res = 'q'
             res = res.lower() + ' '
             if res[0] == 'a':
@@ -95,7 +99,7 @@ def install_file(source, text=False):
     # test if source and target are the same
     source = os.path.realpath(source)
     if source == os.path.realpath(target):
-        debugio.warn('attempt to overwrite %(fname)s with itself' % {'fname': source})
+        logger.warn('attempt to overwrite %s with itself', source)
         return
     # open the input file
     sfp = open(source, mode)

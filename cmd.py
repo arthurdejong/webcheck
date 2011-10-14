@@ -25,6 +25,8 @@
 
 """This is the main webcheck module."""
 
+import getopt
+import logging
 import os
 import re
 import sys
@@ -33,10 +35,12 @@ import urlparse
 
 import webcheck
 import webcheck.monkeypatch
-from webcheck import config, debugio, Crawler
+from webcheck import config, Crawler
 
 
-debugio.loglevel = debugio.INFO
+# The loglevel to use for the logger that is configured.
+LOGLEVEL = logging.INFO
+
 
 # Whether to produce profiling information. This is for development
 # purposes and as such undocumented.
@@ -98,7 +102,9 @@ def print_help():
 
 def parse_args(crawler):
     """Parse command-line arguments."""
-    import getopt
+    # these global options are set here
+    global PROFILE
+    global LOGLEVEL
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
           'i:x:y:l:baqdo:cfr:u:w:Vh',
@@ -123,12 +129,11 @@ def parse_args(crawler):
             elif flag in ('--ignore-robots',):
                 config.USE_ROBOTS = False
             elif flag in ('-q', '--quiet', '--silent'):
-                debugio.loglevel = debugio.ERROR
+                LOGLEVEL = logging.WARNING
             elif flag in ('-d', '--debug'):
-                debugio.loglevel = debugio.DEBUG
+                LOGLEVEL = logging.DEBUG
             elif flag in ('--profile',):
                 # undocumented on purpose
-                global PROFILE
                 PROFILE = True
             elif flag in ('-o', '--output'):
                 config.OUTPUT_DIR = arg
@@ -174,19 +179,19 @@ def parse_args(crawler):
 def main(crawler):
     """Main program."""
     # crawl through the website
-    debugio.info('checking site....')
+    logging.info('checking site....')
     crawler.crawl()  # this will take a while
-    debugio.info('done.')
+    logging.info('done.')
     # do postprocessing (building site structure, etc)
-    debugio.info('postprocessing....')
+    logging.info('postprocessing....')
     crawler.postprocess()
-    debugio.info('done.')
+    logging.info('done.')
     # now we can write out the files
     # start with the frame-description page
-    debugio.info('generating reports...')
+    logging.info('generating reports...')
     # for every plugin, generate a page
     crawler.generate()
-    debugio.info('done.')
+    logging.info('done.')
 
 
 if __name__ == '__main__':
@@ -195,6 +200,8 @@ if __name__ == '__main__':
         crawler = Crawler()
         # parse command-line arguments
         parse_args(crawler)
+        # configure logging
+        logging.basicConfig(format='webcheck: %(levelname)s: %(message)s', level=LOGLEVEL)
         # run the main program
         if PROFILE:
             fname = os.path.join(config.OUTPUT_DIR, 'webcheck.prof')

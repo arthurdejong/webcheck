@@ -24,6 +24,7 @@
 BeautifulSoup HTML parser and is more flexible than the legacy HTMLParser
 module."""
 
+import logging
 import re
 import urlparse
 
@@ -34,6 +35,9 @@ from webcheck.parsers.html import htmlunescape
 import webcheck.parsers.css
 
 
+logger = logging.getLogger(__name__)
+
+
 # pattern for matching http-equiv and content part of
 # <meta http-equiv="refresh" content="0;url=URL">
 _refreshhttpequivpattern = re.compile('^refresh$', re.I)
@@ -41,9 +45,8 @@ _refershcontentpattern = re.compile('^[0-9]+;url=(.*)$', re.I)
 
 # check BeautifulSoup find() function for bugs
 if BeautifulSoup.BeautifulSoup('<foo>').find('foo', bar=True):
-    from webcheck import debugio
-    debugio.warn('using buggy version of BeautifulSoup (%s)' %
-                 BeautifulSoup.__version__)
+    logger.warn('using buggy version of BeautifulSoup (%s)',
+                BeautifulSoup.__version__)
 
 
 def parse(content, link):
