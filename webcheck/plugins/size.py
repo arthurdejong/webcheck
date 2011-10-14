@@ -33,24 +33,22 @@ from webcheck import config
 import webcheck.plugins
 
 
-def _getsize(link, done=None):
+def _getsize(link, seen=None):
     """Return the size of the link and all its embedded links, counting each
     link only once."""
     # make a new list
-    if done is None:
-        done = []
+    if seen is None:
+        seen = set()
     # add this link to the list
-    done.append(link)
+    seen.add(link)
     # if we don't known about our total size yet, calculate
     if not hasattr(link, 'total_size'):
-        size = 0
         # add our size
-        if link.size is not None:
-            size = link.size
+        size = link.size or 0
         # add sizes of embedded objects
         for embed in link.embedded:
-            if embed not in done:
-                size += _getsize(embed, done)
+            if embed not in seen:
+                size += _getsize(embed, seen)
         link.total_size = size
     return link.total_size
 
