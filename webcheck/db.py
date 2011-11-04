@@ -92,7 +92,7 @@ class Link(Base):
 
     # crawling information
     redirectdepth = Column(Integer, default=0)
-    depth = Column(Integer)
+    depth = Column(Integer, default=0)
 
     @staticmethod
     def clean_url(url):
@@ -108,8 +108,13 @@ class Link(Base):
         # try to find the link
         instance = session.query(Link).filter_by(url=url).first()
         if not instance:
-            instance = Link(url=url)
+            if config.MAX_DEPTH and self.depth >= config.MAX_DEPTH:
+                logger.debug('link %s too deep', url)
+            instance = Link(url=url, depth=self.depth + 1)
             session.add(instance)
+        else:
+            # we may have discovered a shorter path
+            instance.depth = min(instance.depth, self.depth + 1)
         # mark that we were looking for an anchor/fragment
         if fragment:
             instance.add_reqanchor(self, fragment)

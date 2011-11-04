@@ -50,6 +50,9 @@ CONTINUE = False
 # the -w command line option.
 WAIT_BETWEEN_REQUESTS = 0
 
+# Maximum number of links to follow from the specified base URLs.
+MAX_DEPTH = None
+
 # Redirect depth, the number of redirects to follow. This is the state of the
 # -r command line option.
 REDIRECT_DEPTH = 5

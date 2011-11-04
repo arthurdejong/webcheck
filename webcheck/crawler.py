@@ -254,6 +254,8 @@ class Crawler(object):
 
     def get_links_to_crawl(self, session):
         links = session.query(Link).filter(Link.fetched == None)
+        if config.MAX_DEPTH:
+            links = links.filter(Link.depth <= config.MAX_DEPTH)
         return links.filter(Link.yanked == None)
 
     def crawl(self):
@@ -406,7 +408,8 @@ class Crawler(object):
             link.depth = 0
         session.commit()
         while count > 0:
-            logger.debug('%d links at depth %d', count, depth)
+            logger.debug('%d links at depth %d%s', count, depth,
+                         ' (max)' if depth == config.MAX_DEPTH else '')
             # update the depth of all links without a depth that have a
             # parent with the previous depth
             qry = session.query(Link).filter(Link.depth == None)
