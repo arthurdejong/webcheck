@@ -109,4 +109,4 @@ TIDY_OPTIONS = dict(quiet=1,
                     accessibility_check=1,
                     show_errors=6,
                     show_warnings=1,
-                    char_encoding='raw')
+                    char_encoding='utf8')

@@ -31,7 +31,9 @@ def parse(content, link):
     link."""
     # only call tidy on internal pages
     if link.is_internal:
+        # force encoding of the content to UTF-8
+        content = content.decode(link.encoding).encode('utf-8')
         t = tidy.parseString(content, **config.TIDY_OPTIONS)
         for err in t.errors:
             # error messages are escaped so we unescape them
-            link.add_pageproblem(htmlunescape(unicode(err)))
+            link.add_pageproblem(htmlunescape(unicode(str(err), 'utf-8', 'replace')))
