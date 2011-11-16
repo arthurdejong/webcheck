@@ -42,12 +42,6 @@ from webcheck import config, Crawler
 LOGLEVEL = logging.INFO
 
 
-# Whether to produce profiling information. This is for development
-# purposes and as such undocumented.
-# http://docs.python.org/lib/profile.html
-PROFILE = False
-
-
 def print_version():
     """Print version information."""
     sys.stdout.write(
@@ -100,11 +94,9 @@ def print_help():
       '  -h, --help             display this help and exit\n'
       % {'redirects': config.REDIRECT_DEPTH})
 
-
 def parse_args(crawler):
     """Parse command-line arguments."""
     # these global options are set here
-    global PROFILE
     global LOGLEVEL
     try:
         optlist, args = getopt.gnu_getopt(sys.argv[1:],
@@ -135,7 +127,7 @@ def parse_args(crawler):
                 LOGLEVEL = logging.DEBUG
             elif flag in ('--profile',):
                 # undocumented on purpose
-                PROFILE = True
+                pass
             elif flag in ('-o', '--output'):
                 config.OUTPUT_DIR = arg
             elif flag in ('-c', '--continue'):
@@ -181,6 +173,8 @@ def parse_args(crawler):
 
 def main(crawler):
     """Main program."""
+    # configure logging
+    logging.basicConfig(format='webcheck: %(levelname)s: %(message)s', level=LOGLEVEL)
     # crawl through the website
     logging.info('checking site....')
     crawler.crawl()  # this will take a while
@@ -202,7 +196,5 @@ def entry_point():
     crawler = Crawler()
     # parse command-line arguments
     parse_args(crawler)
-    # configure logging
-    logging.basicConfig(format='webcheck: %(levelname)s: %(message)s', level=LOGLEVEL)
     # run the main program
     main(crawler)

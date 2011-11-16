@@ -23,13 +23,25 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
-"""This is the main webcheck module."""
+"""Alternative entry_point for development."""
 
-from webcheck.cmd import entry_point
+import sys, os, logging
+
+from webcheck.cmd import Crawler, parse_args, main
+from webcheck import config
+
+# Whether to produce profiling information. This is for development
+# purposes and as such undocumented.
+# http://docs.python.org/lib/profile.html
+PROFILE = False
 
 if __name__ == '__main__':
     try:
-        if PROFILE:
+        # initialize crawler object
+        crawler = Crawler()
+        # parse command-line arguments
+        parse_args(crawler)
+        if PROFILE or '--profile' in sys.argv:
             fname = os.path.join(config.OUTPUT_DIR, 'webcheck.prof')
             try:
                 import cProfile
@@ -40,12 +52,12 @@ if __name__ == '__main__':
                 sqltap.start()
             except ImportError:
                 pass
-            cProfile.run('entry_point()', fname)
+            cProfile.run('main(crawler)', fname)
             if 'sqltap' in locals():
                 statistics = sqltap.collect()
                 sqltap.report(statistics, os.path.join(config.OUTPUT_DIR, 'sqltap.html'))
         else:
-            entry_point()
+            main(crawler)
     except KeyboardInterrupt:
         sys.stderr.write('Interrupted\n')
         sys.exit(1)
