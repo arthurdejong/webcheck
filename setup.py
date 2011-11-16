@@ -3,8 +3,12 @@ setup(
     name = 'webcheck',
     version = '1.10.5a',
     packages = find_packages(),
-    scripts = ['cmd.py'],
-    install_requires = ['distribute', 'sqlalchemy'],
+    entry_points = {
+        'console_scripts': [
+            'webcheck = webcheck.cmd:entry_point',
+        ],
+    },
+    install_requires = ['setuptools', 'sqlalchemy'],
     extras_require = {
         'tidy': ['utidylib'],
         'soup': ['beautifulsoup'],
