@@ -96,7 +96,7 @@ class Link(Base):
 
     @staticmethod
     def clean_url(url):
-        # normalise the URL, removing the fragment from the URL
+        """normalise the URL, removing the fragment from the URL"""
         return urlparse.urldefrag(normalizeurl(url))[0]
 
     def _get_link(self, url):
@@ -108,7 +108,7 @@ class Link(Base):
         # try to find the link
         instance = session.query(Link).filter_by(url=url).first()
         if not instance:
-            if config.MAX_DEPTH and self.depth >= config.MAX_DEPTH:
+            if config.MAX_DEPTH != None and self.depth >= config.MAX_DEPTH:
                 logger.debug('link %s too deep', url)
             instance = Link(url=url, depth=self.depth + 1)
             session.add(instance)
@@ -135,17 +135,20 @@ class Link(Base):
 
     def add_redirect(self, url):
         """Indicate that this link redirects to the specified url."""
+        session = object_session(self)
         url = self.clean_url(url)
-        # figure out depth
+        # check for (possibly indirect) redirects to self
+        for link in session.query(Link).filter_by(url=url):
+            if link.follow_link() == self:
+                link.add_linkproblem('redirects back to source: %s' % self.url)
+                self.add_linkproblem('redirects back to source: %s' % link.url)
+                return
+        # figure out depth (how can [self.redirectdepth] ever by non-zero?)
         self.redirectdepth = max([self.redirectdepth] +
                                  [x.redirectdepth for x in self.parents]) + 1
         # check depth
         if self.redirectdepth >= config.REDIRECT_DEPTH:
             self.add_linkproblem('too many redirects (%d)' % self.redirectdepth)
-            return
-        # check for redirect to self
-        if url == self.url:
-            self.add_linkproblem('redirect same as source: %s' % url)
             return
         # add child
         self.add_child(url)
