@@ -258,12 +258,11 @@ def _maketxt(txt, encoding):
     # try to decode with the given encoding
     if encoding:
         try:
-            return htmlunescape(unicode(txt, encoding, 'replace'))
+            return htmlunescape(txt.decode(encoding))
         except (LookupError, TypeError, ValueError), e:
             logger.warn('page has unknown encoding: %s', str(encoding))
     # fall back to locale's encoding
-    return htmlunescape(unicode(txt, errors='replace'))
-
+    return htmlunescape(txt.decode('ascii', 'replace'))
 
 def parse(content, link):
     """Parse the specified content and extract an url list, a list of images a
@@ -271,7 +270,7 @@ def parse(content, link):
     # create parser and feed it the content
     parser = _MyHTMLParser(link)
     try:
-        parser.feed(content)
+        parser.feed(content.decode('ascii', 'ignore').encode())
         parser.close()
     except Exception, e:
         # ignore (but log) all errors
