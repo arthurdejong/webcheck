@@ -254,7 +254,7 @@ class Crawler(object):
 
     def get_links_to_crawl(self, session):
         links = session.query(Link).filter(Link.fetched == None)
-        if config.MAX_DEPTH:
+        if config.MAX_DEPTH != None:
             links = links.filter(Link.depth <= config.MAX_DEPTH)
         return links.filter(Link.yanked == None)
 
