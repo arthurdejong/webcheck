@@ -64,7 +64,13 @@ too intrusive).
 
 INSTALLING WEBCHECK
 ===================
+This will install the latest version from PyPi.
 
+  % easy_install webcheck
+
+
+MANUAL INSTALLATION
+===================
 Installation is relatively easy. These installation instructions are for
 Unix-like systems. Other operating systems may differ.
 
@@ -77,12 +83,6 @@ Unix-like systems. Other operating systems may differ.
 
   3. Put the manual page in the MANPATH.
      % ln -s /opt/webcheck-1.10.4/webcheck.1 /usr/local/man/man1/webcheck.1
-
-webcheck does not use Distutils because that tool is meant to install Python
-modules which should end up in the default Python path (from what the author
-understands of Distutils). Since webcheck does not expose any public API, it
-is an application with only private modules. A (maintainable) setup.py which
-installs webcheck outside the public patch is welcome.
 
 
 RUNNING WEBCHECK
