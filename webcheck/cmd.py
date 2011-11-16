@@ -196,33 +196,13 @@ def main(crawler):
     crawler.generate()
     logging.info('done.')
 
-
-if __name__ == '__main__':
-    try:
-        # initialize crawler object
-        crawler = Crawler()
-        # parse command-line arguments
-        parse_args(crawler)
-        # configure logging
-        logging.basicConfig(format='webcheck: %(levelname)s: %(message)s', level=LOGLEVEL)
-        # run the main program
-        if PROFILE:
-            fname = os.path.join(config.OUTPUT_DIR, 'webcheck.prof')
-            try:
-                import cProfile
-            except ImportError:
-                import profile as cProfile
-            try:
-                import sqltap
-                sqltap.start()
-            except ImportError:
-                pass
-            cProfile.run('main(crawler)', fname)
-            if 'sqltap' in locals():
-                statistics = sqltap.collect()
-                sqltap.report(statistics, os.path.join(config.OUTPUT_DIR, 'sqltap.html'))
-        else:
-            main(crawler)
-    except KeyboardInterrupt:
-        sys.stderr.write('Interrupted\n')
-        sys.exit(1)
+def entry_point():
+    """setuptools entry point"""
+    # initialize crawler object
+    crawler = Crawler()
+    # parse command-line arguments
+    parse_args(crawler)
+    # configure logging
+    logging.basicConfig(format='webcheck: %(levelname)s: %(message)s', level=LOGLEVEL)
+    # run the main program
+    main(crawler)
