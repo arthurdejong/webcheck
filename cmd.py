@@ -94,6 +94,7 @@ def print_help():
       '  -f, --force            overwrite files without asking\n'
       '  -r, --redirects=N      the number of redirects webcheck should follow,\n'
       '                         0 implies to follow all redirects (default=%(redirects)d)\n'
+      '  -l, --levels=N         maximum depth of links to follow from base urls (default=inf)\n'
       '  -w, --wait=SECONDS     wait SECONDS between retrievals\n'
       '  -V, --version          output version information and exit\n'
       '  -h, --help             display this help and exit\n'
@@ -111,7 +112,7 @@ def parse_args(crawler):
           ('internal=', 'external=', 'yank=', 'base-only', 'avoid-external',
            'ignore-robots',
            'quiet', 'silent', 'debug', 'profile', 'output=', 'continue',
-           'force', 'redirects=', 'wait=', 'version', 'help'))
+           'force', 'redirects=', 'levels=', 'wait=', 'version', 'help'))
         internal_urls = []
         external_urls = []
         yank_urls = []
@@ -143,6 +144,8 @@ def parse_args(crawler):
                 config.OVERWRITE_FILES = True
             elif flag in ('-r', '--redirects'):
                 config.REDIRECT_DEPTH = int(arg)
+            elif flag in ('-l', '--levels'):
+                config.MAX_DEPTH = int(arg)
             elif flag in ('-w', '--wait'):
                 config.WAIT_BETWEEN_REQUESTS = float(arg)
             elif flag in ('-V', '--version'):
