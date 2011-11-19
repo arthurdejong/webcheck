@@ -27,7 +27,8 @@
 
 import sys, os, logging
 
-from webcheck.cmd import Crawler, parse_args, main
+from webcheck.crawler import Crawler
+from webcheck.cmd import parse_args, main
 from webcheck import config
 
 # Whether to produce profiling information. This is for development

@@ -35,8 +35,8 @@ import urlparse
 
 import webcheck
 import webcheck.monkeypatch
-from webcheck import config, Crawler
-
+from webcheck import config
+from webcheck.crawler import Crawler
 
 # The loglevel to use for the logger that is configured.
 LOGLEVEL = logging.INFO

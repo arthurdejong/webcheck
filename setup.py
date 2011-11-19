@@ -1,7 +1,10 @@
 from setuptools import setup, find_packages
+
+from webcheck import __version__, __homepage__
+
 setup(
     name = 'webcheck',
-    version = '1.10.5a',
+    version = __version__,
     packages = find_packages(),
     entry_points = {
         'console_scripts': [
@@ -20,5 +23,5 @@ setup(
     description = 'webcheck is a website checking tool for webmasters',
     license = 'GPL',
     keywords = 'spider',
-    url = 'http://arthurdejong.org/webcheck/',
+    url = __homepage__,
 )

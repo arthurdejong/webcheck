@@ -21,7 +21,6 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
-__version__ = '1.10.4'
+__version__ = '2.0b'
 __homepage__ = 'http://arthurdejong.org/webcheck/'
 
-from webcheck.crawler import Crawler
