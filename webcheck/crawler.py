@@ -285,7 +285,7 @@ class Crawler(object):
             # choose a link from the tocheck list
             link = tocheck.pop()
             link.is_internal = self._is_internal(link.url)
-            link.yanked = self._is_yanked(link.url)
+            link.yanked = self._is_yanked(str(link.url))
             # see if there are any more links to check
             if not tocheck:
                 tocheck = self.get_links_to_crawl(session)
