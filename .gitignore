@@ -1,0 +1,20 @@
+# global
+*.pyc
+*.pyo
+__pycache__
+
+# /
+/.coverage
+/build
+/coverage
+/dist
+/htmlcov
+/webcheck.egg-info
+
+# /debian/
+/debian/files
+/debian/webcheck
+/debian/webcheck.debhelper.log
+/debian/webcheck.postinst.debhelper
+/debian/webcheck.prerm.debhelper
+/debian/webcheck.substvars
