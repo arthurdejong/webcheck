@@ -104,6 +104,17 @@ default_cfg = dict(
 default_cfg.update({'continue': config.CONTINUE})
 
 
+class Config(object):
+
+    def __init__(self, *args, **kwargs):
+        self.update(*args, **kwargs)
+
+    def update(self, *args, **kwargs):
+        for arg in args:
+            vars(self).update(arg)
+        vars(self).update(kwargs)
+
+
 class Crawler(object):
     """Class to represent gathered data of a site.
 
@@ -113,25 +124,52 @@ class Crawler(object):
       plugins    - a list of plugin modules used by the crawler
     """
 
-    def __init__(self):
+    def __init__(self, cfg):
         """Creates an instance of the Crawler class and initializes the
         state of the site."""
-        # list of internal urls
-        self._internal_urls = set()
+        # complete the configuration
+        self.cfg = Config(default_cfg)
+        self.cfg.update(cfg)
         # list of regexps considered internal
         self._internal_res = {}
+        for pattern in self.cfg.internal:
+            self._internal_res[pattern] = re.compile(pattern, re.IGNORECASE)
         # list of regexps considered external
         self._external_res = {}
+        for pattern in self.cfg.external:
+            self._external_res[pattern] = re.compile(pattern, re.IGNORECASE)
         # list of regexps matching links that should not be checked
         self._yanked_res = {}
-        # map of scheme+netloc to robot handleds
+        for pattern in self.cfg.yank:
+            self._yanked_res[pattern] = re.compile(pattern, re.IGNORECASE)
+        # update other configuration
+        config.BASE_URLS_ONLY = self.cfg.base_only
+        config.AVOID_EXTERNAL_LINKS = self.cfg.avoid_external
+        config.USE_ROBOTS = not(self.cfg.ignore_robots)
+        config.OUTPUT_DIR = self.cfg.output_dir
+        config.CONTINUE = getattr(self.cfg, 'continue')
+        config.OVERWRITE_FILES = self.cfg.force
+        config.REDIRECT_DEPTH = self.cfg.redirects
+        config.MAX_DEPTH = self.cfg.max_depth
+        config.WAIT_BETWEEN_REQUESTS = self.cfg.wait
+        # map of scheme+netloc to robot parsers
         self._robotparsers = {}
-        # list of base urls (these are the internal urls to start from)
-        self.bases = []
         # load the plugins
         self.plugins = [
             __import__(plugin, globals(), locals(), [plugin])
             for plugin in config.PLUGINS]
+        # add base urls
+        self._internal_urls = set()
+        for url in self.cfg.base_urls:
+            # if it does not look like a url it is probably a local file
+            if urlparse.urlsplit(url)[0] == '':
+                url = 'file://' + urllib.pathname2url(os.path.abspath(url))
+            # clean the URL and add it
+            url = Link.clean_url(url)
+            if url not in self._internal_urls:
+                self._internal_urls.add(url)
+        # list of base link objects
+        self.bases = []
 
     def setup_database(self):
         if hasattr(self, 'database_configed'):
@@ -147,31 +185,6 @@ class Crawler(object):
         # ensure that all tables are created
         Base.metadata.create_all(engine)
         # TODO: schema migraton goes here
-
-    def add_base(self, url):
-        """Add the given url and consider all urls below it to be internal.
-        These links are all marked for checking with the crawl() function."""
-        # ensure we have a connection to the database
-        self.setup_database()
-        # clean the URL and add it
-        url = Link.clean_url(url)
-        if url not in self._internal_urls:
-            self._internal_urls.add(url)
-
-    def add_internal_re(self, exp):
-        """Adds the gived regular expression as a pattern to match internal
-        urls."""
-        self._internal_res[exp] = re.compile(exp, re.IGNORECASE)
-
-    def add_external_re(self, exp):
-        """Adds the gived regular expression as a pattern to match external
-        urls."""
-        self._external_res[exp] = re.compile(exp, re.IGNORECASE)
-
-    def add_yanked_re(self, exp):
-        """Adds the gived regular expression as a pattern to match urls that
-        will not be checked at all."""
-        self._yanked_res[exp] = re.compile(exp, re.IGNORECASE)
 
     def _is_internal(self, url):
         """Check whether the specified url is external or internal. This

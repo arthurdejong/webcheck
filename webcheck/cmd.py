@@ -27,17 +27,10 @@
 
 import argparse
 import logging
-import os
-import urllib
-import urlparse
 
 import webcheck
 import webcheck.monkeypatch
 from webcheck.crawler import Crawler, default_cfg
-
-
-# The loglevel to use for the logger that is configured.
-LOGLEVEL = logging.INFO
 
 
 version_string = '''
@@ -122,40 +115,18 @@ parser.add_argument(
 parser.set_defaults(**default_cfg)
 
 
-def parse_args(crawler):
-    """Parse command-line arguments."""
-    # these global options are set here
-    global LOGLEVEL
-    args = parser.parse_args()
-    for pattern in args.internal:
-        crawler.add_internal_re(pattern)
-    for pattern in args.external:
-        crawler.add_external_re(pattern)
-    for pattern in args.yank:
-        crawler.add_yanked_re(pattern)
-    config.BASE_URLS_ONLY = args.base_only
-    config.AVOID_EXTERNAL_LINKS = args.avoid_external
-    config.USE_ROBOTS = not(args.ignore_robots)
-    if args.quiet:
-        LOGLEVEL = logging.WARNING
-    elif args.debug:
-        LOGLEVEL = logging.DEBUG
-    config.OUTPUT_DIR = args.output
-    config.CONTINUE = getattr(args, 'continue')
-    config.OVERWRITE_FILES = args.force
-    config.REDIRECT_DEPTH = args.redirects
-    config.MAX_DEPTH = args.max_depth
-    config.WAIT_BETWEEN_REQUESTS = args.wait
-    for arg in args.urls:
-        # if it does not look like a url it is probably a local file
-        if urlparse.urlsplit(arg)[0] == '':
-            arg = 'file://' + urllib.pathname2url(os.path.abspath(arg))
-        crawler.add_base(arg)
-
-
-def main(crawler):
+def main(cfg):
     """Main program."""
-    logging.basicConfig(format='webcheck: %(levelname)s: %(message)s', level=LOGLEVEL)
+    # configure logging
+    if cfg.get('quiet', False):
+        level = logging.WARNING
+    elif cfg.get('debug', False):
+        level = logging.DEBUG
+    else:
+        level = logging.INFO
+    logging.basicConfig(format='webcheck: %(levelname)s: %(message)s', level=level)
+    # set up crawler and go
+    crawler = Crawler(cfg)
     logging.info('checking site....')
     crawler.crawl()
     logging.info('done.')
@@ -169,6 +140,5 @@ def main(crawler):
 
 def entry_point():
     """setuptools entry point"""
-    crawler = Crawler()
-    parse_args(crawler)
-    main(crawler)
+    args = parser.parse_args()
+    main(vars(cfg))

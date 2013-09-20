@@ -4,7 +4,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007, 2008, 2010, 2011 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008, 2010, 2011, 2013 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,25 +25,17 @@
 
 """Alternative entry_point for development."""
 
-import sys, os, logging
+import os
+import sys
 
-from webcheck.crawler import Crawler
-from webcheck.cmd import parse_args, main
-from webcheck import config
+from webcheck.cmd import parser, main
 
-# Whether to produce profiling information. This is for development
-# purposes and as such undocumented.
-# http://docs.python.org/lib/profile.html
-PROFILE = False
 
 if __name__ == '__main__':
     try:
-        # initialize crawler object
-        crawler = Crawler()
-        # parse command-line arguments
-        parse_args(crawler)
-        if PROFILE or '--profile' in sys.argv:
-            fname = os.path.join(config.OUTPUT_DIR, 'webcheck.prof')
+        args = parser.parse_args()
+        if args.profile:
+            fname = os.path.join(args.output_dir, 'webcheck.prof')
             try:
                 import cProfile
             except ImportError:
@@ -53,12 +45,12 @@ if __name__ == '__main__':
                 sqltap.start()
             except ImportError:
                 pass
-            cProfile.run('main(crawler)', fname)
+            cProfile.run('main(vars(args))', fname)
             if 'sqltap' in locals():
                 statistics = sqltap.collect()
-                sqltap.report(statistics, os.path.join(config.OUTPUT_DIR, 'sqltap.html'))
+                sqltap.report(statistics, os.path.join(args.output_dir, 'sqltap.html'))
         else:
-            main(crawler)
+            main(vars(args))
     except KeyboardInterrupt:
         sys.stderr.write('Interrupted\n')
         sys.exit(1)
