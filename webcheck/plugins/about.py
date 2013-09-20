@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007, 2011 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2011, 2013 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ __outputfile__ = 'about.html'
 import time
 
 import webcheck
-from webcheck import config
 from webcheck.db import Session, Link
 import webcheck.plugins
 
@@ -78,7 +77,7 @@ def generate(crawler):
       '    particular purpose. See the source for further details.\n'
       '   </p>\n'
       '   <p>\n'
-      '    Copyright &copy; 1998-2011 Albert Hopkins (marduk),\n'
+      '    Copyright &copy; 1998-2013 Albert Hopkins (marduk),\n'
       '    Mike W. Meyer and Arthur de Jong\n'
       '   </p>\n'
       '   <p>\n'
@@ -101,14 +100,13 @@ def generate(crawler):
     fp.write(
       '   <h3>Plugins</h3>\n'
       '   <ul>\n')
-    for plugin in config.PLUGINS:
-        pluginmod = __import__(plugin, globals(), locals(), [plugin])
+    for plugin in crawler.plugins:
         fp.write(
           '    <li>\n'
           '     <strong>%s</strong><br />\n'
-          % webcheck.plugins.htmlescape(pluginmod.__title__))
-        if hasattr(pluginmod, '__doc__'):
-            fp.write('     %s<br />\n' % webcheck.plugins.htmlescape(pluginmod.__doc__))
+          % webcheck.plugins.htmlescape(plugin.__title__))
+        if hasattr(plugin, '__doc__'):
+            fp.write('     %s<br />\n' % webcheck.plugins.htmlescape(plugin.__doc__))
         fp.write('    </li>\n')
     fp.write(
       '   </ul>\n')

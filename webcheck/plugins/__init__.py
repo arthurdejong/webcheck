@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007, 2009, 2011 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2009, 2011, 2013 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,11 +43,9 @@ fields:
 
 Pluings can use the functions exported by this module."""
 
-import sys
 import time
 
 from sqlalchemy.orm import joinedload
-from sqlalchemy.orm.session import object_session
 
 import webcheck
 from webcheck import config
@@ -160,25 +158,23 @@ def print_parents(fp, link, indent='     '):
       indent + '</div>\n')
 
 
-def _print_navbar(fp, selected):
+def _print_navbar(fp, selected, crawler):
     """Return an html fragement representing the navigation bar for a page."""
     fp.write('  <ul class="navbar">\n')
-    for plugin in config.PLUGINS:
-        # import the plugin
-        pluginmod = __import__(plugin, globals(), locals(), [plugin])
+    for plugin in crawler.plugins:
         # skip if no outputfile
-        if not hasattr(pluginmod, '__outputfile__'):
+        if not hasattr(plugin, '__outputfile__'):
             continue
         # generate a link to the plugin page
         selected = ''
-        if pluginmod == selected:
+        if plugin == selected:
             selected = ' class="selected"'
         fp.write(
           '   <li><a href="%(pluginfile)s"%(selected)s title="%(description)s">%(title)s</a></li>\n'
-          % {'pluginfile':  pluginmod.__outputfile__,
+          % {'pluginfile':  plugin.__outputfile__,
              'selected':    selected,
-             'title':       htmlescape(pluginmod.__title__),
-             'description': htmlescape(pluginmod.__doc__)})
+             'title':       htmlescape(plugin.__title__),
+             'description': htmlescape(plugin.__doc__)})
     fp.write('  </ul>\n')
 
 
@@ -209,7 +205,7 @@ def open_html(plugin, crawler):
          'siteurl':     base.url,
          'version':     webcheck.__version__})
     # write navigation bar
-    _print_navbar(fp, plugin)
+    _print_navbar(fp, plugin, crawler)
     # write plugin heading
     fp.write('  <h2>%s</h2>\n' % htmlescape(plugin.__title__))
     # write plugin contents

@@ -110,7 +110,8 @@ class Crawler(object):
     The available properties of this class are:
 
       bases      - a list of base link object
-   """
+      plugins    - a list of plugin modules used by the crawler
+    """
 
     def __init__(self):
         """Creates an instance of the Crawler class and initializes the
@@ -127,6 +128,10 @@ class Crawler(object):
         self._robotparsers = {}
         # list of base urls (these are the internal urls to start from)
         self.bases = []
+        # load the plugins
+        self.plugins = [
+            __import__(plugin, globals(), locals(), [plugin])
+            for plugin in config.PLUGINS]
 
     def setup_database(self):
         if hasattr(self, 'database_configed'):
@@ -429,24 +434,20 @@ class Crawler(object):
             depth += 1
             # TODO: also handle embeds
         # see if any of the plugins want to do postprocessing
-        for plugin in config.PLUGINS:
-            # import the plugin
-            pluginmod = __import__(plugin, globals(), locals(), [plugin])
-            if hasattr(pluginmod, 'postprocess'):
-                logger.info(plugin)
-                pluginmod.postprocess(self)
+        for plugin in self.plugins:
+            if hasattr(plugin, 'postprocess'):
+                logger.info(plugin.__name__)
+                plugin.postprocess(self)
 
     def generate(self):
         """Generate pages for plugins."""
         # ensure we have a connection to the database
         self.setup_database()
         # call all the plugins
-        for plugin in config.PLUGINS:
-            # import the plugin
-            pluginmod = __import__(plugin, globals(), locals(), [plugin])
-            if hasattr(pluginmod, 'generate'):
-                logger.info(plugin)
-                pluginmod.generate(self)
+        for plugin in self.plugins:
+            if hasattr(plugin, 'generate'):
+                logger.info(plugin.__name__)
+                plugin.generate(self)
         # install theme files
         install_file('webcheck.css', True)
         install_file('fancytooltips/fancytooltips.js', True)
