@@ -33,8 +33,7 @@ import urlparse
 
 import webcheck
 import webcheck.monkeypatch
-from webcheck import config
-from webcheck.crawler import Crawler
+from webcheck.crawler import Crawler, default_cfg
 
 
 # The loglevel to use for the logger that is configured.
@@ -75,13 +74,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '-V', '--version', action=VersionAction)
 parser.add_argument(
-    '-i', '--internal', metavar='PATTERN', action='append', default=[],
+    '-i', '--internal', metavar='PATTERN', action='append',
     help='mark URLs matching PATTERN as internal')
 parser.add_argument(
-    '-x', '--external', metavar='PATTERN', action='append', default=[],
+    '-x', '--external', metavar='PATTERN', action='append',
     help='mark URLs matching PATTERN as external')
 parser.add_argument(
-    '-y', '--yank', metavar='PATTERN', action='append', default=[],
+    '-y', '--yank', metavar='PATTERN', action='append',
     help='do not check URLs matching PATTERN')
 parser.add_argument(
     '-b', '--base-only', action='store_true',
@@ -99,7 +98,7 @@ parser.add_argument(
     '-d', '--debug', action='store_true',
     help='show programmer-level debug information')
 parser.add_argument(
-    '-o', '--output', dest='output_dir', metavar='DIRECTORY', default=config.OUTPUT_DIR,
+    '-o', '--output', dest='output_dir', metavar='DIRECTORY',
     help='store the generated reports in the specified directory')
 parser.add_argument(
     '-c', '--continue', action='store_true',
@@ -108,18 +107,19 @@ parser.add_argument(
     '-f', '--force', action='store_true',
     help='overwrite files without asking')
 parser.add_argument(
-    '-r', '--redirects', metavar='N', type=int, default=config.REDIRECT_DEPTH,
+    '-r', '--redirects', metavar='N', type=int,
     help='the number of redirects webcheck should follow, 0 implies to follow all redirects')
 parser.add_argument(
-    '-l', '--max-depth', '--levels', metavar='N', type=int, default=config.MAX_DEPTH,
+    '-l', '--max-depth', '--levels', metavar='N', type=int,
     help='maximum depth of links to follow from base urls')
 parser.add_argument(
-    '-w', '--wait', metavar='SECONDS', type=float, default=config.WAIT_BETWEEN_REQUESTS,
+    '-w', '--wait', metavar='SECONDS', type=float,
     help='wait SECONDS between retrievals')
 parser.add_argument(
     '--profile', action='store_true', help=argparse.SUPPRESS)
 parser.add_argument(
     'base_urls', metavar='URL', nargs='+')
+parser.set_defaults(**default_cfg)
 
 
 def parse_args(crawler):

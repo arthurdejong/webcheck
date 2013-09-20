@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007, 2008, 2011 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008, 2011, 2013 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -92,6 +92,16 @@ _spacepattern = re.compile(' ')
 
 # pattern to match anchor part of a url
 _anchorpattern = re.compile('#([^#]+)$')
+
+
+# get default configuration
+default_cfg = dict(
+    internal=[], external=[], yank=[], base_only=config.BASE_URLS_ONLY,
+    avoid_external=config.AVOID_EXTERNAL_LINKS, ignore_robots=not(config.USE_ROBOTS),
+    output=config.OUTPUT_DIR, force=config.OVERWRITE_FILES,
+    redirects=config.REDIRECT_DEPTH, max_depth=config.MAX_DEPTH,
+    wait=config.WAIT_BETWEEN_REQUESTS)
+default_cfg.update({'continue': config.CONTINUE})
 
 
 class Crawler(object):
