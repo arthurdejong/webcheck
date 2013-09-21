@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2011 Arthur de Jong
+# Copyright (C) 2005, 2006, 2011, 2013 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -93,3 +93,4 @@ def generate(crawler):
     fp.write(
       '   </ul>\n')
     webcheck.plugins.close_html(fp)
+    session.close()

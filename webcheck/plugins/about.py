@@ -111,3 +111,4 @@ def generate(crawler):
     fp.write(
       '   </ul>\n')
     webcheck.plugins.close_html(fp)
+    session.close()

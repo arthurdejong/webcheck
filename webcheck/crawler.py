@@ -337,6 +337,7 @@ class Crawler(object):
             logger.debug('items left to check: %d' %
                           (remaining + len(tocheck)))
         session.commit()
+        session.close()
 
     def fetch(self, link):
         """Attempt to fetch the url (if not yanked) and fill in link
@@ -451,6 +452,7 @@ class Crawler(object):
             if hasattr(plugin, 'postprocess'):
                 logger.info(plugin.__name__)
                 plugin.postprocess(self)
+        #session.close() do not close because bases uses the session
 
     def generate(self):
         """Generate pages for plugins."""
