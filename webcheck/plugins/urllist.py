@@ -27,24 +27,13 @@ __author__ = 'Arthur de Jong'
 __outputfile__ = 'urllist.html'
 
 from webcheck.db import Session, Link
-import webcheck.plugins
+from webcheck.output import render
 
 
 def generate(crawler):
     """Output a sorted list of URLs."""
     session = Session()
-    fp = webcheck.plugins.open_html(webcheck.plugins.urllist, crawler)
-    fp.write(
-      '   <p class="description">\n'
-      '    This is the list of all urls encountered during the examination of\n'
-      '    the website. It lists internal as well as external and\n'
-      '    non-examined urls.\n'
-      '   </p>\n'
-      '   <ol>\n')
     links = session.query(Link).order_by(Link.url)
-    for link in links:
-        fp.write('    <li>' + webcheck.plugins.make_link(link, link.url) + '</li>\n')
-    fp.write(
-      '   </ol>\n')
-    webcheck.plugins.close_html(fp)
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links)
     session.close()

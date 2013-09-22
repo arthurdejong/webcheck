@@ -31,39 +31,14 @@ __outputfile__ = 'notchkd.html'
 from sqlalchemy.orm import joinedload
 
 from webcheck.db import Session, Link
-import webcheck.plugins
+from webcheck.output import render
 
 
 def generate(crawler):
     """Output the list of not checked pages."""
     session = Session()
-    # get all yanked urls
     links = session.query(Link).filter(Link.yanked != None).order_by(Link.url)
-    # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.notchkd, crawler)
-    if not links.count():
-        fp.write(
-          '   <p class="description">\n'
-          '    All links have been checked.\n'
-          '   </p>\n')
-        webcheck.plugins.close_html(fp)
-        return
-    fp.write(
-      '   <p class="description">\n'
-      '    This is the list of all urls that were encountered but not checked\n'
-      '    at all during the examination of the website.\n'
-      '   </p>\n'
-      '   <ol>\n')
-    for link in links.options(joinedload(Link.linkproblems)):
-        fp.write(
-          '    <li>\n'
-          '     %(link)s\n'
-          % {'link': webcheck.plugins.make_link(link, link.url)})
-        # present a list of parents
-        webcheck.plugins.print_parents(fp, link, '     ')
-        fp.write(
-          '    </li>\n')
-    fp.write(
-      '   </ol>\n')
-    webcheck.plugins.close_html(fp)
+    links = links.options(joinedload(Link.linkproblems))
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links)
     session.close()

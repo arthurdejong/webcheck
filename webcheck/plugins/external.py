@@ -31,39 +31,14 @@ __outputfile__ = 'external.html'
 from sqlalchemy.orm import joinedload
 
 from webcheck.db import Session, Link
-import webcheck.plugins
+from webcheck.output import render
 
 
 def generate(crawler):
     """Generate the list of external links."""
     session = Session()
-    # get all external links
     links = session.query(Link).filter(Link.is_internal != True).order_by(Link.url)
-    # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.external, crawler)
-    if not links:
-        fp.write(
-          '   <p class="description">'
-          '    No external links were found on the website.'
-          '   </p>\n')
-        webcheck.plugins.close_html(fp)
-        return
-    fp.write(
-      '   <p class="description">'
-      '    This is the list of all external urls encountered during the'
-      '    examination of the website.'
-      '   </p>\n'
-      '   <ol>\n')
-    for link in links.options(joinedload(Link.linkproblems)):
-        fp.write(
-          '    <li>\n'
-          '     %(link)s\n'
-          % {'link': webcheck.plugins.make_link(link)})
-        # present a list of parents
-        webcheck.plugins.print_parents(fp, link, '     ')
-        fp.write(
-          '    </li>\n')
-    fp.write(
-      '   </ol>\n')
-    webcheck.plugins.close_html(fp)
+    links = links.options(joinedload(Link.linkproblems))
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links)
     session.close()

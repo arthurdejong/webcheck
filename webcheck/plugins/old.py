@@ -30,9 +30,9 @@ __outputfile__ = 'old.html'
 
 import time
 
-from webcheck.db import Session, Link
 from webcheck import config
-import webcheck.plugins
+from webcheck.db import Session, Link
+from webcheck.output import render
 
 
 SECS_PER_DAY = 60 * 60 * 24
@@ -41,40 +41,9 @@ SECS_PER_DAY = 60 * 60 * 24
 def generate(crawler):
     """Output the list of outdated pages to the specified file descriptor."""
     session = Session()
-    # the time for which links are considered old
     oldtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSOLD_URL_AGE
-    # get all internal pages that are old
     links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = links.filter(Link.mtime < oldtime).order_by(Link.mtime)
-    # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.old, crawler)
-    if not links.count():
-        fp.write(
-          '   <p class="description">\n'
-          '    No pages were found that were older than %(old)d days old.\n'
-          '   </p>\n'
-          % {'old': config.REPORT_WHATSOLD_URL_AGE})
-        webcheck.plugins.close_html(fp)
-        return
-    fp.write(
-      '   <p class="description">\n'
-      '    These pages have been modified a long time ago (older than %(old)d\n'
-      '    days) and may be outdated.\n'
-      '   </p>\n'
-      '   <ul>\n'
-      % {'old': config.REPORT_WHATSOLD_URL_AGE})
-    for link in links:
-        age = (time.time() - link.mtime) / SECS_PER_DAY
-        fp.write(
-          '    <li>\n'
-          '     %(link)s\n'
-          '     <ul class="problems">\n'
-          '      <li>age: %(age)d days</li>\n'
-          '     </ul>\n'
-          '    </li>\n'
-          % {'link': webcheck.plugins.make_link(link),
-             'age':  age})
-    fp.write(
-      '   </ul>\n')
-    webcheck.plugins.close_html(fp)
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links, now=time.time(), SECS_PER_DAY=SECS_PER_DAY)
     session.close()

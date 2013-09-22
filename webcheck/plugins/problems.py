@@ -28,21 +28,19 @@ __title__ = 'problems by author'
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'problems.html'
 
+import collections
+import re
+
 from webcheck.db import Session, Link
-import webcheck.plugins
+from webcheck.output import render
 
 
-def _mk_id(name):
-    """Convert the name to a string that may be used inside an
-    ID attribute."""
-    # convert to lowercase first
+def mk_id(name):
+    """Convert the name to a string that may be used inside an ID
+    attribute."""
     name = name.lower()
-    import re
-    # strip any leading non alpha characters
     name = re.sub('^[^a-z]*', '', name)
-    # remove any non-allowed characters
     name = re.sub('[^a-z0-9_:.]+', '-', name)
-    # we're done
     return name
 
 
@@ -50,79 +48,17 @@ def generate(crawler):
     """Output the overview of problems per author."""
     session = Session()
     # make a list of problems per author
-    problem_db = {}
+    problem_db = collections.defaultdict(list)
     # get internal links with page problems
     links = session.query(Link).filter_by(is_internal=True)
     links = links.filter(Link.pageproblems.any()).order_by(Link.url)
     for link in links:
-        # make a normal name for the author
-        if link.author:
-            author = link.author.strip()
-        else:
-            author = unicode('Unknown')
-        # store the problem
-        if author in problem_db:
-            problem_db[author].append(link)
-        else:
-            problem_db[author] = [link]
-    fp = webcheck.plugins.open_html(webcheck.plugins.problems, crawler)
-    if not problem_db:
-        fp.write(
-          '   <p class="description">\n'
-          '    No problems were found on this site, hurray.\n'
-          '   </p>\n')
-        webcheck.plugins.close_html(fp)
-        return
-    # print description
-    fp.write(
-      '   <p class="description">\n'
-      '    This is an overview of all the problems on the site, grouped by\n'
-      '    author.\n'
-      '   </p>\n')
-    # get a list of authors
+        author = link.author.strip() if link.author else u'Unknown'
+        problem_db[author].append(link)
+    # get a sorted list of authors
     authors = problem_db.keys()
     authors.sort()
-    # generate short list of authors
-    if len(authors) > 1:
-        fp.write('   <ul class="authorlist">\n')
-        for author in authors:
-            fp.write(
-              '    <li><a href="#author_%(authorref)s">Author: %(author)s</a></li>\n'
-              % {'authorref': webcheck.plugins.htmlescape(_mk_id(author)),
-                 'author':    webcheck.plugins.htmlescape(author)})
-        fp.write('   </ul>\n')
-    # generate problem report
-    fp.write('   <ul>\n')
-    for author in authors:
-        fp.write(
-          '     <li id="author_%(authorref)s">\n'
-          '      Author: %(author)s\n'
-          '      <ul>\n'
-          % {'authorref': webcheck.plugins.htmlescape(_mk_id(author)),
-             'author':    webcheck.plugins.htmlescape(author)})
-        # sort pages by url
-        problem_db[author].sort(lambda a, b: cmp(a.url, b.url))
-        # list problems for this author
-        for link in problem_db[author]:
-            # present the links
-            fp.write(
-              '    <li>\n'
-              '     %(link)s\n'
-              '     <ul class="problems">\n'
-              % {'link': webcheck.plugins.make_link(link)})
-            # list the problems
-            for problem in link.pageproblems:
-                fp.write(
-                  '      <li>%(problem)s</li>\n'
-                  % {'problem':  webcheck.plugins.htmlescape(problem)})
-            # end the list item
-            fp.write(
-              '     </ul>\n'
-              '    </li>\n')
-        fp.write(
-          '      </ul>\n'
-          '     </li>\n')
-    fp.write(
-      '   </ul>\n')
-    webcheck.plugins.close_html(fp)
+    authors = [(x, problem_db[x]) for x in authors]
+    render(__outputfile__, crawler=crawler, title=__title__,
+           authors=authors, mk_id=mk_id)
     session.close()

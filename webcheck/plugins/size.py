@@ -28,12 +28,12 @@ __title__ = "what's big"
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'size.html'
 
-from webcheck.db import Session, Link
 from webcheck import config
-import webcheck.plugins
+from webcheck.db import Session, Link
+from webcheck.output import render
 
 
-def _getsize(link, seen=None):
+def get_size(link, seen=None):
     """Return the size of the link and all its embedded links, counting each
     link only once."""
     # make a new list
@@ -48,7 +48,7 @@ def _getsize(link, seen=None):
         # add sizes of embedded objects
         for embed in link.embedded:
             if embed not in seen:
-                size += _getsize(embed, seen)
+                size += get_size(embed, seen)
         link.total_size = size
     return link.total_size
 
@@ -56,41 +56,10 @@ def _getsize(link, seen=None):
 def generate(crawler):
     """Output the list of large pages."""
     session = Session()
-    # get all internal pages and get big links
     links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = [x for x in links
-             if _getsize(x) >= config.REPORT_SLOW_URL_SIZE * 1024]
-    # sort links by size (biggest first)
+             if get_size(x) >= config.REPORT_SLOW_URL_SIZE * 1024]
     links.sort(lambda a, b: cmp(b.total_size, a.total_size))
-    # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.size, crawler)
-    if not links:
-        fp.write(
-          '   <p class="description">\n'
-          '    No pages over %(size)dK were found.\n'
-          '   </p>\n'
-          % {'size': config.REPORT_SLOW_URL_SIZE})
-        webcheck.plugins.close_html(fp)
-        return
-    fp.write(
-      '   <p class="description">\n'
-      '    These pages are probably too big (over %(size)dK) which could be\n'
-      '    slow to download.\n'
-      '   </p>\n'
-      '   <ul>\n'
-      % {'size': config.REPORT_SLOW_URL_SIZE})
-    for link in links:
-        size = webcheck.plugins.get_size(link.total_size)
-        fp.write(
-          '    <li>\n'
-          '     %(link)s\n'
-          '     <ul class="problem">\n'
-          '      <li>size: %(size)s</li>\n'
-          '     </ul>\n'
-          '    </li>\n'
-          % {'link': webcheck.plugins.make_link(link),
-             'size': size})
-    fp.write(
-      '   </ul>\n')
-    webcheck.plugins.close_html(fp)
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links)
     session.close()
