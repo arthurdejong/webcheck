@@ -135,6 +135,8 @@ def render(output_file, **kwargs):
     crawler = kwargs.get('crawler', None)
     if crawler:
         kwargs.setdefault('sitename', crawler.bases[0].title or crawler.bases[0].url)
+    kwargs.setdefault('Link', Link)
+    kwargs.setdefault('config', config)
     template = env.get_template(output_file)
     fp = open_file(output_file)
     fp.write(template.render(**kwargs))
