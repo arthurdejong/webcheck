@@ -129,6 +129,12 @@ env = jinja2.Environment(
 
 def render(output_file, **kwargs):
     """Render the output file with the specified context variables."""
+    kwargs.setdefault('webcheck', webcheck)
+    kwargs.setdefault('output_file', output_file)
+    kwargs.setdefault('time', time.ctime(time.time()))
+    crawler = kwargs.get('crawler', None)
+    if crawler:
+        kwargs.setdefault('sitename', crawler.bases[0].title or crawler.bases[0].url)
     template = env.get_template(output_file)
     fp = open_file(output_file)
     fp.write(template.render(**kwargs))

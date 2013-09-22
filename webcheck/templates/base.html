@@ -1,0 +1,58 @@
+{#
+ # base.html - base template for webcheck reports
+ #
+ # Copyright (C) 2013 Arthur de Jong
+ #
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 2 of the License, or
+ # (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ #
+ # The files produced as output from the software do not automatically fall
+ # under the copyright of the software, unless explicitly stated otherwise.
+ #}
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Webcheck report for {{ sitename }} ({{ title }})</title>
+    <link rel="stylesheet" type="text/css" href="webcheck.css" />
+    <link rel="icon" href="favicon.ico" type="image/ico" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <script type="text/javascript" src="fancytooltips.js"></script>
+    <meta name="Generator" content="webcheck {{ webcheck.__version__ }}" />
+  </head>
+  <body>
+    <h1 class="basename">Webcheck report for {{ sitename }}</a></h1>
+
+    <ul class="navbar">
+      {% for plugin in crawler.plugins %}
+        {% if plugin.__outputfile__ %}
+          <li><a href="{{ plugin.__outputfile__ }}"{% if plugin.__outputfile__ == output_file %} class="selected"{% endif %} title="{{ plugin.__doc__ }}">{{ plugin.__title__ }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    <h2>{{ title }}</h2>
+
+    <div class="content">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+    <p class="footer">
+      Generated {{ time }} by <a href="{{ webcheck.__homepage__ }}">webcheck {{ webcheck.__version__ }}</a>
+    </p>
+  </body>
+</html>
