@@ -3,7 +3,7 @@
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
-# Copyright (C) 2005, 2006, 2007, 2008, 2010, 2011 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008, 2010, 2011, 2013 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
+import codecs
 import logging
 import os
 import shutil
@@ -35,7 +36,7 @@ from webcheck import config
 logger = logging.getLogger(__name__)
 
 
-def open_file(filename, istext=True, makebackup=False):
+def open_file(filename, is_text=True, makebackup=False):
     """This returns an open file object which can be used for writing. This
     file is created in the output directory. The output directory (stored in
     config.OUTPUT_DIR is created if it does not yet exist. If the second
@@ -64,19 +65,19 @@ def open_file(filename, istext=True, makebackup=False):
             elif res[0] != 'y':
                 raise SystemExit('Aborted.')
     # open the file for writing
-    if istext:
-        return open(fname, 'w')
+    if is_text:
+        return codecs.open(fname, encoding='utf-8', mode='w')
     else:
         return open(fname, 'wb')
 
 
-def install_file(source, text=False):
+def install_file(source, is_text=False):
     """Install the given file in the output directory.
-    If the text flag is set to true it is assumed the file is text,
+    If the is_text flag is set to true it is assumed the file is text,
     translating line endings."""
     # figure out mode to open the file with
     mode = 'r'
-    if text:
+    if is_text:
         mode += 'U'
     # check with what kind of argument we are called
     scheme = urlparse.urlsplit(source)[0]
@@ -104,7 +105,7 @@ def install_file(source, text=False):
     # open the input file
     sfp = open(source, mode)
     # create file in output directory (with overwrite question)
-    tfp = open_file(os.path.basename(source))
+    tfp = open_file(os.path.basename(source), is_text=is_text)
     # copy contents
     shutil.copyfileobj(sfp, tfp)
     # close files
