@@ -53,11 +53,3 @@ def get_parsermodule(mimetype):
     if mimetype in _parsermodules:
         return _parsermodules[mimetype]
     return None
-
-
-def get_mimetypes():
-    """Return a list of supported mime types that can be parsed
-    by the installed parsers."""
-    if _parsermodules == {}:
-        _init_modules()
-    return _parsermodules.keys()
