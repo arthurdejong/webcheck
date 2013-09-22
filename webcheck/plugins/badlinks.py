@@ -31,7 +31,7 @@ __outputfile__ = 'badlinks.html'
 from sqlalchemy.orm import joinedload
 
 from webcheck.db import Session, Link
-import webcheck.plugins
+from webcheck.output import render
 
 
 def postprocess(crawler):
@@ -52,41 +52,8 @@ def postprocess(crawler):
 def generate(crawler):
     """Present the list of bad links."""
     session = Session()
-    # find all links with link problems
-    links = session.query(Link).filter(Link.linkproblems.any()).order_by(Link.url).options(joinedload(Link.linkproblems))
-    # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.badlinks, crawler)
-    if not links:
-        fp.write(
-          '   <p class="description">\n'
-          '    There were no problems retrieving links from the website.\n'
-          '   </p>\n')
-        webcheck.plugins.close_html(fp)
-        return
-    fp.write(
-      '   <p class="description">\n'
-      '    These links could not be retrieved during the crawling of the website.\n'
-      '   </p>\n'
-      '   <ol>\n')
-    for link in links:
-        # list the link
-        fp.write(
-          '    <li>\n'
-          '     %(badurl)s\n'
-          '     <ul class="problems">\n'
-          % {'badurl':  webcheck.plugins.make_link(link, link.url)})
-        # list the problems
-        for problem in link.linkproblems:
-            fp.write(
-              '      <li>%(problem)s</li>\n'
-              % {'problem':  webcheck.plugins.htmlescape(problem)})
-        fp.write(
-          '     </ul>\n')
-        # present a list of parents
-        webcheck.plugins.print_parents(fp, link, '     ')
-        fp.write(
-          '    </li>\n')
-    fp.write(
-      '   </ol>\n')
-    webcheck.plugins.close_html(fp)
+    links = session.query(Link).filter(Link.linkproblems.any())
+    links = links.order_by(Link.url).options(joinedload(Link.linkproblems))
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links)
     session.close()

@@ -29,7 +29,7 @@ __author__ = 'Arthur de Jong'
 __outputfile__ = 'images.html'
 
 from webcheck.db import Session, Link
-import webcheck.plugins
+from webcheck.output import render
 
 
 def generate(crawler):
@@ -40,24 +40,6 @@ def generate(crawler):
     links = links.filter((Link.is_page != True) | (Link.is_page == None))
     links = links.filter(Link.mimetype.startswith('image/'))
     links = links.order_by(Link.url)
-    # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.images, crawler)
-    if not links:
-        fp.write(
-          '   <p class="description">\n'
-          '    No images were linked on the website.\n'
-          '   </p>\n'
-          '   <ol>\n')
-        webcheck.plugins.close_html(fp)
-        return
-    fp.write(
-      '   <p class="description">\n'
-      '    This is the list of all images found linked on the website.\n'
-      '   </p>\n'
-      '   <ol>\n')
-    for link in links:
-        fp.write('    <li>%s</li>\n' % webcheck.plugins.make_link(link, link.url))
-    fp.write(
-      '   </ol>\n')
-    webcheck.plugins.close_html(fp)
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links)
     session.close()

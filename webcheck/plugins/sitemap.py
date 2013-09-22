@@ -30,66 +30,47 @@ __outputfile__ = 'index.html'
 
 from webcheck import config
 from webcheck.db import Link
-import webcheck.plugins
+from webcheck.output import render
 
 
-def add_pagechildren(link, children, explored):
+def get_children(link, explored):
     """Determine the page children of this link, combining the children of
     embedded items and following redirects."""
     # get all internal children
     qry = link.children.filter(Link.is_internal == True)
     if link.depth:
         qry = qry.filter((Link.depth > link.depth) | (Link.depth == None))
-    # follow redirects
-    children.update(y
-                    for y in (x.follow_link() for x in qry)
-                    if y and y.is_page and y.is_internal and y.id not in explored)
-    explored.update(x.id for x in children)
+    # follow redirects and return all direct children
+    for child in (x.follow_link() for x in qry):
+        if child and child.is_page and child.is_internal and child.id not in explored:
+            explored.add(child.id)
+            yield child
     # add embedded element's pagechildren (think frames)
     for embed in link.embedded.filter(Link.is_internal == True).filter(Link.is_page == True):
-        # TODO: put this in a query
         if embed.id not in explored and \
            (embed.depth == None or embed.depth > link.depth):
-            add_pagechildren(embed, children, explored)
+            for child in get_children(embed, explored):
+                yield child
 
 
-def _explore(fp, link, explored, depth=0, indent='    '):
+def explore(links, explored=None, depth=0):
     """Recursively do a breadth first traversal of the graph of links on the
-    site. Prints the html results to the file descriptor."""
-    # output this link
-    fp.write(indent + '<li>\n')
-    fp.write(indent + ' ' + webcheck.plugins.make_link(link) + '\n')
-    # only check children if we are not too deep yet
-    if depth <= config.REPORT_SITEMAP_LEVEL:
-        # figure out the links to follow and ensure that they are only
-        # explored from here
-        children = set()
-        add_pagechildren(link, children, explored)
-        # remove None which could be there as a result of follow_link()
-        children.discard(None)
-        if children:
-            children = list(children)
-            # present children as a list
-            fp.write(indent + ' <ul>\n')
+    site."""
+    if explored is None:
+        explored = set(x.id for x in links)
+    for link in links:
+        children = []
+        if depth <= config.REPORT_SITEMAP_LEVEL:
+            children = list(get_children(link, explored))
             children.sort(lambda a, b: cmp(a.url, b.url))
-            for child in children:
-                _explore(fp, child, explored, depth + 1, indent + '  ')
-            fp.write(indent + ' </ul>\n')
-    fp.write(indent + '</li>\n')
+        if children:
+            yield link, explore(children, explored, depth + 1)
+        else:
+            yield link, None
 
 
 def generate(crawler):
     """Output the sitemap."""
-    fp = webcheck.plugins.open_html(webcheck.plugins.sitemap, crawler)
-    # output the site structure using breadth first traversal
-    fp.write(
-      '   <p class="description">\n'
-      '    This an overview of the crawled site.\n'
-      '   </p>\n'
-      '   <ul>\n')
-    explored = set(x.id for x in crawler.bases)
-    for l in crawler.bases:
-        _explore(fp, l, explored)
-    fp.write(
-      '   </ul>\n')
-    webcheck.plugins.close_html(fp)
+    links = explore(crawler.bases)
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links)

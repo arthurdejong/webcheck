@@ -41,28 +41,6 @@ mimetypes = ('text/html', 'application/xhtml+xml', 'text/x-server-parsed-html')
 _entitypattern = re.compile('&(#[0-9]{1,6}|[a-zA-Z]{2,10});')
 
 
-def htmlescape(txt):
-    """HTML escape the given string and return an ASCII clean string with
-    known entities and character entities for the other values."""
-    # check for empty string
-    if not txt:
-        return u''
-    # convert to unicode object
-    if not isinstance(txt, unicode):
-        txt = unicode(txt)
-    # the output string
-    out = ''
-    # loop over the characters of the string
-    for c in txt:
-        if ord(c) in htmlentitydefs.codepoint2name:
-            out += '&%s;' % htmlentitydefs.codepoint2name[ord(c)]
-        elif ord(c) > 126:
-            out += '&#%d;' % ord(c)
-        else:
-            out += c.encode('utf-8')
-    return out
-
-
 def _unescape_entity(match):
     """Helper function for htmlunescape().
     This funcion unescapes a html entity, it is passed to the sub()

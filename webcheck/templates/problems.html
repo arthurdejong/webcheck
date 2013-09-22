@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if not authors %}
+    <p class="description">
+      No problems were found on this site, hurray.
+    </p>
+  {% else %}
+    <p class="description">
+      This is an overview of all the problems on the site, grouped by author.
+    </p>
+    {# index of authors #}
+    {% if authors|length > 1 %}
+      <ul class="authorlist">
+        {% for author, links in authors %}
+          <li><a href="#author_{{ mk_id(author) }}">Author: {{ author }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <ul>
+      {% for author, links in authors %}
+        <li id="author_{{ mk_id(author) }}">
+          Author: {{ author }}
+          <ul>
+            {% for link in links %}
+              <li>
+                {{ make_link(link) }}
+                <ul class="problems">
+                  {% for problem in link.pageproblems %}
+                    <li>{{ problem }}</li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endfor %}
+          </ul>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

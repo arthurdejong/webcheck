@@ -31,7 +31,7 @@ __outputfile__ = 'notitles.html'
 from sqlalchemy.sql.functions import char_length
 
 from webcheck.db import Session, Link
-import webcheck.plugins
+from webcheck.output import render
 
 
 def postprocess(crawler):
@@ -50,30 +50,9 @@ def postprocess(crawler):
 def generate(crawler):
     """Output the list of pages without a title."""
     session = Session()
-    # get all internal pages without a title
     links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = links.filter((char_length(Link.title) == 0) |
                          (Link.title == None)).order_by(Link.url)
-    # present results
-    fp = webcheck.plugins.open_html(webcheck.plugins.notitles, crawler)
-    if not links.count():
-        fp.write(
-          '   <p class="description">\n'
-          '    All pages had a title specified.\n'
-          '   </p>\n')
-        webcheck.plugins.close_html(fp)
-        return
-    fp.write(
-      '   <p class="description">\n'
-      '    This is the list of all (internal) pages without a proper title\n'
-      '    specified.\n'
-      '   </p>\n'
-      '   <ol>\n')
-    for link in links:
-        fp.write(
-          '    <li>%(link)s</li>\n'
-          % {'link': webcheck.plugins.make_link(link, link.url)})
-    fp.write(
-      '   </ol>\n')
-    webcheck.plugins.close_html(fp)
+    render(__outputfile__, crawler=crawler, title=__title__,
+           links=links)
     session.close()

@@ -1,0 +1,84 @@
+{#
+ # macros.html - macros that are used in other templates
+ #
+ # Copyright (C) 2013 Arthur de Jong
+ #
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 2 of the License, or
+ # (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ #
+ # The files produced as output from the software do not automatically fall
+ # under the copyright of the software, unless explicitly stated otherwise.
+ #}
+
+{# output a space separated list of CSS classes for the provided link #}
+{% macro link_css_classes(link) -%}
+  {% if link.is_internal %}internal{% else %}external{% endif %}
+{%- endmacro %}
+
+{# output an overview of the link information #}
+{% macro link_info(link, separator='&#10;') -%}
+  url: {{ link.url }}{{ separator }}
+  {%- if link.status %}{{ link.status }}{{ separator }}{% endif -%}
+  {%- if link.title %}title: {{ link.title|trim }}{{ separator }}{% endif -%}
+  {%- if link.author %}author: {{ link.author|trim }}{{ separator }}{% endif -%}
+  {%- if link.is_internal %}internal link{% else %}external link{% endif -%}
+  {%- if link.yanked %}, not checked ({{ link.yanked }}){% endif -%}{{ separator }}
+  {%- if link.redirectdepth -%}
+    {%- if link.children.count() > 0 -%}
+      redirect: {{ link.children.first().url }}
+    {%- else -%}
+      redirect (not followed)
+    {%- endif -%}{{ separator }}
+  {%- endif -%}
+  {%- set count = link.count_parents -%}
+  {%- if count == 1 -%}
+    linked from 1 page{{ separator }}
+  {%- elif count > 1 -%}
+    linked from {{ count }} pages{{ separator }}
+  {%- endif -%}
+  {%- if link.mtime %}last modified: {{ time.ctime(link.mtime) }}{{ separator }}{% endif -%}
+  {%- if link.size %}size: {{ link.size|filesizeformat(binary=True) }}{{ separator }}{% endif -%}
+  {%- if link.mimetype %}mime-type: {{ link.mimetype }}{{ separator }}{% endif -%}
+  {%- if link.encoding %}encoding: {{ link.encoding }}{{ separator }}{% endif -%}
+  {%- for problem in link.linkproblems -%}
+    problem: {{ problem.message }}{{ separator }}
+  {%- endfor -%}
+{%- endmacro %}
+
+{# render a link embedded in an <a> with a title and information #}
+{% macro make_link(link, title=None) -%}
+  <a href="{{ link.url }}" class="{{ link_css_classes(link) }}"
+  {%- if config.REPORT_LINKS_IN_NEW_WINDOW %} target="_blank"{%- endif %}
+ title="{{ link_info(link) }}">{{ title or link.title or link.url }}</a>
+{%- endmacro %}
+
+{# return a <div> containing a list of parent links #}
+{% macro link_parents(link) %}
+  {% set count = link.count_parents %}
+  {% if count %}
+    {% set parents = link.parents.order_by(Link.title, Link.url)[:config.PARENT_LISTLEN] %}
+    <div class="parents">
+      referenced from:
+      <ul>
+        {% for parent in parents %}
+          <li>{{ make_link(parent) }}</li>
+        {% endfor %}
+        {% set more = count - parents|length %}
+        {% if more %}
+          <li>{{ more }} more...</li>
+        {% endif %}
+      </ul>
+    </div>
+  {% endif %}
+{% endmacro %}
