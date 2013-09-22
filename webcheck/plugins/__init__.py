@@ -51,7 +51,7 @@ import webcheck
 from webcheck import config
 from webcheck.db import Link
 from webcheck.parsers.html import htmlescape
-from webcheck.util import open_file
+from webcheck.output import open_file
 
 
 def _floatformat(f):

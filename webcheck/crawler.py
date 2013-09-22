@@ -41,7 +41,7 @@ import urlparse
 
 from webcheck import config
 from webcheck.db import Session, Base, Link, truncate_db
-from webcheck.util import install_file
+from webcheck.output import install_file
 import webcheck.parsers
 
 from sqlalchemy import create_engine

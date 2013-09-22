@@ -1,5 +1,5 @@
 
-# util.py - utility functions for webcheck
+# output.py - utility functions for webcheck
 #
 # Copyright (C) 1998, 1999 Albert Hopkins (marduk)
 # Copyright (C) 2002 Mike W. Meyer
@@ -22,15 +22,22 @@
 # The files produced as output from the software do not automatically fall
 # under the copyright of the software, unless explicitly stated otherwise.
 
+"""Utility functions for generating the report."""
+
 import codecs
 import logging
 import os
 import shutil
 import sys
+import time
 import urllib
 import urlparse
 
+import jinja2
+
 from webcheck import config
+from webcheck.db import Link
+import webcheck
 
 
 logger = logging.getLogger(__name__)
@@ -111,3 +118,18 @@ def install_file(source, is_text=False):
     # close files
     tfp.close()
     sfp.close()
+
+
+env = jinja2.Environment(
+    loader=jinja2.PackageLoader('webcheck'),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True,
+    trim_blocks=True, lstrip_blocks=True, keep_trailing_newline=True)
+
+
+def render(output_file, **kwargs):
+    """Render the output file with the specified context variables."""
+    template = env.get_template(output_file)
+    fp = open_file(output_file)
+    fp.write(template.render(**kwargs))
+    fp.close()
