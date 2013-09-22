@@ -121,7 +121,7 @@ class Crawler(object):
     The available properties of this class are:
 
       site_name  - the name of the website that is crawled
-      bases      - a list of base link object
+      base_urls  - a list of base URLs
       plugins    - a list of plugin modules used by the crawler
     """
 
@@ -162,17 +162,17 @@ class Crawler(object):
             __import__(plugin, globals(), locals(), [plugin])
             for plugin in config.PLUGINS]
         # add base urls
-        self._internal_urls = set()
+        self.base_urls = []
         for url in self.cfg.base_urls:
             # if it does not look like a url it is probably a local file
             if urlparse.urlsplit(url)[0] == '':
                 url = 'file://' + urllib.pathname2url(os.path.abspath(url))
             # clean the URL and add it
             url = Link.clean_url(url)
-            if url not in self._internal_urls:
-                self._internal_urls.add(url)
-        # list of base link objects
-        self.bases = []
+            if url not in self.base_urls:
+                self.base_urls.append(url)
+        # set up empty site name
+        self.site_name = None
 
     def setup_database(self):
         if hasattr(self, 'database_configed'):
@@ -193,27 +193,19 @@ class Crawler(object):
         """Check whether the specified url is external or internal. This
         uses the urls marked with add_base() and the regular expressions
         passed with add_external_re()."""
-        # check if it is internal through the regexps
         for regexp in self._internal_res.values():
             if regexp.search(url) is not None:
                 return True
-        res = False
-        # check that the url starts with an internal url
         if config.BASE_URLS_ONLY:
-            # the url must start with one of the _internal_urls
-            for i in self._internal_urls:
-                res |= (i == url[:len(i)])
+            # the url must start with one of the base URLs
+            if not any(url.startswith(x) for x in self.base_urls):
+                return False
         else:
             # the netloc must match a netloc of an _internal_url
             netloc = urlparse.urlsplit(url)[1]
-            for i in self._internal_urls:
-                res |= (urlparse.urlsplit(i)[1] == netloc)
-        # if it is not internal now, it never will be
-        if not res:
-            return False
-        # check if it is external through the regexps
+            if not any((urlparse.urlsplit(x)[1] == netloc) for x in self.base_urls):
+                return False
         for x in self._external_res.values():
-            # if the url matches it is external and we can stop
             if x.search(url):
                 return False
         return True
@@ -303,7 +295,7 @@ class Crawler(object):
         if not config.CONTINUE:
             truncate_db()
         # add all internal urls to the database
-        for url in self._internal_urls:
+        for url in self.base_urls:
             url = Link.clean_url(url)
             self.get_link(session, url)
         # add some URLs from the database that haven't been fetched
@@ -424,27 +416,28 @@ class Crawler(object):
         session = Session()
         # build the list of urls that were set up with add_base() that
         # do not have a parent (they form the base for the site)
-        for url in self._internal_urls:
+        bases = []
+        for url in list(self.base_urls):
             link = self.get_link(session, url).follow_link()
             if not link:
                 logger.warn('base link %s redirects to nowhere', url)
-                continue
-            # add the link to bases
-            logger.debug('adding %s to bases', link.url)
-            self.bases.append(link)
-        # if we got no bases, just use the first internal one
-        if not self.bases:
+                self.base_urls.remove(url)
+            else:
+                bases.append(link)
+        # if we got no base URLs, just use the first internal one we find
+        if not self.base_urls:
             link = session.query(Link).filter(Link.is_internal == True).first()
-            logger.debug('fallback to adding %s to bases', link.url)
-            self.bases.append(link)
+            logger.debug('fallback to adding %s to base urls', link.url)
+            self.base_urls.append(link.url)
+            bases.append(link)
         # set the site name
-        self.site_name = self.bases[0].title or self.bases[0].url
+        self.site_name = bases[0].title or bases[0].url
         # do a breadth first traversal of the website to determine depth
         session.query(Link).update(dict(depth=None), synchronize_session=False)
         session.commit()
         depth = 0
-        count = len(self.bases)
-        for link in self.bases:
+        count = len(bases)
+        for link in bases:
             link.depth = 0
         session.commit()
         while count > 0:
@@ -458,12 +451,13 @@ class Crawler(object):
             session.commit()
             depth += 1
             # TODO: also handle embeds
+        session.commit()
+        session.close()
         # see if any of the plugins want to do postprocessing
         for plugin in self.plugins:
             if hasattr(plugin, 'postprocess'):
                 logger.info(plugin.__name__)
                 plugin.postprocess(self)
-        #session.close() do not close because bases uses the session
 
     def generate(self):
         """Generate pages for plugins."""

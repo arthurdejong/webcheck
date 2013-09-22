@@ -29,7 +29,7 @@ __author__ = 'Arthur de Jong'
 __outputfile__ = 'index.html'
 
 from webcheck import config
-from webcheck.db import Link
+from webcheck.db import Session, Link
 from webcheck.output import render
 
 
@@ -71,6 +71,9 @@ def explore(links, explored=None, depth=0):
 
 def generate(crawler):
     """Output the sitemap."""
-    links = explore(crawler.bases)
+    session = Session()
+    links = [session.query(Link).filter_by(url=url).first()
+             for url in crawler.base_urls]
+    links = explore(links)
     render(__outputfile__, crawler=crawler, title=__title__,
            links=links)
