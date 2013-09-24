@@ -353,12 +353,18 @@ class Crawler(object):
             if parent:
                 request.add_header('Referer', parent.url)
             response = urllib2.urlopen(request, timeout=config.IOTIMEOUT)
+            info = response.info()
             link.mimetype = response.info().gettype()
             link.set_encoding(response.headers.getparam('charset'))
-            # FIXME: get result code and other stuff
+            # get result code and other stuff
             link.status = str(response.code)
-            # link.size = int(response.getheader('Content-length'))
-            # link.mtime = time.mktime(response.msg.getdate('Last-Modified'))
+            try:
+                link.size = int(info.getheader('Content-length'))
+            except (TypeError, ValueError):
+                pass
+            mtime = info.getdate('Last-Modified')
+            if mtime:
+                link.mtime = datetime.datetime(*mtime[:7])
             # if response.status == 301: link.add_linkproblem(str(response.status)+': '+response.reason)
             # elif response.status != 200: link.add_linkproblem(str(response.status)+': '+response.reason)
             # TODO: add checking for size
