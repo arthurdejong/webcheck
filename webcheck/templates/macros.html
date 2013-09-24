@@ -47,7 +47,7 @@
   {%- elif count > 1 -%}
     linked from {{ count }} pages{{ separator|safe }}
   {%- endif -%}
-  {%- if link.mtime %}last modified: {{ time.ctime(link.mtime) }}{{ separator|safe }}{% endif -%}
+  {%- if link.mtime %}last modified: {{ link.mtime.strftime('%F %T') }}{{ separator|safe }}{% endif -%}
   {%- if link.size %}size: {{ link.size|filesizeformat(binary=True) }}{{ separator|safe }}{% endif -%}
   {%- if link.mimetype %}mime-type: {{ link.mimetype }}{{ separator|safe }}{% endif -%}
   {%- if link.encoding %}encoding: {{ link.encoding }}{{ separator|safe }}{% endif -%}
