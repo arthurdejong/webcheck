@@ -24,7 +24,7 @@ import logging
 import urlparse
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import distinct, func
+from sqlalchemy import func
 from sqlalchemy import Table, Column, Integer, Boolean, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.orm.session import object_session
@@ -225,22 +225,15 @@ class Link(Base):
     @property
     def count_parents(self):
         session = object_session(self)
-        p1 = session.query(func.count(distinct(children.c.parent_id))).filter(children.c.child_id == self.id)
-        p2 = session.query(func.count(distinct(embedded.c.parent_id))).filter(embedded.c.child_id == self.id)
-        return p1.scalar() + p2.scalar()
+        return session.query(children.c.parent_id).filter(children.c.child_id == self.id).union(
+            session.query(embedded.c.parent_id).filter(embedded.c.child_id == self.id)).count()
 
     @property
     def parents(self):
         session = object_session(self)
-        #links = object_session(self).query(Link)
-        #links = links.join(children, Link.id == children.c.parent_id)
-        #links = links.join(embedded, Link.id == embedded.c.parent_id)
-        #return links.filter((children.c.child_id == self.id) |
-        #                    (embedded.c.child_id == self.id)).distinct()
         parent_ids = union(session.query(children.c.parent_id).filter(children.c.child_id == self.id),
                            session.query(embedded.c.parent_id).filter(embedded.c.child_id == self.id))
-
-        return session.query(Link).filter(Link.id == parent_ids.c.children_parent_id).distinct()
+        return session.query(Link).filter(Link.id == parent_ids.c.children_parent_id)
 
 
 class LinkProblem(Base):
