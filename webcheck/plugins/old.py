@@ -28,22 +28,19 @@ __title__ = "what's old"
 __author__ = 'Arthur de Jong'
 __outputfile__ = 'old.html'
 
-import time
+import datetime
 
 from webcheck import config
 from webcheck.db import Session, Link
 from webcheck.output import render
 
 
-SECS_PER_DAY = 60 * 60 * 24
-
-
 def generate(crawler):
     """Output the list of outdated pages to the specified file descriptor."""
     session = Session()
-    oldtime = time.time() - SECS_PER_DAY * config.REPORT_WHATSOLD_URL_AGE
+    oldtime = datetime.datetime.now() - datetime.timedelta(days=config.REPORT_WHATSOLD_URL_AGE)
     links = session.query(Link).filter_by(is_page=True, is_internal=True)
     links = links.filter(Link.mtime < oldtime).order_by(Link.mtime)
     render(__outputfile__, crawler=crawler, title=__title__,
-           links=links, now=time.time(), SECS_PER_DAY=SECS_PER_DAY)
+           links=links, now=datetime.datetime.now())
     session.close()

@@ -41,7 +41,7 @@
         <li>
           {{ make_link(link) }}
           <ul class="problems">
-            <li>age: {{ (now - link.mtime) / SECS_PER_DAY }} days</li>
+            <li>age: {{ (now - link.mtime).days }} days</li>
           </ul>
         </li>
       {% endfor %}
