@@ -120,6 +120,7 @@ class Crawler(object):
 
     The available properties of this class are:
 
+      site_name  - the name of the website that is crawled
       bases      - a list of base link object
       plugins    - a list of plugin modules used by the crawler
     """
@@ -154,6 +155,8 @@ class Crawler(object):
         config.WAIT_BETWEEN_REQUESTS = self.cfg.wait
         # map of scheme+netloc to robot parsers
         self._robotparsers = {}
+        # set up empty site name
+        self.site_name = None
         # load the plugins
         self.plugins = [
             __import__(plugin, globals(), locals(), [plugin])
@@ -434,6 +437,8 @@ class Crawler(object):
             link = session.query(Link).filter(Link.is_internal == True).first()
             logger.debug('fallback to adding %s to bases', link.url)
             self.bases.append(link)
+        # set the site name
+        self.site_name = self.bases[0].title or self.bases[0].url
         # do a breadth first traversal of the website to determine depth
         session.query(Link).update(dict(depth=None), synchronize_session=False)
         session.commit()

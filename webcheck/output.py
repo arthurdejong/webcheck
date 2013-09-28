@@ -132,9 +132,6 @@ def render(output_file, **kwargs):
     kwargs.setdefault('webcheck', webcheck)
     kwargs.setdefault('output_file', output_file)
     kwargs.setdefault('time', time.ctime(time.time()))
-    crawler = kwargs.get('crawler', None)
-    if crawler:
-        kwargs.setdefault('sitename', crawler.bases[0].title or crawler.bases[0].url)
     kwargs.setdefault('Link', Link)
     kwargs.setdefault('config', config)
     template = env.get_template(output_file)

@@ -26,7 +26,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Webcheck report for {{ sitename }} ({{ title }})</title>
+    <title>Webcheck report for {{ crawler.site_name }} ({{ title }})</title>
     <link rel="stylesheet" type="text/css" href="webcheck.css" />
     <link rel="icon" href="favicon.ico" type="image/ico" />
     <link rel="shortcut icon" href="favicon.ico" />
@@ -34,7 +34,7 @@
     <meta name="Generator" content="webcheck {{ webcheck.__version__ }}" />
   </head>
   <body>
-    <h1 class="basename">Webcheck report for {{ sitename }}</a></h1>
+    <h1 class="basename">Webcheck report for {{ crawler.site_name }}</a></h1>
 
     <ul class="navbar">
       {% for plugin in crawler.plugins %}
