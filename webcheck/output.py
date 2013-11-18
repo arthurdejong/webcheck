@@ -123,8 +123,11 @@ def install_file(source, is_text=False):
 env = jinja2.Environment(
     loader=jinja2.PackageLoader('webcheck'),
     extensions=['jinja2.ext.autoescape'],
-    autoescape=True,
-    trim_blocks=True, lstrip_blocks=True, keep_trailing_newline=True)
+    autoescape=True)
+# set options that are not supported in older versions of jinja2
+env.trim_blocks = True
+env.lstrip_blocks = True
+env.keep_trailing_newline = True
 
 
 def render(output_file, **kwargs):
