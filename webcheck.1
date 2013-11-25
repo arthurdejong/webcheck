@@ -1,4 +1,4 @@
-.\" Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Arthur de Jong
+.\" Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Arthur de Jong
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -131,13 +131,9 @@ Redirect depth. the number of redirects webcheck should follow when
 following a link. 0 implies to follow all redirects.
 
 .TP
-.BI "\-u, \-\-userpass=" "URL"
-Specify a URL with username and password information to use for basic
-authentication when visiting the site.
-.br
-e.g. http://test:secret@example.com/
-.br
-This option may be specified multiple times.
+.BI "\-l, \-\-max-depth=, \-\-levels" "N"
+Recursion depth. The number of links to follow from the base URLs.
+By default links are infinitely followed.
 
 .TP
 .BI "\-w, \-\-wait=" "SECONDS"
@@ -161,8 +157,8 @@ Show short summary of options.
 URLs are divided into two classes:
 
 .B Internal
-URLs are retrieved and the retrieved item is checked for syntax.
-Also, the retrieved item is searched for links to other items (of any class)
+URLs are retrieved and the retrieved content is checked for problems.
+Also, the retrieved item is searched for links
 and these links are followed.
 
 .B External
@@ -217,7 +213,7 @@ Copyright \(co 1998, 1999 Albert Hopkins (marduk)
 .br
 Copyright \(co 2002 Mike W. Meyer
 .br
-Copyright \(co 2005, 2006, 2007, 2008, 2009, 2010 Arthur de Jong
+Copyright \(co 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Arthur de Jong
 .br
 webcheck is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

@@ -11,7 +11,7 @@
 
    Copyright (C) 1998, 1999 Albert Hopkins (marduk)
    Copyright (C) 2002 Mike W. Meyer
-   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Arthur de Jong
+   Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Arthur de Jong
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,15 +55,15 @@ Features of webcheck include:
  * list links pointing to external sites
  * can run without user intervention
 
-webcheck is written in Python and is developed on a Debian system with Python
-2.4. Previous versions of Python are not tested regularly. More recent
-versions of Python have much better performance for large sites. Patches to
-support a wider range of Python releases are welcome (provided they are not
-too intrusive).
+webcheck is written in Python and is developed on a Debian system with
+Python 2.7. Previous versions of Python are not tested regularly. Patches
+to support a wider range of Python releases are welcome (provided they are
+not too intrusive).
 
 
 INSTALLING WEBCHECK
 ===================
+
 This will install the latest version from PyPi.
 
   % easy_install webcheck
@@ -71,6 +71,7 @@ This will install the latest version from PyPi.
 
 MANUAL INSTALLATION
 ===================
+
 Installation is relatively easy. These installation instructions are for
 Unix-like systems. Other operating systems may differ.
 
@@ -101,7 +102,7 @@ Should crawl the site and write the reports to the /tmp/myreport directory.
 The reports are simple HMTL pages that should look fine with most modern
 browsers.
 
-For more information on webcheck usage and command line options see the
+For more information on webcheck usage and command line options, see the
 webcheck manual page. If the manual page is not in the MANPATH you can
 probably open the manual with something like:
   % man -l /opt/webcheck-1.10.4/webcheck.1

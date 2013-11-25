@@ -1,28 +1,59 @@
+
+This document tries to describe the software layout and design of
+webcheck. It should provide some help for contributing code to this package.
+
+
+CONTRIBUTING TO WEBCHECK
+========================
+
+Contributions to webcheck are most welcome. Integrating contributions will
+be done on a best-effort basis and can be made easier if the following are
+considered:
+
+* for large changes it is a good idea to send an email first
+* send your patches in unified diff (diff -u) format, Git patches or Git
+  pull requests
+* try to use the svn version of the software to develop the patch
+* clearly state which problem you're trying to solve and how this is
+  accomplished
+* please follow the existing coding conventions
+* please test the patch and include information on testing with the patch
+* add a copyright statement with the patch if you feel the contribution is
+  significant enough (e.g. more than a few lines)
+* when including third-party code, retain copyright information (copyright
+  holder and license) and ensure that the license is GPL compatible
+
+Please email webcheck-users@lists.arthurdejong.org if you want to
+contribute. All contributions will be acknowledged in the AUTHORS file.
+
+
 WEBCHECK DESIGN OVERVIEW
 ========================
 
-Webcheck has grown and has been refactored over time so there is not really a
-single design. The functions are grouped in modules according to their
-function. This graphs should present a simple overview of the modules and
-order of calling the functions.
+Webcheck has grown and has been refactored over time. While some different
+design concepts were used, recently there has been a push towards a modular
+plugin-based design.
 
-webcheck/                   - top-level namespace
- \- cmd.py                  - main program entry point, command line parsing, etc
- \- config.py               - configuration settings (imported from most other
- |                            modules)
- \- util.py                 - common functions imported from most other modules
+The graphs blowe should give an overview of the modules and order of calling
+the functions.
+
+webcheck                    - top-level namespace
+ \- cmd                     - command-line front-end for webcheck
+ \- config                  - configuration settings (imported from most other
+ |                            modules, expected to be refactored out)
+ \- crawler                 - home of the Crawler class that controls the
+ |                            initialisation, crawling, post-processing and
+ |                            report generation
+ \- db                      - database definitions using SQLAlchemy
+ |                            used to persist the crawled data in a SQLite db
+ \- monkeypatch             - hacks to fix third-party bugs
+ \- myurllib                - URL normalisation functions
+ \- output                  - utility functions for report generation
  |
- \- crawler.py              - module with loop and logic for traversing a
- |   |                        website and storing all the information about
- |   |                        the website that is used later
- \- myurllib.py             - module for ftp/file/http url fetching
+ \- parsers                 - entry point for content parsing
+ |  \- html                 - parser modules for HTML content
+ |  \- css                  - parser module for CSS
  |
- \- parsers/__init__.py     - front-end module to handle parsing of content
- |  \- html/                - parser modules for html content
- |  \- css.py               - parser module for css (dummy currently)
+ \- plugins                 - collection of report and post-processing plugins
  |
- \- plugins/__init__.py     - front-end module for plugin modules, this calls
-     |                        all configured plugins and has some helper
-     |                        functions for plugins
-     \- plugins/*.py        - per report one plugin that does some specific
-                              checking and outputs some html code
+ \- templates               - HTML templates for report generation

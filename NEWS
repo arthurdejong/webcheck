@@ -2,7 +2,7 @@ changes from 1.10.4 to 1.10.5 (alpha)
 -----------------------------
 
 * added setup.py for pypi/egg-based installation
-* support --levels option to control max depth
+* support --max-depth option to control max depth
 * detect and report on endless redirects
 * move to sqlite for storing crawler state
 

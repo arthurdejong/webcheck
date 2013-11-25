@@ -2,16 +2,14 @@ before next release
 -------------------
 * go over all FIXMEs in code (ftp)
 * follow redirects (to a limit) of external sites
-* -U,  --user-agent=AGENT    identify as AGENT instead of Wget/VERSION.
+* -U,  --user-agent=AGENT identify as AGENT instead of webcheck VERSION
 
-probably before 2.0 release
+probably before 3.0 release
 ---------------------------
 * support for multi-threading (use -t, --threads as option)
-* find a fix for redirecting stdout and stderr to work properly
 * implement a maximum transfer size for downloading
 * support ftp proxies
 * support proxying https traffic
-* give problems different levels (info, warning, error) or categories
 * option to only force overwrite generated files and leave static files (css, js) alone
 * implement a --html-only option to not copy css and other files
 * check for missing encoding (report problem)
@@ -21,48 +19,30 @@ probably before 2.0 release
 wishlist
 --------
 * make code for stripping last part of a url (e.g. foo/index.html -> foo/)
-* maybe set referer (configurable)
-* cookies support (maybe) (not difficult with urllib2)
 * integration with weblint
 * do form checking of crawled pages
 * do spelling checking of crawled pages
-* test w3c conformance of pages
 * add support for fetching gzipped content to improve performance
-* maybe do http pipelining
 * maybe output a google sitemap file: http://www.google.com/webmasters/sitemaps/docs/en/protocol.html
 * maybe trim titles that are too long
 * maybe check that documents referenced in <img> tags are really images
-* maybe split out plugins in check() and generate() functions
-* make FAQ
 * use gettext to present output to enable translations of messages and html
 * maybe report on embedded content that is external
 * present an overview of problem pages: "100 problems in 10 pages" (per author)
 * check of email addresses that they are formatted properly and check that host part has an MX record (make it a problem for no record or only an A record)
-* maybe implement news, nntp, gopher and telnet schemes (if there is anyone that wants them)
-* maybe add custom bullets in problem lists, depending on problem type
 * present age for times long ago in a friendlier format (.. days ago, .. months ago, .. years ago)
 * maybe unescaped spaces aren't always a real problem (e.g. in mailto: urls)
 * maybe give a warning for urls that have non-ascii characters
 * maybe fetch and store description and other meta information about page (keywords) (just like author)
-* connect to w3c-markup-validator and tidy (and possibly other tools)
-* find out why title does not show up correctly for file?:// urls if they contain non-ascii chars
 * output scan took so long
-* support unicode strings for all string values in link objects (url, status, mimetype, encoding, etc)
-* maybe also serialize robotparsers
 * maybe also add robots.txt to urllist if fetched successfully
 * support CSS encoding: http://www.w3.org/International/questions/qa-css-charset
 * webcheck does not give an error when accessing http://site:443/ ??
-* improve data structures (e.g. see if pop() is faster than pop(0))
-* do not use string for serializing child, embed, anchor and reqanchor as they are already url-encoded
-* there seem to be some issues with generating site maps for ftp directories
-* document serialized file format in manual page (if it is stabilized)
 * look into python-spf to see how DNS queries are done
 * implement an option to ignore problems on pages (but do consider internal, etc) (e.g. for generated or legacy html)
-* maybe use urllib2 instead of our own custom code (redirects may be a problem here though)
 * add support for robots meta tag: http://www.robotstxt.org/wc/meta-user.html
 * only report multiple definitions of a single anchor once
 * warn if URL contains unencoded characters
 * see section 6 of rfc3986.txt for URL comparison (esp. 6.2.2.)
 * implement paging for huge reports
-* check out python-coverage
 * output timing information on scan (e.g. scan took 30 minutes)
