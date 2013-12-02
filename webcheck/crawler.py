@@ -36,6 +36,7 @@ import os
 import re
 import robotparser
 import time
+import urllib
 import urllib2
 import urlparse
 
