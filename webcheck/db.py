@@ -121,6 +121,12 @@ class Link(Base):
         # return the link
         return instance
 
+    def _mk_unicode(self, message):
+        """Turn the message into a unicode object."""
+        if not isinstance(message, unicode):
+            message = unicode(message, encoding=self.encoding or 'utf-8', errors='replace')
+        return message
+
     def set_encoding(self, encoding):
         """Set the encoding of the link doing some basic checks to see if
         the encoding is supported."""
@@ -155,7 +161,7 @@ class Link(Base):
 
     def add_linkproblem(self, message):
         """Indicate that something went wrong while retrieving this link."""
-        self.linkproblems.append(LinkProblem(message=message))
+        self.linkproblems.append(LinkProblem(message=self._mk_unicode(message)))
 
     def add_pageproblem(self, message):
         """Indicate that something went wrong with parsing the document."""
@@ -163,7 +169,7 @@ class Link(Base):
         if not self.is_internal:
             return
         # TODO: only include a single problem once (e.g. multiple anchors)
-        self.pageproblems.append(PageProblem(message=message))
+        self.pageproblems.append(PageProblem(message=self._mk_unicode(message)))
 
     def add_child(self, url):
         """Add the specified URL as a child of this link."""
@@ -184,7 +190,7 @@ class Link(Base):
     def add_anchor(self, anchor):
         """Indicate that this page contains the specified anchor."""
         # lowercase anchor
-        anchor = anchor.lower()
+        anchor = self._mk_unicode(anchor).lower()
         if self.anchors.filter(Anchor.anchor == anchor).first():
             self.add_pageproblem(
               'anchor/id "%(anchor)s" defined multiple times'
@@ -196,7 +202,7 @@ class Link(Base):
         """Indicate that the specified link contains a reference to the
         specified anchor. This can be checked later."""
         # lowercase anchor
-        anchor = anchor.lower()
+        anchor = self._mk_unicode(anchor).lower()
         # if RequestedAnchor doesn't exist, add it
         if not self.reqanchors.filter((RequestedAnchor.parent_id == parent.id) & (RequestedAnchor.anchor == anchor)).first():
             self.reqanchors.append(RequestedAnchor(parent_id=parent.id, anchor=anchor))
