@@ -141,4 +141,4 @@ def main(cfg):
 def entry_point():
     """setuptools entry point"""
     args = parser.parse_args()
-    main(vars(cfg))
+    main(vars(args))
