@@ -32,6 +32,7 @@ import sys
 import time
 import urllib
 import urlparse
+import pkg_resources
 
 import jinja2
 
@@ -82,35 +83,12 @@ def install_file(source, is_text=False):
     """Install the given file in the output directory.
     If the is_text flag is set to true it is assumed the file is text,
     translating line endings."""
-    # figure out mode to open the file with
-    mode = 'r'
+    sfp = pkg_resources.resource_stream(__name__, source)
     if is_text:
-        mode += 'U'
-    # check with what kind of argument we are called
-    scheme = urlparse.urlsplit(source)[0]
-    if scheme == 'file':
-        # this is a file:/// url, translate to normal path and open
-        source = urllib.url2pathname(urlparse.urlsplit(source)[2])
-    elif scheme == '' and os.path.isabs(source):
-        # this is an absolute path, just open it as is
-        pass
-    elif scheme == '':
-        # this is a relavite path, try to fetch it from the python path
-        for directory in sys.path:
-            tst = os.path.join(directory, source)
-            if os.path.isfile(tst):
-                source = tst
-                break
+        sfp = codecs.getreader('utf-8')(sfp)
     # TODO: support more schemes here
     # figure out the destination name
     target = os.path.join(config.OUTPUT_DIR, os.path.basename(source))
-    # test if source and target are the same
-    source = os.path.realpath(source)
-    if source == os.path.realpath(target):
-        logger.warn('attempt to overwrite %s with itself', source)
-        return
-    # open the input file
-    sfp = open(source, mode)
     # create file in output directory (with overwrite question)
     tfp = open_file(os.path.basename(source), is_text=is_text)
     # copy contents

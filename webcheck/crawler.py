@@ -470,6 +470,6 @@ class Crawler(object):
                 logger.info(plugin.__name__)
                 plugin.generate(self)
         # install theme files
-        install_file('webcheck.css', True)
-        install_file('fancytooltips/fancytooltips.js', True)
-        install_file('favicon.ico', False)
+        install_file('static/webcheck.css', True)
+        install_file('static/fancytooltips/fancytooltips.js', True)
+        install_file('static/favicon.ico', False)
