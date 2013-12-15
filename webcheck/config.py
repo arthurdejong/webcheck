@@ -70,7 +70,8 @@ PLUGINS = ['webcheck.plugins.anchors',
            'webcheck.plugins.size',
            'webcheck.plugins.notitles',
            'webcheck.plugins.problems',
-           'webcheck.plugins.about']
+           'webcheck.plugins.about',
+           'webcheck.plugins.csvfile']
 
 # Whether to overwrite files without asking. This is the state of the -f
 # command line option.
