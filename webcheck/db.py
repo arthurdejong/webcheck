@@ -70,7 +70,6 @@ class Link(Base):
     # information about the retrieved link
     status = Column(String)
     mimetype = Column(String)
-    mimetype = Column(String)
     encoding = Column(String)
     size = Column(Integer)
     mtime = Column(DateTime, index=True)
