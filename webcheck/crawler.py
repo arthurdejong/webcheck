@@ -41,11 +41,9 @@ import urllib2
 import urlparse
 
 from webcheck import config
-from webcheck.db import Session, Base, Link, truncate_db
+from webcheck.db import Session, Link, setup_db, truncate_db
 from webcheck.output import install_file
 import webcheck.parsers
-
-from sqlalchemy import create_engine
 
 
 logger = logging.getLogger(__name__)
@@ -179,16 +177,10 @@ class Crawler(object):
         if hasattr(self, 'database_configed'):
             return
         self.database_configed = True
-        # ensure output directory exists
         if not os.path.isdir(config.OUTPUT_DIR):
             os.mkdir(config.OUTPUT_DIR)
-        # open the sqlite file
         filename = os.path.join(config.OUTPUT_DIR, 'webcheck.sqlite')
-        engine = create_engine('sqlite:///' + filename)
-        Session.configure(bind=engine)
-        # ensure that all tables are created
-        Base.metadata.create_all(engine)
-        # TODO: schema migraton goes here
+        setup_db(filename)
 
     def _is_internal(self, url):
         """Check whether the specified url is external or internal. This

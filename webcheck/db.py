@@ -1,7 +1,7 @@
 
 # db.py - database access layer for webcheck
 #
-# Copyright (C) 2011 Arthur de Jong
+# Copyright (C) 2011, 2013 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 import logging
 import urlparse
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import func
 from sqlalchemy import Table, Column, Integer, Boolean, String, DateTime, ForeignKey
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.orm.session import object_session
 from sqlalchemy.sql.expression import union
@@ -35,7 +35,6 @@ from webcheck.myurllib import normalizeurl
 
 
 logger = logging.getLogger(__name__)
-
 
 
 # provide session and schema classes
@@ -307,6 +306,14 @@ class RequestedAnchor(Base):
 
     def __unicode__(self):
         return self.anchor
+
+
+def setup_db(filename):
+    # open the sqlite file
+    engine = create_engine('sqlite:///' + filename)
+    Session.configure(bind=engine)
+    # ensure that all tables are created
+    Base.metadata.create_all(engine)
 
 
 def truncate_db():
