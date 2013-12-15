@@ -260,13 +260,7 @@ class Crawler(object):
         return None
 
     def _get_link(self, session, url):
-        # try to find the URL
-        url = Link.clean_url(url)
-        link = session.query(Link).filter_by(url=url).first()
-        if not link:
-            link = Link(url=url)
-            session.add(link)
-        return link
+        return Link.get_or_create(session, Link.clean_url(url))
 
     def _get_links_to_crawl(self, session):
         links = session.query(Link).filter(Link.fetched == None)
@@ -289,7 +283,6 @@ class Crawler(object):
             truncate_db()
         # add all internal urls to the database
         for url in self.base_urls:
-            url = Link.clean_url(url)
             self._get_link(session, url)
         # add some URLs from the database that haven't been fetched
         tocheck = self._get_links_to_crawl(session)

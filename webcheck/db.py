@@ -25,6 +25,7 @@ import urlparse
 
 from sqlalchemy import Table, Column, Integer, Boolean, String, DateTime, ForeignKey
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.orm.session import object_session
@@ -98,6 +99,22 @@ class Link(Base):
         """normalise the URL, removing the fragment from the URL"""
         return urlparse.urldefrag(normalizeurl(url))[0]
 
+    @staticmethod
+    def get_or_create(session, url):
+        """This expects a clean url."""
+        session.commit()
+        while True:
+            instance = session.query(Link).filter_by(url=url).first()
+            if instance:
+                return instance
+            try:
+                instance = Link(url=url)
+                session.add(instance)
+                session.commit()
+                return instance
+            except IntegrityError:
+                pass  # will try again
+
     def _get_child(self, url):
         """Get a link object for the specified URL."""
         # get the session
@@ -105,15 +122,9 @@ class Link(Base):
         # normalise the URL, removing the fragment from the URL
         url, fragment = urlparse.urldefrag(normalizeurl(url))
         # try to find the link
-        instance = session.query(Link).filter_by(url=url).first()
-        if not instance:
-            if config.MAX_DEPTH != None and self.depth >= config.MAX_DEPTH:
-                logger.debug('link %s too deep', url)
-            instance = Link(url=url, depth=self.depth + 1)
-            session.add(instance)
-        else:
-            # we may have discovered a shorter path
-            instance.depth = min(instance.depth, self.depth + 1)
+        instance = self.get_or_create(session, url)
+        # we may have discovered a shorter path
+        instance.depth = min(instance.depth, self.depth + 1) or self.depth + 1
         # mark that we were looking for an anchor/fragment
         if fragment:
             instance.add_reqanchor(self, fragment)
