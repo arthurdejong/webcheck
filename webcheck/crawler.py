@@ -259,7 +259,7 @@ class Crawler(object):
         # fall back to allowing the url
         return None
 
-    def get_link(self, session, url):
+    def _get_link(self, session, url):
         # try to find the URL
         url = Link.clean_url(url)
         link = session.query(Link).filter_by(url=url).first()
@@ -268,7 +268,7 @@ class Crawler(object):
             session.add(link)
         return link
 
-    def get_links_to_crawl(self, session):
+    def _get_links_to_crawl(self, session):
         links = session.query(Link).filter(Link.fetched == None)
         if config.MAX_DEPTH != None:
             links = links.filter(Link.depth <= config.MAX_DEPTH)
@@ -290,9 +290,9 @@ class Crawler(object):
         # add all internal urls to the database
         for url in self.base_urls:
             url = Link.clean_url(url)
-            self.get_link(session, url)
+            self._get_link(session, url)
         # add some URLs from the database that haven't been fetched
-        tocheck = self.get_links_to_crawl(session)
+        tocheck = self._get_links_to_crawl(session)
         remaining = tocheck.count()
         tocheck = tocheck[:100]
         remaining -= len(tocheck)
@@ -304,7 +304,7 @@ class Crawler(object):
             link.yanked = self._is_yanked(str(link.url))
             # see if there are any more links to check
             if not tocheck:
-                tocheck = self.get_links_to_crawl(session)
+                tocheck = self._get_links_to_crawl(session)
                 remaining = tocheck.count()
                 tocheck = tocheck[:100]
                 remaining -= len(tocheck)
@@ -312,9 +312,9 @@ class Crawler(object):
             if link.yanked or link.fetched:
                 continue
             # fetch the link's contents
-            response = self.fetch(link)
+            response = self._fetch_link(link)
             if response:
-                self.parse(link, response)
+                self._parse_response(link, response)
             # flush database changes
             session.commit()
             # sleep between requests if configured
@@ -327,9 +327,9 @@ class Crawler(object):
         session.commit()
         session.close()
 
-    def fetch(self, link):
-        """Attempt to fetch the url (if not yanked) and fill in link
-        attributes (based on is_internal)."""
+    def _fetch_link(self, link):
+        """Attempt to fetch the url and return content. This updates the
+        link with information retrieved."""
         logger.info(link.url)
         # mark the link as fetched to avoid loops
         link.fetched = datetime.datetime.now()
@@ -378,8 +378,8 @@ class Crawler(object):
             logger.exception('unknown exception caught: ' + str(e))
             link.add_linkproblem('error reading HTTP response: %s' % str(e))
 
-    def parse(self, link, response):
-        """Parse the fetched response."""
+    def _parse_response(self, link, response):
+        """Parse the fetched response content."""
         # find a parser for the content-type
         parsermodule = webcheck.parsers.get_parsermodule(link.mimetype)
         if parsermodule is None:
@@ -411,7 +411,7 @@ class Crawler(object):
         # do not have a parent (they form the base for the site)
         bases = []
         for url in list(self.base_urls):
-            link = self.get_link(session, url).follow_link()
+            link = self._get_link(session, url).follow_link()
             if not link:
                 logger.warn('base link %s redirects to nowhere', url)
                 self.base_urls.remove(url)

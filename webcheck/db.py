@@ -98,7 +98,7 @@ class Link(Base):
         """normalise the URL, removing the fragment from the URL"""
         return urlparse.urldefrag(normalizeurl(url))[0]
 
-    def _get_link(self, url):
+    def _get_child(self, url):
         """Get a link object for the specified URL."""
         # get the session
         session = object_session(self)
@@ -176,7 +176,7 @@ class Link(Base):
         if not self.is_internal:
             return
         # add to children
-        self.children.append(self._get_link(url))
+        self.children.append(self._get_child(url))
 
     def add_embed(self, url):
         """Mark the given URL as used as an image on this page."""
@@ -184,7 +184,7 @@ class Link(Base):
         if not self.is_internal:
             return
         # add to embedded
-        self.embedded.append(self._get_link(url))
+        self.embedded.append(self._get_child(url))
 
     def add_anchor(self, anchor):
         """Indicate that this page contains the specified anchor."""
