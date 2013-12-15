@@ -342,7 +342,7 @@ class Crawler(object):
                 request.add_header('Referer', parent.url)
             response = urllib2.urlopen(request, timeout=config.IOTIMEOUT)
             info = response.info()
-            link.mimetype = response.info().gettype()
+            link.mimetype = info.gettype()
             link.set_encoding(response.headers.getparam('charset'))
             # get result code and other stuff
             link.status = str(response.code)
