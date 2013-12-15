@@ -1,7 +1,7 @@
 
 # html.py - parser functions for html content
 #
-# Copyright (C) 2005, 2006, 2007, 2008, 2011 Arthur de Jong
+# Copyright (C) 2005, 2006, 2007, 2008, 2011, 2013 Arthur de Jong
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -98,7 +98,6 @@ def parse(content, link):
     if config.TIDY_OPTIONS:
         try:
             import webcheck.parsers.html.calltidy
-            logger.debug('the Tidy parser is ok')
             webcheck.parsers.html.calltidy.parse(content, link)
         except ImportError:
             logger.warn('tidy library (python-utidylib) is unavailable')
